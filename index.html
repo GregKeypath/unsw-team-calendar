@@ -428,13 +428,47 @@
   const MONTH_NAMES = ['January','February','March','April','May','June',
                        'July','August','September','October','November','December'];
 
-  let events = JSON.parse(localStorage.getItem('unsw-team-cal-events') || '{}');
+  const DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/events.json';
+
+  let events = {};
   let currentYear, currentMonth;
   let pendingDateKey = null;
   let selectedTag = 0;
 
-  function saveEvents() {
-    localStorage.setItem('unsw-team-cal-events', JSON.stringify(events));
+  // Load events from Firebase then render
+  async function loadEvents() {
+    try {
+      const res = await fetch(DB);
+      const data = await res.json();
+      events = data || {};
+      render();
+    } catch(e) { console.error('Failed to load events', e); }
+  }
+
+  // Save all events back to Firebase
+  async function saveEvents() {
+    try {
+      await fetch(DB, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(events)
+      });
+    } catch(e) { console.error('Failed to save events', e); }
+  }
+
+  // Real-time listener — updates calendar when anyone adds/removes an event
+  function startRealtime() {
+    const source = new EventSource(DB.replace('.json', '') + '.json');
+    source.addEventListener('put', (e) => {
+      const payload = JSON.parse(e.data);
+      events = payload.data || {};
+      render();
+    });
+    source.addEventListener('patch', (e) => {
+      const payload = JSON.parse(e.data);
+      Object.assign(events, payload.data || {});
+      render();
+    });
   }
 
   function dateKey(y, m, d) {
@@ -611,7 +645,8 @@
   const now = new Date();
   currentYear = now.getFullYear();
   currentMonth = now.getMonth();
-  render();
+  loadEvents();
+  startRealtime();
 </script>
 </body>
 </html>
