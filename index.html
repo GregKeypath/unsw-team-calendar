@@ -653,6 +653,72 @@
       font-size: 0.68rem;
       opacity: 0.7;
     }
+
+    /* Kanban board */
+    .kanban-wrap { padding: 20px 32px; overflow-x: auto; }
+    .kanban-board { display: flex; gap: 12px; min-width: max-content; align-items: flex-start; }
+    .kanban-col { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; }
+    .kanban-col-header {
+      background: #111;
+      color: #FFD100;
+      padding: 10px 14px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .col-count {
+      background: rgba(255,209,0,0.2);
+      color: #FFD100;
+      font-size: 0.68rem;
+      padding: 1px 7px;
+      font-weight: 700;
+    }
+    .kanban-col-body {
+      background: rgba(0,0,0,0.04);
+      min-height: 200px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: background 0.15s;
+      border: 2px solid transparent;
+    }
+    .kanban-col-body.drag-over { background: rgba(255,209,0,0.12); border-color: #FFD100; }
+    .kanban-card {
+      padding: 8px 10px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      line-height: 1.4;
+      cursor: grab;
+      border-left: 3px solid;
+      transition: opacity 0.15s, transform 0.15s;
+      user-select: none;
+    }
+    .kanban-card:hover { transform: translateX(2px); }
+    .kanban-card.dragging { opacity: 0.35; cursor: grabbing; }
+    .cat-priority   { background: #FEE2E2; color: #991B1B; border-color: #EF4444; }
+    .cat-calls      { background: #DBEAFE; color: #1D4ED8; border-color: #3B82F6; }
+    .cat-admin      { background: #F1F5F9; color: #475569; border-color: #94A3B8; }
+    .cat-leadership { background: #EDE9FE; color: #5B21B6; border-color: #7C3AED; }
+    .cat-welcome    { background: #DCFCE7; color: #15803D; border-color: #22C55E; }
+    .cat-automated  { background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
+    .cat-webinar    { background: #FFEDD5; color: #9A3412; border-color: #F97316; }
+    .kanban-legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 16px 32px 0;
+      font-size: 0.72rem;
+      font-weight: 600;
+      align-items: center;
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .kanban-subhead { padding: 8px 32px 0; font-size: 0.8rem; color: #888; }
   </style>
 </head>
 <body>
@@ -682,6 +748,7 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">📅 Calendar</button>
   <button class="tab-btn" data-tab="strategy">📋 Weekly Engagement Strategy</button>
+  <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
 </nav>
 
 <!-- Calendar tab -->
@@ -736,6 +803,15 @@
     </div>
   </div>
 </div><!-- end tab-strategy -->
+
+<!-- Kanban tab -->
+<div class="tab-panel" id="tab-kanban">
+  <p class="kanban-subhead">Drag cards between columns to reorganise. Changes sync to the team automatically.</p>
+  <div class="kanban-legend" id="kanban-legend"></div>
+  <div class="kanban-wrap">
+    <div class="kanban-board" id="kanban-board"></div>
+  </div>
+</div>
 
 <!-- Modal -->
 <div class="modal-overlay" id="modal-overlay">
@@ -1106,6 +1182,7 @@
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
     });
   });
 
@@ -1144,6 +1221,279 @@
   });
 
   loadStrategy();
+
+  // ── Kanban Board ──────────────────────────────────────────────
+  const KANBAN_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/kanban.json';
+
+  const KANBAN_COLS = [
+    { id: 'pre-hex', label: 'Pre-Hex' },
+    { id: 'o-week',  label: 'O-Week' },
+    { id: 'week-1',  label: 'Week 1' },
+    { id: 'week-2',  label: 'Week 2' },
+    { id: 'week-3',  label: 'Week 3' },
+    { id: 'week-4',  label: 'Week 4' },
+    { id: 'week-5',  label: 'Week 5' },
+    { id: 'week-6',  label: 'Week 6' },
+    { id: 'week-7',  label: 'Week 7' },
+  ];
+
+  const KANBAN_CATS = {
+    priority:   { label: 'Priority',   dot: '#EF4444' },
+    calls:      { label: 'Calls',      dot: '#3B82F6' },
+    admin:      { label: 'Admin',      dot: '#94A3B8' },
+    leadership: { label: 'Leadership', dot: '#7C3AED' },
+    welcome:    { label: 'Welcome',    dot: '#22C55E' },
+    automated:  { label: 'Automated',  dot: '#F59E0B' },
+    webinar:    { label: 'Webinar',    dot: '#F97316' },
+  };
+
+  const KANBAN_INITIAL = {
+    'pre-hex': [
+      { id:'k1',  text:'Welcome Calls', cat:'welcome' },
+      { id:'k2',  text:'Welcome Webinar (Weeks -2 & -1)', cat:'webinar' },
+      { id:'k3',  text:'Making Connections Webinar', cat:'webinar' },
+    ],
+    'o-week': [
+      { id:'k4',  text:'Suspension appeal deadline Wednesday (H1 only)', cat:'priority' },
+      { id:'k5',  text:'Results released on Friday', cat:'admin' },
+      { id:'k6',  text:'Re-enrolment last attempts: 1. T1-T2  2. Registration  3. Reengagement', cat:'priority' },
+      { id:'k7',  text:'Incomplete Enrollment Review', cat:'calls' },
+      { id:'k8',  text:'No Pre-Req Calls', cat:'calls' },
+      { id:'k9',  text:'#Previous TP Dropped - At Risk Calls', cat:'calls' },
+      { id:'k10', text:'Failed Current Term → Follow up email (no contact)', cat:'calls' },
+      { id:'k11', text:'Outbound Remaining Welcome Calls', cat:'welcome' },
+      { id:'k12', text:'High Risk Course Enrolment At Risk Calls', cat:'calls' },
+      { id:'k13', text:'Introductory emails to Course Convenors (1 Leader, SSA shared email)', cat:'admin' },
+      { id:'k14', text:'Incomplete Enrolment List from SLC to SDIT', cat:'admin' },
+      { id:'k15', text:'Post Making Connections webinar slides in Hubs', cat:'admin' },
+      { id:'k16', text:'Lead: Graduated - Failed Last TP List (Friday Morning)', cat:'leadership' },
+      { id:'k17', text:'Welcome Call Tracking', cat:'admin' },
+      { id:'k18', text:'Welcome Webinar', cat:'webinar' },
+    ],
+    'week-1': [
+      { id:'k19', text:'Census on Thursday', cat:'priority' },
+      { id:'k20', text:'Track Academic Standing Drop Risk', cat:'priority' },
+      { id:'k21', text:'Final & Incomplete Enrolments on Monday', cat:'priority' },
+      { id:'k22', text:'Escalate LATE ENROLLMENTS Tue: Failed Current TP → Next Term Graduated', cat:'priority' },
+      { id:'k23', text:'Incomplete Enrollment Drop Tuesday', cat:'admin' },
+      { id:'k24', text:'Late Enrolment - Failed Prereq (Incomplete Pre-req)', cat:'calls' },
+      { id:'k25', text:'Academic Standing Calls', cat:'calls' },
+      { id:'k26', text:'Failed Current Term → Failed Subject Last 12 Months follow up email', cat:'calls' },
+      { id:'k27', text:'High Risk Course Enrolment At Risk Calls', cat:'calls' },
+      { id:'k28', text:'LMS Non-Access x2 Attempts (minimum)', cat:'calls' },
+      { id:'k29', text:'LMS Non-Access - Canvas: Angela to send Wednesday outlines', cat:'admin' },
+      { id:'k30', text:'Lead: Academic Standing & Appeals', cat:'leadership' },
+      { id:'k31', text:'Welcome Call Tracking', cat:'welcome' },
+      { id:'k32', text:'Incomplete Requisite List from SLC', cat:'admin' },
+      { id:'k33', text:'PGIPT Approvals list → ROPS for GC>M sheet & CRM update', cat:'admin' },
+    ],
+    'week-2': [
+      { id:'k34', text:'Post Census Wrapup & Degree Pathing', cat:'priority' },
+      { id:'k35', text:'Suspension appeal deadline Tuesday, outcomes Thursday', cat:'priority' },
+      { id:'k36', text:'WADM Risk Reengagement Calls', cat:'calls' },
+      { id:'k37', text:'CS Engagement >60 days: Pre-enrollment Academic Year focus', cat:'calls' },
+      { id:'k38', text:'PGIPT FEE-HELP received Mon Week 2 from SLC', cat:'admin' },
+      { id:'k39', text:'Credit & Exemption Report from SDIT', cat:'admin' },
+      { id:'k40', text:'T1-T2 NS Check Calls - hybrid DP Enrollment & Stu Essentials', cat:'calls' },
+      { id:'k41', text:'Academic Standing', cat:'calls' },
+      { id:'k42', text:'Final Attempts Moodle Non-Access Calls', cat:'calls' },
+      { id:'k43', text:'Schedule Welcome Webinar next term + send Rego Link to SSA & SEA', cat:'admin' },
+      { id:'k44', text:'Lead: Academic Standing & Appeals', cat:'leadership' },
+      { id:'k45', text:'Welcome Call Tracking', cat:'welcome' },
+    ],
+    'week-3': [
+      { id:'k46', text:'WADMs Drop Tuesday', cat:'priority' },
+      { id:'k47', text:'Goal: finish 1st attempts Reg-Reeng by EOW', cat:'priority' },
+      { id:'k48', text:'IPT opens Monday Week 3', cat:'priority' },
+      { id:'k49', text:'WADM Risk Reengagement Calls (Monday)', cat:'calls' },
+      { id:'k50', text:'All T1-T2 calls → NS Course 1 Call + email with DP + Stu Essentials Check', cat:'calls' },
+      { id:'k51', text:'T1-T2 Outstanding Docs calls (remove Enrolment Block)', cat:'calls' },
+      { id:'k52', text:'Student Essentials (SEM) Incomplete Risk Calls', cat:'calls' },
+      { id:'k53', text:'CS Engagement Calls', cat:'calls' },
+      { id:'k54', text:'Re-enrolment Headstart: Not Active + No Future Enrolments', cat:'calls' },
+      { id:'k55', text:'PGIPT FEEHELP Calls', cat:'calls' },
+      { id:'k56', text:'T1-T2 Goal Setting & Team Tracking', cat:'leadership' },
+      { id:'k57', text:'Not Active List → UNSW for verification of Discontinued/Graduated', cat:'admin' },
+      { id:'k58', text:'Download PGIPT report → ROPS. Follow up with PAs', cat:'admin' },
+      { id:'k59', text:'TL review R&FC doc - identify potential course cancellations (<10 enrolments)', cat:'admin' },
+      { id:'k60', text:'Block days for DP Review & Post Census Wrap Up', cat:'admin' },
+      { id:'k61', text:'Appeals - SSA Input for UNSWO', cat:'admin' },
+      { id:'k62', text:'Welcome Call Tracking', cat:'welcome' },
+    ],
+    'week-4': [
+      { id:'k63', text:'🎉 GC>M Party - Goal: Finish First Attempts by EOW', cat:'priority' },
+      { id:'k64', text:'LOA Pool Blitz', cat:'calls' },
+      { id:'k65', text:'GC>M 1st attempt calls + emails', cat:'calls' },
+      { id:'k66', text:'REP Re-enrollment Calls (first attempts)', cat:'calls' },
+      { id:'k67', text:'WADM Winback List', cat:'calls' },
+      { id:'k68', text:'All T1-T2 calls → NS Course 1 Call + email with DP', cat:'calls' },
+      { id:'k69', text:'Monday: WADM Risk Reengagement Calls', cat:'calls' },
+      { id:'k70', text:'T1-T2 Tracking - Team & All SSA Adherence', cat:'leadership' },
+      { id:'k71', text:'Lead: Appeal Outcomes & Pre-census Drops (Work with SDIT)', cat:'leadership' },
+      { id:'k72', text:'Drops Analysis Team Meeting (pending)', cat:'admin' },
+      { id:'k73', text:'Download PGIPT report → ROPS. Follow up with PAs', cat:'admin' },
+      { id:'k74', text:'Discrepancies Check', cat:'admin' },
+      { id:'k75', text:'Request REP Last Term to Graduate List', cat:'admin' },
+      { id:'k76', text:'T1-T2 QA & Feedback', cat:'admin' },
+      { id:'k77', text:'Spot Checks: Pending Grad / No Course Available List', cat:'admin' },
+      { id:'k78', text:'TL: Request NTSS = NCA with course planned on DP list from SDIT', cat:'admin' },
+      { id:'k79', text:'Welcome Calls', cat:'welcome' },
+    ],
+    'week-5': [
+      { id:'k80', text:'Academic Discontinue deadline (AW grade) Friday', cat:'priority' },
+      { id:'k81', text:'Goal: finish 2nd attempts Reg-Reeng by EOW', cat:'priority' },
+      { id:'k82', text:'REP Re-enrollment Calls (2nd attempts)', cat:'calls' },
+      { id:'k83', text:'LOA Reengagement Calls', cat:'calls' },
+      { id:'k84', text:'Last Term to Graduate Re-Enrollment Calls (CG pull from CRM)', cat:'calls' },
+      { id:'k85', text:'CS Engagement Calls', cat:'calls' },
+      { id:'k86', text:'Student Essentials (SEM) Incomplete Risk Calls', cat:'calls' },
+      { id:'k87', text:'WADM Winback List', cat:'calls' },
+      { id:'k88', text:'Incomplete and No PreReq Enrolments', cat:'calls' },
+      { id:'k89', text:'Lead: LOA Blitz & Adherence', cat:'leadership' },
+      { id:'k90', text:'Lead: T1-T2 Tracking - Team & All SSA Adherence', cat:'leadership' },
+      { id:'k91', text:'Confirm Webinar hosts & panellists', cat:'admin' },
+      { id:'k92', text:'Course Digest & UNSWO Central Walkthrough (Week 5 Every Hex)', cat:'webinar' },
+      { id:'k93', text:'Welcome Calls', cat:'welcome' },
+    ],
+    'week-6': [
+      { id:'k94',  text:'PGIPT deadline Friday', cat:'priority' },
+      { id:'k95',  text:'Winback Blitz - Non-negotiable from H6, H1', cat:'priority' },
+      { id:'k96',  text:'GC > M calls + GC Winbacks List (1st attempts)', cat:'calls' },
+      { id:'k97',  text:'REP Re-enrollment Calls (2nd attempts)', cat:'calls' },
+      { id:'k98',  text:'GC > Masters (2nd attempts) + GC Winbacks List', cat:'calls' },
+      { id:'k99',  text:'LOA Reengagement Calls', cat:'calls' },
+      { id:'k100', text:'Incomplete and No PreReq Enrolments', cat:'calls' },
+      { id:'k101', text:'Student Essentials Block Applied - Just H2', cat:'calls' },
+      { id:'k102', text:'Winback or NCA - GCM & Withdrawn Winbacks', cat:'calls' },
+      { id:'k103', text:'Lead: GC>M Adherence & Enrolment', cat:'leadership' },
+      { id:'k104', text:'Lead: T1-T2 Tracking - Team & All SSA Adherence', cat:'leadership' },
+      { id:'k105', text:'Welcome Call Tracking', cat:'welcome' },
+      { id:'k106', text:'Confirm MC webinar Staff with UNSWO', cat:'admin' },
+      { id:'k107', text:'Email UNSW Online (Helen) to add SSAs + Joey to next session courses', cat:'admin' },
+      { id:'k108', text:'Re-Enrolment Automated Emails', cat:'automated' },
+    ],
+    'week-7': [
+      { id:'k109', text:'GC>Masters Final Attempts + GC Winbacks List', cat:'priority' },
+      { id:'k110', text:'Go back to PRIORITY: 1. T1-T2  2. Registration  3. Reengagement', cat:'priority' },
+      { id:'k111', text:'Failed Subject Last 12 Months - At Risk Retention Calls', cat:'calls' },
+      { id:'k112', text:'#Previous TP Dropped - At Risk Calls', cat:'calls' },
+      { id:'k113', text:'Winback or NCA - GCM & Withdrawn Winbacks (Final Attempts)', cat:'calls' },
+      { id:'k114', text:'Welcome Calls', cat:'welcome' },
+      { id:'k115', text:'Welcome Webinar (WC webinar 1 & 2)', cat:'webinar' },
+    ],
+  };
+
+  let kanbanBoard = null;
+
+  async function loadKanban() {
+    try {
+      const res = await fetch(KANBAN_DB);
+      const data = await res.json();
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        kanbanBoard = {};
+        for (const col in data) {
+          const val = data[col];
+          if (Array.isArray(val)) kanbanBoard[col] = val.filter(Boolean);
+          else if (typeof val === 'object') kanbanBoard[col] = Object.values(val).filter(Boolean);
+          else kanbanBoard[col] = [];
+        }
+        // Ensure all columns exist
+        KANBAN_COLS.forEach(c => { if (!kanbanBoard[c.id]) kanbanBoard[c.id] = []; });
+      } else {
+        kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
+      }
+    } catch(e) {
+      kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
+    }
+    renderKanban();
+  }
+
+  async function saveKanban() {
+    try {
+      await fetch(KANBAN_DB, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(kanbanBoard)
+      });
+    } catch(e) {}
+  }
+
+  function renderKanban() {
+    // Legend
+    const legend = document.getElementById('kanban-legend');
+    if (legend && !legend.hasChildNodes()) {
+      Object.entries(KANBAN_CATS).forEach(([key, val]) => {
+        const item = document.createElement('div');
+        item.className = 'legend-item';
+        const dot = document.createElement('span');
+        dot.className = 'legend-dot';
+        dot.style.background = val.dot;
+        const lbl = document.createElement('span');
+        lbl.textContent = val.label;
+        item.appendChild(dot);
+        item.appendChild(lbl);
+        legend.appendChild(item);
+      });
+    }
+
+    const board = document.getElementById('kanban-board');
+    if (!board) return;
+    board.innerHTML = '';
+
+    KANBAN_COLS.forEach(col => {
+      const cards = kanbanBoard[col.id] || [];
+
+      const colEl = document.createElement('div');
+      colEl.className = 'kanban-col';
+
+      const header = document.createElement('div');
+      header.className = 'kanban-col-header';
+      header.innerHTML = `<span>${col.label}</span><span class="col-count">${cards.length}</span>`;
+
+      const body = document.createElement('div');
+      body.className = 'kanban-col-body';
+      body.dataset.col = col.id;
+
+      cards.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
+
+      body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
+      body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
+      body.addEventListener('drop', e => {
+        e.preventDefault();
+        body.classList.remove('drag-over');
+        const cardId  = e.dataTransfer.getData('kanbanCardId');
+        const fromCol = e.dataTransfer.getData('kanbanFromCol');
+        if (!cardId || fromCol === col.id) return;
+        const src = kanbanBoard[fromCol];
+        const idx = src.findIndex(c => c.id === cardId);
+        if (idx === -1) return;
+        const [moved] = src.splice(idx, 1);
+        if (!kanbanBoard[col.id]) kanbanBoard[col.id] = [];
+        kanbanBoard[col.id].push(moved);
+        saveKanban();
+        renderKanban();
+      });
+
+      colEl.appendChild(header);
+      colEl.appendChild(body);
+      board.appendChild(colEl);
+    });
+  }
+
+  function createKanbanCard(card, colId) {
+    const el = document.createElement('div');
+    el.className = `kanban-card cat-${card.cat}`;
+    el.setAttribute('draggable', 'true');
+    el.title = card.text;
+    el.textContent = card.text;
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('kanbanCardId', card.id);
+      e.dataTransfer.setData('kanbanFromCol', colId);
+      setTimeout(() => el.classList.add('dragging'), 0);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    return el;
+  }
 </script>
 </body>
 </html>
