@@ -134,8 +134,7 @@
     .event-chip { cursor: pointer; }
 
     .day-cell {
-      background: #fff;
-      border: 1px solid #e5e5e5;
+      border: 1px solid rgba(0,0,0,0.07);
       border-top: 3px solid transparent;
       padding: 12px;
       min-height: 155px;
@@ -147,18 +146,22 @@
 
     .day-cell:hover {
       border-top-color: #FFD100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
     }
 
     .day-cell.today {
       border-top-color: #FFD100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
     }
 
-    .day-cell.past {
-      background: #fafafa;
-      opacity: 0.65;
-    }
+    .day-cell.past { opacity: 0.6; }
+
+    /* Per-day colours — Mon through Fri */
+    .day-mon { background: #EFF6FF; }
+    .day-tue { background: #F0FDF4; }
+    .day-wed { background: #FFFBEB; }
+    .day-thu { background: #FDF4FF; }
+    .day-fri { background: #FFF1F2; }
 
     .day-label {
       display: flex;
@@ -602,11 +605,11 @@
       const isToday = key === todayKey;
       const isPast = new Date(currentYear, currentMonth, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-      const cell = document.createElement('div');
-      cell.className = 'day-cell' + (isToday ? ' today' : '') + (isPast && !isToday ? ' past' : '');
-
       const SHORT_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const DAY_CLASSES = ['', 'day-mon', 'day-tue', 'day-wed', 'day-thu', 'day-fri', ''];
       const dow2 = new Date(currentYear, currentMonth, d).getDay();
+      const cell = document.createElement('div');
+      cell.className = 'day-cell ' + (DAY_CLASSES[dow2] || '') + (isToday ? ' today' : '') + (isPast && !isToday ? ' past' : '');
 
       const label = document.createElement('div');
       label.className = 'day-label';
