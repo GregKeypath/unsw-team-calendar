@@ -168,11 +168,25 @@
       opacity: 0.65;
     }
 
+    .day-label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 4px;
+    }
+
     .day-number {
       font-size: 0.78rem;
       font-weight: 700;
       color: #bbb;
-      margin-bottom: 2px;
+    }
+
+    .day-name {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #ccc;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
     }
 
     .day-cell.today .day-number {
@@ -186,6 +200,10 @@
       justify-content: center;
       font-size: 0.72rem;
       font-weight: 800;
+    }
+
+    .day-cell.today .day-name {
+      color: #aaa;
     }
 
     .events-list {
@@ -532,10 +550,23 @@
       const cell = document.createElement('div');
       cell.className = 'day-cell' + (isToday ? ' today' : '') + (isPast && !isToday ? ' past' : '');
 
+      const SHORT_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const dow2 = new Date(currentYear, currentMonth, d).getDay();
+
+      const label = document.createElement('div');
+      label.className = 'day-label';
+
       const num = document.createElement('div');
       num.className = 'day-number';
       num.textContent = d;
-      cell.appendChild(num);
+
+      const dayName = document.createElement('div');
+      dayName.className = 'day-name';
+      dayName.textContent = SHORT_DAYS[dow2];
+
+      label.appendChild(num);
+      label.appendChild(dayName);
+      cell.appendChild(label);
 
       const list = document.createElement('div');
       list.className = 'events-list';
