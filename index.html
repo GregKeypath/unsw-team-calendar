@@ -49,100 +49,6 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* Engagement strategy panel */
-    .strategy-wrap {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 28px 32px;
-    }
-
-    .strategy-wrap h2 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .strategy-wrap .strategy-sub {
-      font-size: 0.82rem;
-      color: #888;
-      margin-bottom: 24px;
-    }
-
-    .strategy-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-    }
-
-    .strategy-col {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .strategy-day-header {
-      background: #111;
-      color: #FFD100;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      padding: 8px 12px;
-    }
-
-    .strategy-card {
-      background: #fff;
-      border: 1px solid #e5e5e5;
-      border-top: 3px solid #FFD100;
-      padding: 12px;
-      min-height: 120px;
-    }
-
-    .strategy-card textarea {
-      width: 100%;
-      border: none;
-      outline: none;
-      font-family: inherit;
-      font-size: 0.82rem;
-      color: #333;
-      resize: none;
-      min-height: 100px;
-      background: transparent;
-      line-height: 1.5;
-    }
-
-    .strategy-card textarea::placeholder { color: #ccc; }
-
-    .strategy-save-bar {
-      margin-top: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .strategy-save-btn {
-      background: #FFD100;
-      border: 1.5px solid #FFD100;
-      color: #111;
-      font-weight: 700;
-      font-size: 0.86rem;
-      padding: 8px 20px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .strategy-save-btn:hover { background: #e6bc00; }
-
-    .strategy-saved-msg {
-      font-size: 0.8rem;
-      color: #22c55e;
-      font-weight: 600;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .strategy-saved-msg.show { opacity: 1; }
-
     /* Yellow utility bar — matches the top strip on studyonline.unsw.edu.au */
     .top-bar {
       background: #FFD100;
@@ -747,7 +653,6 @@
 <!-- Tab navigation -->
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">📅 Calendar</button>
-  <button class="tab-btn" data-tab="strategy">📋 Weekly Engagement Strategy</button>
   <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
 </nav>
 
@@ -769,40 +674,6 @@
 <div class="calendar-grid" id="calendar-grid"></div>
 
 </div><!-- end tab-calendar -->
-
-<!-- Strategy tab -->
-<div class="tab-panel" id="tab-strategy">
-  <div class="strategy-wrap">
-    <h2>Weekly Engagement Strategy</h2>
-    <p class="strategy-sub">Outline your team's weekly engagement plan for each day. Changes are saved automatically.</p>
-    <div class="strategy-grid">
-      <div class="strategy-col">
-        <div class="strategy-day-header">Monday</div>
-        <div class="strategy-card"><textarea id="strat-mon" placeholder="Monday strategy..."></textarea></div>
-      </div>
-      <div class="strategy-col">
-        <div class="strategy-day-header">Tuesday</div>
-        <div class="strategy-card"><textarea id="strat-tue" placeholder="Tuesday strategy..."></textarea></div>
-      </div>
-      <div class="strategy-col">
-        <div class="strategy-day-header">Wednesday</div>
-        <div class="strategy-card"><textarea id="strat-wed" placeholder="Wednesday strategy..."></textarea></div>
-      </div>
-      <div class="strategy-col">
-        <div class="strategy-day-header">Thursday</div>
-        <div class="strategy-card"><textarea id="strat-thu" placeholder="Thursday strategy..."></textarea></div>
-      </div>
-      <div class="strategy-col">
-        <div class="strategy-day-header">Friday</div>
-        <div class="strategy-card"><textarea id="strat-fri" placeholder="Friday strategy..."></textarea></div>
-      </div>
-    </div>
-    <div class="strategy-save-bar">
-      <button class="strategy-save-btn" id="strategy-save-btn">Save Strategy</button>
-      <span class="strategy-saved-msg" id="strategy-saved-msg">✓ Saved!</span>
-    </div>
-  </div>
-</div><!-- end tab-strategy -->
 
 <!-- Kanban tab -->
 <div class="tab-panel" id="tab-kanban">
@@ -1185,42 +1056,6 @@
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
     });
   });
-
-  // Strategy — save/load from Firebase
-  const STRAT_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/strategy.json';
-  const STRAT_DAYS = ['mon','tue','wed','thu','fri'];
-
-  async function loadStrategy() {
-    try {
-      const res = await fetch(STRAT_DB);
-      const data = await res.json();
-      if (data) {
-        STRAT_DAYS.forEach(d => {
-          const el = document.getElementById('strat-' + d);
-          if (el && data[d]) el.value = data[d];
-        });
-      }
-    } catch(e) {}
-  }
-
-  document.getElementById('strategy-save-btn').addEventListener('click', async () => {
-    const payload = {};
-    STRAT_DAYS.forEach(d => {
-      payload[d] = document.getElementById('strat-' + d).value;
-    });
-    try {
-      await fetch(STRAT_DB, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const msg = document.getElementById('strategy-saved-msg');
-      msg.classList.add('show');
-      setTimeout(() => msg.classList.remove('show'), 2500);
-    } catch(e) {}
-  });
-
-  loadStrategy();
 
   // ── Kanban Board ──────────────────────────────────────────────
   const KANBAN_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/kanban.json';
