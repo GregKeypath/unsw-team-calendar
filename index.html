@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNSW Team Calendar</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #f4f4f4;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    /* Yellow utility bar — matches the top strip on studyonline.unsw.edu.au */
+    .top-bar {
+      background: #FFD100;
+      padding: 6px 32px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #111;
+      text-align: right;
+      letter-spacing: 0.2px;
+    }
+
+    /* White nav bar — matches the site header */
+    .site-header {
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .unsw-logo {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      border-right: 1px solid #ddd;
+      padding-right: 18px;
+      margin-right: 4px;
+    }
+
+    .unsw-logo .logo-unsw {
+      font-size: 1.6rem;
+      font-weight: 900;
+      font-style: italic;
+      color: #FFD100;
+      letter-spacing: 2px;
+      -webkit-text-stroke: 0.5px #d4a900;
+    }
+
+    .unsw-logo .logo-sydney {
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #111;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .header-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #444;
+      letter-spacing: 0.2px;
+    }
+
+    /* Nav controls — outlined button style matching "Enquire today" */
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-controls button {
+      background: #fff;
+      border: 1.5px solid #111;
+      color: #111;
+      padding: 7px 16px;
+      border-radius: 0;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.2px;
+    }
+
+    .nav-controls button:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    #month-label {
+      font-size: 1rem;
+      font-weight: 700;
+      min-width: 170px;
+      text-align: center;
+      color: #111;
+    }
+
+    .today-btn {
+      background: #FFD100 !important;
+      border-color: #FFD100 !important;
+      color: #111 !important;
+    }
+
+    .today-btn:hover {
+      background: #e6bc00 !important;
+      border-color: #e6bc00 !important;
+      color: #111 !important;
+    }
+
+    /* Calendar */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      padding: 24px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .day-header {
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #555;
+      padding: 0 0 8px;
+    }
+
+    .day-cell {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-top: 3px solid transparent;
+      padding: 12px;
+      min-height: 155px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: border-top-color 0.15s, box-shadow 0.15s;
+    }
+
+    .day-cell:hover {
+      border-top-color: #FFD100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .day-cell.today {
+      border-top-color: #FFD100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+
+    .day-cell.past {
+      background: #fafafa;
+      opacity: 0.65;
+    }
+
+    .day-number {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #bbb;
+      margin-bottom: 2px;
+    }
+
+    .day-cell.today .day-number {
+      background: #FFD100;
+      color: #111;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .event-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: default;
+      transition: filter 0.15s;
+    }
+
+    .event-chip:hover { filter: brightness(0.92); }
+
+    .event-chip .event-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .event-chip .delete-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.7rem;
+      padding: 0 2px;
+      opacity: 0.6;
+      line-height: 1;
+      color: inherit;
+    }
+
+    .event-chip:hover .delete-btn { display: inline; }
+
+    .add-event-btn {
+      background: none;
+      border: 1.5px dashed #ccc;
+      color: #bbb;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, color 0.15s;
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
+
+    .add-event-btn:hover { border-color: #FFD100; color: #111; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      width: 380px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      animation: pop 0.16s ease;
+      overflow: hidden;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.94); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .modal-header {
+      background: #111;
+      color: #fff;
+      padding: 16px 22px;
+      border-bottom: 3px solid #FFD100;
+    }
+
+    .modal-header h2 { font-size: 0.92rem; font-weight: 700; }
+
+    .modal-body { padding: 20px 22px 18px; }
+
+    .modal-body input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 0;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 14px;
+    }
+
+    .modal-body input[type="text"]:focus {
+      border-color: #FFD100;
+      box-shadow: 0 0 0 3px rgba(255,209,0,0.2);
+    }
+
+    .tag-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .tag-picker {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tag-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.15s, background 0.15s;
+      border-radius: 2px;
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .tag-option:hover { filter: brightness(0.95); }
+
+    .tag-option.selected {
+      border-color: #111;
+    }
+
+    .tag-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .modal-actions button {
+      padding: 9px 20px;
+      border-radius: 0;
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .btn-cancel {
+      background: #fff;
+      border: 1.5px solid #bbb;
+      color: #555;
+    }
+
+    .btn-cancel:hover { background: #f5f5f5; }
+
+    .btn-save {
+      background: #FFD100;
+      border: 1.5px solid #FFD100;
+      color: #111;
+    }
+
+    .btn-save:hover { background: #e6bc00; border-color: #e6bc00; }
+  </style>
+</head>
+<body>
+
+<!-- Yellow top bar -->
+<div class="top-bar">Team Calendar &mdash; UNSW Online</div>
+
+<!-- White site header with UNSW branding -->
+<header class="site-header">
+  <div class="logo-area">
+    <div class="unsw-logo">
+      <span class="logo-unsw">UNSW</span>
+      <span class="logo-sydney">Sydney</span>
+    </div>
+    <span class="header-title">Team Calendar</span>
+  </div>
+
+  <div class="nav-controls">
+    <button id="prev-btn">&#8592;</button>
+    <span id="month-label"></span>
+    <button id="next-btn">&#8594;</button>
+    <button class="today-btn" id="today-btn">Today</button>
+  </div>
+</header>
+
+<div class="calendar-grid" id="calendar-grid"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Add Event</h2>
+    </div>
+    <div class="modal-body">
+      <input type="text" id="event-input" placeholder="Event name..." maxlength="80" />
+      <div class="tag-label">Event Type</div>
+      <div class="tag-picker" id="tag-picker"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancel-btn">Cancel</button>
+        <button class="btn-save" id="save-btn">Add Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TAGS = [
+    { label: 'Internal Meeting', bg: '#DBEAFE', text: '#1D4ED8', dot: '#3B82F6' },
+    { label: 'Calendar Block',   bg: '#F3F4F6', text: '#374151', dot: '#6B7280' },
+    { label: 'APAC Meeting',     bg: '#EDE9FE', text: '#5B21B6', dot: '#7C3AED' },
+    { label: 'Training',         bg: '#D1FAE5', text: '#065F46', dot: '#10B981' },
+  ];
+
+  const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const MONTH_NAMES = ['January','February','March','April','May','June',
+                       'July','August','September','October','November','December'];
+
+  let events = JSON.parse(localStorage.getItem('unsw-team-cal-events') || '{}');
+  let currentYear, currentMonth;
+  let pendingDateKey = null;
+  let selectedTag = 0;
+
+  function saveEvents() {
+    localStorage.setItem('unsw-team-cal-events', JSON.stringify(events));
+  }
+
+  function dateKey(y, m, d) {
+    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
+
+  function getWeekdaysInMonth(year, month) {
+    const days = [];
+    const total = new Date(year, month + 1, 0).getDate();
+    for (let d = 1; d <= total; d++) {
+      const dow = new Date(year, month, d).getDay();
+      if (dow >= 1 && dow <= 5) days.push(d);
+    }
+    return days;
+  }
+
+  function render() {
+    const grid = document.getElementById('calendar-grid');
+    grid.innerHTML = '';
+    document.getElementById('month-label').textContent =
+      `${MONTH_NAMES[currentMonth]} ${currentYear}`;
+
+    const today = new Date();
+    const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+    DAY_NAMES.forEach(name => {
+      const h = document.createElement('div');
+      h.className = 'day-header';
+      h.textContent = name;
+      grid.appendChild(h);
+    });
+
+    const weekdays = getWeekdaysInMonth(currentYear, currentMonth);
+    const firstDow = new Date(currentYear, currentMonth, weekdays[0]).getDay();
+    const colStart = firstDow;
+
+    weekdays.forEach((d, i) => {
+      if (i === 0 && colStart > 1) {
+        for (let c = 1; c < colStart; c++) {
+          grid.appendChild(document.createElement('div'));
+        }
+      }
+
+      const key = dateKey(currentYear, currentMonth, d);
+      const isToday = key === todayKey;
+      const isPast = new Date(currentYear, currentMonth, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      const cell = document.createElement('div');
+      cell.className = 'day-cell' + (isToday ? ' today' : '') + (isPast && !isToday ? ' past' : '');
+
+      const num = document.createElement('div');
+      num.className = 'day-number';
+      num.textContent = d;
+      cell.appendChild(num);
+
+      const list = document.createElement('div');
+      list.className = 'events-list';
+      (events[key] || []).forEach((ev, idx) => {
+        const tag = TAGS[ev.tag] || TAGS[0];
+        const chip = document.createElement('div');
+        chip.className = 'event-chip';
+        chip.style.background = tag.bg;
+        chip.style.color = tag.text;
+        chip.style.borderLeft = `3px solid ${tag.dot}`;
+
+        const txt = document.createElement('span');
+        txt.className = 'event-text';
+        txt.textContent = ev.name;
+        chip.appendChild(txt);
+
+        const del = document.createElement('button');
+        del.className = 'delete-btn';
+        del.textContent = '✕';
+        del.title = 'Remove event';
+        del.addEventListener('click', (e) => {
+          e.stopPropagation();
+          events[key].splice(idx, 1);
+          if (!events[key].length) delete events[key];
+          saveEvents();
+          render();
+        });
+        chip.appendChild(del);
+        list.appendChild(chip);
+      });
+      cell.appendChild(list);
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-event-btn';
+      addBtn.textContent = '+ Add event';
+      addBtn.addEventListener('click', () => openModal(key, d));
+      cell.appendChild(addBtn);
+
+      grid.appendChild(cell);
+    });
+  }
+
+  const overlay = document.getElementById('modal-overlay');
+  const input = document.getElementById('event-input');
+
+  function openModal(key, day) {
+    pendingDateKey = key;
+    const parts = key.split('-');
+    const dow = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])).getDay();
+    document.getElementById('modal-title').textContent =
+      `Add Event — ${DAY_NAMES[dow - 1]} ${day} ${MONTH_NAMES[currentMonth]}`;
+    input.value = '';
+    selectedTag = 0;
+    renderTags();
+    overlay.classList.add('open');
+    setTimeout(() => input.focus(), 50);
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    pendingDateKey = null;
+  }
+
+  function renderTags() {
+    const picker = document.getElementById('tag-picker');
+    picker.innerHTML = '';
+    TAGS.forEach((t, i) => {
+      const opt = document.createElement('div');
+      opt.className = 'tag-option' + (i === selectedTag ? ' selected' : '');
+      opt.style.background = t.bg;
+      opt.style.color = t.text;
+      opt.style.borderColor = i === selectedTag ? t.dot : 'transparent';
+
+      const dot = document.createElement('span');
+      dot.className = 'tag-dot';
+      dot.style.background = t.dot;
+      opt.appendChild(dot);
+
+      const lbl = document.createElement('span');
+      lbl.textContent = t.label;
+      opt.appendChild(lbl);
+
+      opt.addEventListener('click', () => { selectedTag = i; renderTags(); });
+      picker.appendChild(opt);
+    });
+  }
+
+  function saveEvent() {
+    const name = input.value.trim();
+    if (!name || !pendingDateKey) return;
+    if (!events[pendingDateKey]) events[pendingDateKey] = [];
+    events[pendingDateKey].push({ name, tag: selectedTag });
+    saveEvents();
+    render();
+    closeModal();
+  }
+
+  document.getElementById('save-btn').addEventListener('click', saveEvent);
+  document.getElementById('cancel-btn').addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEvent(); });
+
+  document.getElementById('prev-btn').addEventListener('click', () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    render();
+  });
+  document.getElementById('next-btn').addEventListener('click', () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    render();
+  });
+  document.getElementById('today-btn').addEventListener('click', () => {
+    const t = new Date();
+    currentYear = t.getFullYear();
+    currentMonth = t.getMonth();
+    render();
+  });
+
+  const now = new Date();
+  currentYear = now.getFullYear();
+  currentMonth = now.getMonth();
+  render();
+</script>
+</body>
+</html>
