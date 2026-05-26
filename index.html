@@ -265,6 +265,33 @@
       color: #aaa;
     }
 
+    /* Past date — strikethrough on the number + green tick */
+    .day-cell.past .day-number {
+      text-decoration: line-through;
+      text-decoration-color: #aaa;
+      color: #ccc;
+    }
+
+    .day-cell.past .day-name { color: #ddd; }
+
+    .past-marker {
+      font-size: 0.75rem;
+      color: #22c55e;
+      font-weight: 800;
+      margin-left: 2px;
+    }
+
+    /* Month badge — shown on 1st of month */
+    .month-badge {
+      font-size: 0.6rem;
+      font-weight: 800;
+      background: #111;
+      color: #FFD100;
+      padding: 1px 5px;
+      letter-spacing: 0.5px;
+      margin-right: 2px;
+    }
+
     .events-list {
       display: flex;
       flex-direction: column;
@@ -583,14 +610,26 @@
     { label: 'Training',         bg: '#D1FAE5', text: '#065F46', dot: '#10B981' },
   ];
 
-  const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+  const DAY_NAMES   = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
   const MONTH_NAMES = ['January','February','March','April','May','June',
                        'July','August','September','October','November','December'];
+  const SHORT_DAYS  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const DAY_CLASSES = ['','day-mon','day-tue','day-wed','day-thu','day-fri',''];
+  const TODAY_EMOJIS= ['','🚀','⭐','🎯','⚡','🎉',''];
+
+  // Get the Monday of the week containing a given date
+  function getMonday(d) {
+    const date = new Date(d);
+    date.setHours(0,0,0,0);
+    const day = date.getDay();
+    date.setDate(date.getDate() - (day === 0 ? 6 : day - 1));
+    return date;
+  }
 
   const DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/events.json';
 
   let events = {};
-  let currentYear, currentMonth;
+  let startDate;   // Monday of the first visible week
   let pendingDateKey = null;
   let selectedTag = 0;
 
@@ -647,129 +686,136 @@
     return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   }
 
-  function getWeekdaysInMonth(year, month) {
-    const days = [];
-    const total = new Date(year, month + 1, 0).getDate();
-    for (let d = 1; d <= total; d++) {
-      const dow = new Date(year, month, d).getDay();
-      if (dow >= 1 && dow <= 5) days.push(d);
-    }
-    return days;
-  }
-
   function render() {
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = '';
-    document.getElementById('month-label').textContent =
-      `${MONTH_NAMES[currentMonth]} ${currentYear}`;
 
-    const today = new Date();
+    const today = new Date(); today.setHours(0,0,0,0);
     const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
 
-    const weekdays = getWeekdaysInMonth(currentYear, currentMonth);
-    const firstDow = new Date(currentYear, currentMonth, weekdays[0]).getDay();
-    const colStart = firstDow;
+    // Header label: "26 May – 20 Jun 2026"
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 25); // Friday of week 4
+    const fmtD = d => `${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+    const rangeLabel = startDate.getFullYear() === endDate.getFullYear()
+      ? `${fmtD(startDate)} – ${fmtD(endDate)} ${endDate.getFullYear()}`
+      : `${fmtD(startDate)} ${startDate.getFullYear()} – ${fmtD(endDate)} ${endDate.getFullYear()}`;
+    document.getElementById('month-label').textContent = rangeLabel;
 
-    weekdays.forEach((d, i) => {
-      if (i === 0 && colStart > 1) {
-        for (let c = 1; c < colStart; c++) {
-          grid.appendChild(document.createElement('div'));
+    // Render 4 weeks × 5 days
+    for (let w = 0; w < 4; w++) {
+      for (let d = 0; d < 5; d++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + w * 7 + d);
+
+        const y   = date.getFullYear();
+        const m   = date.getMonth();
+        const day = date.getDate();
+        const dow = date.getDay();
+        const key = dateKey(y, m, day);
+        const isToday = key === todayKey;
+        const isPast  = date < today;
+
+        const cell = document.createElement('div');
+        cell.className = 'day-cell ' + (DAY_CLASSES[dow] || '') + (isToday ? ' today' : '') + (isPast ? ' past' : '');
+
+        // Day label row
+        const labelEl = document.createElement('div');
+        labelEl.className = 'day-label';
+
+        const num = document.createElement('div');
+        num.className = 'day-number';
+        num.textContent = day;
+
+        const dayName = document.createElement('div');
+        dayName.className = 'day-name';
+        dayName.textContent = SHORT_DAYS[dow];
+
+        // Show month name when it changes (first day of month)
+        if (day === 1) {
+          const mb = document.createElement('span');
+          mb.className = 'month-badge';
+          mb.textContent = MONTH_NAMES[m].slice(0,3).toUpperCase();
+          labelEl.appendChild(mb);
         }
-      }
 
-      const key = dateKey(currentYear, currentMonth, d);
-      const isToday = key === todayKey;
+        labelEl.appendChild(num);
+        labelEl.appendChild(dayName);
 
-      const SHORT_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const DAY_CLASSES = ['', 'day-mon', 'day-tue', 'day-wed', 'day-thu', 'day-fri', ''];
-      // Fun emoji per day-of-week, shown only on today
-      const TODAY_EMOJIS = ['', '🚀', '⭐', '🎯', '⚡', '🎉', ''];
-      const dow2 = new Date(currentYear, currentMonth, d).getDay();
-      const cell = document.createElement('div');
-      cell.className = 'day-cell ' + (DAY_CLASSES[dow2] || '') + (isToday ? ' today' : '');
+        if (isPast) {
+          const done = document.createElement('span');
+          done.className = 'past-marker';
+          done.textContent = '✓';
+          labelEl.appendChild(done);
+        }
 
-      const label = document.createElement('div');
-      label.className = 'day-label';
+        if (isToday && TODAY_EMOJIS[dow]) {
+          const emoji = document.createElement('span');
+          emoji.className = 'today-emoji';
+          emoji.textContent = TODAY_EMOJIS[dow];
+          labelEl.appendChild(emoji);
+        }
 
-      const num = document.createElement('div');
-      num.className = 'day-number';
-      num.textContent = d;
+        cell.appendChild(labelEl);
 
-      const dayName = document.createElement('div');
-      dayName.className = 'day-name';
-      dayName.textContent = SHORT_DAYS[dow2];
+        // Events
+        const list = document.createElement('div');
+        list.className = 'events-list';
+        (events[key] || []).forEach((ev, idx) => {
+          const tag = TAGS[ev.tag] || TAGS[0];
+          const chip = document.createElement('div');
+          chip.className = 'event-chip';
+          chip.style.background = tag.bg;
+          chip.style.color = tag.text;
+          chip.style.borderLeft = `3px solid ${tag.dot}`;
 
-      label.appendChild(num);
-      label.appendChild(dayName);
+          const txt = document.createElement('span');
+          txt.className = 'event-text';
+          txt.textContent = ev.name;
+          chip.appendChild(txt);
 
-      if (isToday && TODAY_EMOJIS[dow2]) {
-        const emoji = document.createElement('span');
-        emoji.className = 'today-emoji';
-        emoji.textContent = TODAY_EMOJIS[dow2];
-        label.appendChild(emoji);
-      }
+          const indicators = document.createElement('span');
+          indicators.className = 'detail-indicators';
+          if (ev.link)     { const i = document.createElement('span'); i.className='has-link'; i.textContent='🔗'; indicators.appendChild(i); }
+          if (ev.comments) { const i = document.createElement('span'); i.className='has-note'; i.textContent='💬'; indicators.appendChild(i); }
+          chip.appendChild(indicators);
 
-      cell.appendChild(label);
-
-      const list = document.createElement('div');
-      list.className = 'events-list';
-      (events[key] || []).forEach((ev, idx) => {
-        const tag = TAGS[ev.tag] || TAGS[0];
-        const chip = document.createElement('div');
-        chip.className = 'event-chip';
-        chip.style.background = tag.bg;
-        chip.style.color = tag.text;
-        chip.style.borderLeft = `3px solid ${tag.dot}`;
-
-        const txt = document.createElement('span');
-        txt.className = 'event-text';
-        txt.textContent = ev.name;
-        chip.appendChild(txt);
-
-        // Small indicators if link or comments exist
-        const indicators = document.createElement('span');
-        indicators.className = 'detail-indicators';
-        if (ev.link) { const i = document.createElement('span'); i.className='has-link'; i.textContent='🔗'; indicators.appendChild(i); }
-        if (ev.comments) { const i = document.createElement('span'); i.className='has-note'; i.textContent='💬'; indicators.appendChild(i); }
-        chip.appendChild(indicators);
-
-        const del = document.createElement('button');
-        del.className = 'delete-btn';
-        del.textContent = '✕';
-        del.title = 'Remove event';
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          events[key].splice(idx, 1);
-          if (!events[key].length) delete events[key];
-          saveEvents();
-          render();
+          const del = document.createElement('button');
+          del.className = 'delete-btn';
+          del.textContent = '✕';
+          del.title = 'Remove event';
+          del.addEventListener('click', (e) => {
+            e.stopPropagation();
+            events[key].splice(idx, 1);
+            if (!events[key].length) delete events[key];
+            saveEvents(); render();
+          });
+          chip.appendChild(del);
+          chip.addEventListener('click', () => openDetail(key, idx));
+          list.appendChild(chip);
         });
-        chip.appendChild(del);
+        cell.appendChild(list);
 
-        chip.addEventListener('click', () => openDetail(key, idx));
-        list.appendChild(chip);
-      });
-      cell.appendChild(list);
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-event-btn';
+        addBtn.textContent = '+ Add event';
+        addBtn.addEventListener('click', () => openModal(key, day, m, y));
+        cell.appendChild(addBtn);
 
-      const addBtn = document.createElement('button');
-      addBtn.className = 'add-event-btn';
-      addBtn.textContent = '+ Add event';
-      addBtn.addEventListener('click', () => openModal(key, d));
-      cell.appendChild(addBtn);
-
-      grid.appendChild(cell);
-    });
+        grid.appendChild(cell);
+      }
+    }
   }
 
   const overlay = document.getElementById('modal-overlay');
   const input = document.getElementById('event-input');
 
-  function openModal(key, day) {
+  function openModal(key, day, month, year) {
     pendingDateKey = key;
     const parts = key.split('-');
     const dow = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])).getDay();
     document.getElementById('modal-title').textContent =
-      `Add Event — ${DAY_NAMES[dow - 1]} ${day} ${MONTH_NAMES[currentMonth]}`;
+      `Add Event — ${DAY_NAMES[dow - 1]} ${day} ${MONTH_NAMES[month]} ${year}`;
     input.value = '';
     selectedTag = 0;
     renderTags();
@@ -864,25 +910,19 @@
   detailOverlay.addEventListener('click', (e) => { if (e.target === detailOverlay) closeDetail(); });
 
   document.getElementById('prev-btn').addEventListener('click', () => {
-    currentMonth--;
-    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    startDate.setDate(startDate.getDate() - 7);
     render();
   });
   document.getElementById('next-btn').addEventListener('click', () => {
-    currentMonth++;
-    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    startDate.setDate(startDate.getDate() + 7);
     render();
   });
   document.getElementById('today-btn').addEventListener('click', () => {
-    const t = new Date();
-    currentYear = t.getFullYear();
-    currentMonth = t.getMonth();
+    startDate = getMonday(new Date());
     render();
   });
 
-  const now = new Date();
-  currentYear = now.getFullYear();
-  currentMonth = now.getMonth();
+  startDate = getMonday(new Date());
   loadEvents();
   startPolling();
 </script>
