@@ -435,12 +435,27 @@
   let pendingDateKey = null;
   let selectedTag = 0;
 
+  // Firebase stores arrays as objects — convert back to arrays
+  function normalise(data) {
+    if (!data || typeof data !== 'object') return {};
+    const out = {};
+    for (const date in data) {
+      const val = data[date];
+      if (Array.isArray(val)) {
+        out[date] = val.filter(Boolean);
+      } else if (typeof val === 'object') {
+        out[date] = Object.values(val).filter(Boolean);
+      }
+    }
+    return out;
+  }
+
   // Load events from Firebase then render
   async function loadEvents() {
     try {
       const res = await fetch(DB);
       const data = await res.json();
-      events = data || {};
+      events = normalise(data);
       render();
     } catch(e) { console.error('Failed to load events', e); }
   }
@@ -448,27 +463,25 @@
   // Save all events back to Firebase
   async function saveEvents() {
     try {
-      await fetch(DB, {
+      const res = await fetch(DB, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(events)
       });
+      if (!res.ok) console.error('Save failed', res.status);
     } catch(e) { console.error('Failed to save events', e); }
   }
 
-  // Real-time listener — updates calendar when anyone adds/removes an event
-  function startRealtime() {
-    const source = new EventSource(DB.replace('.json', '') + '.json');
-    source.addEventListener('put', (e) => {
-      const payload = JSON.parse(e.data);
-      events = payload.data || {};
-      render();
-    });
-    source.addEventListener('patch', (e) => {
-      const payload = JSON.parse(e.data);
-      Object.assign(events, payload.data || {});
-      render();
-    });
+  // Poll Firebase every 10 seconds to pick up changes from other users
+  function startPolling() {
+    setInterval(async () => {
+      try {
+        const res = await fetch(DB);
+        const data = await res.json();
+        events = normalise(data);
+        render();
+      } catch(e) {}
+    }, 10000);
   }
 
   function dateKey(y, m, d) {
@@ -646,7 +659,7 @@
   currentYear = now.getFullYear();
   currentMonth = now.getMonth();
   loadEvents();
-  startRealtime();
+  startPolling();
 </script>
 </body>
 </html>
