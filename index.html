@@ -131,15 +131,7 @@
       margin: 0 auto;
     }
 
-    .day-header {
-      text-align: center;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #555;
-      padding: 0 0 8px;
-    }
+    .event-chip { cursor: pointer; }
 
     .day-cell {
       background: #fff;
@@ -389,6 +381,56 @@
     }
 
     .btn-save:hover { background: #e6bc00; border-color: #e6bc00; }
+
+    /* Detail modal extras */
+    .modal-body textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 0;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+      margin-bottom: 14px;
+    }
+
+    .modal-body textarea:focus {
+      border-color: #FFD100;
+      box-shadow: 0 0 0 3px rgba(255,209,0,0.2);
+    }
+
+    .field-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .event-tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .detail-indicators {
+      display: flex;
+      gap: 4px;
+      margin-left: 2px;
+    }
+
+    .has-link, .has-note {
+      font-size: 0.68rem;
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
@@ -429,6 +471,26 @@
       <div class="modal-actions">
         <button class="btn-cancel" id="cancel-btn">Cancel</button>
         <button class="btn-save" id="save-btn">Add Event</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detail-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="detail-title">Event Details</h2>
+    </div>
+    <div class="modal-body">
+      <div id="detail-tag-badge" class="event-tag-badge"></div>
+      <div class="field-label">Link</div>
+      <input type="text" id="detail-link" placeholder="https://..." maxlength="300" />
+      <div class="field-label">Comments</div>
+      <textarea id="detail-comments" placeholder="Add notes or comments..."></textarea>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="detail-cancel-btn">Close</button>
+        <button class="btn-save" id="detail-save-btn">Save</button>
       </div>
     </div>
   </div>
@@ -525,13 +587,6 @@
     const today = new Date();
     const todayKey = dateKey(today.getFullYear(), today.getMonth(), today.getDate());
 
-    DAY_NAMES.forEach(name => {
-      const h = document.createElement('div');
-      h.className = 'day-header';
-      h.textContent = name;
-      grid.appendChild(h);
-    });
-
     const weekdays = getWeekdaysInMonth(currentYear, currentMonth);
     const firstDow = new Date(currentYear, currentMonth, weekdays[0]).getDay();
     const colStart = firstDow;
@@ -583,6 +638,13 @@
         txt.textContent = ev.name;
         chip.appendChild(txt);
 
+        // Small indicators if link or comments exist
+        const indicators = document.createElement('span');
+        indicators.className = 'detail-indicators';
+        if (ev.link) { const i = document.createElement('span'); i.className='has-link'; i.textContent='🔗'; indicators.appendChild(i); }
+        if (ev.comments) { const i = document.createElement('span'); i.className='has-note'; i.textContent='💬'; indicators.appendChild(i); }
+        chip.appendChild(indicators);
+
         const del = document.createElement('button');
         del.className = 'delete-btn';
         del.textContent = '✕';
@@ -595,6 +657,8 @@
           render();
         });
         chip.appendChild(del);
+
+        chip.addEventListener('click', () => openDetail(key, idx));
         list.appendChild(chip);
       });
       cell.appendChild(list);
@@ -668,6 +732,48 @@
   document.getElementById('cancel-btn').addEventListener('click', closeModal);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveEvent(); });
+
+  // Detail modal
+  let detailKey = null;
+  let detailIdx = null;
+  const detailOverlay = document.getElementById('detail-overlay');
+
+  function openDetail(key, idx) {
+    const ev = events[key][idx];
+    const tag = TAGS[ev.tag] || TAGS[0];
+    detailKey = key;
+    detailIdx = idx;
+
+    document.getElementById('detail-title').textContent = ev.name;
+
+    const badge = document.getElementById('detail-tag-badge');
+    badge.textContent = tag.label;
+    badge.style.background = tag.bg;
+    badge.style.color = tag.text;
+    badge.style.borderLeft = `3px solid ${tag.dot}`;
+
+    document.getElementById('detail-link').value = ev.link || '';
+    document.getElementById('detail-comments').value = ev.comments || '';
+    detailOverlay.classList.add('open');
+    setTimeout(() => document.getElementById('detail-link').focus(), 50);
+  }
+
+  function closeDetail() {
+    detailOverlay.classList.remove('open');
+    detailKey = null; detailIdx = null;
+  }
+
+  document.getElementById('detail-save-btn').addEventListener('click', () => {
+    if (detailKey === null || detailIdx === null) return;
+    events[detailKey][detailIdx].link = document.getElementById('detail-link').value.trim();
+    events[detailKey][detailIdx].comments = document.getElementById('detail-comments').value.trim();
+    saveEvents();
+    render();
+    closeDetail();
+  });
+
+  document.getElementById('detail-cancel-btn').addEventListener('click', closeDetail);
+  detailOverlay.addEventListener('click', (e) => { if (e.target === detailOverlay) closeDetail(); });
 
   document.getElementById('prev-btn').addEventListener('click', () => {
     currentMonth--;
