@@ -200,10 +200,25 @@
 
     .day-cell.today {
       border-top-color: #FFD100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+      box-shadow: 0 0 0 2px #FFD100, 0 4px 18px rgba(255,209,0,0.3);
+      animation: pulse-today 2.5s ease-in-out infinite;
     }
 
-    .day-cell.past { opacity: 1; }
+    @keyframes pulse-today {
+      0%, 100% { box-shadow: 0 0 0 2px #FFD100, 0 4px 18px rgba(255,209,0,0.25); }
+      50%       { box-shadow: 0 0 0 3px #FFD100, 0 4px 24px rgba(255,209,0,0.5); }
+    }
+
+    .today-emoji {
+      font-size: 1rem;
+      line-height: 1;
+      animation: bounce-emoji 1.8s ease-in-out infinite;
+    }
+
+    @keyframes bounce-emoji {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-3px); }
+    }
 
     /* Per-day colours — Mon through Fri */
     .day-mon { background: #EFF6FF; }
@@ -664,13 +679,14 @@
 
       const key = dateKey(currentYear, currentMonth, d);
       const isToday = key === todayKey;
-      const isPast = new Date(currentYear, currentMonth, d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
       const SHORT_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       const DAY_CLASSES = ['', 'day-mon', 'day-tue', 'day-wed', 'day-thu', 'day-fri', ''];
+      // Fun emoji per day-of-week, shown only on today
+      const TODAY_EMOJIS = ['', '🚀', '⭐', '🎯', '⚡', '🎉', ''];
       const dow2 = new Date(currentYear, currentMonth, d).getDay();
       const cell = document.createElement('div');
-      cell.className = 'day-cell ' + (DAY_CLASSES[dow2] || '') + (isToday ? ' today' : '') + (isPast && !isToday ? ' past' : '');
+      cell.className = 'day-cell ' + (DAY_CLASSES[dow2] || '') + (isToday ? ' today' : '');
 
       const label = document.createElement('div');
       label.className = 'day-label';
@@ -685,6 +701,14 @@
 
       label.appendChild(num);
       label.appendChild(dayName);
+
+      if (isToday && TODAY_EMOJIS[dow2]) {
+        const emoji = document.createElement('span');
+        emoji.className = 'today-emoji';
+        emoji.textContent = TODAY_EMOJIS[dow2];
+        label.appendChild(emoji);
+      }
+
       cell.appendChild(label);
 
       const list = document.createElement('div');
