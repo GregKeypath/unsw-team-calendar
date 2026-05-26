@@ -613,18 +613,23 @@
     .cat-welcome    { background: #DCFCE7; color: #15803D; border-color: #22C55E; }
     .cat-automated  { background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
     .cat-webinar    { background: #FFEDD5; color: #9A3412; border-color: #F97316; }
-    .kanban-legend {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 16px 32px 0;
-      font-size: 0.72rem;
-      font-weight: 600;
-      align-items: center;
-    }
-    .legend-item { display: flex; align-items: center; gap: 5px; }
-    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .kanban-subhead { padding: 8px 32px 0; font-size: 0.8rem; color: #888; }
+    /* Card edit/delete actions */
+    .kanban-card { position: relative; }
+    .card-text { display: block; padding-right: 44px; }
+    .card-actions { display: none; position: absolute; top: 5px; right: 5px; gap: 3px; }
+    .kanban-card:hover .card-actions { display: flex; }
+    .card-btn { border: none; background: rgba(255,255,255,0.85); cursor: pointer; padding: 2px 6px; font-size: 0.7rem; border-radius: 3px; line-height: 1.5; }
+    .card-edit-btn:hover { background: #dbeafe; }
+    .card-del-btn { color: #ef4444; }
+    .card-del-btn:hover { background: #fee2e2; }
+    .card-edit-textarea { width: 100%; border: 1.5px solid #FFD100; border-radius: 4px; padding: 5px; font-size: 0.78rem; font-family: inherit; resize: vertical; min-height: 60px; background: #fff; }
+    .card-edit-actions { display: flex; gap: 6px; margin-top: 6px; }
+    .card-save-btn { background: #FFD100; border: none; padding: 3px 10px; border-radius: 3px; font-size: 0.72rem; font-weight: 700; cursor: pointer; }
+    .card-save-btn:hover { background: #e6bc00; }
+    .card-cancel-btn { background: #f3f4f6; border: 1px solid #ddd; padding: 3px 10px; border-radius: 3px; font-size: 0.72rem; cursor: pointer; }
+    /* Add card button per column */
+    .kanban-add-btn { width: 100%; margin-top: 6px; padding: 6px; background: none; border: 1.5px dashed #ddd; border-radius: 6px; color: #aaa; font-size: 0.78rem; cursor: pointer; text-align: left; }
+    .kanban-add-btn:hover { border-color: #FFD100; color: #111; background: #fffbeb; }
   </style>
 </head>
 <body>
@@ -677,8 +682,6 @@
 
 <!-- Kanban tab -->
 <div class="tab-panel" id="tab-kanban">
-  <p class="kanban-subhead">Drag cards between columns to reorganise. Changes sync to the team automatically.</p>
-  <div class="kanban-legend" id="kanban-legend"></div>
   <div class="kanban-wrap">
     <div class="kanban-board" id="kanban-board"></div>
   </div>
@@ -1061,7 +1064,6 @@
   const KANBAN_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/kanban.json';
 
   const KANBAN_COLS = [
-    { id: 'pre-hex', label: 'Pre-Hex' },
     { id: 'o-week',  label: 'O-Week' },
     { id: 'week-1',  label: 'Week 1' },
     { id: 'week-2',  label: 'Week 2' },
@@ -1083,11 +1085,6 @@
   };
 
   const KANBAN_INITIAL = {
-    'pre-hex': [
-      { id:'k1',  text:'Welcome Calls', cat:'welcome' },
-      { id:'k2',  text:'Welcome Webinar (Weeks -2 & -1)', cat:'webinar' },
-      { id:'k3',  text:'Making Connections Webinar', cat:'webinar' },
-    ],
     'o-week': [
       { id:'k4',  text:'Suspension appeal deadline Wednesday (H1 only)', cat:'priority' },
       { id:'k5',  text:'Results released on Friday', cat:'admin' },
@@ -1254,23 +1251,6 @@
   }
 
   function renderKanban() {
-    // Legend
-    const legend = document.getElementById('kanban-legend');
-    if (legend && !legend.hasChildNodes()) {
-      Object.entries(KANBAN_CATS).forEach(([key, val]) => {
-        const item = document.createElement('div');
-        item.className = 'legend-item';
-        const dot = document.createElement('span');
-        dot.className = 'legend-dot';
-        dot.style.background = val.dot;
-        const lbl = document.createElement('span');
-        lbl.textContent = val.label;
-        item.appendChild(dot);
-        item.appendChild(lbl);
-        legend.appendChild(item);
-      });
-    }
-
     const board = document.getElementById('kanban-board');
     if (!board) return;
     board.innerHTML = '';
@@ -1290,6 +1270,42 @@
       body.dataset.col = col.id;
 
       cards.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
+
+      // Add card button
+      const addBtn = document.createElement('button');
+      addBtn.className = 'kanban-add-btn';
+      addBtn.textContent = '+ Add item';
+      addBtn.addEventListener('click', () => {
+        const textarea = document.createElement('textarea');
+        textarea.className = 'card-edit-textarea';
+        textarea.placeholder = 'Type item...';
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'card-save-btn';
+        saveBtn.textContent = '✓ Add';
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'card-cancel-btn';
+        cancelBtn.textContent = '✕';
+        const rowEl = document.createElement('div');
+        rowEl.style.cssText = 'background:#fff;border:1.5px solid #FFD100;border-radius:6px;padding:8px;';
+        const actRow = document.createElement('div');
+        actRow.className = 'card-edit-actions';
+        actRow.appendChild(saveBtn);
+        actRow.appendChild(cancelBtn);
+        rowEl.appendChild(textarea);
+        rowEl.appendChild(actRow);
+        body.insertBefore(rowEl, addBtn);
+        textarea.focus();
+        saveBtn.addEventListener('click', () => {
+          const text = textarea.value.trim();
+          if (!text) return;
+          const newCard = { id: 'k' + Date.now(), text, cat: 'admin' };
+          if (!kanbanBoard[col.id]) kanbanBoard[col.id] = [];
+          kanbanBoard[col.id].push(newCard);
+          saveKanban();
+          renderKanban();
+        });
+        cancelBtn.addEventListener('click', () => rowEl.remove());
+      });
 
       body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
       body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
@@ -1311,6 +1327,7 @@
 
       colEl.appendChild(header);
       colEl.appendChild(body);
+      body.appendChild(addBtn);
       board.appendChild(colEl);
     });
   }
@@ -1319,14 +1336,81 @@
     const el = document.createElement('div');
     el.className = `kanban-card cat-${card.cat}`;
     el.setAttribute('draggable', 'true');
-    el.title = card.text;
-    el.textContent = card.text;
+
+    const textEl = document.createElement('span');
+    textEl.className = 'card-text';
+    textEl.textContent = card.text;
+
+    const actions = document.createElement('div');
+    actions.className = 'card-actions';
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'card-btn card-edit-btn';
+    editBtn.textContent = '✏️';
+    editBtn.title = 'Edit';
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'card-btn card-del-btn';
+    delBtn.textContent = '✕';
+    delBtn.title = 'Delete';
+
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+    el.appendChild(textEl);
+    el.appendChild(actions);
+
     el.addEventListener('dragstart', e => {
       e.dataTransfer.setData('kanbanCardId', card.id);
       e.dataTransfer.setData('kanbanFromCol', colId);
       setTimeout(() => el.classList.add('dragging'), 0);
     });
     el.addEventListener('dragend', () => el.classList.remove('dragging'));
+
+    // Edit
+    editBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      el.setAttribute('draggable', 'false');
+      const textarea = document.createElement('textarea');
+      textarea.className = 'card-edit-textarea';
+      textarea.value = card.text;
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'card-save-btn';
+      saveBtn.textContent = '✓ Save';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'card-cancel-btn';
+      cancelBtn.textContent = '✕ Cancel';
+      const editRow = document.createElement('div');
+      editRow.className = 'card-edit-actions';
+      editRow.appendChild(saveBtn);
+      editRow.appendChild(cancelBtn);
+      el.innerHTML = '';
+      el.appendChild(textarea);
+      el.appendChild(editRow);
+      textarea.focus();
+      saveBtn.addEventListener('click', () => {
+        const newText = textarea.value.trim();
+        if (!newText) return;
+        card.text = newText;
+        const col = kanbanBoard[colId];
+        const idx = col ? col.findIndex(c => c.id === card.id) : -1;
+        if (idx !== -1) col[idx].text = newText;
+        saveKanban();
+        renderKanban();
+      });
+      cancelBtn.addEventListener('click', () => renderKanban());
+    });
+
+    // Delete
+    delBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      const col = kanbanBoard[colId];
+      if (!col) return;
+      const idx = col.findIndex(c => c.id === card.id);
+      if (idx !== -1) col.splice(idx, 1);
+      saveKanban();
+      renderKanban();
+    });
+
     return el;
   }
 </script>
