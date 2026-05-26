@@ -613,6 +613,13 @@
     .cat-welcome    { background: #DCFCE7; color: #15803D; border-color: #22C55E; }
     .cat-automated  { background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
     .cat-webinar    { background: #FFEDD5; color: #9A3412; border-color: #F97316; }
+    /* UNSW Key Date badges */
+    .unsw-dates-row { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:4px; }
+    .unsw-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.66rem; font-weight:700; padding:2px 6px 2px 5px; border-radius:3px; white-space:nowrap; letter-spacing:0.1px; }
+    .unsw-badge.o-week  { background:#FFF8D6; color:#7A5700; border-left:3px solid #FFD100; }
+    .unsw-badge.census  { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
+    .unsw-badge.results { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
+
     /* Card edit/delete actions */
     .kanban-card { position: relative; }
     .card-text { display: block; padding-right: 44px; }
@@ -739,6 +746,53 @@
   const SHORT_DAYS  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const DAY_CLASSES = ['','day-mon','day-tue','day-wed','day-thu','day-fri',''];
   const TODAY_EMOJIS= ['','🚀','⭐','🎯','⚡','🎉',''];
+
+  // UNSW 2026 Academic Calendar – key dates
+  const UNSW_DATES = {
+    // ── Hexa 1 ──
+    '2026-01-12':[{type:'o-week', label:'O-Week H1'}],
+    '2026-01-13':[{type:'o-week', label:'O-Week H1'}],
+    '2026-01-14':[{type:'o-week', label:'O-Week H1'}],
+    '2026-01-15':[{type:'o-week', label:'O-Week H1'}],
+    '2026-01-16':[{type:'o-week', label:'O-Week H1'}],
+    '2026-01-29':[{type:'census', label:'Census H1'}],
+    // ── Hexa 2 ──
+    '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
+    '2026-03-10':[{type:'o-week', label:'O-Week H2'}],
+    '2026-03-11':[{type:'o-week', label:'O-Week H2'}],
+    '2026-03-12':[{type:'o-week', label:'O-Week H2'}],
+    '2026-03-13':[{type:'results',label:'Results H1'},{type:'o-week',label:'O-Week H2'}],
+    '2026-03-26':[{type:'census', label:'Census H2'}],
+    // ── Hexa 3 ──
+    '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
+    '2026-05-05':[{type:'o-week', label:'O-Week H3'}],
+    '2026-05-06':[{type:'o-week', label:'O-Week H3'}],
+    '2026-05-07':[{type:'o-week', label:'O-Week H3'}],
+    '2026-05-08':[{type:'results',label:'Results H2'},{type:'o-week',label:'O-Week H3'}],
+    '2026-05-21':[{type:'census', label:'Census H3'}],
+    // ── Hexa 4 ──
+    '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
+    '2026-06-30':[{type:'o-week', label:'O-Week H4'}],
+    '2026-07-01':[{type:'o-week', label:'O-Week H4'}],
+    '2026-07-02':[{type:'o-week', label:'O-Week H4'}],
+    '2026-07-03':[{type:'results',label:'Results H3'},{type:'o-week',label:'O-Week H4'}],
+    '2026-07-16':[{type:'census', label:'Census H4'}],
+    // ── Hexa 5 ──
+    '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
+    '2026-08-25':[{type:'o-week', label:'O-Week H5'}],
+    '2026-08-26':[{type:'o-week', label:'O-Week H5'}],
+    '2026-08-27':[{type:'o-week', label:'O-Week H5'}],
+    '2026-08-28':[{type:'results',label:'Results H4'},{type:'o-week',label:'O-Week H5'}],
+    '2026-09-10':[{type:'census', label:'Census H5'}],
+    // ── Hexa 6 ──
+    '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
+    '2026-10-20':[{type:'o-week', label:'O-Week H6'}],
+    '2026-10-21':[{type:'o-week', label:'O-Week H6'}],
+    '2026-10-22':[{type:'o-week', label:'O-Week H6'}],
+    '2026-10-23':[{type:'results',label:'Results H5'},{type:'o-week',label:'O-Week H6'}],
+    '2026-11-05':[{type:'census', label:'Census H6'}],
+    '2026-12-18':[{type:'results',label:'Results H6'}],
+  };
 
   // Get the Monday of the week containing a given date
   function getMonday(d) {
@@ -880,6 +934,21 @@
         }
 
         cell.appendChild(labelEl);
+
+        // UNSW Key Date badges
+        const unswItems = UNSW_DATES[key];
+        if (unswItems && unswItems.length) {
+          const row = document.createElement('div');
+          row.className = 'unsw-dates-row';
+          unswItems.forEach(item => {
+            const badge = document.createElement('span');
+            badge.className = `unsw-badge ${item.type}`;
+            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : '✅';
+            badge.textContent = icon + ' ' + item.label;
+            row.appendChild(badge);
+          });
+          cell.appendChild(row);
+        }
 
         // Events
         const list = document.createElement('div');
