@@ -634,11 +634,26 @@
     .unsw-badge.census  { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
     .unsw-badge.results { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
 
-    /* Card edit/delete actions */
-    .kanban-card { position: relative; }
-    .card-text { display: block; padding-right: 44px; }
+    /* Card layout */
+    .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; }
+    .card-text { flex: 1; min-width: 0; word-break: break-word; padding-right: 40px; }
     .card-actions { display: none; position: absolute; top: 5px; right: 5px; gap: 3px; }
     .kanban-card:hover .card-actions { display: flex; }
+
+    /* Tick / done state */
+    .card-check {
+      flex-shrink: 0; margin-top: 1px;
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid #d1d5db; background: none;
+      cursor: pointer; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; color: transparent;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .card-check:hover { border-color: #22c55e; color: #22c55e; }
+    .kanban-card.done .card-check { background: #22c55e; border-color: #22c55e; color: #fff; }
+    .kanban-card.done .card-text { text-decoration: line-through; color: #aaa; }
+    .kanban-card.done { opacity: 0.65; }
     .card-btn { border: none; background: rgba(255,255,255,0.85); cursor: pointer; padding: 2px 6px; font-size: 0.7rem; border-radius: 3px; line-height: 1.5; }
     .card-edit-btn:hover { background: #dbeafe; }
     .card-del-btn { color: #ef4444; }
@@ -1388,9 +1403,10 @@
       const colEl = document.createElement('div');
       colEl.className = 'kanban-col';
 
+      const doneCount = cards.filter(c => c.done).length;
       const header = document.createElement('div');
       header.className = 'kanban-col-header';
-      header.innerHTML = `<span>${col.label}</span><span class="col-count">${cards.length}</span>`;
+      header.innerHTML = `<span>${col.label}</span><span class="col-count">${doneCount > 0 ? doneCount + '/' : ''}${cards.length}</span>`;
 
       const body = document.createElement('div');
       body.className = 'kanban-col-body';
@@ -1461,8 +1477,23 @@
 
   function createKanbanCard(card, colId) {
     const el = document.createElement('div');
-    el.className = `kanban-card cat-${card.cat}`;
+    el.className = `kanban-card cat-${card.cat}${card.done ? ' done' : ''}`;
     el.setAttribute('draggable', 'true');
+
+    // Tick checkbox
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'card-check';
+    checkBtn.title = card.done ? 'Mark incomplete' : 'Mark complete';
+    checkBtn.textContent = '✓';
+    checkBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      card.done = !card.done;
+      const col = kanbanBoard[colId];
+      const idx = col ? col.findIndex(c => c.id === card.id) : -1;
+      if (idx !== -1) col[idx].done = card.done;
+      saveKanban();
+      renderKanban();
+    });
 
     const textEl = document.createElement('span');
     textEl.className = 'card-text';
@@ -1483,6 +1514,7 @@
 
     actions.appendChild(editBtn);
     actions.appendChild(delBtn);
+    el.appendChild(checkBtn);
     el.appendChild(textEl);
     el.appendChild(actions);
 
