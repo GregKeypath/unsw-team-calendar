@@ -10,7 +10,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #f4f4f4;
+      background: linear-gradient(160deg, #f0f4f8 0%, #e8ecf0 100%);
       color: #111;
       min-height: 100vh;
     }
@@ -18,7 +18,7 @@
     /* Tab navigation */
     .tab-nav {
       background: #fff;
-      border-bottom: 2px solid #e5e5e5;
+      box-shadow: 0 1px 0 #e5e5e5;
       padding: 0 32px;
       display: flex;
       gap: 0;
@@ -36,6 +36,7 @@
       cursor: pointer;
       letter-spacing: 0.2px;
       transition: color 0.15s, border-color 0.15s;
+      border-radius: 8px 8px 0 0;
     }
 
     .tab-btn:hover { color: #111; }
@@ -63,7 +64,7 @@
     /* White nav bar — matches the site header */
     .site-header {
       background: #fff;
-      border-bottom: 1px solid #e5e5e5;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       padding: 0 32px;
       display: flex;
       align-items: center;
@@ -123,7 +124,7 @@
       border: 1.5px solid #111;
       color: #111;
       padding: 7px 16px;
-      border-radius: 0;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 0.88rem;
       font-weight: 600;
@@ -190,6 +191,8 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
     .roster-cell .roster-day {
@@ -217,30 +220,30 @@
     .event-chip { cursor: pointer; }
 
     .day-cell {
-      border: 1px solid rgba(0,0,0,0.07);
-      border-top: 3px solid transparent;
+      border: 1px solid rgba(255,255,255,0.85);
+      border-radius: 14px;
       padding: 12px;
       min-height: 155px;
       display: flex;
       flex-direction: column;
       gap: 5px;
-      transition: border-top-color 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.03);
+      transition: box-shadow 0.2s, transform 0.2s;
     }
 
     .day-cell:hover {
-      border-top-color: #FFD100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.07);
+      transform: translateY(-2px);
     }
 
     .day-cell.today {
-      border-top-color: #FFD100;
-      box-shadow: 0 0 0 2px #FFD100, 0 4px 18px rgba(255,209,0,0.3);
+      box-shadow: 0 0 0 2.5px #FFD100, 0 6px 22px rgba(255,209,0,0.35);
       animation: pulse-today 2.5s ease-in-out infinite;
     }
 
     @keyframes pulse-today {
-      0%, 100% { box-shadow: 0 0 0 2px #FFD100, 0 4px 18px rgba(255,209,0,0.25); }
-      50%       { box-shadow: 0 0 0 3px #FFD100, 0 4px 24px rgba(255,209,0,0.5); }
+      0%, 100% { box-shadow: 0 0 0 2px #FFD100, 0 6px 20px rgba(255,209,0,0.25); }
+      50%       { box-shadow: 0 0 0 4px #FFD100, 0 8px 28px rgba(255,209,0,0.55); }
     }
 
     .today-emoji {
@@ -338,6 +341,7 @@
       padding: 1px 5px;
       letter-spacing: 0.5px;
       margin-right: 2px;
+      border-radius: 4px;
     }
 
     .events-list {
@@ -356,6 +360,7 @@
       font-weight: 500;
       cursor: default;
       transition: filter 0.15s;
+      border-radius: 7px;
     }
 
     .event-chip:hover { filter: brightness(0.92); }
@@ -393,6 +398,7 @@
       transition: border-color 0.15s, color 0.15s;
       margin-top: 2px;
       letter-spacing: 0.2px;
+      border-radius: 7px;
     }
 
     .add-event-btn:hover { border-color: #FFD100; color: #111; }
@@ -413,9 +419,10 @@
     .modal {
       background: #fff;
       width: 380px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.1);
       animation: pop 0.16s ease;
       overflow: hidden;
+      border-radius: 16px;
     }
 
     @keyframes pop {
@@ -428,6 +435,7 @@
       color: #fff;
       padding: 16px 22px;
       border-bottom: 3px solid #FFD100;
+      border-radius: 16px 16px 0 0;
     }
 
     .modal-header h2 { font-size: 0.92rem; font-weight: 700; }
@@ -438,7 +446,7 @@
       width: 100%;
       padding: 10px 12px;
       border: 1.5px solid #ddd;
-      border-radius: 0;
+      border-radius: 8px;
       font-size: 0.9rem;
       outline: none;
       transition: border-color 0.2s;
@@ -474,7 +482,7 @@
       cursor: pointer;
       border: 2px solid transparent;
       transition: border-color 0.15s, background 0.15s;
-      border-radius: 2px;
+      border-radius: 8px;
       font-size: 0.84rem;
       font-weight: 600;
     }
@@ -500,7 +508,7 @@
 
     .modal-actions button {
       padding: 9px 20px;
-      border-radius: 0;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 0.86rem;
       font-weight: 700;
@@ -529,7 +537,7 @@
       width: 100%;
       padding: 10px 12px;
       border: 1.5px solid #ddd;
-      border-radius: 0;
+      border-radius: 8px;
       font-size: 0.9rem;
       font-family: inherit;
       outline: none;
@@ -577,7 +585,7 @@
     /* Kanban board */
     .kanban-wrap { padding: 20px 32px; overflow-x: auto; }
     .kanban-board { display: flex; gap: 12px; min-width: max-content; align-items: flex-start; }
-    .kanban-col { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; }
+    .kanban-col { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06); }
     .kanban-col-header {
       background: #111;
       color: #FFD100;
@@ -596,6 +604,7 @@
       font-size: 0.68rem;
       padding: 1px 7px;
       font-weight: 700;
+      border-radius: 10px;
     }
     .kanban-col-body {
       background: rgba(0,0,0,0.04);
@@ -606,6 +615,7 @@
       gap: 6px;
       transition: background 0.15s;
       border: 2px solid transparent;
+      border-radius: 0 0 12px 12px;
     }
     .kanban-col-body.drag-over { background: rgba(255,209,0,0.12); border-color: #FFD100; }
     .kanban-card {
@@ -629,13 +639,13 @@
     .cat-webinar    { background: #FFEDD5; color: #9A3412; border-color: #F97316; }
     /* UNSW Key Date badges */
     .unsw-dates-row { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:4px; }
-    .unsw-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.66rem; font-weight:700; padding:2px 6px 2px 5px; border-radius:3px; white-space:nowrap; letter-spacing:0.1px; }
+    .unsw-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.66rem; font-weight:700; padding:2px 6px 2px 5px; border-radius:6px; white-space:nowrap; letter-spacing:0.1px; }
     .unsw-badge.o-week  { background:#FFF8D6; color:#7A5700; border-left:3px solid #FFD100; }
     .unsw-badge.census  { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
     .unsw-badge.results { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
 
     /* Card layout */
-    .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; }
+    .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
     .card-text { flex: 1; min-width: 0; word-break: break-word; padding-right: 40px; }
     .card-actions { display: none; position: absolute; top: 5px; right: 5px; gap: 3px; }
     .kanban-card:hover .card-actions { display: flex; }
