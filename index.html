@@ -693,6 +693,65 @@
     /* Add card button per column */
     .kanban-add-btn { width: 100%; margin-top: 6px; padding: 6px; background: none; border: 1.5px dashed #ddd; border-radius: 6px; color: #aaa; font-size: 0.78rem; cursor: pointer; text-align: left; }
     .kanban-add-btn:hover { border-color: #FFD100; color: #111; background: #fffbeb; }
+
+    /* ── Pacing Board ── */
+    .pacing-wrap { padding: 20px 32px 40px; max-width: 1400px; margin: 0 auto; }
+    .pacing-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .pacing-hex-nav { display: flex; gap: 8px; }
+    .hex-btn {
+      padding: 7px 20px; border-radius: 20px; border: 2px solid #ddd;
+      background: #fff; color: #888; font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; letter-spacing: 0.3px;
+    }
+    .hex-btn:hover { border-color: #FFD100; color: #111; }
+    .hex-btn.active { background: #FFD100; border-color: #FFD100; color: #111; box-shadow: 0 2px 8px rgba(255,209,0,0.4); }
+
+    .pacing-table-outer { overflow-x: auto; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .pacing-table {
+      width: 100%; border-collapse: collapse; font-size: 0.8rem;
+      background: #fff; border-radius: 14px; overflow: hidden;
+    }
+    .pacing-table th {
+      background: #111; color: #FFD100; padding: 10px 12px;
+      font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; white-space: nowrap; text-align: left;
+    }
+    .pacing-table th.group-header {
+      background: #222; color: #aaa; font-size: 0.6rem; letter-spacing: 1px;
+      border-bottom: 1px solid #333; text-align: center;
+    }
+    .pacing-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; vertical-align: middle; }
+    .pacing-table tr:last-child td { border-bottom: none; }
+    .pacing-table tr.total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #e5e5e5; }
+    .pacing-table tr:not(.total-row):hover td { background: #fffbeb; }
+
+    .ssa-name { font-weight: 700; color: #111; font-size: 0.84rem; }
+    .enrol-cell { display: flex; flex-direction: column; gap: 2px; }
+    .enrol-bar-bg { height: 4px; background: #e5e5e5; border-radius: 2px; width: 80px; }
+    .enrol-bar-fill { height: 4px; border-radius: 2px; transition: width 0.3s; }
+
+    .pct-pill {
+      display: inline-block; padding: 2px 8px; border-radius: 10px;
+      font-size: 0.72rem; font-weight: 700; min-width: 52px; text-align: center;
+    }
+    .pct-green  { background: #dcfce7; color: #15803d; }
+    .pct-amber  { background: #fef9c3; color: #854d0e; }
+    .pct-orange { background: #ffedd5; color: #9a3412; }
+    .pct-red    { background: #fee2e2; color: #991b1b; }
+    .pct-grey   { background: #f1f5f9; color: #64748b; }
+
+    .kpi-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 8px;
+      font-size: 0.65rem; font-weight: 700; white-space: nowrap;
+    }
+    .kpi-exceptional { background: #dcfce7; color: #15803d; }
+    .kpi-achieved    { background: #dbeafe; color: #1d4ed8; }
+    .kpi-support     { background: #fee2e2; color: #991b1b; }
+    .kpi-na          { background: #f1f5f9; color: #94a3b8; }
+
+    .metric-val { font-weight: 600; color: #333; }
+    .metric-sub { font-size: 0.68rem; color: #999; }
   </style>
 </head>
 <body>
@@ -722,6 +781,7 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">📅 Calendar</button>
   <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
+  <button class="tab-btn" data-tab="pacing">📈 Pacing Board</button>
 </nav>
 
 <!-- Calendar tab -->
@@ -747,6 +807,16 @@
 <div class="tab-panel" id="tab-kanban">
   <div class="kanban-wrap">
     <div class="kanban-board" id="kanban-board"></div>
+  </div>
+</div>
+
+<!-- Pacing Board tab -->
+<div class="tab-panel" id="tab-pacing">
+  <div class="pacing-wrap">
+    <div class="pacing-controls">
+      <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
+    </div>
+    <div class="pacing-content" id="pacing-content"></div>
   </div>
 </div>
 
@@ -1218,6 +1288,163 @@
   loadEvents();
   startPolling();
 
+  // ── Pacing Board ──────────────────────────────────────────────
+
+  const PACING_DATA = {
+    H1: {
+      label: 'H1 · 2026',
+      rows: [
+        { name:'Daljeet Sahota',    st:184, en:158, pctSt:'85.87%', it:163, pctIt:'96.93%', stt:166, pctSt2:'95%',  t1t2:19, pctT1:'73%', gcm:5,  gcmC:'36%', cohort:272,  ctd:251, cPct:'92%', calls:73,  sts:26, cr:'35%', cq:null, kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'EXCEPTIONAL PERFORMANCE' },
+        { name:'Priscilla Samuel',  st:180, en:158, pctSt:'87.78%', it:162, pctIt:'97.53%', stt:165, pctSt2:'96%',  t1t2:16, pctT1:'80%', gcm:6,  gcmC:'35%', cohort:270,  ctd:180, cPct:'67%', calls:59,  sts:27, cr:'38%', cq:null, kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Saravanan Rajamani',st:180, en:163, pctSt:'90.56%', it:162, pctIt:'100.62%',stt:170, pctSt2:'96%',  t1t2:16, pctT1:'76%', gcm:9,  gcmC:'45%', cohort:270,  ctd:141, cPct:'52%', calls:62,  sts:27, cr:'38%', cq:null, kR:'ACHIEVED EXPECTATIONS',  kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Melanie Richards',  st:133, en:128, pctSt:'96.24%', it:121, pctIt:'105.79%',stt:124, pctSt2:'103%', t1t2:19, pctT1:'90%', gcm:9,  gcmC:'53%', cohort:217,  ctd:157, cPct:'72%', calls:42,  sts:21, cr:'50%', cq:null, kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Amelia Mosley',     st:190, en:169, pctSt:'88.95%', it:167, pctIt:'101.20%',stt:170, pctSt2:'99%',  t1t2:22, pctT1:'81%', gcm:4,  gcmC:'40%', cohort:264,  ctd:212, cPct:'80%', calls:50,  sts:25, cr:'47%', cq:null, kR:'ACHIEVED EXPECTATIONS',  kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
+        { name:'Tyler Bruns',       st:179, en:158, pctSt:'88.27%', it:161, pctIt:'98.14%', stt:164, pctSt2:'96%',  t1t2:25, pctT1:'71%', gcm:5,  gcmC:'42%', cohort:269,  ctd:206, cPct:'77%', calls:58,  sts:25, cr:'39%', cq:null, kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+      ],
+      total: { name:'UNSW Total', st:1018,en:935,pctSt:'91.85%',it:936,pctIt:'99.89%',stt:959,pctSt2:'97%',t1t2:117,pctT1:'78%',gcm:33,gcmC:'42%',cohort:1562,ctd:1147,cPct:'73%',calls:57,sts:25,cr:'23%',cq:null,kR:null,kS:null,k6:null }
+    },
+    H2: {
+      label: 'H2 · 2026',
+      rows: [
+        { name:'Daljeet Sahota',    st:199, en:179, pctSt:'89.95%', it:183, pctIt:'97.81%',  stt:186, pctSt2:'96%',  t1t2:36, pctT1:'84%', gcm:3,  gcmC:'19%', cohort:286, ctd:277, cPct:'97%', calls:71, sts:26, cr:'36%', cq:'84%', kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'EXCEPTIONAL PERFORMANCE' },
+        { name:'Priscilla Samuel',  st:194, en:165, pctSt:'85.05%', it:178, pctIt:'92.70%',  stt:181, pctSt2:'91%',  t1t2:31, pctT1:'78%', gcm:1,  gcmC:'6%',  cohort:280, ctd:208, cPct:'74%', calls:59, sts:27, cr:'38%', cq:'85%', kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Saravanan Rajamani',st:141, en:134, pctSt:'95.04%', it:129, pctIt:'103.88%', stt:130, pctSt2:'103%', t1t2:31, pctT1:'72%', gcm:1,  gcmC:'11%', cohort:205, ctd:127, cPct:'62%', calls:59, sts:29, cr:'42%', cq:'73%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Melanie Richards',  st:140, en:123, pctSt:'87.86%', it:128, pctIt:'96.09%',  stt:130, pctSt2:'95%',  t1t2:20, pctT1:'77%', gcm:2,  gcmC:'18%', cohort:207, ctd:84,  cPct:'41%', calls:40, sts:20, cr:'48%', cq:'81%', kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Amelia Mosley',     st:198, en:190, pctSt:'95.96%', it:180, pctIt:'105.56%', stt:182, pctSt2:'104%', t1t2:35, pctT1:'74%', gcm:4,  gcmC:'31%', cohort:288, ctd:255, cPct:'89%', calls:51, sts:26, cr:'48%', cq:'81%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
+        { name:'Tyler Bruns',       st:202, en:198, pctSt:'98.02%', it:185, pctIt:'107.03%', stt:187, pctSt2:'106%', t1t2:47, pctT1:'81%', gcm:0,  gcmC:'0%',  cohort:281, ctd:150, cPct:'53%', calls:56, sts:24, cr:'39%', cq:'77%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+      ],
+      total: { name:'UNSW Total', st:1069,en:989,pctSt:'92.52%',it:983,pctIt:'100.61%',stt:996,pctSt2:'99%',t1t2:200,pctT1:'78%',gcm:11,gcmC:'14%',cohort:1547,ctd:1101,cPct:'72%',calls:56,sts:25,cr:'22%',cq:'80%',kR:null,kS:null,k6:null }
+    },
+    H3: {
+      label: 'H3 · 2026',
+      rows: [
+        { name:'Daljeet Sahota',    st:261, en:234, pctSt:'89.66%', it:237, pctIt:'98.73%',  stt:239, pctSt2:'98%',  t1t2:43, pctT1:'78%', gcm:6, gcmC:'30%', cohort:374, ctd:289, cPct:'77%', calls:76, sts:29, cr:'37%', cq:'84%', kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Priscilla Samuel',  st:265, en:248, pctSt:'93.58%', it:241, pctIt:'102.90%', stt:244, pctSt2:'102%', t1t2:60, pctT1:'87%', gcm:6, gcmC:'30%', cohort:373, ctd:308, cPct:'83%', calls:59, sts:28, cr:'41%', cq:'85%', kR:'ACHIEVED EXPECTATIONS', kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
+        { name:'Saravanan Rajamani',st:210, en:200, pctSt:'95.24%', it:191, pctIt:'104.71%', stt:194, pctSt2:'103%', t1t2:63, pctT1:'79%', gcm:1, gcmC:'14%', cohort:300, ctd:149, cPct:'50%', calls:56, sts:30, cr:'46%', cq:'73%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+        { name:'Amelia Mosley',     st:256, en:246, pctSt:'96.09%', it:235, pctIt:'104.68%', stt:239, pctSt2:'103%', t1t2:50, pctT1:'79%', gcm:4, gcmC:'24%', cohort:364, ctd:292, cPct:'80%', calls:56, sts:30, cr:'50%', cq:'81%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
+        { name:'Kimmi',             st:148, en:130, pctSt:'87.84%', it:134, pctIt:'97.01%',  stt:137, pctSt2:'95%',  t1t2:13, pctT1:'72%', gcm:3, gcmC:'25%', cohort:225, ctd:113, cPct:'50%', calls:33, sts:20, cr:'67%', cq:'NA',  kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
+      ],
+      total: { name:'UNSW Total', st:1141,en:1058,pctSt:'92.73%',it:1038,pctIt:'101.93%',stt:1053,pctSt2:'100%',t1t2:229,pctT1:'80%',gcm:17,gcmC:'25%',cohort:1636,ctd:1151,cPct:'72%',calls:56,sts:27,cr:'27%',cq:'81%',kR:null,kS:null,k6:null }
+    },
+    H4: {
+      label: 'H4 · 2026',
+      rows: [
+        { name:'Daljeet Sahota',    st:0, en:0, pctSt:'—', it:0, pctIt:'—', stt:0, pctSt2:'—', t1t2:0, pctT1:'—', gcm:0, gcmC:'—', cohort:349, ctd:349, cPct:'100%', calls:null, sts:null, cr:'—', cq:null, kR:'SUPPORT NEEDED',  kS:'EXCEPTIONAL PERFORMANCE', k6:'—' },
+        { name:'Priscilla Samuel',  st:0, en:0, pctSt:'—', it:0, pctIt:'—', stt:0, pctSt2:'—', t1t2:0, pctT1:'—', gcm:0, gcmC:'—', cohort:347, ctd:347, cPct:'100%', calls:null, sts:null, cr:'—', cq:null, kR:'SUPPORT NEEDED',  kS:'EXCEPTIONAL PERFORMANCE', k6:'—' },
+        { name:'Saravanan Rajamani',st:0, en:0, pctSt:'—', it:0, pctIt:'—', stt:0, pctSt2:'—', t1t2:0, pctT1:'—', gcm:0, gcmC:'—', cohort:278, ctd:278, cPct:'100%', calls:null, sts:null, cr:'—', cq:null, kR:'SUPPORT NEEDED',  kS:'EXCEPTIONAL PERFORMANCE', k6:'—' },
+        { name:'Amelia Mosley',     st:0, en:0, pctSt:'—', it:0, pctIt:'—', stt:0, pctSt2:'—', t1t2:0, pctT1:'—', gcm:0, gcmC:'—', cohort:346, ctd:346, cPct:'100%', calls:null, sts:null, cr:'—', cq:null, kR:'SUPPORT NEEDED',  kS:'EXCEPTIONAL PERFORMANCE', k6:'—' },
+        { name:'Kimmi',             st:0, en:0, pctSt:'—', it:0, pctIt:'—', stt:0, pctSt2:'—', t1t2:0, pctT1:'—', gcm:0, gcmC:'—', cohort:347, ctd:347, cPct:'100%', calls:null, sts:null, cr:'—', cq:null, kR:'SUPPORT NEEDED',  kS:'EXCEPTIONAL PERFORMANCE', k6:'—' },
+      ],
+      total: { name:'UNSW Total', st:0,en:0,pctSt:'—',it:0,pctIt:'—',stt:0,pctSt2:'—',t1t2:0,pctT1:'—',gcm:0,gcmC:'—',cohort:1667,ctd:1667,cPct:'100%',calls:null,sts:null,cr:'—',cq:null,kR:null,kS:null,k6:null }
+    }
+  };
+
+  let activePacingHex = 'H3';
+
+  function pctClass(str) {
+    if (!str || str === '—') return 'pct-grey';
+    const n = parseFloat(str);
+    if (n >= 100) return 'pct-green';
+    if (n >= 90)  return 'pct-amber';
+    if (n >= 80)  return 'pct-orange';
+    return 'pct-red';
+  }
+
+  function kpiBadge(val) {
+    if (!val || val === '—') return '<span class="kpi-badge kpi-na">—</span>';
+    if (val === 'EXCEPTIONAL PERFORMANCE') return '<span class="kpi-badge kpi-exceptional">⭐ Exceptional</span>';
+    if (val === 'ACHIEVED EXPECTATIONS')   return '<span class="kpi-badge kpi-achieved">✓ Achieved</span>';
+    if (val === 'SUPPORT NEEDED')          return '<span class="kpi-badge kpi-support">⚠ Support Needed</span>';
+    return `<span class="kpi-badge kpi-na">${val}</span>`;
+  }
+
+  function enrolBar(enrolled, target) {
+    if (!target) return '—';
+    const pct = Math.min(100, Math.round(enrolled / target * 100));
+    const col = pct >= 100 ? '#22c55e' : pct >= 90 ? '#f59e0b' : '#ef4444';
+    return `<div class="enrol-cell">
+      <span class="metric-val">${enrolled} <span class="metric-sub">/ ${target}</span></span>
+      <div class="enrol-bar-bg"><div class="enrol-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+    </div>`;
+  }
+
+  function renderPacingRow(r, isTotal) {
+    const rowClass = isTotal ? 'total-row' : '';
+    return `<tr class="${rowClass}">
+      <td><span class="ssa-name">${r.name}</span></td>
+      <td>${enrolBar(r.en, r.st)}</td>
+      <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
+      <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
+      <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+      <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
+      <td><span class="metric-val">${r.gcm}</span> <span class="metric-sub">${r.gcmC}</span></td>
+      <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
+      <td><span class="metric-val">${r.calls ?? '—'}</span></td>
+      <td><span class="metric-val">${r.sts ?? '—'}</span></td>
+      <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
+      <td>${isTotal ? '' : kpiBadge(r.kR)}</td>
+      <td>${isTotal ? '' : kpiBadge(r.kS)}</td>
+      <td>${isTotal ? '' : kpiBadge(r.k6)}</td>
+    </tr>`;
+  }
+
+  function renderPacing() {
+    // Hex nav
+    const nav = document.getElementById('pacing-hex-nav');
+    if (nav) {
+      nav.innerHTML = Object.entries(PACING_DATA).map(([key, val]) =>
+        `<button class="hex-btn ${key === activePacingHex ? 'active' : ''}" data-hex="${key}">${val.label}</button>`
+      ).join('');
+      nav.querySelectorAll('.hex-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activePacingHex = btn.dataset.hex;
+          renderPacing();
+        });
+      });
+    }
+
+    const hex = PACING_DATA[activePacingHex];
+    const content = document.getElementById('pacing-content');
+    if (!content || !hex) return;
+
+    content.innerHTML = `
+      <div class="pacing-table-outer">
+        <table class="pacing-table">
+          <thead>
+            <tr>
+              <th rowspan="2">SSA</th>
+              <th colspan="2" class="group-header">Enrolments</th>
+              <th colspan="2" class="group-header">Incentive / Stretch</th>
+              <th colspan="2" class="group-header">T1–T2</th>
+              <th colspan="2" class="group-header">GC &gt; M</th>
+              <th colspan="3" class="group-header">Activity</th>
+              <th colspan="3" class="group-header">KPI Weightage</th>
+            </tr>
+            <tr>
+              <th>Enrolled / Target</th>
+              <th>% to Start</th>
+              <th>% to Incentive</th>
+              <th>% to Stretch</th>
+              <th>T1–T2 Enrolled</th>
+              <th>% to T1–T2</th>
+              <th>GC&gt;M Enrol</th>
+              <th>Contacted</th>
+              <th>Avg Calls</th>
+              <th>Avg STS</th>
+              <th>Call Quality</th>
+              <th>Re-Enrolments</th>
+              <th>Student Contacts</th>
+              <th>60-Day Attempt</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${hex.rows.map(r => renderPacingRow(r, false)).join('')}
+            ${renderPacingRow(hex.total, true)}
+          </tbody>
+        </table>
+      </div>`;
+  }
+
   // Tab switching
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1226,6 +1453,7 @@
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
+      if (btn.dataset.tab === 'pacing') renderPacing();
     });
   });
 
