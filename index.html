@@ -618,6 +618,23 @@
       border-radius: 0 0 12px 12px;
     }
     .kanban-col-body.drag-over { background: rgba(255,209,0,0.12); border-color: #FFD100; }
+
+    /* Current week column highlight */
+    .kanban-col.current-week { box-shadow: 0 0 0 2.5px #FFD100, 0 6px 24px rgba(255,209,0,0.35); }
+    .kanban-col.current-week .kanban-col-header { background: #FFD100; color: #111; }
+    .kanban-col.current-week .col-count { background: rgba(0,0,0,0.12); color: #111; }
+    .current-week-label {
+      font-size: 0.58rem;
+      font-weight: 800;
+      background: #111;
+      color: #FFD100;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
     .kanban-card {
       padding: 8px 10px;
       font-size: 0.76rem;
@@ -1407,16 +1424,28 @@
     if (!board) return;
     board.innerHTML = '';
 
+    // Work out which column is the current hex week
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const todayWeek = UNSW_WEEKS[todayKey];
+    let currentColId = null;
+    if (todayWeek) {
+      currentColId = todayWeek.label === 'O-Week' ? 'o-week'
+                   : 'week-' + todayWeek.label.replace('Week ', '');
+    }
+
     KANBAN_COLS.forEach(col => {
       const cards = kanbanBoard[col.id] || [];
+      const isCurrent = col.id === currentColId;
 
       const colEl = document.createElement('div');
-      colEl.className = 'kanban-col';
+      colEl.className = 'kanban-col' + (isCurrent ? ' current-week' : '');
 
       const doneCount = cards.filter(c => c.done).length;
       const header = document.createElement('div');
       header.className = 'kanban-col-header';
-      header.innerHTML = `<span>${col.label}</span><span class="col-count">${doneCount > 0 ? doneCount + '/' : ''}${cards.length}</span>`;
+      const nowBadge = isCurrent ? ` <span class="current-week-label">Now</span>` : '';
+      header.innerHTML = `<span>${col.label}${nowBadge}</span><span class="col-count">${doneCount > 0 ? doneCount + '/' : ''}${cards.length}</span>`;
 
       const body = document.createElement('div');
       body.className = 'kanban-col-body';
