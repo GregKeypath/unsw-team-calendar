@@ -695,9 +695,12 @@
     .kanban-add-btn:hover { border-color: #FFD100; color: #111; background: #fffbeb; }
 
     /* ── Pacing Board ── */
-    .pacing-wrap { padding: 20px 32px 40px; max-width: 1400px; margin: 0 auto; }
-    .pacing-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-    .pacing-hex-nav { display: flex; gap: 8px; }
+    .pacing-wrap { padding: 20px 32px 40px; max-width: 1600px; margin: 0 auto; }
+    .pacing-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .pacing-hex-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pacing-ssa-nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .pacing-ssa-label { font-size: 0.68rem; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+
     .hex-btn {
       padding: 7px 20px; border-radius: 20px; border: 2px solid #ddd;
       background: #fff; color: #888; font-size: 0.82rem; font-weight: 700;
@@ -706,29 +709,45 @@
     .hex-btn:hover { border-color: #FFD100; color: #111; }
     .hex-btn.active { background: #FFD100; border-color: #FFD100; color: #111; box-shadow: 0 2px 8px rgba(255,209,0,0.4); }
 
+    .ssa-btn {
+      padding: 5px 14px; border-radius: 20px; border: 1.5px solid #e5e5e5;
+      background: #fff; color: #666; font-size: 0.76rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .ssa-btn:hover { border-color: #111; color: #111; }
+    .ssa-btn.active { background: #111; border-color: #111; color: #fff; }
+
     .pacing-table-outer { overflow-x: auto; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     .pacing-table {
-      width: 100%; border-collapse: collapse; font-size: 0.8rem;
+      width: 100%; border-collapse: collapse; font-size: 0.78rem;
       background: #fff; border-radius: 14px; overflow: hidden;
     }
-    .pacing-table th {
-      background: #111; color: #FFD100; padding: 10px 12px;
-      font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.8px; white-space: nowrap; text-align: left;
-    }
-    .pacing-table th.group-header {
-      background: #222; color: #aaa; font-size: 0.6rem; letter-spacing: 1px;
-      border-bottom: 1px solid #333; text-align: center;
-    }
-    .pacing-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; vertical-align: middle; }
+    /* Section header row */
+    .pacing-table th { padding: 8px 12px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; text-align: center; }
+    .pacing-table th.th-name { background: #111; color: #FFD100; text-align: left; }
+    /* Coloured section headers */
+    .pacing-table th.sec-hdr { font-size: 0.65rem; font-weight: 900; border-bottom: 1px solid rgba(255,255,255,0.15); }
+    .pacing-table th.sec-sub { font-size: 0.58rem; font-weight: 700; opacity: 0.9; padding: 6px 12px; text-align: left; }
+    /* Section colours */
+    .s-incentive { background: #1e3a5f; color: #93c5fd; }
+    .s-stretch   { background: #3b0764; color: #d8b4fe; }
+    .s-t1t2      { background: #1e40af; color: #bfdbfe; }
+    .s-gcm       { background: #14532d; color: #86efac; }
+    .s-sixtyDay  { background: #78350f; color: #fde68a; }
+    .s-kpi       { background: #134e4a; color: #99f6e4; }
+    .s-weight    { background: #881337; color: #fda4af; }
+
+    .pacing-table td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; vertical-align: middle; }
     .pacing-table tr:last-child td { border-bottom: none; }
     .pacing-table tr.total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #e5e5e5; }
-    .pacing-table tr:not(.total-row):hover td { background: #fffbeb; }
+    .pacing-table tr.hex-row td { background: #f0f6ff; }
+    .pacing-table tr:not(.total-row):not(.hex-row):hover td { background: #fffbeb; }
 
     .ssa-name { font-weight: 700; color: #111; font-size: 0.84rem; }
+    .hex-name { font-weight: 700; color: #1e40af; font-size: 0.82rem; }
     .enrol-cell { display: flex; flex-direction: column; gap: 2px; }
     .enrol-bar-bg { height: 4px; background: #e5e5e5; border-radius: 2px; width: 80px; }
-    .enrol-bar-fill { height: 4px; border-radius: 2px; transition: width 0.3s; }
+    .enrol-bar-fill { height: 4px; border-radius: 2px; }
 
     .pct-pill {
       display: inline-block; padding: 2px 8px; border-radius: 10px;
@@ -815,6 +834,7 @@
   <div class="pacing-wrap">
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
+      <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
   </div>
@@ -1340,6 +1360,9 @@
   };
 
   let activePacingHex = 'H3';
+  let activePacingSSA = null;
+
+  const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Mosley','Tyler Bruns'];
 
   function pctClass(str) {
     if (!str || str === '—') return 'pct-grey';
@@ -1368,24 +1391,69 @@
     </div>`;
   }
 
-  function renderPacingRow(r, isTotal) {
-    const rowClass = isTotal ? 'total-row' : '';
-    return `<tr class="${rowClass}">
-      <td><span class="ssa-name">${r.name}</span></td>
+  const PACING_TABLE_HEADER = `
+    <thead>
+      <tr>
+        <th rowspan="2" class="th-name s-incentive" style="text-align:left">SSA</th>
+        <th colspan="2" class="sec-hdr s-incentive">📊 Incentive Tracking</th>
+        <th colspan="2" class="sec-hdr s-stretch">🎯 Stretch Tracking</th>
+        <th colspan="2" class="sec-hdr s-t1t2">📋 T1-T2 Census</th>
+        <th colspan="2" class="sec-hdr s-gcm">🎓 GC &gt; M Tracker</th>
+        <th colspan="3" class="sec-hdr s-sixtyDay">📞 60 Day Attempt</th>
+        <th colspan="3" class="sec-hdr s-kpi">📈 KPI Tracking</th>
+        <th colspan="3" class="sec-hdr s-weight">⚖️ Weightage</th>
+      </tr>
+      <tr>
+        <th class="sec-sub s-incentive">Enrolled / Target</th>
+        <th class="sec-sub s-incentive">% to Start</th>
+        <th class="sec-sub s-stretch">% to Incentive</th>
+        <th class="sec-sub s-stretch">% to Stretch</th>
+        <th class="sec-sub s-t1t2">T1-T2 Enrolled</th>
+        <th class="sec-sub s-t1t2">% to T1-T2</th>
+        <th class="sec-sub s-gcm">GC&gt;M Enrol</th>
+        <th class="sec-sub s-gcm">Conv %</th>
+        <th class="sec-sub s-sixtyDay">Cohort</th>
+        <th class="sec-sub s-sixtyDay">Contacted</th>
+        <th class="sec-sub s-sixtyDay">% to Target</th>
+        <th class="sec-sub s-kpi">Avg Calls</th>
+        <th class="sec-sub s-kpi">Avg STS</th>
+        <th class="sec-sub s-kpi">Call Quality</th>
+        <th class="sec-sub s-weight">Re-Enrolments</th>
+        <th class="sec-sub s-weight">Student Contacts</th>
+        <th class="sec-sub s-weight">60-Day Attempt</th>
+      </tr>
+    </thead>`;
+
+  function renderPacingRow(r, labelHtml, showKpi) {
+    return `<tr>
+      <td>${labelHtml}</td>
       <td>${enrolBar(r.en, r.st)}</td>
       <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
       <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
       <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+      <td><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
       <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-      <td><span class="metric-val">${r.gcm}</span> <span class="metric-sub">${r.gcmC}</span></td>
+      <td><span class="metric-val">${r.gcm ?? '—'}</span></td>
+      <td><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
+      <td><span class="metric-val">${r.cohort ?? '—'}</span></td>
+      <td><span class="metric-val">${r.ctd ?? '—'}</span></td>
       <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
       <td><span class="metric-val">${r.calls ?? '—'}</span></td>
       <td><span class="metric-val">${r.sts ?? '—'}</span></td>
       <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-      <td>${isTotal ? '' : kpiBadge(r.kR)}</td>
-      <td>${isTotal ? '' : kpiBadge(r.kS)}</td>
-      <td>${isTotal ? '' : kpiBadge(r.k6)}</td>
+      <td>${showKpi ? kpiBadge(r.kR) : ''}</td>
+      <td>${showKpi ? kpiBadge(r.kS) : ''}</td>
+      <td>${showKpi ? kpiBadge(r.k6) : ''}</td>
     </tr>`;
+  }
+
+  function buildPacingTable(rows) {
+    return `<div class="pacing-table-outer">
+      <table class="pacing-table">
+        ${PACING_TABLE_HEADER}
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
   }
 
   function renderPacing() {
@@ -1398,51 +1466,86 @@
       nav.querySelectorAll('.hex-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           activePacingHex = btn.dataset.hex;
+          activePacingSSA = null;
           renderPacing();
         });
       });
     }
 
-    const hex = PACING_DATA[activePacingHex];
-    const content = document.getElementById('pacing-content');
-    if (!content || !hex) return;
+    // SSA nav
+    const ssaNav = document.getElementById('pacing-ssa-nav');
+    if (ssaNav) {
+      ssaNav.innerHTML = `<span class="pacing-ssa-label">View by SSA:</span>` +
+        `<button class="ssa-btn ${!activePacingSSA ? 'active' : ''}" data-ssa="">All SSAs</button>` +
+        ALL_SSA_NAMES.map(name =>
+          `<button class="ssa-btn ${activePacingSSA === name ? 'active' : ''}" data-ssa="${name}">${name.split(' ')[0]}</button>`
+        ).join('');
+      ssaNav.querySelectorAll('.ssa-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activePacingSSA = btn.dataset.ssa || null;
+          renderPacing();
+        });
+      });
+    }
 
-    content.innerHTML = `
-      <div class="pacing-table-outer">
-        <table class="pacing-table">
-          <thead>
-            <tr>
-              <th rowspan="2">SSA</th>
-              <th colspan="2" class="group-header">Enrolments</th>
-              <th colspan="2" class="group-header">Incentive / Stretch</th>
-              <th colspan="2" class="group-header">T1–T2</th>
-              <th colspan="2" class="group-header">GC &gt; M</th>
-              <th colspan="3" class="group-header">Activity</th>
-              <th colspan="3" class="group-header">KPI Weightage</th>
-            </tr>
-            <tr>
-              <th>Enrolled / Target</th>
-              <th>% to Start</th>
-              <th>% to Incentive</th>
-              <th>% to Stretch</th>
-              <th>T1–T2 Enrolled</th>
-              <th>% to T1–T2</th>
-              <th>GC&gt;M Enrol</th>
-              <th>Contacted</th>
-              <th>Avg Calls</th>
-              <th>Avg STS</th>
-              <th>Call Quality</th>
-              <th>Re-Enrolments</th>
-              <th>Student Contacts</th>
-              <th>60-Day Attempt</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${hex.rows.map(r => renderPacingRow(r, false)).join('')}
-            ${renderPacingRow(hex.total, true)}
-          </tbody>
-        </table>
-      </div>`;
+    const content = document.getElementById('pacing-content');
+    if (!content) return;
+
+    if (activePacingSSA) {
+      // Cross-hex view: rows = hexamesters for selected SSA
+      const properRows = Object.entries(PACING_DATA).map(([hexKey, hexData]) => {
+        const r = hexData.rows.find(row => row.name === activePacingSSA);
+        if (!r) return '';
+        const cls = hexKey === activePacingHex ? 'hex-row' : '';
+        return `<tr class="${cls}">
+          <td><span class="hex-name">${hexData.label}</span></td>
+          <td>${enrolBar(r.en, r.st)}</td>
+          <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
+          <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
+          <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+          <td><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
+          <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
+          <td><span class="metric-val">${r.gcm ?? '—'}</span></td>
+          <td><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
+          <td><span class="metric-val">${r.cohort ?? '—'}</span></td>
+          <td><span class="metric-val">${r.ctd ?? '—'}</span></td>
+          <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
+          <td><span class="metric-val">${r.calls ?? '—'}</span></td>
+          <td><span class="metric-val">${r.sts ?? '—'}</span></td>
+          <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
+          <td>${kpiBadge(r.kR)}</td>
+          <td>${kpiBadge(r.kS)}</td>
+          <td>${kpiBadge(r.k6)}</td>
+        </tr>`;
+      }).join('');
+      content.innerHTML = buildPacingTable(properRows);
+    } else {
+      // Hex view: rows = all SSAs for selected hex
+      const hex = PACING_DATA[activePacingHex];
+      if (!hex) return;
+      const r = hex.total;
+      const totalRowHtml = `<tr class="total-row">
+        <td><span class="ssa-name">${r.name}</span></td>
+        <td>${enrolBar(r.en, r.st)}</td>
+        <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
+        <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
+        <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+        <td><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
+        <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
+        <td><span class="metric-val">${r.gcm ?? '—'}</span></td>
+        <td><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
+        <td><span class="metric-val">${r.cohort ?? '—'}</span></td>
+        <td><span class="metric-val">${r.ctd ?? '—'}</span></td>
+        <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
+        <td><span class="metric-val">${r.calls ?? '—'}</span></td>
+        <td><span class="metric-val">${r.sts ?? '—'}</span></td>
+        <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
+        <td></td><td></td><td></td>
+      </tr>`;
+      content.innerHTML = buildPacingTable(
+        hex.rows.map(r => renderPacingRow(r, `<span class="ssa-name">${r.name}</span>`, true)).join('') + totalRowHtml
+      );
+    }
   }
 
   // Tab switching
