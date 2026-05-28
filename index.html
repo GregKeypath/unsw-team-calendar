@@ -737,6 +737,27 @@
     .s-kpi       { background: #134e4a; color: #99f6e4; }
     .s-weight    { background: #881337; color: #fda4af; }
 
+    /* Data-row section tile tints — each group gets its own subtle background */
+    .pacing-table td.ds-inc { background: rgba(147,197,253,0.10); }
+    .pacing-table td.ds-str { background: rgba(216,180,254,0.10); }
+    .pacing-table td.ds-t12 { background: rgba(191,219,254,0.10); }
+    .pacing-table td.ds-gcm { background: rgba(134,239,172,0.10); }
+    .pacing-table td.ds-60d { background: rgba(253,230,138,0.10); }
+    .pacing-table td.ds-kpi { background: rgba(153,246,228,0.10); }
+    .pacing-table td.ds-wgt { background: rgba(253,164,175,0.10); }
+    /* Colored left-border accent marks the start of each tile group */
+    .pacing-table .ds-inc.ds-s { border-left: 3px solid #93c5fd; }
+    .pacing-table .ds-str.ds-s { border-left: 3px solid #d8b4fe; }
+    .pacing-table .ds-t12.ds-s { border-left: 3px solid #bfdbfe; }
+    .pacing-table .ds-gcm.ds-s { border-left: 3px solid #86efac; }
+    .pacing-table .ds-60d.ds-s { border-left: 3px solid #fde68a; }
+    .pacing-table .ds-kpi.ds-s { border-left: 3px solid #99f6e4; }
+    .pacing-table .ds-wgt.ds-s { border-left: 3px solid #fda4af; }
+    /* White divider line between section-header cells */
+    .pacing-table th.sec-hdr { border-left: 2px solid rgba(255,255,255,0.18); }
+    /* Matching white divider on sub-header first column */
+    .pacing-table th.sec-sub.ds-s { border-left: 2px solid rgba(255,255,255,0.3); }
+
     .pacing-table td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; vertical-align: middle; }
     .pacing-table tr:last-child td { border-bottom: none; }
     .pacing-table tr.total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #e5e5e5; }
@@ -1404,21 +1425,21 @@
         <th colspan="3" class="sec-hdr s-weight">⚖️ Weightage</th>
       </tr>
       <tr>
-        <th class="sec-sub s-incentive">Enrolled / Target</th>
+        <th class="sec-sub s-incentive ds-s">Enrolled / Target</th>
         <th class="sec-sub s-incentive">% to Start</th>
-        <th class="sec-sub s-stretch">% to Incentive</th>
+        <th class="sec-sub s-stretch ds-s">% to Incentive</th>
         <th class="sec-sub s-stretch">% to Stretch</th>
-        <th class="sec-sub s-t1t2">T1-T2 Enrolled</th>
+        <th class="sec-sub s-t1t2 ds-s">T1-T2 Enrolled</th>
         <th class="sec-sub s-t1t2">% to T1-T2</th>
-        <th class="sec-sub s-gcm">GC&gt;M Enrol</th>
+        <th class="sec-sub s-gcm ds-s">GC&gt;M Enrol</th>
         <th class="sec-sub s-gcm">Conv %</th>
-        <th class="sec-sub s-sixtyDay">Cohort</th>
+        <th class="sec-sub s-sixtyDay ds-s">Cohort</th>
         <th class="sec-sub s-sixtyDay">Contacted</th>
         <th class="sec-sub s-sixtyDay">% to Target</th>
-        <th class="sec-sub s-kpi">Avg Calls</th>
+        <th class="sec-sub s-kpi ds-s">Avg Calls</th>
         <th class="sec-sub s-kpi">Avg STS</th>
         <th class="sec-sub s-kpi">Call Quality</th>
-        <th class="sec-sub s-weight">Re-Enrolments</th>
+        <th class="sec-sub s-weight ds-s">Re-Enrolments</th>
         <th class="sec-sub s-weight">Student Contacts</th>
         <th class="sec-sub s-weight">60-Day Attempt</th>
       </tr>
@@ -1427,23 +1448,23 @@
   function renderPacingRow(r, labelHtml, showKpi) {
     return `<tr>
       <td>${labelHtml}</td>
-      <td>${enrolBar(r.en, r.st)}</td>
-      <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
-      <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
-      <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
-      <td><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
-      <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-      <td><span class="metric-val">${r.gcm ?? '—'}</span></td>
-      <td><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
-      <td><span class="metric-val">${r.cohort ?? '—'}</span></td>
-      <td><span class="metric-val">${r.ctd ?? '—'}</span></td>
-      <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
-      <td><span class="metric-val">${r.calls ?? '—'}</span></td>
-      <td><span class="metric-val">${r.sts ?? '—'}</span></td>
-      <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-      <td>${showKpi ? kpiBadge(r.kR) : ''}</td>
-      <td>${showKpi ? kpiBadge(r.kS) : ''}</td>
-      <td>${showKpi ? kpiBadge(r.k6) : ''}</td>
+      <td class="ds-inc ds-s">${enrolBar(r.en, r.st)}</td>
+      <td class="ds-inc"><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
+      <td class="ds-str ds-s"><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
+      <td class="ds-str"><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+      <td class="ds-t12 ds-s"><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
+      <td class="ds-t12"><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
+      <td class="ds-gcm ds-s"><span class="metric-val">${r.gcm ?? '—'}</span></td>
+      <td class="ds-gcm"><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
+      <td class="ds-60d ds-s"><span class="metric-val">${r.cohort ?? '—'}</span></td>
+      <td class="ds-60d"><span class="metric-val">${r.ctd ?? '—'}</span></td>
+      <td class="ds-60d"><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
+      <td class="ds-kpi ds-s"><span class="metric-val">${r.calls ?? '—'}</span></td>
+      <td class="ds-kpi"><span class="metric-val">${r.sts ?? '—'}</span></td>
+      <td class="ds-kpi">${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
+      <td class="ds-wgt ds-s">${showKpi ? kpiBadge(r.kR) : ''}</td>
+      <td class="ds-wgt">${showKpi ? kpiBadge(r.kS) : ''}</td>
+      <td class="ds-wgt">${showKpi ? kpiBadge(r.k6) : ''}</td>
     </tr>`;
   }
 
@@ -1499,23 +1520,23 @@
         const cls = hexKey === activePacingHex ? 'hex-row' : '';
         return `<tr class="${cls}">
           <td><span class="hex-name">${hexData.label}</span></td>
-          <td>${enrolBar(r.en, r.st)}</td>
-          <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
-          <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
-          <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
-          <td><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
-          <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-          <td><span class="metric-val">${r.gcm ?? '—'}</span></td>
-          <td><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
-          <td><span class="metric-val">${r.cohort ?? '—'}</span></td>
-          <td><span class="metric-val">${r.ctd ?? '—'}</span></td>
-          <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
-          <td><span class="metric-val">${r.calls ?? '—'}</span></td>
-          <td><span class="metric-val">${r.sts ?? '—'}</span></td>
-          <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-          <td>${kpiBadge(r.kR)}</td>
-          <td>${kpiBadge(r.kS)}</td>
-          <td>${kpiBadge(r.k6)}</td>
+          <td class="ds-inc ds-s">${enrolBar(r.en, r.st)}</td>
+          <td class="ds-inc"><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
+          <td class="ds-str ds-s"><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
+          <td class="ds-str"><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+          <td class="ds-t12 ds-s"><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
+          <td class="ds-t12"><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
+          <td class="ds-gcm ds-s"><span class="metric-val">${r.gcm ?? '—'}</span></td>
+          <td class="ds-gcm"><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
+          <td class="ds-60d ds-s"><span class="metric-val">${r.cohort ?? '—'}</span></td>
+          <td class="ds-60d"><span class="metric-val">${r.ctd ?? '—'}</span></td>
+          <td class="ds-60d"><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
+          <td class="ds-kpi ds-s"><span class="metric-val">${r.calls ?? '—'}</span></td>
+          <td class="ds-kpi"><span class="metric-val">${r.sts ?? '—'}</span></td>
+          <td class="ds-kpi">${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
+          <td class="ds-wgt ds-s">${kpiBadge(r.kR)}</td>
+          <td class="ds-wgt">${kpiBadge(r.kS)}</td>
+          <td class="ds-wgt">${kpiBadge(r.k6)}</td>
         </tr>`;
       }).join('');
       content.innerHTML = buildPacingTable(properRows);
@@ -1526,21 +1547,21 @@
       const r = hex.total;
       const totalRowHtml = `<tr class="total-row">
         <td><span class="ssa-name">${r.name}</span></td>
-        <td>${enrolBar(r.en, r.st)}</td>
-        <td><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
-        <td><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
-        <td><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
-        <td><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
-        <td><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-        <td><span class="metric-val">${r.gcm ?? '—'}</span></td>
-        <td><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
-        <td><span class="metric-val">${r.cohort ?? '—'}</span></td>
-        <td><span class="metric-val">${r.ctd ?? '—'}</span></td>
-        <td><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
-        <td><span class="metric-val">${r.calls ?? '—'}</span></td>
-        <td><span class="metric-val">${r.sts ?? '—'}</span></td>
-        <td>${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-        <td></td><td></td><td></td>
+        <td class="ds-inc ds-s">${enrolBar(r.en, r.st)}</td>
+        <td class="ds-inc"><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
+        <td class="ds-str ds-s"><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
+        <td class="ds-str"><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
+        <td class="ds-t12 ds-s"><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
+        <td class="ds-t12"><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
+        <td class="ds-gcm ds-s"><span class="metric-val">${r.gcm ?? '—'}</span></td>
+        <td class="ds-gcm"><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
+        <td class="ds-60d ds-s"><span class="metric-val">${r.cohort ?? '—'}</span></td>
+        <td class="ds-60d"><span class="metric-val">${r.ctd ?? '—'}</span></td>
+        <td class="ds-60d"><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
+        <td class="ds-kpi ds-s"><span class="metric-val">${r.calls ?? '—'}</span></td>
+        <td class="ds-kpi"><span class="metric-val">${r.sts ?? '—'}</span></td>
+        <td class="ds-kpi">${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
+        <td class="ds-wgt ds-s"></td><td class="ds-wgt"></td><td class="ds-wgt"></td>
       </tr>`;
       content.innerHTML = buildPacingTable(
         hex.rows.map(r => renderPacingRow(r, `<span class="ssa-name">${r.name}</span>`, true)).join('') + totalRowHtml
