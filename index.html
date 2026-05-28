@@ -767,6 +767,21 @@
 
     .metric-val { font-weight: 600; color: #333; }
     .metric-sub { font-size: 0.68rem; color: #999; }
+
+    /* Pacing edit button */
+    .sc-edit-btn { display:none; border:none; background:none; cursor:pointer; font-size:0.68rem; padding:1px 3px; border-radius:3px; margin-left:4px; opacity:0.6; vertical-align:middle; }
+    .sc-table tr:hover .sc-edit-btn { display:inline; }
+    .sc-edit-btn:hover { opacity:1; background:rgba(255,209,0,0.2); }
+    /* Pacing edit form modal */
+    .pacing-edit-body { padding:16px 22px 8px; overflow-y:auto; }
+    .pe-section { margin-bottom:14px; }
+    .pe-sec-title { font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:#fff; padding:4px 10px; border-radius:6px; margin-bottom:8px; display:inline-block; }
+    .pe-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+    .pe-label { font-size:0.76rem; font-weight:600; color:#555; min-width:155px; flex-shrink:0; }
+    .pe-input { width:90px; padding:5px 8px; border:1.5px solid #ddd; border-radius:6px; font-size:0.82rem; font-family:inherit; }
+    .pe-input:focus { border-color:#FFD100; outline:none; box-shadow:0 0 0 2px rgba(255,209,0,0.2); }
+    .pe-select { flex:1; padding:5px 8px; border:1.5px solid #ddd; border-radius:6px; font-size:0.8rem; font-family:inherit; }
+    .pe-calc { font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:8px; min-width:52px; text-align:center; }
   </style>
 </head>
 <body>
@@ -871,6 +886,16 @@
         <button class="btn-save" id="detail-save-btn">Save</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Pacing Data Edit Modal -->
+<div class="modal-overlay" id="pacing-edit-overlay">
+  <div class="modal" style="width:500px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <h2 id="pacing-edit-title">Edit SSA Data</h2>
+    </div>
+    <div class="pacing-edit-body" id="pacing-edit-body"></div>
   </div>
 </div>
 
@@ -981,6 +1006,7 @@
   }
 
   const DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/events.json';
+  const PACING_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing.json';
 
   let events = {};
   let startDate;   // Monday of the first visible week
@@ -1357,6 +1383,9 @@
 
   let activePacingHex = 'H3';
   let activePacingSSA = null;
+  let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
+  let editingPacingHex = null;
+  let editingPacingIdx = null;
 
   const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Mosley','Tyler Bruns'];
 
@@ -1412,6 +1441,73 @@
       cell: (r,showKpi) => showKpi?[kpiBadge(r.kR),kpiBadge(r.kS),kpiBadge(r.k6)]:['—','—','—'] },
   ];
 
+  function calcDerived(r) {
+    const pct = (a, b, dec) => (b > 0) ? (a / b * 100).toFixed(dec ?? 1) + '%' : '—';
+    return {
+      ...r,
+      pctSt:  pct(r.en,    r.st,     2),
+      pctIt:  pct(r.en,    r.it,     2),
+      pctSt2: pct(r.en,    r.stt,    0),
+      pctT1:  pct(r.t1t2,  r.t1t2t,  0),
+      gcmC:   pct(r.gcm,   r.gcmt,   0),
+      cPct:   pct(r.ctd,   r.cohort, 0),
+    };
+  }
+
+  function calcTotal(rows) {
+    const s = { name: 'UNSW Total', cq: null, kR: null, kS: null, k6: null };
+    ['st','en','it','stt','t1t2','t1t2t','gcm','gcmt','cohort','ctd'].forEach(f => {
+      s[f] = rows.reduce((acc, r) => acc + (Number(r[f]) || 0), 0);
+    });
+    const cs = rows.filter(r => r.calls).map(r => Number(r.calls));
+    const ss = rows.filter(r => r.sts).map(r => Number(r.sts));
+    s.calls = cs.length ? Math.round(cs.reduce((a,b)=>a+b,0)/cs.length) : null;
+    s.sts   = ss.length ? Math.round(ss.reduce((a,b)=>a+b,0)/ss.length) : null;
+    return calcDerived(s);
+  }
+
+  function initPacingData() {
+    const data = {};
+    for (const [hk, hd] of Object.entries(PACING_DATA)) {
+      data[hk] = {
+        label: hd.label,
+        rows: hd.rows.map(r => {
+          const t1t2t = (r.pctT1 && r.pctT1 !== '—' && r.t1t2 > 0)
+            ? Math.round(r.t1t2 / (parseFloat(r.pctT1) / 100)) : 0;
+          const gcmt = (r.gcmC && r.gcmC !== '—' && r.gcm > 0)
+            ? Math.round(r.gcm / (parseFloat(r.gcmC) / 100)) : 0;
+          return { ...r, t1t2t, gcmt };
+        }),
+      };
+      data[hk].total = calcTotal(data[hk].rows);
+    }
+    return data;
+  }
+
+  async function loadPacingData() {
+    try {
+      const res = await fetch(PACING_DB);
+      const data = await res.json();
+      if (data && typeof data === 'object' && Object.keys(data).length > 0) {
+        activePacingData = data;
+      } else {
+        activePacingData = initPacingData();
+      }
+    } catch(e) {
+      activePacingData = initPacingData();
+    }
+  }
+
+  async function savePacingData() {
+    try {
+      await fetch(PACING_DB, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(activePacingData)
+      });
+    } catch(e) { console.error('savePacingData failed', e); }
+  }
+
   function buildSectionCards(rowItems) {
     return '<div class="pacing-grid">' +
       PACING_SECTIONS.map(sec => {
@@ -1420,12 +1516,14 @@
         const tbodyRows = rowItems.map(item => {
           const cells = sec.cell(item.r, item.showKpi).map(c => `<td>${c}</td>`).join('');
           const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
-          return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
+          const editAttr = !item.isTotal ? `data-edit-hex="${item.hexKey}" data-edit-idx="${item.rowIdx}"` : '';
+          const editBtn  = !item.isTotal ? `<button class="sc-edit-btn" title="Edit data">✏️</button>` : '';
+          return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}" ${editAttr}>${item.label}${editBtn}</td>${cells}</tr>`;
         }).join('');
         return `<div class="${cardCls}">
           <div class="sc-hdr ${sec.cls}">${sec.label}</div>
           <table class="sc-table">
-            <thead><tr><th>SSA</th>${theadCols}</tr></thead>
+            <thead><tr><th></th>${theadCols}</tr></thead>
             <tbody>${tbodyRows}</tbody>
           </table>
         </div>`;
@@ -1437,7 +1535,7 @@
     // Hex nav
     const nav = document.getElementById('pacing-hex-nav');
     if (nav) {
-      nav.innerHTML = Object.entries(PACING_DATA).map(([key, val]) =>
+      nav.innerHTML = Object.entries(activePacingData).map(([key, val]) =>
         `<button class="hex-btn ${key === activePacingHex ? 'active' : ''}" data-hex="${key}">${val.label}</button>`
       ).join('');
       nav.querySelectorAll('.hex-btn').forEach(btn => {
@@ -1470,24 +1568,34 @@
 
     if (activePacingSSA) {
       // Cross-hex view: each card shows one SSA's metric across all hexamesters
-      const rowItems = Object.entries(PACING_DATA).map(([hexKey, hexData]) => {
-        const r = hexData.rows.find(row => row.name === activePacingSSA);
-        if (!r) return null;
-        return { label: `<span class="hex-name">${hexData.label}</span>`, fullName: hexData.label,
-                 r, showKpi: true, isTotal: false, isHex: hexKey === activePacingHex };
+      const rowItems = Object.entries(activePacingData).map(([hexKey, hexData]) => {
+        const rowIdx = hexData.rows.findIndex(row => row.name === activePacingSSA);
+        if (rowIdx === -1) return null;
+        const r = hexData.rows[rowIdx];
+        return {
+          label: `<span class="hex-name">${hexData.label}</span>`,
+          fullName: hexData.label,
+          r: calcDerived(r),
+          showKpi: true, isTotal: false, isHex: hexKey === activePacingHex,
+          hexKey, rowIdx
+        };
       }).filter(Boolean);
       content.innerHTML = buildSectionCards(rowItems);
     } else {
       // Hex view: each card shows all SSAs for the selected hexamester
-      const hex = PACING_DATA[activePacingHex];
+      const hex = activePacingData[activePacingHex];
       if (!hex) return;
       const rowItems = [
-        ...hex.rows.map(r => ({
+        ...hex.rows.map((r, idx) => ({
           label: `<span class="ssa-name">${r.name.split(' ')[0]}</span>`,
-          fullName: r.name, r, showKpi: true, isTotal: false, isHex: false
+          fullName: r.name,
+          r: calcDerived(r),
+          showKpi: true, isTotal: false, isHex: false,
+          hexKey: activePacingHex, rowIdx: idx
         })),
-        { label: '<span class="ssa-name" style="color:#666">Total</span>', fullName: 'UNSW Total',
-          r: hex.total, showKpi: false, isTotal: true, isHex: false }
+        { label: '<span class="ssa-name" style="color:#888">Total</span>', fullName: 'UNSW Total',
+          r: calcTotal(hex.rows), showKpi: false, isTotal: true, isHex: false,
+          hexKey: activePacingHex, rowIdx: 'total' }
       ];
       content.innerHTML = buildSectionCards(rowItems);
     }
@@ -1501,9 +1609,142 @@
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
-      if (btn.dataset.tab === 'pacing') renderPacing();
+      if (btn.dataset.tab === 'pacing') {
+        if (!activePacingData) loadPacingData().then(() => renderPacing());
+        else renderPacing();
+      }
     });
   });
+
+  // ── Pacing Edit ───────────────────────────────────────────────
+
+  document.getElementById('tab-pacing').addEventListener('click', e => {
+    const btn = e.target.closest('.sc-edit-btn');
+    if (!btn) return;
+    const td = btn.closest('td');
+    if (!td || !td.dataset.editHex) return;
+    const idx = td.dataset.editIdx === 'total' ? 'total' : parseInt(td.dataset.editIdx);
+    openPacingEdit(td.dataset.editHex, idx);
+  });
+
+  document.getElementById('pacing-edit-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('pacing-edit-overlay'))
+      document.getElementById('pacing-edit-overlay').classList.remove('open');
+  });
+
+  function openPacingEdit(hexKey, rowIdx) {
+    editingPacingHex = hexKey;
+    editingPacingIdx = rowIdx;
+    const hexData = activePacingData[hexKey];
+    const r = rowIdx === 'total' ? hexData.total : hexData.rows[rowIdx];
+    document.getElementById('pacing-edit-title').textContent = `${r.name} — ${hexData.label}`;
+    const body = document.getElementById('pacing-edit-body');
+    body.innerHTML = buildPacingEditForm(r);
+
+    // Live-calc wiring
+    const cur = { ...r };
+    body.querySelectorAll('.pe-input[type="number"]').forEach(inp => {
+      inp.addEventListener('input', () => {
+        cur[inp.dataset.field] = parseFloat(inp.value) || 0;
+        updatePacingCalcDisplay(cur);
+      });
+    });
+
+    // Save
+    body.querySelector('#pe-save').addEventListener('click', () => {
+      const numFields = ['st','en','it','stt','t1t2','t1t2t','gcm','gcmt','cohort','ctd','calls','sts'];
+      const updated = {};
+      body.querySelectorAll('.pe-input').forEach(el => {
+        const f = el.dataset.field;
+        if (f === 'cq') {
+          const v = parseFloat(el.value);
+          updated.cq = isNaN(v) ? null : v + '%';
+        } else {
+          updated[f] = numFields.includes(f) ? (parseFloat(el.value) || 0) : el.value;
+        }
+      });
+      body.querySelectorAll('.pe-select').forEach(el => {
+        updated[el.dataset.field] = el.value || null;
+      });
+      const withCalc = calcDerived(updated);
+      if (rowIdx === 'total') {
+        Object.assign(hexData.total, withCalc);
+      } else {
+        Object.assign(hexData.rows[rowIdx], withCalc);
+        hexData.total = calcTotal(hexData.rows);
+      }
+      savePacingData();
+      document.getElementById('pacing-edit-overlay').classList.remove('open');
+      renderPacing();
+    });
+
+    body.querySelector('#pe-cancel').addEventListener('click', () => {
+      document.getElementById('pacing-edit-overlay').classList.remove('open');
+    });
+
+    document.getElementById('pacing-edit-overlay').classList.add('open');
+  }
+
+  function updatePacingCalcDisplay(r) {
+    const d = calcDerived(r);
+    [['pe-pctSt',d.pctSt],['pe-pctIt',d.pctIt],['pe-pctSt2',d.pctSt2],
+     ['pe-pctT1',d.pctT1],['pe-gcmC',d.gcmC],['pe-cPct',d.cPct]].forEach(([id,val]) => {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = val; el.className = `pe-calc pct-pill ${pctClass(val)}`; }
+    });
+  }
+
+  function buildPacingEditForm(r) {
+    const n = f => r[f] || 0;
+    const cqVal = r.cq ? parseFloat(r.cq) : '';
+    return `
+      <div class="pe-section">
+        <span class="pe-sec-title s-incentive">📊 Incentive &amp; Stretch</span>
+        <div class="pe-row"><span class="pe-label">Start Target</span><input class="pe-input" data-field="st" type="number" min="0" value="${n('st')}"></div>
+        <div class="pe-row"><span class="pe-label">Enrolled</span><input class="pe-input" data-field="en" type="number" min="0" value="${n('en')}"><span class="pe-calc pct-pill ${pctClass(r.pctSt)}" id="pe-pctSt">${r.pctSt||'—'}</span></div>
+        <div class="pe-row"><span class="pe-label">Incentive Target</span><input class="pe-input" data-field="it" type="number" min="0" value="${n('it')}"><span class="pe-calc pct-pill ${pctClass(r.pctIt)}" id="pe-pctIt">${r.pctIt||'—'}</span></div>
+        <div class="pe-row"><span class="pe-label">Stretch Target</span><input class="pe-input" data-field="stt" type="number" min="0" value="${n('stt')}"><span class="pe-calc pct-pill ${pctClass(r.pctSt2)}" id="pe-pctSt2">${r.pctSt2||'—'}</span></div>
+      </div>
+      <div class="pe-section">
+        <span class="pe-sec-title s-t1t2">📋 T1-T2 Census</span>
+        <div class="pe-row"><span class="pe-label">T1-T2 Enrolled</span><input class="pe-input" data-field="t1t2" type="number" min="0" value="${n('t1t2')}"><span class="pe-calc pct-pill ${pctClass(r.pctT1)}" id="pe-pctT1">${r.pctT1||'—'}</span></div>
+        <div class="pe-row"><span class="pe-label">T1-T2 Target</span><input class="pe-input" data-field="t1t2t" type="number" min="0" value="${n('t1t2t')}"></div>
+      </div>
+      <div class="pe-section">
+        <span class="pe-sec-title s-gcm">🎓 GC &gt; M Tracker</span>
+        <div class="pe-row"><span class="pe-label">GC&gt;M Enrolled</span><input class="pe-input" data-field="gcm" type="number" min="0" value="${n('gcm')}"><span class="pe-calc pct-pill ${pctClass(r.gcmC)}" id="pe-gcmC">${r.gcmC||'—'}</span></div>
+        <div class="pe-row"><span class="pe-label">GC&gt;M Target</span><input class="pe-input" data-field="gcmt" type="number" min="0" value="${n('gcmt')}"></div>
+      </div>
+      <div class="pe-section">
+        <span class="pe-sec-title s-sixtyDay">📞 60 Day Attempt</span>
+        <div class="pe-row"><span class="pe-label">Cohort Size</span><input class="pe-input" data-field="cohort" type="number" min="0" value="${n('cohort')}"></div>
+        <div class="pe-row"><span class="pe-label">Contacted</span><input class="pe-input" data-field="ctd" type="number" min="0" value="${n('ctd')}"><span class="pe-calc pct-pill ${pctClass(r.cPct)}" id="pe-cPct">${r.cPct||'—'}</span></div>
+      </div>
+      <div class="pe-section">
+        <span class="pe-sec-title s-kpi">📈 KPI Tracking</span>
+        <div class="pe-row"><span class="pe-label">Avg Calls / Week</span><input class="pe-input" data-field="calls" type="number" min="0" value="${n('calls')}"></div>
+        <div class="pe-row"><span class="pe-label">Avg STS / Week</span><input class="pe-input" data-field="sts" type="number" min="0" value="${n('sts')}"></div>
+        <div class="pe-row"><span class="pe-label">Call Quality %</span><input class="pe-input" data-field="cq" type="number" min="0" max="100" value="${cqVal}" placeholder="—"></div>
+      </div>
+      <div class="pe-section">
+        <span class="pe-sec-title s-weight">⚖️ Weightage</span>
+        <div class="pe-row"><span class="pe-label">Re-Enrolments KPI</span>${pacingKpiSelect('kR', r.kR)}</div>
+        <div class="pe-row"><span class="pe-label">Student Contacts KPI</span>${pacingKpiSelect('kS', r.kS)}</div>
+        <div class="pe-row"><span class="pe-label">60-Day KPI</span>${pacingKpiSelect('k6', r.k6)}</div>
+      </div>
+      <div class="modal-actions" style="margin-top:4px;padding-bottom:4px">
+        <button class="btn-cancel" id="pe-cancel">Cancel</button>
+        <button class="btn-save" id="pe-save">💾 Save</button>
+      </div>`;
+  }
+
+  function pacingKpiSelect(field, val) {
+    const opts = [['','— N/A'],['EXCEPTIONAL PERFORMANCE','⭐ Exceptional'],
+                  ['ACHIEVED EXPECTATIONS','✓ Achieved'],['SUPPORT NEEDED','⚠ Support Needed']];
+    return `<select class="pe-select" data-field="${field}">
+      ${opts.map(([v,l])=>`<option value="${v}"${val===v?' selected':''}>${l}</option>`).join('')}
+    </select>`;
+  }
 
   // ── Kanban Board ──────────────────────────────────────────────
   const KANBAN_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/kanban.json';
