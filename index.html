@@ -1689,6 +1689,7 @@
   let activePacingSSA = null;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
 const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Mosley','Tyler Bruns'];
+  const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards'];
 
   function pctClass(str) {
     if (!str || str === '—') return 'pct-grey';
@@ -1921,7 +1922,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     if (ssaNav) {
       ssaNav.innerHTML = `<span class="pacing-ssa-label">View by SSA:</span>` +
         `<button class="ssa-btn ${!activePacingSSA ? 'active' : ''}" data-ssa="">All SSAs</button>` +
-        ALL_SSA_NAMES.map(name =>
+        ALL_SSA_NAMES.filter(n => !HIDDEN_SSA.includes(n)).map(name =>
           `<button class="ssa-btn ${activePacingSSA === name ? 'active' : ''}" data-ssa="${name}">${name.split(' ')[0]}</button>`
         ).join('');
       ssaNav.querySelectorAll('.ssa-btn').forEach(btn => {
@@ -1954,16 +1955,17 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       // Hex view: each card shows all SSAs for the selected hexamester
       const hex = activePacingData[activePacingHex];
       if (!hex) return;
+      const visibleRows = hex.rows.filter(r => !HIDDEN_SSA.includes(r.name));
       const rowItems = [
-        ...hex.rows.map((r, idx) => ({
+        ...visibleRows.map((r, idx) => ({
           label: `<span class="ssa-name">${r.name.split(' ')[0]}</span>`,
           fullName: r.name,
           r: calcDerived(r),
           showKpi: true, isTotal: false, isHex: false,
-          hexKey: activePacingHex, rowIdx: idx
+          hexKey: activePacingHex, rowIdx: hex.rows.indexOf(r)
         })),
         { label: '<span class="ssa-name" style="color:#888">Total</span>', fullName: 'UNSW Total',
-          r: calcTotal(hex.rows), showKpi: false, isTotal: true, isHex: false,
+          r: calcTotal(visibleRows), showKpi: false, isTotal: true, isHex: false,
           hexKey: activePacingHex, rowIdx: 'total' }
       ];
       content.innerHTML = buildSectionCards(rowItems);
