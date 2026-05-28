@@ -13,11 +13,30 @@
       --accent-dark: #e6bc00;
       --accent-text: #111;
       --accent-rgb:  255, 209, 0;
+
+      /* Page background */
+      --page-bg: linear-gradient(160deg, #f0f4f8 0%, #e8ecf0 100%);
+
+      /* Pacing section header colours */
+      --sec-1-bg: #1e3a5f; --sec-1-txt: #93c5fd;
+      --sec-2-bg: #3b0764; --sec-2-txt: #d8b4fe;
+      --sec-3-bg: #14532d; --sec-3-txt: #86efac;
+      --sec-4-bg: #78350f; --sec-4-txt: #fde68a;
+      --sec-5-bg: #1e40af; --sec-5-txt: #bfdbfe;
+      --sec-6-bg: #134e4a; --sec-6-txt: #99f6e4;
+      --sec-7-bg: #881337; --sec-7-txt: #fda4af;
+
+      /* Calendar day column tints */
+      --day-mon: #EFF6FF;
+      --day-tue: #F0FDF4;
+      --day-wed: #FFFBEB;
+      --day-thu: #FDF4FF;
+      --day-fri: #FFF1F2;
     }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: linear-gradient(160deg, #f0f4f8 0%, #e8ecf0 100%);
+      background: var(--page-bg);
       color: #111;
       min-height: 100vh;
     }
@@ -265,11 +284,11 @@
     }
 
     /* Per-day colours — Mon through Fri */
-    .day-mon { background: #EFF6FF; }
-    .day-tue { background: #F0FDF4; }
-    .day-wed { background: #FFFBEB; }
-    .day-thu { background: #FDF4FF; }
-    .day-fri { background: #FFF1F2; }
+    .day-mon { background: var(--day-mon); }
+    .day-tue { background: var(--day-tue); }
+    .day-wed { background: var(--day-wed); }
+    .day-thu { background: var(--day-thu); }
+    .day-fri { background: var(--day-fri); }
 
     .day-label {
       display: flex;
@@ -732,13 +751,13 @@
     .section-card.half { grid-column: span 6; }
     .sc-hdr { padding: 9px 12px; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; }
     /* Section colours */
-    .s-incentive { background: #1e3a5f; color: #93c5fd; }
-    .s-stretch   { background: #3b0764; color: #d8b4fe; }
-    .s-t1t2      { background: #1e40af; color: #bfdbfe; }
-    .s-gcm       { background: #14532d; color: #86efac; }
-    .s-sixtyDay  { background: #78350f; color: #fde68a; }
-    .s-kpi       { background: #134e4a; color: #99f6e4; }
-    .s-weight    { background: #881337; color: #fda4af; }
+    .s-incentive { background: var(--sec-1-bg); color: var(--sec-1-txt); }
+    .s-stretch   { background: var(--sec-2-bg); color: var(--sec-2-txt); }
+    .s-gcm       { background: var(--sec-3-bg); color: var(--sec-3-txt); }
+    .s-sixtyDay  { background: var(--sec-4-bg); color: var(--sec-4-txt); }
+    .s-t1t2      { background: var(--sec-5-bg); color: var(--sec-5-txt); }
+    .s-kpi       { background: var(--sec-6-bg); color: var(--sec-6-txt); }
+    .s-weight    { background: var(--sec-7-bg); color: var(--sec-7-txt); }
     /* Mini-table inside each card */
     .sc-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
     .sc-table th { padding: 5px 8px; font-size: 0.57rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa; color: #777; text-align: left; white-space: nowrap; border-bottom: 1px solid #eee; }
@@ -1094,14 +1113,126 @@
 
   // ── Theme System ──────────────────────────────────────────────
   const THEMES = {
-    gold:     { label: 'UNSW Gold',   accent: '#FFD100', accentDark: '#e6bc00', accentRgb: '255,209,0',   accentText: '#111' },
-    blue:     { label: 'Ocean',       accent: '#3B82F6', accentDark: '#2563EB', accentRgb: '59,130,246',  accentText: '#fff' },
-    emerald:  { label: 'Emerald',     accent: '#10B981', accentDark: '#059669', accentRgb: '16,185,129',  accentText: '#fff' },
-    purple:   { label: 'Purple',      accent: '#8B5CF6', accentDark: '#7C3AED', accentRgb: '139,92,246',  accentText: '#fff' },
-    coral:    { label: 'Coral',       accent: '#F97316', accentDark: '#EA6C00', accentRgb: '249,115,22',  accentText: '#fff' },
-    rose:     { label: 'Rose',        accent: '#F43F5E', accentDark: '#E11D48', accentRgb: '244,63,94',   accentText: '#fff' },
-    teal:     { label: 'Teal',        accent: '#14B8A6', accentDark: '#0D9488', accentRgb: '20,184,166',  accentText: '#fff' },
-    midnight: { label: 'Midnight',    accent: '#475569', accentDark: '#334155', accentRgb: '71,85,105',   accentText: '#fff' },
+    gold: {
+      label: 'UNSW Gold',
+      accent: '#FFD100', accentDark: '#e6bc00', accentText: '#111', accentRgb: '255,209,0',
+      pageBg: 'linear-gradient(160deg, #f0f4f8 0%, #e8ecf0 100%)',
+      sec: [
+        { bg:'#1e3a5f', txt:'#93c5fd' },
+        { bg:'#3b0764', txt:'#d8b4fe' },
+        { bg:'#14532d', txt:'#86efac' },
+        { bg:'#78350f', txt:'#fde68a' },
+        { bg:'#1e40af', txt:'#bfdbfe' },
+        { bg:'#134e4a', txt:'#99f6e4' },
+        { bg:'#881337', txt:'#fda4af' },
+      ],
+      days: ['#EFF6FF','#F0FDF4','#FFFBEB','#FDF4FF','#FFF1F2'],
+    },
+    blue: {
+      label: 'Ocean',
+      accent: '#3B82F6', accentDark: '#2563EB', accentText: '#fff', accentRgb: '59,130,246',
+      pageBg: 'linear-gradient(160deg, #eff6ff 0%, #dbeafe 100%)',
+      sec: [
+        { bg:'#1e3a5f', txt:'#93c5fd' },
+        { bg:'#0c4a6e', txt:'#7dd3fc' },
+        { bg:'#1e40af', txt:'#bfdbfe' },
+        { bg:'#164e63', txt:'#a5f3fc' },
+        { bg:'#1e3654', txt:'#bae6fd' },
+        { bg:'#0f3460', txt:'#93c5fd' },
+        { bg:'#0c3547', txt:'#7dd3fc' },
+      ],
+      days: ['#EFF6FF','#E0F2FE','#DBEAFE','#E0F7FA','#EDE9FE'],
+    },
+    emerald: {
+      label: 'Emerald',
+      accent: '#10B981', accentDark: '#059669', accentText: '#fff', accentRgb: '16,185,129',
+      pageBg: 'linear-gradient(160deg, #f0fdf4 0%, #dcfce7 100%)',
+      sec: [
+        { bg:'#14532d', txt:'#86efac' },
+        { bg:'#064e3b', txt:'#6ee7b7' },
+        { bg:'#166534', txt:'#86efac' },
+        { bg:'#134e4a', txt:'#99f6e4' },
+        { bg:'#0f4c36', txt:'#6ee7b7' },
+        { bg:'#1a3d2b', txt:'#4ade80' },
+        { bg:'#065f46', txt:'#a7f3d0' },
+      ],
+      days: ['#F0FDF4','#DCFCE7','#D1FAE5','#CCFBF1','#ECFDF5'],
+    },
+    purple: {
+      label: 'Purple',
+      accent: '#8B5CF6', accentDark: '#7C3AED', accentText: '#fff', accentRgb: '139,92,246',
+      pageBg: 'linear-gradient(160deg, #f5f3ff 0%, #ede9fe 100%)',
+      sec: [
+        { bg:'#3b0764', txt:'#d8b4fe' },
+        { bg:'#4c1d95', txt:'#c4b5fd' },
+        { bg:'#2e1065', txt:'#e9d5ff' },
+        { bg:'#581c87', txt:'#d8b4fe' },
+        { bg:'#3730a3', txt:'#c7d2fe' },
+        { bg:'#4a044e', txt:'#f0abfc' },
+        { bg:'#3b0764', txt:'#d8b4fe' },
+      ],
+      days: ['#F5F3FF','#EDE9FE','#FAE8FF','#FDF4FF','#EFF6FF'],
+    },
+    coral: {
+      label: 'Coral',
+      accent: '#F97316', accentDark: '#EA6C00', accentText: '#fff', accentRgb: '249,115,22',
+      pageBg: 'linear-gradient(160deg, #fff7ed 0%, #ffedd5 100%)',
+      sec: [
+        { bg:'#78350f', txt:'#fde68a' },
+        { bg:'#7c2d12', txt:'#fed7aa' },
+        { bg:'#92400e', txt:'#fde68a' },
+        { bg:'#9a3412', txt:'#fdba74' },
+        { bg:'#78350f', txt:'#fcd34d' },
+        { bg:'#7f1d1d', txt:'#fca5a5' },
+        { bg:'#431407', txt:'#fed7aa' },
+      ],
+      days: ['#FFF7ED','#FFEDD5','#FEF3C7','#FFF1F2','#FDF4FF'],
+    },
+    rose: {
+      label: 'Rose',
+      accent: '#F43F5E', accentDark: '#E11D48', accentText: '#fff', accentRgb: '244,63,94',
+      pageBg: 'linear-gradient(160deg, #fff1f2 0%, #ffe4e6 100%)',
+      sec: [
+        { bg:'#881337', txt:'#fda4af' },
+        { bg:'#9f1239', txt:'#fecdd3' },
+        { bg:'#7f1d1d', txt:'#fca5a5' },
+        { bg:'#831843', txt:'#fbcfe8' },
+        { bg:'#881337', txt:'#fda4af' },
+        { bg:'#4c0519', txt:'#fecdd3' },
+        { bg:'#7f1d1d', txt:'#fca5a5' },
+      ],
+      days: ['#FFF1F2','#FFE4E6','#FCE7F3','#FDF2F8','#FEF2F2'],
+    },
+    teal: {
+      label: 'Teal',
+      accent: '#14B8A6', accentDark: '#0D9488', accentText: '#fff', accentRgb: '20,184,166',
+      pageBg: 'linear-gradient(160deg, #f0fdfa 0%, #ccfbf1 100%)',
+      sec: [
+        { bg:'#134e4a', txt:'#99f6e4' },
+        { bg:'#0f4c36', txt:'#6ee7b7' },
+        { bg:'#0c3b3b', txt:'#5eead4' },
+        { bg:'#0d3d3b', txt:'#99f6e4' },
+        { bg:'#0f3d3d', txt:'#a5f3fc' },
+        { bg:'#0c4038', txt:'#6ee7b7' },
+        { bg:'#0a3332', txt:'#5eead4' },
+      ],
+      days: ['#F0FDFA','#CCFBF1','#CFFAFE','#D1FAE5','#E0F2FE'],
+    },
+    midnight: {
+      label: 'Midnight',
+      accent: '#475569', accentDark: '#334155', accentText: '#fff', accentRgb: '71,85,105',
+      pageBg: 'linear-gradient(160deg, #f1f5f9 0%, #e2e8f0 100%)',
+      sec: [
+        { bg:'#0f172a', txt:'#94a3b8' },
+        { bg:'#1e293b', txt:'#cbd5e1' },
+        { bg:'#0f172a', txt:'#94a3b8' },
+        { bg:'#1e293b', txt:'#e2e8f0' },
+        { bg:'#0f172a', txt:'#94a3b8' },
+        { bg:'#1e293b', txt:'#cbd5e1' },
+        { bg:'#0f172a', txt:'#94a3b8' },
+      ],
+      days: ['#F1F5F9','#E2E8F0','#F8FAFC','#EFF6FF','#F5F3FF'],
+    },
   };
 
   function applyTheme(key) {
@@ -1111,11 +1242,19 @@
     root.style.setProperty('--accent-dark', t.accentDark);
     root.style.setProperty('--accent-text', t.accentText);
     root.style.setProperty('--accent-rgb',  t.accentRgb);
+    root.style.setProperty('--page-bg',     t.pageBg);
+    // Pacing section headers
+    t.sec.forEach((s, i) => {
+      root.style.setProperty(`--sec-${i+1}-bg`,  s.bg);
+      root.style.setProperty(`--sec-${i+1}-txt`, s.txt);
+    });
+    // Calendar day columns
+    const dayKeys = ['--day-mon','--day-tue','--day-wed','--day-thu','--day-fri'];
+    t.days.forEach((d, i) => root.style.setProperty(dayKeys[i], d));
     localStorage.setItem('unsw-theme', key);
     document.querySelectorAll('.theme-swatch').forEach(s =>
       s.classList.toggle('active', s.dataset.theme === key)
     );
-    // update the dot in the toggle button
     const dot = document.querySelector('.theme-dot');
     if (dot) dot.style.background = t.accent;
   }
@@ -1151,6 +1290,13 @@
     root.style.setProperty('--accent-dark', t.accentDark);
     root.style.setProperty('--accent-text', t.accentText);
     root.style.setProperty('--accent-rgb',  t.accentRgb);
+    root.style.setProperty('--page-bg',     t.pageBg);
+    t.sec.forEach((s, i) => {
+      root.style.setProperty(`--sec-${i+1}-bg`,  s.bg);
+      root.style.setProperty(`--sec-${i+1}-txt`, s.txt);
+    });
+    const dayKeys = ['--day-mon','--day-tue','--day-wed','--day-thu','--day-fri'];
+    t.days.forEach((d, i) => root.style.setProperty(dayKeys[i], d));
   })();
 
   const DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/events.json';
