@@ -905,7 +905,7 @@
     <span class="header-title">Success Squad Calendar</span>
   </div>
 
-  <div class="nav-controls">
+  <div class="nav-controls" id="nav-controls">
     <button id="prev-btn">&#8592;</button>
     <span id="month-label"></span>
     <button id="next-btn">&#8594;</button>
@@ -1979,6 +1979,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      // Show calendar nav only on the calendar tab
+      document.getElementById('nav-controls').style.visibility =
+        btn.dataset.tab === 'calendar' ? 'visible' : 'hidden';
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
       if (btn.dataset.tab === 'pacing') {
         if (!activePacingData) loadPacingData().then(() => renderPacing());
