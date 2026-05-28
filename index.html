@@ -717,10 +717,11 @@
     .ssa-btn:hover { border-color: #111; color: #111; }
     .ssa-btn.active { background: #111; border-color: #111; color: #fff; }
 
-    /* Section card grid — 12-col: row1 = 4×span3, row2 = 3×span4 */
+    /* Section card grid — 12-col */
     .pacing-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
     .section-card { grid-column: span 3; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05); }
-    .section-card.wide { grid-column: span 4; }
+    .section-card.full { grid-column: span 12; }
+    .section-card.half { grid-column: span 6; }
     .sc-hdr { padding: 9px 12px; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; }
     /* Section colours */
     .s-incentive { background: #1e3a5f; color: #93c5fd; }
@@ -768,20 +769,12 @@
     .metric-val { font-weight: 600; color: #333; }
     .metric-sub { font-size: 0.68rem; color: #999; }
 
-    /* Pacing edit button */
-    .sc-edit-btn { display:none; border:none; background:none; cursor:pointer; font-size:0.68rem; padding:1px 3px; border-radius:3px; margin-left:4px; opacity:0.6; vertical-align:middle; }
-    .sc-table tr:hover .sc-edit-btn { display:inline; }
-    .sc-edit-btn:hover { opacity:1; background:rgba(255,209,0,0.2); }
-    /* Pacing edit form modal */
-    .pacing-edit-body { padding:16px 22px 8px; overflow-y:auto; }
-    .pe-section { margin-bottom:14px; }
-    .pe-sec-title { font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.8px; color:#fff; padding:4px 10px; border-radius:6px; margin-bottom:8px; display:inline-block; }
-    .pe-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
-    .pe-label { font-size:0.76rem; font-weight:600; color:#555; min-width:155px; flex-shrink:0; }
-    .pe-input { width:90px; padding:5px 8px; border:1.5px solid #ddd; border-radius:6px; font-size:0.82rem; font-family:inherit; }
-    .pe-input:focus { border-color:#FFD100; outline:none; box-shadow:0 0 0 2px rgba(255,209,0,0.2); }
-    .pe-select { flex:1; padding:5px 8px; border:1.5px solid #ddd; border-radius:6px; font-size:0.8rem; font-family:inherit; }
-    .pe-calc { font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:8px; min-width:52px; text-align:center; }
+    /* Inline cell editing */
+    .pc-editable { cursor: pointer; }
+    .pc-editable:hover { background: rgba(255,209,0,0.08) !important; }
+    .pc-inline-input { width: 80px; padding: 3px 6px; border: 1.5px solid #FFD100; border-radius: 4px; font-size: 0.78rem; font-family: inherit; background: #fffef5; outline: none; }
+    .pc-inline-select { width: 100%; padding: 3px 4px; border: 1.5px solid #FFD100; border-radius: 4px; font-size: 0.72rem; font-family: inherit; background: #fffef5; outline: none; }
+    .pc-calc { color: inherit; }
   </style>
 </head>
 <body>
@@ -889,15 +882,6 @@
   </div>
 </div>
 
-<!-- Pacing Data Edit Modal -->
-<div class="modal-overlay" id="pacing-edit-overlay">
-  <div class="modal" style="width:500px;max-height:90vh;display:flex;flex-direction:column">
-    <div class="modal-header">
-      <h2 id="pacing-edit-title">Edit SSA Data</h2>
-    </div>
-    <div class="pacing-edit-body" id="pacing-edit-body"></div>
-  </div>
-</div>
 
 <script>
   const TAGS = [
@@ -1384,10 +1368,7 @@
   let activePacingHex = 'H3';
   let activePacingSSA = null;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
-  let editingPacingHex = null;
-  let editingPacingIdx = null;
-
-  const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Mosley','Tyler Bruns'];
+const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Mosley','Tyler Bruns'];
 
   function pctClass(str) {
     if (!str || str === '—') return 'pct-grey';
@@ -1418,45 +1399,76 @@
 
   // Section definitions — each becomes its own card tile
   const PACING_SECTIONS = [
-    { cls:'s-incentive', label:'📊 Incentive Tracking', wide:false,
-      cols:['Enrolled / Target','% to Start'],
-      cell: r => [enrolBar(r.en,r.st), `<span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span>`] },
-    { cls:'s-stretch', label:'🎯 Stretch Tracking', wide:false,
-      cols:['% to Incentive','% to Stretch'],
-      cell: r => [`<span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span>`,`<span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span>`] },
-    { cls:'s-t1t2', label:'📋 T1-T2 Census', wide:false,
-      cols:['T1-T2 Enrolled','% to T1-T2'],
-      cell: r => [`<span class="metric-val">${r.t1t2??'—'}</span>`,`<span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span>`] },
-    { cls:'s-gcm', label:'🎓 GC > M Tracker', wide:false,
-      cols:['GC>M Enrol','Conv %'],
-      cell: r => [`<span class="metric-val">${r.gcm??'—'}</span>`,`<span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span>`] },
-    { cls:'s-sixtyDay', label:'📞 60 Day Attempt', wide:true,
-      cols:['Cohort','Contacted','% Target'],
-      cell: r => [`<span class="metric-val">${r.cohort??'—'}</span>`,`<span class="metric-val">${r.ctd??'—'}</span>`,`<span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span>`] },
-    { cls:'s-kpi', label:'📈 KPI Tracking', wide:true,
-      cols:['Avg Calls','Avg STS','Call Quality'],
-      cell: r => [`<span class="metric-val">${r.calls??'—'}</span>`,`<span class="metric-val">${r.sts??'—'}</span>`,r.cq?`<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>`:'<span class="metric-sub">—</span>'] },
-    { cls:'s-weight', label:'⚖️ Weightage', wide:true,
-      cols:['Re-Enrolments','Student Contacts','60-Day'],
-      cell: (r,showKpi) => showKpi?[kpiBadge(r.kR),kpiBadge(r.kS),kpiBadge(r.k6)]:['—','—','—'] },
+    { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
+      cols:[
+        { h:'Target',      f:'st',    edit:true },
+        { h:'Enrolled',    f:'en',    edit:true },
+        { h:'% to Start',  f:'pctSt', edit:false, type:'pct' },
+      ]},
+    { cls:'s-stretch', label:'🎯 Stretch Tracking', span:'',
+      cols:[
+        { h:'Inc Target',    f:'it',    edit:true },
+        { h:'% Incentive',   f:'pctIt', edit:false, type:'pct' },
+        { h:'Str Target',    f:'stt',   edit:true },
+        { h:'% Stretch',     f:'pctSt2',edit:false, type:'pct' },
+      ]},
+    { cls:'s-gcm', label:'🎓 GC > M Tracker', span:'',
+      cols:[
+        { h:'GC>M Enrolled', f:'gcm',  edit:true },
+        { h:'GC>M Target',   f:'gcmt', edit:true },
+        { h:'Conv %',        f:'gcmC', edit:false, type:'pct' },
+      ]},
+    { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'',
+      cols:[
+        { h:'Cohort',    f:'cohort', edit:true },
+        { h:'Contacted', f:'ctd',    edit:true },
+        { h:'% Target',  f:'cPct',  edit:false, type:'pct' },
+      ]},
+    { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'full',
+      cols:[
+        { h:'Total T1-T2 Pool',    f:'t1t2pool',          edit:true },
+        { h:'Census Target (80%)', f:'t1t2CensusTarget',  edit:false, type:'num-calc' },
+        { h:'T1-T2 Enrollments',   f:'t1t2',              edit:true },
+        { h:'% to T1-T2',          f:'pctT1',             edit:false, type:'pct' },
+        { h:'Enrolments Needed',   f:'t1t2Needed',        edit:false, type:'num-calc' },
+        { h:'Remaining Opps',      f:'t1t2Remaining',     edit:false, type:'num-calc' },
+      ]},
+    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
+      cols:[
+        { h:'Avg Calls/Week',  f:'calls', edit:true },
+        { h:'Avg STS/Week',    f:'sts',   edit:true },
+        { h:'Call Quality %',  f:'cq',    edit:true,  type:'pct-input' },
+      ]},
+    { cls:'s-weight', label:'⚖️ Weightage', span:'half',
+      cols:[
+        { h:'Re-Enrolments',    f:'kR', edit:true, type:'kpi-select' },
+        { h:'Student Contacts', f:'kS', edit:true, type:'kpi-select' },
+        { h:'60-Day Attempt',   f:'k6', edit:true, type:'kpi-select' },
+      ]},
   ];
 
   function calcDerived(r) {
     const pct = (a, b, dec) => (b > 0) ? (a / b * 100).toFixed(dec ?? 1) + '%' : '—';
+    const t1t2CensusTarget = r.t1t2pool > 0 ? Math.round(r.t1t2pool * 0.80) : 0;
+    const t1t2Needed       = t1t2CensusTarget > 0 ? Math.max(0, t1t2CensusTarget - (r.t1t2 || 0)) : '—';
+    const t1t2Remaining    = r.t1t2pool > 0 ? Math.max(0, r.t1t2pool - (r.t1t2 || 0)) : '—';
     return {
       ...r,
-      pctSt:  pct(r.en,    r.st,     2),
-      pctIt:  pct(r.en,    r.it,     2),
-      pctSt2: pct(r.en,    r.stt,    0),
-      pctT1:  pct(r.t1t2,  r.t1t2t,  0),
-      gcmC:   pct(r.gcm,   r.gcmt,   0),
-      cPct:   pct(r.ctd,   r.cohort, 0),
+      t1t2CensusTarget,
+      t1t2Needed,
+      t1t2Remaining,
+      pctSt:  pct(r.en,   r.st,                2),
+      pctIt:  pct(r.en,   r.it,                2),
+      pctSt2: pct(r.en,   r.stt,               0),
+      pctT1:  pct(r.t1t2, t1t2CensusTarget,    0),
+      gcmC:   pct(r.gcm,  r.gcmt,              0),
+      cPct:   pct(r.ctd,  r.cohort,            0),
     };
   }
 
   function calcTotal(rows) {
     const s = { name: 'UNSW Total', cq: null, kR: null, kS: null, k6: null };
-    ['st','en','it','stt','t1t2','t1t2t','gcm','gcmt','cohort','ctd'].forEach(f => {
+    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','cohort','ctd'].forEach(f => {
       s[f] = rows.reduce((acc, r) => acc + (Number(r[f]) || 0), 0);
     });
     const cs = rows.filter(r => r.calls).map(r => Number(r.calls));
@@ -1476,7 +1488,9 @@
             ? Math.round(r.t1t2 / (parseFloat(r.pctT1) / 100)) : 0;
           const gcmt = (r.gcmC && r.gcmC !== '—' && r.gcm > 0)
             ? Math.round(r.gcm / (parseFloat(r.gcmC) / 100)) : 0;
-          return { ...r, t1t2t, gcmt };
+          // t1t2pool: reverse from census target (which is 80% of pool)
+          const t1t2pool = t1t2t > 0 ? Math.round(t1t2t / 0.80) : 0;
+          return { ...r, t1t2t, gcmt, t1t2pool };
         }),
       };
       data[hk].total = calcTotal(data[hk].rows);
@@ -1508,17 +1522,32 @@
     } catch(e) { console.error('savePacingData failed', e); }
   }
 
+  function cellHtml(col, r, item) {
+    const val = r[col.f];
+    let display;
+    if (col.type === 'pct' || col.type === 'pct-input') {
+      display = `<span class="pct-pill ${pctClass(val)}">${val || '—'}</span>`;
+    } else if (col.type === 'kpi-select') {
+      display = kpiBadge(val);
+    } else {
+      display = `<span class="metric-val">${val ?? '—'}</span>`;
+    }
+
+    if (!col.edit || item.isTotal) {
+      return `<td class="pc-calc">${display}</td>`;
+    }
+    return `<td class="pc-editable" data-field="${col.f}" data-hex="${item.hexKey}" data-idx="${item.rowIdx}" data-type="${col.type || 'number'}">${display}</td>`;
+  }
+
   function buildSectionCards(rowItems) {
     return '<div class="pacing-grid">' +
       PACING_SECTIONS.map(sec => {
-        const cardCls = 'section-card' + (sec.wide ? ' wide' : '');
-        const theadCols = sec.cols.map(c => `<th>${c}</th>`).join('');
+        const cardCls = `section-card${sec.span ? ' ' + sec.span : ''}`;
+        const theadCols = sec.cols.map(c => `<th>${c.h}</th>`).join('');
         const tbodyRows = rowItems.map(item => {
-          const cells = sec.cell(item.r, item.showKpi).map(c => `<td>${c}</td>`).join('');
+          const cells = sec.cols.map(col => cellHtml(col, item.r, item)).join('');
           const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
-          const editAttr = !item.isTotal ? `data-edit-hex="${item.hexKey}" data-edit-idx="${item.rowIdx}"` : '';
-          const editBtn  = !item.isTotal ? `<button class="sc-edit-btn" title="Edit data">✏️</button>` : '';
-          return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}" ${editAttr}>${item.label}${editBtn}</td>${cells}</tr>`;
+          return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
         }).join('');
         return `<div class="${cardCls}">
           <div class="sc-hdr ${sec.cls}">${sec.label}</div>
@@ -1529,6 +1558,26 @@
         </div>`;
       }).join('') +
     '</div>';
+  }
+
+  function saveInlineCell(hexKey, rowIdx, field, rawValue) {
+    if (!activePacingData[hexKey]) return;
+    const isNumeric = !['cq','kR','kS','k6'].includes(field);
+    let value;
+    if (field === 'cq') {
+      const n = parseFloat(rawValue);
+      value = isNaN(n) ? null : n + '%';
+    } else if (['kR','kS','k6'].includes(field)) {
+      value = rawValue || null;
+    } else {
+      value = parseFloat(rawValue) || 0;
+    }
+    activePacingData[hexKey].rows[rowIdx][field] = value;
+    const derived = calcDerived(activePacingData[hexKey].rows[rowIdx]);
+    Object.assign(activePacingData[hexKey].rows[rowIdx], derived);
+    activePacingData[hexKey].total = calcTotal(activePacingData[hexKey].rows);
+    savePacingData();
+    renderPacing();
   }
 
   function renderPacing() {
@@ -1616,135 +1665,52 @@
     });
   });
 
-  // ── Pacing Edit ───────────────────────────────────────────────
+  // ── Pacing Inline Edit ────────────────────────────────────────
 
   document.getElementById('tab-pacing').addEventListener('click', e => {
-    const btn = e.target.closest('.sc-edit-btn');
-    if (!btn) return;
-    const td = btn.closest('td');
-    if (!td || !td.dataset.editHex) return;
-    const idx = td.dataset.editIdx === 'total' ? 'total' : parseInt(td.dataset.editIdx);
-    openPacingEdit(td.dataset.editHex, idx);
+    const cell = e.target.closest('td.pc-editable');
+    if (!cell || cell.querySelector('input, select')) return;
+
+    const field  = cell.dataset.field;
+    const hexKey = cell.dataset.hex;
+    const rowIdx = parseInt(cell.dataset.idx);
+    const type   = cell.dataset.type;
+    const r      = activePacingData[hexKey]?.rows[rowIdx];
+    if (!r) return;
+
+    cell.innerHTML = '';
+
+    if (type === 'kpi-select') {
+      const sel = document.createElement('select');
+      sel.className = 'pc-inline-select';
+      [['','— N/A'],['EXCEPTIONAL PERFORMANCE','⭐ Exceptional'],
+       ['ACHIEVED EXPECTATIONS','✓ Achieved'],['SUPPORT NEEDED','⚠ Support']].forEach(([v,l]) => {
+        const opt = document.createElement('option');
+        opt.value = v; opt.textContent = l;
+        if ((r[field]||'') === v) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      cell.appendChild(sel);
+      sel.focus();
+      const save = () => saveInlineCell(hexKey, rowIdx, field, sel.value);
+      sel.addEventListener('change', save);
+      sel.addEventListener('blur', save);
+    } else {
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.min = 0;
+      inp.className = 'pc-inline-input';
+      if (type === 'pct-input') inp.max = 100;
+      const cur = r[field];
+      inp.value = cur !== null && cur !== undefined ? (parseFloat(cur) || 0) : 0;
+      cell.appendChild(inp);
+      inp.select(); inp.focus();
+      inp.addEventListener('blur', () => saveInlineCell(hexKey, rowIdx, field, inp.value));
+      inp.addEventListener('keydown', ke => {
+        if (ke.key === 'Enter') inp.blur();
+        if (ke.key === 'Escape') renderPacing();
+      });
+    }
   });
-
-  document.getElementById('pacing-edit-overlay').addEventListener('click', e => {
-    if (e.target === document.getElementById('pacing-edit-overlay'))
-      document.getElementById('pacing-edit-overlay').classList.remove('open');
-  });
-
-  function openPacingEdit(hexKey, rowIdx) {
-    editingPacingHex = hexKey;
-    editingPacingIdx = rowIdx;
-    const hexData = activePacingData[hexKey];
-    const r = rowIdx === 'total' ? hexData.total : hexData.rows[rowIdx];
-    document.getElementById('pacing-edit-title').textContent = `${r.name} — ${hexData.label}`;
-    const body = document.getElementById('pacing-edit-body');
-    body.innerHTML = buildPacingEditForm(r);
-
-    // Live-calc wiring
-    const cur = { ...r };
-    body.querySelectorAll('.pe-input[type="number"]').forEach(inp => {
-      inp.addEventListener('input', () => {
-        cur[inp.dataset.field] = parseFloat(inp.value) || 0;
-        updatePacingCalcDisplay(cur);
-      });
-    });
-
-    // Save
-    body.querySelector('#pe-save').addEventListener('click', () => {
-      const numFields = ['st','en','it','stt','t1t2','t1t2t','gcm','gcmt','cohort','ctd','calls','sts'];
-      const updated = {};
-      body.querySelectorAll('.pe-input').forEach(el => {
-        const f = el.dataset.field;
-        if (f === 'cq') {
-          const v = parseFloat(el.value);
-          updated.cq = isNaN(v) ? null : v + '%';
-        } else {
-          updated[f] = numFields.includes(f) ? (parseFloat(el.value) || 0) : el.value;
-        }
-      });
-      body.querySelectorAll('.pe-select').forEach(el => {
-        updated[el.dataset.field] = el.value || null;
-      });
-      const withCalc = calcDerived(updated);
-      if (rowIdx === 'total') {
-        Object.assign(hexData.total, withCalc);
-      } else {
-        Object.assign(hexData.rows[rowIdx], withCalc);
-        hexData.total = calcTotal(hexData.rows);
-      }
-      savePacingData();
-      document.getElementById('pacing-edit-overlay').classList.remove('open');
-      renderPacing();
-    });
-
-    body.querySelector('#pe-cancel').addEventListener('click', () => {
-      document.getElementById('pacing-edit-overlay').classList.remove('open');
-    });
-
-    document.getElementById('pacing-edit-overlay').classList.add('open');
-  }
-
-  function updatePacingCalcDisplay(r) {
-    const d = calcDerived(r);
-    [['pe-pctSt',d.pctSt],['pe-pctIt',d.pctIt],['pe-pctSt2',d.pctSt2],
-     ['pe-pctT1',d.pctT1],['pe-gcmC',d.gcmC],['pe-cPct',d.cPct]].forEach(([id,val]) => {
-      const el = document.getElementById(id);
-      if (el) { el.textContent = val; el.className = `pe-calc pct-pill ${pctClass(val)}`; }
-    });
-  }
-
-  function buildPacingEditForm(r) {
-    const n = f => r[f] || 0;
-    const cqVal = r.cq ? parseFloat(r.cq) : '';
-    return `
-      <div class="pe-section">
-        <span class="pe-sec-title s-incentive">📊 Incentive &amp; Stretch</span>
-        <div class="pe-row"><span class="pe-label">Start Target</span><input class="pe-input" data-field="st" type="number" min="0" value="${n('st')}"></div>
-        <div class="pe-row"><span class="pe-label">Enrolled</span><input class="pe-input" data-field="en" type="number" min="0" value="${n('en')}"><span class="pe-calc pct-pill ${pctClass(r.pctSt)}" id="pe-pctSt">${r.pctSt||'—'}</span></div>
-        <div class="pe-row"><span class="pe-label">Incentive Target</span><input class="pe-input" data-field="it" type="number" min="0" value="${n('it')}"><span class="pe-calc pct-pill ${pctClass(r.pctIt)}" id="pe-pctIt">${r.pctIt||'—'}</span></div>
-        <div class="pe-row"><span class="pe-label">Stretch Target</span><input class="pe-input" data-field="stt" type="number" min="0" value="${n('stt')}"><span class="pe-calc pct-pill ${pctClass(r.pctSt2)}" id="pe-pctSt2">${r.pctSt2||'—'}</span></div>
-      </div>
-      <div class="pe-section">
-        <span class="pe-sec-title s-t1t2">📋 T1-T2 Census</span>
-        <div class="pe-row"><span class="pe-label">T1-T2 Enrolled</span><input class="pe-input" data-field="t1t2" type="number" min="0" value="${n('t1t2')}"><span class="pe-calc pct-pill ${pctClass(r.pctT1)}" id="pe-pctT1">${r.pctT1||'—'}</span></div>
-        <div class="pe-row"><span class="pe-label">T1-T2 Target</span><input class="pe-input" data-field="t1t2t" type="number" min="0" value="${n('t1t2t')}"></div>
-      </div>
-      <div class="pe-section">
-        <span class="pe-sec-title s-gcm">🎓 GC &gt; M Tracker</span>
-        <div class="pe-row"><span class="pe-label">GC&gt;M Enrolled</span><input class="pe-input" data-field="gcm" type="number" min="0" value="${n('gcm')}"><span class="pe-calc pct-pill ${pctClass(r.gcmC)}" id="pe-gcmC">${r.gcmC||'—'}</span></div>
-        <div class="pe-row"><span class="pe-label">GC&gt;M Target</span><input class="pe-input" data-field="gcmt" type="number" min="0" value="${n('gcmt')}"></div>
-      </div>
-      <div class="pe-section">
-        <span class="pe-sec-title s-sixtyDay">📞 60 Day Attempt</span>
-        <div class="pe-row"><span class="pe-label">Cohort Size</span><input class="pe-input" data-field="cohort" type="number" min="0" value="${n('cohort')}"></div>
-        <div class="pe-row"><span class="pe-label">Contacted</span><input class="pe-input" data-field="ctd" type="number" min="0" value="${n('ctd')}"><span class="pe-calc pct-pill ${pctClass(r.cPct)}" id="pe-cPct">${r.cPct||'—'}</span></div>
-      </div>
-      <div class="pe-section">
-        <span class="pe-sec-title s-kpi">📈 KPI Tracking</span>
-        <div class="pe-row"><span class="pe-label">Avg Calls / Week</span><input class="pe-input" data-field="calls" type="number" min="0" value="${n('calls')}"></div>
-        <div class="pe-row"><span class="pe-label">Avg STS / Week</span><input class="pe-input" data-field="sts" type="number" min="0" value="${n('sts')}"></div>
-        <div class="pe-row"><span class="pe-label">Call Quality %</span><input class="pe-input" data-field="cq" type="number" min="0" max="100" value="${cqVal}" placeholder="—"></div>
-      </div>
-      <div class="pe-section">
-        <span class="pe-sec-title s-weight">⚖️ Weightage</span>
-        <div class="pe-row"><span class="pe-label">Re-Enrolments KPI</span>${pacingKpiSelect('kR', r.kR)}</div>
-        <div class="pe-row"><span class="pe-label">Student Contacts KPI</span>${pacingKpiSelect('kS', r.kS)}</div>
-        <div class="pe-row"><span class="pe-label">60-Day KPI</span>${pacingKpiSelect('k6', r.k6)}</div>
-      </div>
-      <div class="modal-actions" style="margin-top:4px;padding-bottom:4px">
-        <button class="btn-cancel" id="pe-cancel">Cancel</button>
-        <button class="btn-save" id="pe-save">💾 Save</button>
-      </div>`;
-  }
-
-  function pacingKpiSelect(field, val) {
-    const opts = [['','— N/A'],['EXCEPTIONAL PERFORMANCE','⭐ Exceptional'],
-                  ['ACHIEVED EXPECTATIONS','✓ Achieved'],['SUPPORT NEEDED','⚠ Support Needed']];
-    return `<select class="pe-select" data-field="${field}">
-      ${opts.map(([v,l])=>`<option value="${v}"${val===v?' selected':''}>${l}</option>`).join('')}
-    </select>`;
-  }
 
   // ── Kanban Board ──────────────────────────────────────────────
   const KANBAN_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/kanban.json';
