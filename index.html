@@ -8,6 +8,13 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --accent:      #FFD100;
+      --accent-dark: #e6bc00;
+      --accent-text: #111;
+      --accent-rgb:  255, 209, 0;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
       background: linear-gradient(160deg, #f0f4f8 0%, #e8ecf0 100%);
@@ -43,7 +50,7 @@
 
     .tab-btn.active {
       color: #111;
-      border-bottom-color: #FFD100;
+      border-bottom-color: var(--accent);
     }
 
     /* Tab panels */
@@ -52,11 +59,11 @@
 
     /* Yellow utility bar — matches the top strip on studyonline.unsw.edu.au */
     .top-bar {
-      background: #FFD100;
+      background: var(--accent);
       padding: 6px 32px;
       font-size: 0.78rem;
       font-weight: 600;
-      color: #111;
+      color: var(--accent-text);
       text-align: right;
       letter-spacing: 0.2px;
     }
@@ -91,9 +98,9 @@
       font-size: 1.6rem;
       font-weight: 900;
       font-style: italic;
-      color: #FFD100;
+      color: var(--accent);
       letter-spacing: 2px;
-      -webkit-text-stroke: 0.5px #d4a900;
+      -webkit-text-stroke: 0.5px var(--accent-dark);
     }
 
     .unsw-logo .logo-sydney {
@@ -146,15 +153,15 @@
     }
 
     .today-btn {
-      background: #FFD100 !important;
-      border-color: #FFD100 !important;
-      color: #111 !important;
+      background: var(--accent) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent-text) !important;
     }
 
     .today-btn:hover {
-      background: #e6bc00 !important;
-      border-color: #e6bc00 !important;
-      color: #111 !important;
+      background: var(--accent-dark) !important;
+      border-color: var(--accent-dark) !important;
+      color: var(--accent-text) !important;
     }
 
     /* Roster bar */
@@ -200,7 +207,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: #FFD100;
+      color: var(--accent);
     }
 
     .roster-cell .roster-name {
@@ -237,13 +244,13 @@
     }
 
     .day-cell.today {
-      box-shadow: 0 0 0 2.5px #FFD100, 0 6px 22px rgba(255,209,0,0.35);
+      box-shadow: 0 0 0 2.5px var(--accent), 0 6px 22px rgba(var(--accent-rgb),0.35);
       animation: pulse-today 2.5s ease-in-out infinite;
     }
 
     @keyframes pulse-today {
-      0%, 100% { box-shadow: 0 0 0 2px #FFD100, 0 6px 20px rgba(255,209,0,0.25); }
-      50%       { box-shadow: 0 0 0 4px #FFD100, 0 8px 28px rgba(255,209,0,0.55); }
+      0%, 100% { box-shadow: 0 0 0 2px var(--accent), 0 6px 20px rgba(var(--accent-rgb),0.25); }
+      50%       { box-shadow: 0 0 0 4px var(--accent), 0 8px 28px rgba(var(--accent-rgb),0.55); }
     }
 
     .today-emoji {
@@ -286,8 +293,8 @@
     }
 
     .day-cell.today .day-number {
-      background: #FFD100;
-      color: #111;
+      background: var(--accent);
+      color: var(--accent-text);
       width: 24px;
       height: 24px;
       border-radius: 50%;
@@ -337,7 +344,7 @@
       font-size: 0.6rem;
       font-weight: 800;
       background: #111;
-      color: #FFD100;
+      color: var(--accent);
       padding: 1px 5px;
       letter-spacing: 0.5px;
       margin-right: 2px;
@@ -401,7 +408,7 @@
       border-radius: 7px;
     }
 
-    .add-event-btn:hover { border-color: #FFD100; color: #111; }
+    .add-event-btn:hover { border-color: var(--accent); color: #111; }
 
     /* Modal */
     .modal-overlay {
@@ -434,7 +441,7 @@
       background: #111;
       color: #fff;
       padding: 16px 22px;
-      border-bottom: 3px solid #FFD100;
+      border-bottom: 3px solid var(--accent);
       border-radius: 16px 16px 0 0;
     }
 
@@ -454,8 +461,8 @@
     }
 
     .modal-body input[type="text"]:focus {
-      border-color: #FFD100;
-      box-shadow: 0 0 0 3px rgba(255,209,0,0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.2);
     }
 
     .tag-label {
@@ -525,12 +532,12 @@
     .btn-cancel:hover { background: #f5f5f5; }
 
     .btn-save {
-      background: #FFD100;
-      border: 1.5px solid #FFD100;
-      color: #111;
+      background: var(--accent);
+      border: 1.5px solid var(--accent);
+      color: var(--accent-text);
     }
 
-    .btn-save:hover { background: #e6bc00; border-color: #e6bc00; }
+    .btn-save:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
 
     /* Detail modal extras */
     .modal-body textarea {
@@ -548,8 +555,8 @@
     }
 
     .modal-body textarea:focus {
-      border-color: #FFD100;
-      box-shadow: 0 0 0 3px rgba(255,209,0,0.2);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.2);
     }
 
     .field-label {
@@ -588,7 +595,7 @@
     .kanban-col { width: 230px; flex-shrink: 0; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.1), 0 1px 4px rgba(0,0,0,0.06); }
     .kanban-col-header {
       background: #111;
-      color: #FFD100;
+      color: var(--accent);
       padding: 10px 14px;
       font-size: 0.72rem;
       font-weight: 800;
@@ -599,8 +606,8 @@
       align-items: center;
     }
     .col-count {
-      background: rgba(255,209,0,0.2);
-      color: #FFD100;
+      background: rgba(var(--accent-rgb),0.2);
+      color: var(--accent);
       font-size: 0.68rem;
       padding: 1px 7px;
       font-weight: 700;
@@ -617,17 +624,17 @@
       border: 2px solid transparent;
       border-radius: 0 0 12px 12px;
     }
-    .kanban-col-body.drag-over { background: rgba(255,209,0,0.12); border-color: #FFD100; }
+    .kanban-col-body.drag-over { background: rgba(var(--accent-rgb),0.12); border-color: var(--accent); }
 
     /* Current week column highlight */
-    .kanban-col.current-week { box-shadow: 0 0 0 2.5px #FFD100, 0 6px 24px rgba(255,209,0,0.35); }
-    .kanban-col.current-week .kanban-col-header { background: #FFD100; color: #111; }
+    .kanban-col.current-week { box-shadow: 0 0 0 2.5px var(--accent), 0 6px 24px rgba(var(--accent-rgb),0.35); }
+    .kanban-col.current-week .kanban-col-header { background: var(--accent); color: var(--accent-text); }
     .kanban-col.current-week .col-count { background: rgba(0,0,0,0.12); color: #111; }
     .current-week-label {
       font-size: 0.58rem;
       font-weight: 800;
       background: #111;
-      color: #FFD100;
+      color: var(--accent);
       padding: 2px 7px;
       border-radius: 10px;
       letter-spacing: 0.5px;
@@ -657,7 +664,7 @@
     /* UNSW Key Date badges */
     .unsw-dates-row { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:4px; }
     .unsw-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.66rem; font-weight:700; padding:2px 6px 2px 5px; border-radius:6px; white-space:nowrap; letter-spacing:0.1px; }
-    .unsw-badge.o-week  { background:#FFF8D6; color:#7A5700; border-left:3px solid #FFD100; }
+    .unsw-badge.o-week  { background:#FFF8D6; color:#7A5700; border-left:3px solid var(--accent); }
     .unsw-badge.census  { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
     .unsw-badge.results { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
 
@@ -685,14 +692,15 @@
     .card-edit-btn:hover { background: #dbeafe; }
     .card-del-btn { color: #ef4444; }
     .card-del-btn:hover { background: #fee2e2; }
-    .card-edit-textarea { width: 100%; border: 1.5px solid #FFD100; border-radius: 4px; padding: 5px; font-size: 0.78rem; font-family: inherit; resize: vertical; min-height: 60px; background: #fff; }
+    .card-edit-textarea { width: 100%; border: 1.5px solid var(--accent); border-radius: 4px; padding: 5px; font-size: 0.78rem; font-family: inherit; resize: vertical; min-height: 60px; background: #fff; }
     .card-edit-actions { display: flex; gap: 6px; margin-top: 6px; }
-    .card-save-btn { background: #FFD100; border: none; padding: 3px 10px; border-radius: 3px; font-size: 0.72rem; font-weight: 700; cursor: pointer; }
-    .card-save-btn:hover { background: #e6bc00; }
+    .card-save-btn { background: var(--accent); border: none; padding: 3px 10px; border-radius: 3px; font-size: 0.72rem; font-weight: 700; cursor: pointer; color: var(--accent-text); }
+    .card-save-btn:hover { background: var(--accent-dark); }
     .card-cancel-btn { background: #f3f4f6; border: 1px solid #ddd; padding: 3px 10px; border-radius: 3px; font-size: 0.72rem; cursor: pointer; }
     /* Add card button per column */
     .kanban-add-btn { width: 100%; margin-top: 6px; padding: 6px; background: none; border: 1.5px dashed #ddd; border-radius: 6px; color: #aaa; font-size: 0.78rem; cursor: pointer; text-align: left; }
-    .kanban-add-btn:hover { border-color: #FFD100; color: #111; background: #fffbeb; }
+    .kanban-add-btn:hover { border-color: var(--accent); color: #111; background: rgba(var(--accent-rgb),0.06); }
+    .kanban-new-row { background:#fff; border:1.5px solid var(--accent); border-radius:6px; padding:8px; }
 
     /* ── Pacing Board ── */
     .pacing-wrap { padding: 20px 32px 40px; max-width: 1600px; margin: 0 auto; }
@@ -706,8 +714,8 @@
       background: #fff; color: #888; font-size: 0.82rem; font-weight: 700;
       cursor: pointer; transition: all 0.15s; letter-spacing: 0.3px;
     }
-    .hex-btn:hover { border-color: #FFD100; color: #111; }
-    .hex-btn.active { background: #FFD100; border-color: #FFD100; color: #111; box-shadow: 0 2px 8px rgba(255,209,0,0.4); }
+    .hex-btn:hover { border-color: var(--accent); color: #111; }
+    .hex-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); box-shadow: 0 2px 8px rgba(var(--accent-rgb),0.4); }
 
     .ssa-btn {
       padding: 5px 14px; border-radius: 20px; border: 1.5px solid #e5e5e5;
@@ -771,10 +779,96 @@
 
     /* Inline cell editing */
     .pc-editable { cursor: pointer; }
-    .pc-editable:hover { background: rgba(255,209,0,0.08) !important; }
-    .pc-inline-input { width: 80px; padding: 3px 6px; border: 1.5px solid #FFD100; border-radius: 4px; font-size: 0.78rem; font-family: inherit; background: #fffef5; outline: none; }
-    .pc-inline-select { width: 100%; padding: 3px 4px; border: 1.5px solid #FFD100; border-radius: 4px; font-size: 0.72rem; font-family: inherit; background: #fffef5; outline: none; }
+    .pc-editable:hover { background: rgba(var(--accent-rgb),0.08) !important; }
+    .pc-inline-input { width: 80px; padding: 3px 6px; border: 1.5px solid var(--accent); border-radius: 4px; font-size: 0.78rem; font-family: inherit; background: #fffef5; outline: none; }
+    .pc-inline-select { width: 100%; padding: 3px 4px; border: 1.5px solid var(--accent); border-radius: 4px; font-size: 0.72rem; font-family: inherit; background: #fffef5; outline: none; }
     .pc-calc { color: inherit; }
+
+    /* ── Theme Picker ── */
+    .theme-picker-wrap {
+      position: relative;
+      margin-left: auto;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .theme-toggle-btn {
+      background: none;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-toggle-btn:hover { border-color: var(--accent); color: #111; }
+    .theme-toggle-btn .theme-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+      border: 1.5px solid rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+    .theme-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: #fff;
+      border: 1.5px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      z-index: 9999;
+      width: 220px;
+    }
+    .theme-dropdown.open { display: block; }
+    .theme-dropdown-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 10px;
+    }
+    .theme-swatches {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .theme-swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 6px 4px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .theme-swatch:hover { background: #f5f5f5; }
+    .theme-swatch.active { border-color: #111; background: #f5f5f5; }
+    .theme-swatch .sw-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,0,0,0.1);
+    }
+    .theme-swatch .sw-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #555;
+      text-align: center;
+      line-height: 1.2;
+    }
   </style>
 </head>
 <body>
@@ -805,6 +899,15 @@
   <button class="tab-btn active" data-tab="calendar">📅 Calendar</button>
   <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">📈 Pacing Board</button>
+  <div class="theme-picker-wrap">
+    <button class="theme-toggle-btn" id="theme-toggle-btn">
+      <span class="theme-dot"></span> Theme
+    </button>
+    <div class="theme-dropdown" id="theme-dropdown">
+      <div class="theme-dropdown-title">Choose your palette</div>
+      <div class="theme-swatches" id="theme-swatches"></div>
+    </div>
+  </div>
 </nav>
 
 <!-- Calendar tab -->
@@ -988,6 +1091,67 @@
     date.setDate(date.getDate() - (day === 0 ? 6 : day - 1));
     return date;
   }
+
+  // ── Theme System ──────────────────────────────────────────────
+  const THEMES = {
+    gold:     { label: 'UNSW Gold',   accent: '#FFD100', accentDark: '#e6bc00', accentRgb: '255,209,0',   accentText: '#111' },
+    blue:     { label: 'Ocean',       accent: '#3B82F6', accentDark: '#2563EB', accentRgb: '59,130,246',  accentText: '#fff' },
+    emerald:  { label: 'Emerald',     accent: '#10B981', accentDark: '#059669', accentRgb: '16,185,129',  accentText: '#fff' },
+    purple:   { label: 'Purple',      accent: '#8B5CF6', accentDark: '#7C3AED', accentRgb: '139,92,246',  accentText: '#fff' },
+    coral:    { label: 'Coral',       accent: '#F97316', accentDark: '#EA6C00', accentRgb: '249,115,22',  accentText: '#fff' },
+    rose:     { label: 'Rose',        accent: '#F43F5E', accentDark: '#E11D48', accentRgb: '244,63,94',   accentText: '#fff' },
+    teal:     { label: 'Teal',        accent: '#14B8A6', accentDark: '#0D9488', accentRgb: '20,184,166',  accentText: '#fff' },
+    midnight: { label: 'Midnight',    accent: '#475569', accentDark: '#334155', accentRgb: '71,85,105',   accentText: '#fff' },
+  };
+
+  function applyTheme(key) {
+    const t = THEMES[key] || THEMES.gold;
+    const root = document.documentElement;
+    root.style.setProperty('--accent',      t.accent);
+    root.style.setProperty('--accent-dark', t.accentDark);
+    root.style.setProperty('--accent-text', t.accentText);
+    root.style.setProperty('--accent-rgb',  t.accentRgb);
+    localStorage.setItem('unsw-theme', key);
+    document.querySelectorAll('.theme-swatch').forEach(s =>
+      s.classList.toggle('active', s.dataset.theme === key)
+    );
+    // update the dot in the toggle button
+    const dot = document.querySelector('.theme-dot');
+    if (dot) dot.style.background = t.accent;
+  }
+
+  function buildThemePicker() {
+    const swatches = document.getElementById('theme-swatches');
+    if (!swatches) return;
+    swatches.innerHTML = Object.entries(THEMES).map(([key, t]) =>
+      `<div class="theme-swatch" data-theme="${key}" title="${t.label}">
+        <div class="sw-circle" style="background:${t.accent}"></div>
+        <span class="sw-label">${t.label}</span>
+      </div>`
+    ).join('');
+    swatches.querySelectorAll('.theme-swatch').forEach(sw => {
+      sw.addEventListener('click', () => {
+        applyTheme(sw.dataset.theme);
+        document.getElementById('theme-dropdown').classList.remove('open');
+      });
+    });
+    // Mark active
+    const saved = localStorage.getItem('unsw-theme') || 'gold';
+    swatches.querySelectorAll('.theme-swatch').forEach(s =>
+      s.classList.toggle('active', s.dataset.theme === saved)
+    );
+  }
+
+  // Load saved theme immediately (before DOM ready to avoid flash)
+  (function() {
+    const saved = localStorage.getItem('unsw-theme') || 'gold';
+    const t = THEMES[saved] || THEMES.gold;
+    const root = document.documentElement;
+    root.style.setProperty('--accent',      t.accent);
+    root.style.setProperty('--accent-dark', t.accentDark);
+    root.style.setProperty('--accent-text', t.accentText);
+    root.style.setProperty('--accent-rgb',  t.accentRgb);
+  })();
 
   const DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/events.json';
   const PACING_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing.json';
@@ -1308,6 +1472,16 @@
   document.getElementById('today-btn').addEventListener('click', () => {
     startDate = getMonday(new Date());
     render();
+  });
+
+  // Theme toggle
+  buildThemePicker();
+  document.getElementById('theme-toggle-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('theme-dropdown').classList.toggle('open');
+  });
+  document.addEventListener('click', () => {
+    document.getElementById('theme-dropdown')?.classList.remove('open');
   });
 
   startDate = getMonday(new Date());
@@ -1951,7 +2125,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         cancelBtn.className = 'card-cancel-btn';
         cancelBtn.textContent = '✕';
         const rowEl = document.createElement('div');
-        rowEl.style.cssText = 'background:#fff;border:1.5px solid #FFD100;border-radius:6px;padding:8px;';
+        rowEl.className = 'kanban-new-row';
         const actRow = document.createElement('div');
         actRow.className = 'card-edit-actions';
         actRow.appendChild(saveBtn);
