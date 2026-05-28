@@ -717,17 +717,11 @@
     .ssa-btn:hover { border-color: #111; color: #111; }
     .ssa-btn.active { background: #111; border-color: #111; color: #fff; }
 
-    .pacing-table-outer { overflow-x: auto; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    .pacing-table {
-      width: 100%; border-collapse: collapse; font-size: 0.78rem;
-      background: #fff; border-radius: 14px; overflow: hidden;
-    }
-    /* Section header row */
-    .pacing-table th { padding: 8px 12px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; white-space: nowrap; text-align: center; }
-    .pacing-table th.th-name { background: #111; color: #FFD100; text-align: left; }
-    /* Coloured section headers */
-    .pacing-table th.sec-hdr { font-size: 0.65rem; font-weight: 900; border-bottom: 1px solid rgba(255,255,255,0.15); }
-    .pacing-table th.sec-sub { font-size: 0.58rem; font-weight: 700; opacity: 0.9; padding: 6px 12px; text-align: left; }
+    /* Section card grid — 12-col: row1 = 4×span3, row2 = 3×span4 */
+    .pacing-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+    .section-card { grid-column: span 3; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05); }
+    .section-card.wide { grid-column: span 4; }
+    .sc-hdr { padding: 9px 12px; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; }
     /* Section colours */
     .s-incentive { background: #1e3a5f; color: #93c5fd; }
     .s-stretch   { background: #3b0764; color: #d8b4fe; }
@@ -736,38 +730,19 @@
     .s-sixtyDay  { background: #78350f; color: #fde68a; }
     .s-kpi       { background: #134e4a; color: #99f6e4; }
     .s-weight    { background: #881337; color: #fda4af; }
-
-    /* Data-row section tile tints — each group gets its own subtle background */
-    .pacing-table td.ds-inc { background: rgba(147,197,253,0.10); }
-    .pacing-table td.ds-str { background: rgba(216,180,254,0.10); }
-    .pacing-table td.ds-t12 { background: rgba(191,219,254,0.10); }
-    .pacing-table td.ds-gcm { background: rgba(134,239,172,0.10); }
-    .pacing-table td.ds-60d { background: rgba(253,230,138,0.10); }
-    .pacing-table td.ds-kpi { background: rgba(153,246,228,0.10); }
-    .pacing-table td.ds-wgt { background: rgba(253,164,175,0.10); }
-    /* Colored left-border accent marks the start of each tile group */
-    .pacing-table .ds-inc.ds-s { border-left: 3px solid #93c5fd; }
-    .pacing-table .ds-str.ds-s { border-left: 3px solid #d8b4fe; }
-    .pacing-table .ds-t12.ds-s { border-left: 3px solid #bfdbfe; }
-    .pacing-table .ds-gcm.ds-s { border-left: 3px solid #86efac; }
-    .pacing-table .ds-60d.ds-s { border-left: 3px solid #fde68a; }
-    .pacing-table .ds-kpi.ds-s { border-left: 3px solid #99f6e4; }
-    .pacing-table .ds-wgt.ds-s { border-left: 3px solid #fda4af; }
-    /* White divider line between section-header cells */
-    .pacing-table th.sec-hdr { border-left: 2px solid rgba(255,255,255,0.18); }
-    /* Matching white divider on sub-header first column */
-    .pacing-table th.sec-sub.ds-s { border-left: 2px solid rgba(255,255,255,0.3); }
-
-    .pacing-table td { padding: 9px 12px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; vertical-align: middle; }
-    .pacing-table tr:last-child td { border-bottom: none; }
-    .pacing-table tr.total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #e5e5e5; }
-    .pacing-table tr.hex-row td { background: #f0f6ff; }
-    .pacing-table tr:not(.total-row):not(.hex-row):hover td { background: #fffbeb; }
-
-    .ssa-name { font-weight: 700; color: #111; font-size: 0.84rem; }
-    .hex-name { font-weight: 700; color: #1e40af; font-size: 0.82rem; }
+    /* Mini-table inside each card */
+    .sc-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    .sc-table th { padding: 5px 8px; font-size: 0.57rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa; color: #777; text-align: left; white-space: nowrap; border-bottom: 1px solid #eee; }
+    .sc-table td { padding: 7px 9px; border-bottom: 1px solid #f5f5f5; white-space: nowrap; vertical-align: middle; }
+    .sc-table tr:last-child td { border-bottom: none; }
+    .sc-table tr.total-row td { background: #f8f9fa; font-weight: 700; border-top: 2px solid #e5e5e5; }
+    .sc-table tr.hex-row td { background: #f0f6ff; }
+    .sc-table tr:not(.total-row):not(.hex-row):hover td { background: #fffbeb; }
+    .sc-name { font-weight: 600; color: #333; max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ssa-name { font-weight: 700; color: #111; font-size: 0.82rem; }
+    .hex-name { font-weight: 700; color: #1e40af; font-size: 0.8rem; }
     .enrol-cell { display: flex; flex-direction: column; gap: 2px; }
-    .enrol-bar-bg { height: 4px; background: #e5e5e5; border-radius: 2px; width: 80px; }
+    .enrol-bar-bg { height: 4px; background: #e5e5e5; border-radius: 2px; width: 70px; }
     .enrol-bar-fill { height: 4px; border-radius: 2px; }
 
     .pct-pill {
@@ -1412,69 +1387,50 @@
     </div>`;
   }
 
-  const PACING_TABLE_HEADER = `
-    <thead>
-      <tr>
-        <th rowspan="2" class="th-name s-incentive" style="text-align:left">SSA</th>
-        <th colspan="2" class="sec-hdr s-incentive">📊 Incentive Tracking</th>
-        <th colspan="2" class="sec-hdr s-stretch">🎯 Stretch Tracking</th>
-        <th colspan="2" class="sec-hdr s-t1t2">📋 T1-T2 Census</th>
-        <th colspan="2" class="sec-hdr s-gcm">🎓 GC &gt; M Tracker</th>
-        <th colspan="3" class="sec-hdr s-sixtyDay">📞 60 Day Attempt</th>
-        <th colspan="3" class="sec-hdr s-kpi">📈 KPI Tracking</th>
-        <th colspan="3" class="sec-hdr s-weight">⚖️ Weightage</th>
-      </tr>
-      <tr>
-        <th class="sec-sub s-incentive ds-s">Enrolled / Target</th>
-        <th class="sec-sub s-incentive">% to Start</th>
-        <th class="sec-sub s-stretch ds-s">% to Incentive</th>
-        <th class="sec-sub s-stretch">% to Stretch</th>
-        <th class="sec-sub s-t1t2 ds-s">T1-T2 Enrolled</th>
-        <th class="sec-sub s-t1t2">% to T1-T2</th>
-        <th class="sec-sub s-gcm ds-s">GC&gt;M Enrol</th>
-        <th class="sec-sub s-gcm">Conv %</th>
-        <th class="sec-sub s-sixtyDay ds-s">Cohort</th>
-        <th class="sec-sub s-sixtyDay">Contacted</th>
-        <th class="sec-sub s-sixtyDay">% to Target</th>
-        <th class="sec-sub s-kpi ds-s">Avg Calls</th>
-        <th class="sec-sub s-kpi">Avg STS</th>
-        <th class="sec-sub s-kpi">Call Quality</th>
-        <th class="sec-sub s-weight ds-s">Re-Enrolments</th>
-        <th class="sec-sub s-weight">Student Contacts</th>
-        <th class="sec-sub s-weight">60-Day Attempt</th>
-      </tr>
-    </thead>`;
+  // Section definitions — each becomes its own card tile
+  const PACING_SECTIONS = [
+    { cls:'s-incentive', label:'📊 Incentive Tracking', wide:false,
+      cols:['Enrolled / Target','% to Start'],
+      cell: r => [enrolBar(r.en,r.st), `<span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span>`] },
+    { cls:'s-stretch', label:'🎯 Stretch Tracking', wide:false,
+      cols:['% to Incentive','% to Stretch'],
+      cell: r => [`<span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span>`,`<span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span>`] },
+    { cls:'s-t1t2', label:'📋 T1-T2 Census', wide:false,
+      cols:['T1-T2 Enrolled','% to T1-T2'],
+      cell: r => [`<span class="metric-val">${r.t1t2??'—'}</span>`,`<span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span>`] },
+    { cls:'s-gcm', label:'🎓 GC > M Tracker', wide:false,
+      cols:['GC>M Enrol','Conv %'],
+      cell: r => [`<span class="metric-val">${r.gcm??'—'}</span>`,`<span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span>`] },
+    { cls:'s-sixtyDay', label:'📞 60 Day Attempt', wide:true,
+      cols:['Cohort','Contacted','% Target'],
+      cell: r => [`<span class="metric-val">${r.cohort??'—'}</span>`,`<span class="metric-val">${r.ctd??'—'}</span>`,`<span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span>`] },
+    { cls:'s-kpi', label:'📈 KPI Tracking', wide:true,
+      cols:['Avg Calls','Avg STS','Call Quality'],
+      cell: r => [`<span class="metric-val">${r.calls??'—'}</span>`,`<span class="metric-val">${r.sts??'—'}</span>`,r.cq?`<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>`:'<span class="metric-sub">—</span>'] },
+    { cls:'s-weight', label:'⚖️ Weightage', wide:true,
+      cols:['Re-Enrolments','Student Contacts','60-Day'],
+      cell: (r,showKpi) => showKpi?[kpiBadge(r.kR),kpiBadge(r.kS),kpiBadge(r.k6)]:['—','—','—'] },
+  ];
 
-  function renderPacingRow(r, labelHtml, showKpi) {
-    return `<tr>
-      <td>${labelHtml}</td>
-      <td class="ds-inc ds-s">${enrolBar(r.en, r.st)}</td>
-      <td class="ds-inc"><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
-      <td class="ds-str ds-s"><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
-      <td class="ds-str"><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
-      <td class="ds-t12 ds-s"><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
-      <td class="ds-t12"><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-      <td class="ds-gcm ds-s"><span class="metric-val">${r.gcm ?? '—'}</span></td>
-      <td class="ds-gcm"><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
-      <td class="ds-60d ds-s"><span class="metric-val">${r.cohort ?? '—'}</span></td>
-      <td class="ds-60d"><span class="metric-val">${r.ctd ?? '—'}</span></td>
-      <td class="ds-60d"><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
-      <td class="ds-kpi ds-s"><span class="metric-val">${r.calls ?? '—'}</span></td>
-      <td class="ds-kpi"><span class="metric-val">${r.sts ?? '—'}</span></td>
-      <td class="ds-kpi">${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-      <td class="ds-wgt ds-s">${showKpi ? kpiBadge(r.kR) : ''}</td>
-      <td class="ds-wgt">${showKpi ? kpiBadge(r.kS) : ''}</td>
-      <td class="ds-wgt">${showKpi ? kpiBadge(r.k6) : ''}</td>
-    </tr>`;
-  }
-
-  function buildPacingTable(rows) {
-    return `<div class="pacing-table-outer">
-      <table class="pacing-table">
-        ${PACING_TABLE_HEADER}
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
+  function buildSectionCards(rowItems) {
+    return '<div class="pacing-grid">' +
+      PACING_SECTIONS.map(sec => {
+        const cardCls = 'section-card' + (sec.wide ? ' wide' : '');
+        const theadCols = sec.cols.map(c => `<th>${c}</th>`).join('');
+        const tbodyRows = rowItems.map(item => {
+          const cells = sec.cell(item.r, item.showKpi).map(c => `<td>${c}</td>`).join('');
+          const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
+          return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
+        }).join('');
+        return `<div class="${cardCls}">
+          <div class="sc-hdr ${sec.cls}">${sec.label}</div>
+          <table class="sc-table">
+            <thead><tr><th>SSA</th>${theadCols}</tr></thead>
+            <tbody>${tbodyRows}</tbody>
+          </table>
+        </div>`;
+      }).join('') +
+    '</div>';
   }
 
   function renderPacing() {
@@ -1513,59 +1469,27 @@
     if (!content) return;
 
     if (activePacingSSA) {
-      // Cross-hex view: rows = hexamesters for selected SSA
-      const properRows = Object.entries(PACING_DATA).map(([hexKey, hexData]) => {
+      // Cross-hex view: each card shows one SSA's metric across all hexamesters
+      const rowItems = Object.entries(PACING_DATA).map(([hexKey, hexData]) => {
         const r = hexData.rows.find(row => row.name === activePacingSSA);
-        if (!r) return '';
-        const cls = hexKey === activePacingHex ? 'hex-row' : '';
-        return `<tr class="${cls}">
-          <td><span class="hex-name">${hexData.label}</span></td>
-          <td class="ds-inc ds-s">${enrolBar(r.en, r.st)}</td>
-          <td class="ds-inc"><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
-          <td class="ds-str ds-s"><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
-          <td class="ds-str"><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
-          <td class="ds-t12 ds-s"><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
-          <td class="ds-t12"><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-          <td class="ds-gcm ds-s"><span class="metric-val">${r.gcm ?? '—'}</span></td>
-          <td class="ds-gcm"><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
-          <td class="ds-60d ds-s"><span class="metric-val">${r.cohort ?? '—'}</span></td>
-          <td class="ds-60d"><span class="metric-val">${r.ctd ?? '—'}</span></td>
-          <td class="ds-60d"><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
-          <td class="ds-kpi ds-s"><span class="metric-val">${r.calls ?? '—'}</span></td>
-          <td class="ds-kpi"><span class="metric-val">${r.sts ?? '—'}</span></td>
-          <td class="ds-kpi">${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-          <td class="ds-wgt ds-s">${kpiBadge(r.kR)}</td>
-          <td class="ds-wgt">${kpiBadge(r.kS)}</td>
-          <td class="ds-wgt">${kpiBadge(r.k6)}</td>
-        </tr>`;
-      }).join('');
-      content.innerHTML = buildPacingTable(properRows);
+        if (!r) return null;
+        return { label: `<span class="hex-name">${hexData.label}</span>`, fullName: hexData.label,
+                 r, showKpi: true, isTotal: false, isHex: hexKey === activePacingHex };
+      }).filter(Boolean);
+      content.innerHTML = buildSectionCards(rowItems);
     } else {
-      // Hex view: rows = all SSAs for selected hex
+      // Hex view: each card shows all SSAs for the selected hexamester
       const hex = PACING_DATA[activePacingHex];
       if (!hex) return;
-      const r = hex.total;
-      const totalRowHtml = `<tr class="total-row">
-        <td><span class="ssa-name">${r.name}</span></td>
-        <td class="ds-inc ds-s">${enrolBar(r.en, r.st)}</td>
-        <td class="ds-inc"><span class="pct-pill ${pctClass(r.pctSt)}">${r.pctSt}</span></td>
-        <td class="ds-str ds-s"><span class="pct-pill ${pctClass(r.pctIt)}">${r.pctIt}</span></td>
-        <td class="ds-str"><span class="pct-pill ${pctClass(r.pctSt2)}">${r.pctSt2}</span></td>
-        <td class="ds-t12 ds-s"><span class="metric-val">${r.t1t2 ?? '—'}</span></td>
-        <td class="ds-t12"><span class="pct-pill ${pctClass(r.pctT1)}">${r.pctT1}</span></td>
-        <td class="ds-gcm ds-s"><span class="metric-val">${r.gcm ?? '—'}</span></td>
-        <td class="ds-gcm"><span class="pct-pill ${pctClass(r.gcmC)}">${r.gcmC}</span></td>
-        <td class="ds-60d ds-s"><span class="metric-val">${r.cohort ?? '—'}</span></td>
-        <td class="ds-60d"><span class="metric-val">${r.ctd ?? '—'}</span></td>
-        <td class="ds-60d"><span class="pct-pill ${pctClass(r.cPct)}">${r.cPct}</span></td>
-        <td class="ds-kpi ds-s"><span class="metric-val">${r.calls ?? '—'}</span></td>
-        <td class="ds-kpi"><span class="metric-val">${r.sts ?? '—'}</span></td>
-        <td class="ds-kpi">${r.cq ? `<span class="pct-pill ${pctClass(r.cq)}">${r.cq}</span>` : '<span class="metric-sub">—</span>'}</td>
-        <td class="ds-wgt ds-s"></td><td class="ds-wgt"></td><td class="ds-wgt"></td>
-      </tr>`;
-      content.innerHTML = buildPacingTable(
-        hex.rows.map(r => renderPacingRow(r, `<span class="ssa-name">${r.name}</span>`, true)).join('') + totalRowHtml
-      );
+      const rowItems = [
+        ...hex.rows.map(r => ({
+          label: `<span class="ssa-name">${r.name.split(' ')[0]}</span>`,
+          fullName: r.name, r, showKpi: true, isTotal: false, isHex: false
+        })),
+        { label: '<span class="ssa-name" style="color:#666">Total</span>', fullName: 'UNSW Total',
+          r: hex.total, showKpi: false, isTotal: true, isHex: false }
+      ];
+      content.innerHTML = buildSectionCards(rowItems);
     }
   }
 
