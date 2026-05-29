@@ -889,6 +889,122 @@
       text-align: center;
       line-height: 1.2;
     }
+
+    /* ── Wishlist Tab ───────────────────────────────────────────── */
+    .wishlist-wrap { padding: 20px 32px 48px; max-width: 1400px; margin: 0 auto; }
+
+    .wishlist-controls {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+    }
+    .wishlist-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .wishlist-sort-wrap { display: flex; align-items: center; gap: 8px; }
+    .wf-label { font-size: 0.68rem; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px; }
+
+    .wf-btn {
+      padding: 7px 16px; border-radius: 20px; border: 1.5px solid #e5e5e5;
+      background: #fff; color: #666; font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .wf-btn:hover { border-color: var(--accent); color: #111; }
+    .wf-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+
+    #wishlist-sort-select {
+      padding: 6px 10px; border: 1.5px solid #e5e5e5; border-radius: 8px;
+      font-size: 0.78rem; font-family: inherit; background: #fff; cursor: pointer;
+    }
+    #wishlist-sort-select:focus { border-color: var(--accent); outline: none; }
+
+    .wishlist-layout { display: flex; gap: 20px; align-items: flex-start; }
+    .wishlist-form-wrap { flex-shrink: 0; width: 290px; position: sticky; top: 20px; }
+
+    .wishlist-form-card {
+      background: #fff; border-radius: 16px; padding: 22px;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .wform-title { font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 18px; }
+
+    .wform-field { margin-bottom: 14px; }
+    .wform-label { display: block; font-size: 0.68rem; font-weight: 800; color: #555; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+    .wform-req { color: var(--accent); }
+    .wform-opt { color: #bbb; font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+    .wform-input, .wform-textarea {
+      width: 100%; padding: 9px 11px; border: 1.5px solid #e5e5e5; border-radius: 8px;
+      font-size: 0.82rem; font-family: inherit; background: #fafafa;
+      transition: border-color 0.15s, box-shadow 0.15s; resize: vertical; box-sizing: border-box;
+    }
+    .wform-input:focus, .wform-textarea:focus {
+      border-color: var(--accent); outline: none; background: #fff;
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),0.12);
+    }
+
+    .wform-tags { display: flex; flex-direction: column; gap: 7px; }
+    .wtag-option {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      border: 1.5px solid #e5e5e5; border-radius: 8px; cursor: pointer;
+      font-size: 0.8rem; font-weight: 600; color: #555;
+      transition: border-color 0.15s, background 0.15s; background: #fafafa;
+    }
+    .wtag-option:hover { border-color: #ccc; background: #fff; }
+    .wtag-option input[type="radio"] { accent-color: var(--accent); flex-shrink: 0; }
+    .wtag-option:has(input:checked) { border-color: var(--accent); background: rgba(var(--accent-rgb),0.07); color: #111; }
+
+    .wform-submit {
+      width: 100%; margin-top: 6px; padding: 11px; background: var(--accent);
+      color: var(--accent-text); border: none; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 800; cursor: pointer;
+      transition: background 0.15s, transform 0.1s; letter-spacing: 0.2px;
+    }
+    .wform-submit:hover { background: var(--accent-dark); transform: translateY(-1px); }
+    .wform-submit:active { transform: translateY(0); }
+
+    .wishlist-grid-wrap { flex: 1; min-width: 0; }
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .wishlist-loading, .wishlist-empty {
+      grid-column: 1 / -1; text-align: center; padding: 60px 20px;
+      color: #bbb; font-size: 0.9rem; line-height: 1.8;
+    }
+
+    .wish-card {
+      background: #fff; border-radius: 14px; padding: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
+      display: flex; flex-direction: column; gap: 10px;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .wish-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.12); transform: translateY(-2px); }
+
+    .wish-tag-badge {
+      display: inline-block; font-size: 0.6rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.7px; padding: 3px 9px;
+      border-radius: 20px; align-self: flex-start;
+    }
+    .wtag-sea       { background: #EFF6FF; color: #2563EB; }
+    .wtag-marketing { background: #F0FDF4; color: #059669; }
+    .wtag-crm       { background: #FFF7ED; color: #EA6C00; }
+
+    .wish-title { font-size: 0.9rem; font-weight: 700; color: #111; line-height: 1.35; }
+    .wish-desc  { font-size: 0.78rem; color: #666; line-height: 1.5; }
+
+    .wish-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: auto; padding-top: 10px; border-top: 1px solid #f0f0f0;
+    }
+    .wish-author { font-size: 0.68rem; color: #bbb; }
+
+    .wish-vote-btn {
+      display: flex; align-items: center; gap: 5px; padding: 5px 13px;
+      border-radius: 20px; border: 1.5px solid #e5e5e5; background: #fff;
+      color: #888; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .wish-vote-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .wish-vote-btn.voted { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+    .wish-vote-count { font-size: 0.88rem; font-weight: 800; }
   </style>
 </head>
 <body>
@@ -919,6 +1035,7 @@
   <button class="tab-btn active" data-tab="calendar">📅 Calendar</button>
   <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">📈 Pacing Board</button>
+  <button class="tab-btn" data-tab="wishlist">⭐ Wishlist</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
@@ -964,6 +1081,72 @@
       <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
+  </div>
+</div>
+
+<!-- Wishlist tab -->
+<div class="tab-panel" id="tab-wishlist">
+  <div class="wishlist-wrap">
+
+    <!-- Controls bar -->
+    <div class="wishlist-controls">
+      <div class="wishlist-filters" id="wishlist-filters">
+        <span class="wf-label">Filter:</span>
+        <button class="wf-btn active" data-filter="all">✨ All</button>
+        <button class="wf-btn" data-filter="SEA">🔵 SEA</button>
+        <button class="wf-btn" data-filter="Marketing">🟢 Marketing</button>
+        <button class="wf-btn" data-filter="CRM">🟠 CRM / Tech</button>
+      </div>
+      <div class="wishlist-sort-wrap">
+        <span class="wf-label">Sort:</span>
+        <select id="wishlist-sort-select">
+          <option value="votes">Most Voted</option>
+          <option value="newest">Newest</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="wishlist-layout">
+
+      <!-- Submission form -->
+      <div class="wishlist-form-wrap">
+        <div class="wishlist-form-card">
+          <div class="wform-title">💡 Add a Wish</div>
+          <form id="wishlist-form" autocomplete="off">
+            <div class="wform-field">
+              <label class="wform-label">Title <span class="wform-req">*</span></label>
+              <input class="wform-input" name="title" type="text" placeholder="What would you like?" required maxlength="120">
+            </div>
+            <div class="wform-field">
+              <label class="wform-label">Description <span class="wform-opt">(optional)</span></label>
+              <textarea class="wform-textarea" name="description" placeholder="Any extra context…" rows="3" maxlength="400"></textarea>
+            </div>
+            <div class="wform-field">
+              <label class="wform-label">Category <span class="wform-req">*</span></label>
+              <div class="wform-tags">
+                <label class="wtag-option"><input type="radio" name="tag" value="SEA" required><span>🔵 SEA Wishlist</span></label>
+                <label class="wtag-option"><input type="radio" name="tag" value="Marketing"><span>🟢 Marketing Wishlist</span></label>
+                <label class="wtag-option"><input type="radio" name="tag" value="CRM"><span>🟠 CRM / Tech Wishlist</span></label>
+              </div>
+            </div>
+            <div class="wform-field">
+              <label class="wform-label">Your name <span class="wform-opt">(optional)</span></label>
+              <input class="wform-input" name="author" type="text" placeholder="e.g. Daljeet" maxlength="40">
+            </div>
+            <button class="wform-submit" type="submit">✨ Add to Wishlist</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Card grid -->
+      <div class="wishlist-grid-wrap">
+        <div class="wishlist-grid" id="wishlist-grid">
+          <div class="wishlist-loading">Loading wishlist…</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -2002,6 +2185,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       // Show calendar nav only on the calendar tab
       document.getElementById('nav-controls').style.visibility =
         btn.dataset.tab === 'calendar' ? 'visible' : 'hidden';
+      if (btn.dataset.tab === 'wishlist' && !wishlistLoaded) loadWishlist();
+      else if (btn.dataset.tab === 'wishlist') renderWishlist();
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
       if (btn.dataset.tab === 'pacing') {
         if (!activePacingData) loadPacingData().then(() => renderPacing());
@@ -2055,6 +2240,144 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         if (ke.key === 'Escape') renderPacing();
       });
     }
+  });
+
+  // ── Wishlist ──────────────────────────────────────────────────
+  const WISHLIST_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/wishlist.json';
+
+  const WISH_TAGS = {
+    SEA:       { label: 'SEA Wishlist',        cls: 'wtag-sea' },
+    Marketing: { label: 'Marketing Wishlist',   cls: 'wtag-marketing' },
+    CRM:       { label: 'CRM / Tech Wishlist',  cls: 'wtag-crm' },
+  };
+
+  let wishlistData   = {};
+  let wishlistFilter = 'all';
+  let wishlistSort   = 'votes';
+  let wishlistLoaded = false;
+
+  function wEsc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function getMyVotes() {
+    try { return JSON.parse(localStorage.getItem('wishlist-votes') || '[]'); }
+    catch(e) { return []; }
+  }
+  function setMyVotes(arr) {
+    localStorage.setItem('wishlist-votes', JSON.stringify(arr));
+  }
+
+  async function loadWishlist() {
+    try {
+      const res  = await fetch(WISHLIST_DB);
+      const data = await res.json();
+      wishlistData = (data && typeof data === 'object' && !Array.isArray(data)) ? data : {};
+    } catch(e) { wishlistData = {}; }
+    wishlistLoaded = true;
+    renderWishlist();
+  }
+
+  async function saveWishItem(item) {
+    const url = WISHLIST_DB.replace(/\.json$/, `/${item.id}.json`);
+    try {
+      await fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(item),
+      });
+    } catch(e) { console.error('saveWishItem failed', e); }
+  }
+
+  function toggleVote(itemId) {
+    const item = wishlistData[itemId];
+    if (!item) return;
+    const myVotes = getMyVotes();
+    if (myVotes.includes(itemId)) {
+      item.votes = Math.max(0, (item.votes || 0) - 1);
+      setMyVotes(myVotes.filter(id => id !== itemId));
+    } else {
+      item.votes = (item.votes || 0) + 1;
+      setMyVotes([...myVotes, itemId]);
+    }
+    wishlistData[itemId] = item;
+    saveWishItem(item);
+    renderWishlist();
+  }
+
+  function renderWishlist() {
+    const grid = document.getElementById('wishlist-grid');
+    if (!grid) return;
+    const myVotes = getMyVotes();
+    let items = Object.values(wishlistData);
+    if (wishlistFilter !== 'all') items = items.filter(it => it.tag === wishlistFilter);
+    if (wishlistSort === 'votes') items.sort((a,b) => (b.votes||0) - (a.votes||0));
+    else items.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+    if (!items.length) {
+      grid.innerHTML = `<div class="wishlist-empty">No items yet.<br>Be the first to add a wish! 🌟</div>`;
+      return;
+    }
+
+    grid.innerHTML = items.map(item => {
+      const tag   = WISH_TAGS[item.tag] || WISH_TAGS.SEA;
+      const voted = myVotes.includes(item.id);
+      const date  = item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString('en-AU', { day:'numeric', month:'short' })
+        : '';
+      const footer = [item.author ? `— ${wEsc(item.author)}` : '', date].filter(Boolean).join(' · ');
+      return `<div class="wish-card">
+        <span class="wish-tag-badge ${tag.cls}">${tag.label}</span>
+        <div class="wish-title">${wEsc(item.title)}</div>
+        ${item.description ? `<div class="wish-desc">${wEsc(item.description)}</div>` : ''}
+        <div class="wish-footer">
+          <span class="wish-author">${footer}</span>
+          <button class="wish-vote-btn ${voted ? 'voted' : ''}" data-id="${item.id}">
+            ▲ <span class="wish-vote-count">${item.votes || 0}</span>
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+
+    grid.querySelectorAll('.wish-vote-btn').forEach(btn => {
+      btn.addEventListener('click', () => toggleVote(btn.dataset.id));
+    });
+  }
+
+  // Form submit
+  document.getElementById('wishlist-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const form  = e.target;
+    const title = form.querySelector('[name="title"]').value.trim();
+    const desc  = form.querySelector('[name="description"]').value.trim();
+    const tag   = form.querySelector('[name="tag"]:checked')?.value;
+    const author= form.querySelector('[name="author"]').value.trim();
+    if (!title || !tag) return;
+    const id   = 'w' + Date.now() + Math.random().toString(36).slice(2,5);
+    const item = { id, title, description: desc, tag, author, votes: 0, createdAt: Date.now() };
+    wishlistData[id] = item;
+    saveWishItem(item);
+    renderWishlist();
+    form.reset();
+  });
+
+  // Filter buttons
+  document.getElementById('wishlist-filters').addEventListener('click', e => {
+    const btn = e.target.closest('.wf-btn');
+    if (!btn) return;
+    wishlistFilter = btn.dataset.filter;
+    document.querySelectorAll('.wf-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.filter === wishlistFilter)
+    );
+    renderWishlist();
+  });
+
+  // Sort select
+  document.getElementById('wishlist-sort-select').addEventListener('change', e => {
+    wishlistSort = e.target.value;
+    renderWishlist();
   });
 
   // ── Kanban Board ──────────────────────────────────────────────
