@@ -1131,8 +1131,16 @@
               </div>
             </div>
             <div class="wform-field">
-              <label class="wform-label">Your name <span class="wform-opt">(optional)</span></label>
-              <input class="wform-input" name="author" type="text" placeholder="e.g. Daljeet" maxlength="40">
+              <label class="wform-label">Your name <span class="wform-req">*</span></label>
+              <select class="wform-input" name="author" required>
+                <option value="" disabled selected>— Select your name —</option>
+                <option>Amelia Mosley</option>
+                <option>Daljeet Sahota</option>
+                <option>Greg Banks</option>
+                <option>Kimmi</option>
+                <option>Priscilla Samuel</option>
+                <option>Saravanan Rajamani</option>
+              </select>
             </div>
             <button class="wform-submit" type="submit">✨ Add to Wishlist</button>
           </form>
