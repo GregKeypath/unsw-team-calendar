@@ -1005,6 +1005,70 @@
     .wish-vote-btn:hover { border-color: var(--accent); color: var(--accent); }
     .wish-vote-btn.voted { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
     .wish-vote-count { font-size: 0.88rem; font-weight: 800; }
+
+    /* =====================================================
+       COURSE PLANNER
+       ===================================================== */
+    .planner-wrap { display: flex; flex-direction: column; height: calc(100vh - 180px); min-height: 500px; }
+    .planner-header { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 16px 24px; flex-shrink: 0; }
+    .planner-controls-row { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+    .planner-control-group { display: flex; flex-direction: column; gap: 4px; }
+    .planner-label { font-size: 0.72rem; font-weight: 700; color: #666; letter-spacing: 0.5px; text-transform: uppercase; }
+    .planner-select { padding: 8px 12px; border: 1.5px solid #e5e5e5; border-radius: 8px; font-size: 0.88rem; font-weight: 500; background: #fff; color: #111; cursor: pointer; min-width: 200px; }
+    .planner-select:focus { outline: none; border-color: var(--accent); }
+    .planner-print-btn { padding: 8px 18px; background: var(--accent); color: var(--accent-text); border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
+    .planner-print-btn:hover { background: var(--accent-dark); }
+    .planner-body { flex: 1; overflow: hidden; position: relative; }
+    .planner-sequence { display: flex; gap: 0; overflow-x: auto; height: 100%; padding: 20px 24px; gap: 12px; align-items: flex-start; }
+    .planner-empty { color: #aaa; font-size: 0.95rem; padding: 40px; text-align: center; width: 100%; }
+    .planner-note { font-size: 0.75rem; color: #888; padding: 8px 24px; background: #fffbeb; border-top: 1px solid #fde68a; }
+
+    /* SP tile */
+    .sp-tile { flex-shrink: 0; width: 220px; background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; display: flex; flex-direction: column; }
+    .sp-tile-head { background: #111; color: #fff; padding: 12px 14px; text-align: center; }
+    .sp-tile-head .sp-label { font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; color: var(--accent); }
+    .sp-tile-head .sp-year { font-size: 0.72rem; font-weight: 500; color: #aaa; margin-top: 1px; }
+    .sp-tile-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: calc(100vh - 340px); }
+
+    /* Category section within SP tile */
+    .sp-cat { border-radius: 8px; overflow: hidden; }
+    .sp-cat-head { padding: 5px 9px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
+    .sp-cat-body { padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; background: rgba(255,255,255,0.6); }
+    .sp-course { font-size: 0.75rem; font-weight: 500; line-height: 1.3; color: #222; }
+    .sp-course-code { font-family: monospace; font-weight: 700; color: #555; font-size: 0.7rem; }
+    .sp-no-courses { font-size: 0.72rem; color: #bbb; font-style: italic; padding: 4px 0; }
+
+    /* Category type colors */
+    .cat-coreA .sp-cat-head { background: #1e3a5f; color: #93c5fd; }
+    .cat-coreA .sp-cat-body { background: #eff6ff; }
+    .cat-coreB .sp-cat-head { background: #3b0764; color: #d8b4fe; }
+    .cat-coreB .sp-cat-body { background: #faf5ff; }
+    .cat-spec1 .sp-cat-head { background: #14532d; color: #86efac; }
+    .cat-spec1 .sp-cat-body { background: #f0fdf4; }
+    .cat-spec2 .sp-cat-head { background: #78350f; color: #fde68a; }
+    .cat-spec2 .sp-cat-body { background: #fffbeb; }
+    .cat-spec3 .sp-cat-head { background: #1e40af; color: #bfdbfe; }
+    .cat-spec3 .sp-cat-body { background: #eff6ff; }
+    .cat-spec4 .sp-cat-head { background: #134e4a; color: #99f6e4; }
+    .cat-spec4 .sp-cat-body { background: #f0fdfa; }
+    .cat-elective .sp-cat-head { background: #881337; color: #fda4af; }
+    .cat-elective .sp-cat-body { background: #fff1f2; }
+    .cat-capstone .sp-cat-head { background: #111; color: #FFD100; }
+    .cat-capstone .sp-cat-body { background: #fffbeb; }
+
+    /* Print styles */
+    @media print {
+      .top-bar, .site-header, .tab-nav, .planner-header { display: none !important; }
+      .tab-panel { display: none !important; }
+      #tab-planner { display: block !important; }
+      .planner-wrap { height: auto; }
+      .planner-body { overflow: visible; }
+      .planner-sequence { overflow: visible; flex-wrap: wrap; padding: 0; }
+      .sp-tile { break-inside: avoid; }
+      .sp-tile-body { max-height: none; overflow: visible; }
+      body { background: white; }
+      .planner-print-btn { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1036,6 +1100,7 @@
   <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">📈 Pacing Board</button>
   <button class="tab-btn" data-tab="wishlist">⭐ Wishlist</button>
+  <button class="tab-btn" data-tab="planner">📚 Course Planner</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
@@ -1154,6 +1219,43 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- Course Planner tab -->
+<div class="tab-panel" id="tab-planner">
+  <div class="planner-wrap">
+    <div class="planner-header">
+      <div class="planner-controls-row">
+        <div class="planner-control-group">
+          <label class="planner-label">Program</label>
+          <select id="planner-program" class="planner-select">
+            <option value="">— Select program —</option>
+          </select>
+        </div>
+        <div class="planner-control-group">
+          <label class="planner-label">Starting study period</label>
+          <select id="planner-sp" class="planner-select">
+            <option value="">— Select program first —</option>
+          </select>
+        </div>
+        <div class="planner-control-group">
+          <label class="planner-label">Periods to show</label>
+          <select id="planner-count" class="planner-select">
+            <option value="4">4 periods</option>
+            <option value="6" selected>6 periods</option>
+            <option value="8">8 periods</option>
+            <option value="12">12 periods (full year+)</option>
+          </select>
+        </div>
+        <button class="planner-print-btn" id="planner-print-btn" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </div>
+    <div class="planner-body">
+      <div class="planner-sequence" id="planner-sequence">
+        <div class="planner-empty">Select a program and study period to view the course carousel.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2770,6 +2872,253 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     return el;
   }
+
+  /* =====================================================
+     COURSE PLANNER DATA
+     ===================================================== */
+  const PLANNER_PROGRAMS = {
+    'Applied Finance': {
+      note: 'Carousel data shown is to H5 2025. Contact program team for current offerings.',
+      sps: ['H6 21','H1 22','H2 22','H3 22','H4 22','H5 22','H6 22','H1 23','H2 23','H3 23','H4 23','H5 23','H6 23','H1 24','H2 24','H3 24','H4 24','H5 24','H6 24','H1 25','H2 25','H3 25','H4 25','H5 25'],
+      cats: [
+        { label: 'Core A', type: 'coreA', items: {'H6 21':['ZZBU8701 Portfolio Management'],'H1 22':['ZZBU8703 International Finance'],'H3 22':['ZZBU8702 Corporate Finance'],'H4 22':['ZZBU8701 Portfolio Management'],'H5 22':['ZZBU8703 International Finance'],'H1 23':['ZZBU8702 Corporate Finance'],'H2 23':['ZZBU8701 Portfolio Management'],'H3 23':['ZZBU8703 International Finance'],'H4 23':['ZZBU8702 Corporate Finance'],'H5 23':['ZZBU8701 Portfolio Management'],'H6 23':['ZZBU8703 International Finance'],'H1 24':['ZZBU8702 Corporate Finance'],'H2 24':['ZZBU8701 Portfolio Management'],'H3 24':['ZZBU8703 International Finance'],'H4 24':['ZZBU8702 Corporate Finance'],'H5 24':['ZZBU8701 Portfolio Management'],'H6 24':['ZZBU8703 International Finance'],'H1 25':['ZZBU8702 Corporate Finance'],'H2 25':['ZZBU8701 Portfolio Management'],'H3 25':['ZZBU8702 Corporate Finance'],'H4 25':['ZZBU8701 Portfolio Management'],'H5 25':['ZZBU8702 Corporate Finance']} },
+        { label: 'Core B', type: 'coreB', items: {'H2 22':['ZZBU8704 Private Equity & Venture Capital'],'H5 22':['ZZBU8707 Derivatives'],'H6 22':['ZZBU8705 Equity Valuation'],'H1 23':['ZZBU8704 Private Equity & Venture Capital'],'H2 23':['ZZBU8706 Fixed Income'],'H3 23':['ZZBU8708 Ethics & Professional Standards'],'H4 23':['ZZBU8707 Derivatives'],'H5 23':['ZZBU8705 Equity Valuation'],'H1 24':['ZZBU8704 Private Equity & Venture Capital'],'H2 24':['ZZBU8706 Fixed Income'],'H3 24':['ZZBU8708 Ethics & Professional Standards'],'H4 24':['ZZBU8707 Derivatives'],'H5 24':['ZZBU8705 Equity Valuation'],'H6 24':['ZZBU8706 Fixed Income'],'H1 25':['ZZBU8707 Derivatives','ZZBU8704 Private Equity & Venture Capital'],'H2 25':['ZZBU8705 Equity Valuation','ZZBU8703 International Finance'],'H3 25':['ZZBU8706 Fixed Income','ZZBU8708 Ethics & Professional Standards'],'H4 25':['ZZBU8707 Derivatives','ZZBU8704 Private Equity & Venture Capital'],'H5 25':['ZZBU8705 Equity Valuation','ZZBU8703 International Finance']} },
+        { label: 'Management Electives', type: 'spec2', items: {'H6 21':['ZZBU6002 Financial Management'],'H1 22':['ZZBU6005 Law Regulation & Ethics','ZZBU6103 Entrepreneurship & Innovation'],'H2 22':['ZZBU6003 Business Economics'],'H4 22':['ZZBU6002 Financial Management'],'H5 22':['ZZBU6003 Business Economics','ZZBU6103 Entrepreneurship & Innovation'],'H6 22':['ZZBU6005 Law Regulation & Ethics'],'H2 23':['ZZBU6002 Financial Management'],'H3 23':['ZZBU6003 Business Economics','ZZBU6103 Entrepreneurship & Innovation'],'H4 23':['ZZBU6005 Law Regulation & Ethics'],'H6 23':['ZZBU6002 Financial Management'],'H1 24':['ZZBU6003 Business Economics','ZZBU6103 Entrepreneurship & Innovation'],'H2 24':['ZZBU6005 Law Regulation & Ethics'],'H4 24':['ZZBU6002 Financial Management'],'H5 24':['ZZBU6003 Business Economics','ZZBU6103 Entrepreneurship & Innovation'],'H6 24':['ZZBU6005 Law Regulation & Ethics'],'H2 25':['ZZBU6002 Financial Management','ZZBU6103 Entrepreneurship & Innovation'],'H3 25':['ZZBU6003 Business Economics','ZZBU6005 Law Regulation & Ethics']} },
+        { label: 'Analytics Electives', type: 'spec3', items: {'H2 22':['ZZBU6501 Introductory Data Analysis'],'H4 22':['ZZBU6501 Introductory Data Analysis'],'H6 22':['ZZBU6501 Introductory Data Analysis'],'H2 23':['ZZBU6501 Introductory Data Analysis'],'H4 23':['ZZBU6501 Introductory Data Analysis'],'H6 23':['ZZBU6501 Introductory Data Analysis'],'H2 24':['ZZBU6501 Introductory Data Analysis'],'H4 24':['ZZBU6501 Introductory Data Analysis'],'H6 24':['ZZBU6501 Introductory Data Analysis'],'H2 25':['ZZBU6501 Introductory Data Analysis'],'H4 25':['ZZBU6501 Introductory Data Analysis'],'H6 21':['ZZEN9021 Principles of Programming'],'H2 22':['ZZEN9021 Principles of Programming'],'H3 25':['ZZEN9021 Principles of Programming']} },
+      ]
+    },
+
+    'Analytics': {
+      sps: ['H1 24','H2 24','H3 24','H4 24','H5 24','H6 24','H1 25','H2 25','H3 25','H4 25','H5 25','H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27'],
+      cats: [
+        { label: 'Core Courses', type: 'coreA', items: {'H1 24':['ZZBU6503 Managing People, Analytics & Change'],'H2 24':['ZZBU6501 Introductory Data Analysis'],'H3 24':['ZZBU6503 Managing People, Analytics & Change','ZZBU6505 Data and Ethics'],'H4 24':['ZZBU6501 Introductory Data Analysis'],'H5 24':['ZZBU6503 Managing People, Analytics & Change'],'H6 24':['ZZBU6501 Introductory Data Analysis','ZZBU6505 Data and Ethics'],'H1 25':['ZZBU6503 Managing People, Analytics & Change','ZZBU6502 Analytics and Business'],'H2 25':['ZZBU6501 Introductory Data Analysis','ZZBU6505 Data and Ethics'],'H3 25':['ZZBU6503 Managing People, Analytics & Change','ZZEN9021 Principles of Programming'],'H4 25':['ZZBU6501 Introductory Data Analysis','ZZBU6502 Analytics and Business'],'H5 25':['ZZBU6503 Managing People, Analytics & Change','ZZBU6505 Data and Ethics'],'H6 25':['ZZBU6501 Introductory Data Analysis','ZZEN9021 Principles of Programming'],'H1 26':['ZZBU6503 Managing People, Analytics & Change','ZZBU6502 Analytics and Business'],'H2 26':['ZZBU6501 Introductory Data Analysis','ZZBU6505 Data and Ethics'],'H3 26':['ZZBU6503 Managing People, Analytics & Change','ZZEN9021 Principles of Programming'],'H4 26':['ZZBU6501 Introductory Data Analysis','ZZBU6502 Analytics and Business'],'H5 26':['ZZBU6503 Managing People, Analytics & Change','ZZBU6505 Data and Ethics'],'H6 26':['ZZBU6501 Introductory Data Analysis','ZZEN9021 Principles of Programming'],'H1 27':['ZZBU6503 Managing People, Analytics & Change','ZZBU6502 Analytics and Business'],'H2 27':['ZZBU6501 Introductory Data Analysis','ZZBU6505 Data and Ethics'],'H3 27':['ZZBU6503 Managing People, Analytics & Change','ZZEN9021 Principles of Programming'],'H4 27':['ZZBU6501 Introductory Data Analysis','ZZBU6502 Analytics and Business'],'H5 27':['ZZBU6501 Introductory Data Analysis'],'H6 27':['ZZBU6501 Introductory Data Analysis']} },
+        { label: 'Core Courses (Advanced)', type: 'coreB', items: {'H1 24':['ZZBU6507 Data Visualisation & Communication'],'H2 24':['ZZBU6516 Database Management'],'H3 24':['ZZBU6511 Predictive Analytics'],'H4 24':['ZZBU6507 Data Visualisation & Communication'],'H5 24':['ZZBU6511 Predictive Analytics','ZZBU6502 Analytics and Business'],'H6 24':['ZZBU6516 Database Management'],'H1 25':['ZZBU6511 Predictive Analytics'],'H2 25':['ZZBU6507 Data Visualisation & Communication'],'H3 26':['ZZBU6511 Predictive Analytics'],'H4 26':['ZZBU6507 Data Visualisation & Communication'],'H5 26':['ZZBU6516 Database Management'],'H6 26':['ZZBU6511 Predictive Analytics'],'H1 27':['ZZBU6507 Data Visualisation & Communication'],'H2 27':['ZZBU6516 Database Management'],'H3 27':['ZZBU6511 Predictive Analytics'],'H4 27':['ZZBU6507 Data Visualisation & Communication'],'H5 27':['ZZBU6516 Database Management']} },
+        { label: 'Spec: Marketing Analytics', type: 'spec1', items: {'H1 24':['ZZBU6513 Social Media & Digital Analytics'],'H2 24':['ZZBU6512 Foundations of Marketing Analytics'],'H3 24':['ZZBU6514 Managing Customer Analytics'],'H4 24':['ZZBU6513 Social Media & Digital Analytics'],'H5 24':['ZZBU6512 Foundations of Marketing Analytics'],'H6 24':['ZZBU6514 Managing Customer Analytics'],'H1 25':['ZZBU6513 Social Media & Digital Analytics'],'H2 25':['ZZBU6512 Foundations of Marketing Analytics'],'H3 25':['ZZBU6514 Managing Customer Analytics'],'H4 25':['ZZBU6513 Social Media & Digital Analytics'],'H5 25':['ZZBU6512 Foundations of Marketing Analytics'],'H6 25':['ZZBU6514 Managing Customer Analytics'],'H1 26':['ZZBU6513 Social Media & Digital Analytics'],'H2 26':['ZZBU6512 Foundations of Marketing Analytics'],'H3 26':['ZZBU6514 Managing Customer Analytics'],'H4 26':['ZZBU6513 Social Media & Digital Analytics'],'H5 26':['ZZBU6512 Foundations of Marketing Analytics'],'H6 26':['ZZBU6514 Managing Customer Analytics'],'H1 27':['ZZBU6513 Social Media & Digital Analytics'],'H2 27':['ZZBU6512 Foundations of Marketing Analytics'],'H3 27':['ZZBU6514 Managing Customer Analytics'],'H4 27':['ZZBU6513 Social Media & Digital Analytics'],'H5 27':['ZZBU6512 Foundations of Marketing Analytics'],'H6 27':['ZZBU6514 Managing Customer Analytics']} },
+        { label: 'Spec: General Analytics', type: 'spec2', items: {'H1 24':['ZZCA6510 Decision Making in Analytics'],'H2 24':['ZZBU6508 Analytics and Consulting'],'H3 24':['ZZBU6509 Financial Modelling'],'H4 24':['ZZCA6510 Decision Making in Analytics'],'H5 24':['ZZBU6508 Analytics and Consulting'],'H6 24':['ZZBU6509 Financial Modelling'],'H1 25':['ZZCA6510 Decision Making in Analytics'],'H2 25':['ZZBU6508 Analytics and Consulting'],'H3 25':['ZZBU6509 Financial Modelling'],'H4 25':['ZZCA6510 Decision Making in Analytics'],'H5 25':['ZZBU6508 Analytics and Consulting'],'H6 25':['ZZBU6509 Financial Modelling'],'H1 26':['ZZCA6510 Decision Making in Analytics'],'H2 26':['ZZBU6508 Analytics and Consulting'],'H3 26':['ZZBU6509 Financial Modelling'],'H4 26':['ZZCA6510 Decision Making in Analytics'],'H5 26':['ZZBU6508 Analytics and Consulting'],'H6 26':['ZZBU6509 Financial Modelling'],'H1 27':['ZZCA6510 Decision Making in Analytics'],'H2 27':['ZZBU6508 Analytics and Consulting'],'H3 27':['ZZBU6509 Financial Modelling'],'H4 27':['ZZCA6510 Decision Making in Analytics'],'H5 27':['ZZBU6508 Analytics and Consulting'],'H6 27':['ZZBU6509 Financial Modelling']} },
+        { label: 'Spec: HR Analytics', type: 'spec3', items: {'H1 24':['ZZBU6404 Human Resource Analytics','ZZBU6407 HR Information Systems'],'H2 24':['ZZBU6404 Human Resource Analytics'],'H3 24':['MHRM Elective'],'H4 24':['MHRM Elective','ZZBU6407 HR Information Systems'],'H5 24':['ZZBU6404 Human Resource Analytics'],'H6 24':['MHRM Elective'],'H1 25':['ZZBU6404 Human Resource Analytics','ZZBU6407 HR Information Systems'],'H2 25':['MHRM Elective'],'H3 25':['ZZBU6404 Human Resource Analytics'],'H4 25':['ZZBU6407 HR Information Systems','MHRM Elective'],'H5 25':['ZZBU6404 Human Resource Analytics'],'H6 25':['MHRM Elective'],'H1 26':['ZZBU6404 Human Resource Analytics','ZZBU6407 HR Information Systems'],'H2 26':['MHRM Elective'],'H3 26':['ZZBU6404 Human Resource Analytics'],'H4 26':['ZZBU6407 HR Information Systems','MHRM Elective'],'H5 26':['ZZBU6404 Human Resource Analytics'],'H6 26':['MHRM Elective'],'H1 27':['ZZBU6404 Human Resource Analytics','ZZBU6407 HR Information Systems'],'H2 27':['MHRM Elective'],'H3 27':['ZZBU6404 Human Resource Analytics'],'H4 27':['ZZBU6407 HR Information Systems','MHRM Elective'],'H5 27':['ZZBU6404 Human Resource Analytics'],'H6 27':['MHRM Elective']} },
+        { label: 'Capstone', type: 'capstone', items: {'H2 24':['ZZBU6601 General / Marketing Analytics Capstone (36UOC)'],'H5 24':['ZZBU6601 Analytics Capstone (36UOC)'],'H2 25':['ZZBU6601 Analytics Capstone (36UOC)'],'H5 25':['ZZBU6601 Analytics Capstone (36UOC)'],'H2 26':['ZZBU6601 Analytics Capstone (36UOC)'],'H5 26':['ZZBU6601 Analytics Capstone (36UOC)'],'H2 27':['ZZBU6601 Analytics Capstone (36UOC)'],'H5 27':['ZZBU6601 Analytics Capstone (36UOC)']} },
+      ]
+    },
+
+    'Business Law': {
+      sps: ['H4 25','H5 25','H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27'],
+      cats: [
+        { label: 'Core Courses', type: 'coreA', items: {'H4 25':['ZZBU6414 Introduction to Employment Law'],'H5 25':['ZZLJ8211 Corporate Governance & Leadership'],'H6 25':['ZZLJ8212 Commercial Contract Law'],'H1 26':['ZZLJ8100 Law Regulation & Ethics'],'H2 26':['ZZBU6414 Introduction to Employment Law'],'H3 26':['ZZLJ8211 Corporate Governance & Leadership'],'H4 26':['ZZLJ8212 Commercial Contract Law'],'H5 26':['ZZLJ8100 Law Regulation & Ethics'],'H6 26':['ZZBU6414 Introduction to Employment Law'],'H1 27':['ZZLJ8211 Corporate Governance & Leadership'],'H2 27':['ZZLJ8212 Commercial Contract Law'],'H3 27':['ZZLJ8100 Law Regulation & Ethics'],'H4 27':['ZZBU6414 Introduction to Employment Law'],'H5 27':['ZZLJ8211 Corporate Governance & Leadership'],'H6 27':['ZZLJ8212 Commercial Contract Law']} },
+        { label: 'Electives', type: 'elective', items: {'H2 26':['ZZLJ9223 Cyber and the Law'],'H2 27':['ZZLJ9223 Cyber and the Law']} },
+      ]
+    },
+
+    'Cyber Security': {
+      sps: ['H1 25','H2 25','H3 25','H4 25','H5 25','H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27'],
+      cats: [
+        { label: 'Core Courses', type: 'coreA', items: {'H1 25':['ZZCA9204 Cybersecurity Ethics'],'H2 25':['ZZEN9203 Principles of Security Engineering'],'H3 25':['ZZCA9202 Data Security and Privacy'],'H4 25':['ZZCA9204 Cybersecurity Ethics'],'H5 25':['ZZEN9203 Principles of Security Engineering'],'H6 25':['ZZCA9202 Data Security and Privacy'],'H1 26':['ZZCA9204 Cybersecurity Ethics'],'H2 26':['ZZEN9203 Principles of Security Engineering'],'H3 26':['ZZCA9202 Data Security and Privacy'],'H4 26':['ZZCA9204 Cybersecurity Ethics'],'H5 26':['ZZEN9203 Principles of Security Engineering'],'H6 26':['ZZCA9202 Data Security and Privacy'],'H1 27':['ZZCA9204 Cybersecurity Ethics'],'H2 27':['ZZEN9203 Principles of Security Engineering'],'H3 27':['ZZCA9202 Data Security and Privacy'],'H4 27':['ZZCA9204 Cybersecurity Ethics'],'H5 27':['ZZEN9203 Principles of Security Engineering'],'H6 27':['ZZCA9202 Data Security and Privacy']} },
+        { label: 'Spec: Security Management & Leadership', type: 'spec1', items: {'H1 25':['ZZCA9206 Cyber Risk & Resilience'],'H2 25':['ZZCA9222 Cyber Threats & Crime'],'H3 25':['ZZCA9221 Cyber Management & Governance'],'H4 25':['ZZLJ9223 Cyber and the Law'],'H5 25':['ZZCA9205 Cyber Operations'],'H6 25':['ZZCA9206 Cyber Risk & Resilience'],'H1 26':['ZZCA9222 Cyber Threats & Crime'],'H2 26':['ZZLJ9223 Cyber and the Law'],'H3 26':['ZZCA9221 Cyber Management & Governance'],'H4 26':['ZZCA9205 Cyber Operations'],'H5 26':['ZZCA9206 Cyber Risk & Resilience'],'H6 26':['ZZCA9222 Cyber Threats & Crime'],'H1 27':['ZZCA9221 Cyber Management & Governance'],'H2 27':['ZZLJ9223 Cyber and the Law'],'H3 27':['ZZCA9205 Cyber Operations'],'H4 27':['ZZCA9206 Cyber Risk & Resilience'],'H5 27':['ZZCA9222 Cyber Threats & Crime'],'H6 27':['ZZCA9221 Cyber Management & Governance']} },
+        { label: 'Spec: Security Engineering', type: 'spec2', items: {'H1 25':['ZZEN9213 Penetration Testing'],'H3 25':['ZZEN9214 Cloud Security'],'H4 25':['ZZEN9212 Advanced Penetration Testing'],'H5 25':['ZZCA9205 Cyber Operations'],'H6 25':['ZZEN9213 Penetration Testing'],'H1 26':['ZZEN9212 Advanced Penetration Testing'],'H2 26':['ZZEN9214 Cloud Security'],'H3 26':['ZZEN9216 Fundamentals of Coding: C & Assembler'],'H4 26':['ZZEN9217 OS Fundamentals for Security'],'H5 26':['ZZCA9211 Digital Forensics'],'H6 26':['ZZEN9213 Penetration Testing'],'H1 27':['ZZEN9212 Advanced Penetration Testing'],'H2 27':['ZZEN9214 Cloud Security'],'H3 27':['ZZEN9216 Fundamentals of Coding: C & Assembler'],'H4 27':['ZZEN9217 OS Fundamentals for Security'],'H5 27':['ZZCA9211 Digital Forensics']} },
+        { label: 'Non-Domain Electives', type: 'elective', items: {'H1 25':['ZZEN9311 Database Systems'],'H3 25':['ZZEN9021 Principles of Programming'],'H4 25':['ZZEN9311 Database Systems'],'H5 25':['ZZEN9313 Big Data Management'],'H6 25':['ZZEN9021 Principles of Programming'],'H1 26':['ZZEN9311 Database Systems'],'H3 26':['ZZEN9021 Principles of Programming'],'H4 26':['ZZEN9311 Database Systems'],'H5 26':['ZZEN9215 Reverse Engineering'],'H6 26':['ZZEN9021 Principles of Programming'],'H1 27':['ZZEN9311 Database Systems'],'H3 27':['ZZEN9021 Principles of Programming'],'H4 27':['ZZEN9311 Database Systems'],'H5 27':['ZZEN9215 Reverse Engineering'],'H6 27':['ZZEN9021 Principles of Programming']} },
+        { label: 'Capstone', type: 'capstone', items: {'H2 25':['ZZCA9208 Management & Leadership Capstone'],'H3 25':['ZZEN9209 Security Engineering Capstone'],'H6 25':['ZZCA9208 Management & Leadership Capstone','ZZEN9209 Security Engineering Capstone'],'H2 26':['ZZCA9208 Management & Leadership Capstone','ZZEN9209 Security Engineering Capstone'],'H6 26':['ZZCA9208 Management & Leadership Capstone','ZZEN9209 Security Engineering Capstone'],'H2 27':['ZZCA9208 Management & Leadership Capstone','ZZEN9209 Security Engineering Capstone'],'H6 27':['ZZCA9208 Management & Leadership Capstone','ZZEN9209 Security Engineering Capstone']} },
+      ]
+    },
+
+    'Data Science': {
+      sps: ['H1 23','H2 23','H3 23','H4 23','H5 23','H6 23','H1 24','H2 24','H3 24','H4 24','H5 24','H6 24','H1 25','H2 25','H3 25','H4 25','H5 25','H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26'],
+      cats: [
+        { label: 'Core (GCert)', type: 'coreA', items: {'H3 23':['ZZSC9001 Foundations of Data Science'],'H4 23':['ZZEN9021 Principles of Programming'],'H5 24':['ZZSC9001 Foundations of Data Science'],'H6 24':['ZZEN9021 Principles of Programming'],'H2 25':['ZZSC9001 Foundations of Data Science'],'H3 25':['ZZEN9021 Principles of Programming'],'H4 25':['ZZSC9001 Foundations of Data Science'],'H5 25':['ZZEN9021 Principles of Programming'],'H6 25':['ZZSC9001 Foundations of Data Science'],'H1 26':['ZZEN9021 Principles of Programming'],'H2 26':['ZZSC9001 Foundations of Data Science'],'H3 26':['ZZEN9021 Principles of Programming'],'H4 26':['ZZSC9001 Foundations of Data Science'],'H5 26':['ZZEN9021 Principles of Programming'],'H6 26':['ZZSC9001 Foundations of Data Science']} },
+        { label: 'Core (GDip)', type: 'coreB', items: {'H2 23':['ZZSC5905 Statistical Inference for Data Scientists'],'H3 23':['ZZSC5806 Regression Analysis for Data Scientists'],'H6 23':['ZZSC5905 Statistical Inference for Data Scientists'],'H1 24':['ZZSC5806 Regression Analysis for Data Scientists'],'H3 24':['ZZSC5905 Statistical Inference for Data Scientists'],'H4 24':['ZZSC5806 Regression Analysis for Data Scientists'],'H3 25':['ZZSC5836 Data Mining & Machine Learning'],'H4 25':['ZZSC5905 Statistical Inference for Data Scientists'],'H5 25':['ZZSC5806 Regression Analysis for Data Scientists'],'H6 25':['ZZSC5836 Data Mining & Machine Learning'],'H1 26':['ZZSC5905 Statistical Inference for Data Scientists'],'H2 26':['ZZSC5806 Regression Analysis for Data Scientists'],'H3 26':['ZZSC5836 Data Mining & Machine Learning'],'H4 26':['ZZSC5905 Statistical Inference for Data Scientists'],'H5 26':['ZZSC5806 Regression Analysis for Data Scientists'],'H6 26':['ZZSC5836 Data Mining & Machine Learning']} },
+        { label: 'Data Science Electives', type: 'spec1', items: {'H1 23':['ZZEN9311 Database Systems'],'H2 23':['ZZBU5611 Strategic Decision Making'],'H4 23':['ZZEN9444 Neural Networks & Deep Learning'],'H5 23':['ZZSC5855 Multivariate Analysis'],'H1 24':['ZZCA6510 Decision Making in Analytics'],'H2 24':['ZZSC5960 Bayesian Inference'],'H4 24':['ZZEN9313 Big Data Management'],'H5 24':['ZZSC5855 Multivariate Analysis'],'H2 25':['ZZBU5611 Strategic Decision Making'],'H3 25':['ZZSC5960 Bayesian Inference'],'H4 25':['ZZEN9444 Neural Networks & Deep Learning'],'H5 25':['ZZEN9313 Big Data Management'],'H1 26':['ZZBU6507 Data Visualisation & Communication'],'H3 26':['ZZSC5960 Bayesian Inference'],'H4 26':['ZZEN9444 Neural Networks & Deep Learning'],'H6 26':['ZZSC5855 Multivariate Analysis']} },
+        { label: 'Shared Electives', type: 'spec2', items: {'H3 23':['ZZEN9313 Big Data Management'],'H4 23':['ZZBU6507 Data Visualisation & Communication'],'H6 23':['ZZBU6507 Data Visualisation & Communication'],'H1 24':['ZZCA6510 Decision Making in Analytics'],'H4 24':['ZZCA6510 Decision Making in Analytics'],'H5 24':['ZZBU6507 Data Visualisation & Communication'],'H2 25':['ZZCA6510 Decision Making in Analytics'],'H3 25':['ZZBU6507 Data Visualisation & Communication'],'H4 25':['ZZCA6510 Decision Making in Analytics'],'H5 25':['ZZSC5855 Multivariate Analysis'],'H6 25':['ZZSC5855 Multivariate Analysis'],'H1 26':['ZZCA6510 Decision Making in Analytics'],'H3 26':['ZZEN9313 Big Data Management'],'H4 26':['ZZCA6510 Decision Making in Analytics'],'H5 26':['ZZBU6507 Data Visualisation & Communication']} },
+        { label: 'Capstone', type: 'capstone', items: {'H2 23':['ZZSC9020 Data Science Project (48UOC)'],'H5 23':['ZZSC9020 Data Science Project (48UOC)'],'H2 24':['ZZSC9020 Data Science Project (48UOC)'],'H5 24':['ZZSC9020 Data Science Project (48UOC)'],'H2 25':['ZZSC9020 Data Science Project (48UOC)'],'H5 25':['ZZSC9020 Data Science Project (48UOC)'],'H2 26':['ZZSC9020 Data Science Project (48UOC)'],'H5 26':['ZZSC9020 Data Science Project (48UOC)']} },
+      ]
+    },
+
+    'FinTech': {
+      note: 'Carousel data shown is to H4 2024. Contact program team for current offerings.',
+      sps: ['H5 20','H6 20','H1 21','H2 21','H3 21','H4 21','H5 21','H6 21','H1 22','H2 22','H3 22','H4 22','H5 22','H6 22','H1 23','H2 23','H3 23','H4 23','H5 23','H6 23','H1 24','H2 24','H3 24','H4 24'],
+      cats: [
+        { label: 'Core Courses', type: 'coreA', items: {'H5 20':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H1 21':['ZZBU8503 RegTech Applications'],'H3 21':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H5 21':['ZZBU8503 RegTech Applications'],'H1 22':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H2 22':['ZZBU8509 Tech Disruption: Funding & Lending'],'H4 22':['ZZBU8503 RegTech Applications'],'H5 22':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H6 22':['ZZBU8508 Tech Disruption: Payments & Transfers'],'H1 23':['ZZBU8503 RegTech Applications'],'H2 23':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H3 23':['ZZBU8508 Tech Disruption: Payments & Transfers'],'H4 23':['ZZBU8503 RegTech Applications'],'H5 23':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H6 23':['ZZBU8508 Tech Disruption: Payments & Transfers'],'H1 24':['ZZBU8503 RegTech Applications'],'H2 24':['ZZBU8501 FinTech Ecosystem & Industry Insights'],'H3 24':['ZZBU8508 Tech Disruption: Payments & Transfers'],'H4 24':['ZZBU8503 RegTech Applications']} },
+        { label: 'Core Courses (Technical)', type: 'coreB', items: {'H2 21':['ZZBU8504 Technical Tools for FinTech'],'H5 21':['ZZBU8504 Technical Tools for FinTech'],'H2 22':['ZZBU8504 Technical Tools for FinTech'],'H5 22':['ZZBU8504 Technical Tools for FinTech'],'H2 23':['ZZBU8504 Technical Tools for FinTech'],'H5 23':['ZZBU8504 Technical Tools for FinTech'],'H2 24':['ZZBU8504 Technical Tools for FinTech'],'H6 20':['ZZBU8502 Decentralised Finance'],'H4 21':['ZZBU8502 Decentralised Finance'],'H5 21':['ZZBU8510 InsurTech & Financial Risk Mgmt'],'H3 22':['ZZBU8510 InsurTech & Financial Risk Mgmt'],'H5 22':['ZZBU8502 Decentralised Finance'],'H6 22':['ZZBU8510 InsurTech & Financial Risk Mgmt'],'H4 23':['ZZBU8509 Tech Disruption: Funding & Lending'],'H5 23':['ZZBU8502 Decentralised Finance'],'H6 23':['ZZBU8510 InsurTech & Financial Risk Mgmt'],'H1 24':['ZZBU8509 Tech Disruption: Funding & Lending'],'H3 24':['ZZBU8510 InsurTech & Financial Risk Mgmt'],'H4 24':['ZZBU8509 Tech Disruption: Funding & Lending']} },
+        { label: 'Management & Analytics Electives', type: 'spec2', items: {'H1 22':['ZZBU6101 Managing with Digital Technology'],'H4 22':['ZZBU6101 Managing with Digital Technology'],'H1 23':['ZZBU6101 Managing with Digital Technology'],'H4 23':['ZZBU6101 Managing with Digital Technology'],'H1 24':['ZZBU6101 Managing with Digital Technology'],'H2 22':['ZZBU6503 Managing People, Analytics & Change'],'H4 22':['ZZBU6503 Managing People, Analytics & Change'],'H2 23':['ZZBU6503 Managing People, Analytics & Change'],'H4 23':['ZZBU6503 Managing People, Analytics & Change'],'H2 24':['ZZBU6503 Managing People, Analytics & Change']} },
+      ]
+    },
+
+    'Human Resource Management': {
+      sps: ['H5 23','H6 23','H1 24','H2 24','H3 24','H4 24','H5 24','H6 24','H1 25','H2 25','H3 25','H4 25','H5 25','H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27'],
+      cats: [
+        { label: 'Masters Core (4 courses)', type: 'coreA', items: {'H3 24':['ZZBU6401 HR Policies & Practices'],'H4 24':['ZZBU6410 HR Strategies'],'H5 24':['ZZBU6412 Managing People & Organisations'],'H6 24':['ZZBU6414 Introduction to Employment Law'],'H1 25':['ZZBU6401 HR Policies & Practices'],'H2 25':['ZZBU6410 HR Strategies'],'H3 25':['ZZBU6412 Managing People & Organisations'],'H4 25':['ZZBU6414 Introduction to Employment Law'],'H5 25':['ZZBU6401 HR Policies & Practices'],'H6 25':['ZZBU6410 HR Strategies'],'H1 26':['ZZBU6401 HR Policies & Practices'],'H2 26':['ZZBU6410 HR Strategies'],'H3 26':['ZZBU6412 Managing People & Organisations'],'H4 26':['ZZBU6401 HR Policies & Practices'],'H5 26':['ZZBU6410 HR Strategies'],'H6 26':['ZZBU6412 Managing People & Organisations'],'H1 27':['ZZBU6401 HR Policies & Practices'],'H2 27':['ZZBU6410 HR Strategies'],'H3 27':['ZZBU6412 Managing People & Organisations'],'H4 27':['ZZBU6401 HR Policies & Practices']} },
+        { label: 'GCert HRA Core', type: 'spec1', items: {'H6 23':['ZZBU6501 Introductory Data Analysis'],'H2 24':['ZZBU6407 HR Information Systems'],'H4 24':['ZZBU6404 HR Analytics (IDA)'],'H5 24':['ZZBU6407 HR Information Systems'],'H3 25':['ZZBU6501 Introductory Data Analysis'],'H4 25':['ZZBU6404 HR Analytics'],'H5 25':['ZZBU6407 HR Information Systems'],'H1 26':['ZZBU6404 HR Analytics'],'H2 26':['ZZBU6407 HR Information Systems'],'H4 26':['ZZBU6501 Introductory Data Analysis'],'H5 26':['ZZBU6404 HR Analytics'],'H6 26':['ZZBU6407 HR Information Systems'],'H1 27':['ZZBU6404 HR Analytics'],'H2 27':['ZZBU6407 HR Information Systems'],'H3 27':['ZZBU6404 HR Analytics'],'H4 27':['ZZBU6407 HR Information Systems']} },
+        { label: 'GCert DEI Core', type: 'spec2', items: {'H6 23':['ZZBU6402 Employee Wellbeing & Engagement'],'H2 24':['ZZBU6403 Sustainability & Human Resources'],'H3 24':['ZZBU6406 Diversity, Equity & Inclusion'],'H4 24':['ZZBU6402 Employee Wellbeing & Engagement'],'H5 24':['ZZBU6403 Sustainability & Human Resources'],'H1 25':['ZZBU6406 Diversity, Equity & Inclusion'],'H2 25':['ZZBU6402 Employee Wellbeing & Engagement'],'H3 25':['ZZBU6403 Sustainability & Human Resources'],'H5 25':['ZZBU6406 Diversity, Equity & Inclusion'],'H6 25':['ZZBU6402 Employee Wellbeing & Engagement'],'H1 26':['ZZBU6403 Sustainability & Human Resources'],'H3 26':['ZZBU6406 Diversity, Equity & Inclusion'],'H4 26':['ZZBU6402 Employee Wellbeing & Engagement'],'H5 26':['ZZBU6403 Sustainability & Human Resources'],'H6 26':['ZZBU6406 Diversity, Equity & Inclusion'],'H1 27':['ZZBU6402 Employee Wellbeing & Engagement'],'H2 27':['ZZBU6403 Sustainability & Human Resources'],'H3 27':['ZZBU6406 Diversity, Equity & Inclusion'],'H4 27':['ZZBU6402 Employee Wellbeing & Engagement']} },
+        { label: 'GCert LOD Core', type: 'spec3', items: {'H3 24':['ZZBU6411 Organisational Development'],'H4 24':['ZZBU6413 Leadership Development'],'H1 25':['ZZBU6411 Organisational Development'],'H2 25':['ZZBU6413 Leadership Development'],'H1 26':['ZZBU6411 Organisational Development'],'H2 26':['ZZBU6413 Leadership Development'],'H4 26':['ZZBU6411 Organisational Development'],'H6 26':['ZZBU6411 Organisational Development'],'H1 27':['ZZBU6413 Leadership Development'],'H3 27':['ZZBU6411 Organisational Development'],'H4 27':['ZZBU6411 Organisational Development']} },
+        { label: 'HRM Electives', type: 'elective', items: {'H5 23':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H6 23':['ZZBU6408 Managing Pay & Performance'],'H1 24':['ZZBU6409 Change Management'],'H2 24':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H5 24':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H6 24':['ZZBU6408 Strategic Rewards & Performance'],'H1 25':['ZZBU6409 Change Management'],'H2 25':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H3 25':['ZZBU6408 Strategic Rewards & Performance'],'H1 26':['ZZBU6409 Change Management'],'H3 26':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H4 26':['ZZBU6408 Strategic Rewards & Performance'],'H5 26':['ZZBU6409 Change Management'],'H1 27':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H2 27':['ZZBU6408 Strategic Rewards & Performance'],'H3 27':['ZZBU6409 Change Management']} },
+      ]
+    },
+
+    'Management': {
+      sps: ['H4 25','H5 25','H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27'],
+      cats: [
+        { label: 'Core Courses', type: 'coreA', items: {'H4 25':['ZZBU6004 Foundations of Marketing','ZZBU6502 Analytics and Business'],'H5 25':['ZZBU6001 Managing Yourself & Others','ZZLJ8211 Corporate Governance & Leadership'],'H6 25':['ZZBU6002 Financial Management','ZZLJ8212 Commercial Contract Law'],'H1 26':['ZZBU6003 Business Economics','ZZLJ8100 Law Regulation & Ethics'],'H2 26':['ZZBU6004 Foundations of Marketing','ZZBU6101 Managing with Digital Technology'],'H3 26':['ZZBU6001 Managing Yourself & Others'],'H4 26':['ZZBU6002 Financial Management','ZZBU6412 Managing People & Organisations'],'H5 26':['ZZBU6003 Business Economics'],'H6 26':['ZZBU6004 Foundations of Marketing','ZZLJ8100 Law Regulation & Ethics'],'H1 27':['ZZBU6001 Managing Yourself & Others'],'H2 27':['ZZBU6002 Financial Management','ZZBU6101 Managing with Digital Technology'],'H3 27':['ZZBU6003 Business Economics','ZZLJ8100 Law Regulation & Ethics'],'H4 27':['ZZBU6004 Foundations of Marketing'],'H5 27':['ZZBU6001 Managing Yourself & Others'],'H6 27':['ZZBU6002 Financial Management']} },
+        { label: 'Business Law Specialisation', type: 'spec1', items: {'H4 25':['ZZBU6414 Introduction to Employment Law'],'H5 25':['ZZLJ8211 Corporate Governance & Leadership'],'H6 25':['ZZLJ8212 Commercial Contract Law'],'H1 26':['ZZLJ8100 Law Regulation & Ethics'],'H2 26':['ZZBU6414 Introduction to Employment Law'],'H3 26':['ZZLJ8211 Corporate Governance & Leadership'],'H4 26':['ZZLJ8212 Commercial Contract Law'],'H5 26':['ZZLJ8100 Law Regulation & Ethics'],'H6 26':['ZZBU6414 Introduction to Employment Law'],'H1 27':['ZZLJ8211 Corporate Governance & Leadership'],'H2 27':['ZZLJ8212 Commercial Contract Law'],'H3 27':['ZZLJ8100 Law Regulation & Ethics'],'H4 27':['ZZBU6414 Introduction to Employment Law'],'H5 27':['ZZLJ8211 Corporate Governance & Leadership'],'H6 27':['ZZLJ8212 Commercial Contract Law']} },
+        { label: 'Leadership & Org Dev Specialisation', type: 'spec2', items: {'H4 25':['ZZBU6411 Organisational Development'],'H5 25':['ZZBU6413 Leadership Development'],'H1 26':['ZZBU6411 Organisational Development'],'H2 26':['ZZBU6413 Leadership Development'],'H3 26':['ZZLJ9223 Cyber and the Law'],'H5 26':['ZZBU6411 Organisational Development'],'H6 26':['ZZBU6413 Leadership Development'],'H1 27':['ZZBU6411 Organisational Development'],'H2 27':['ZZBU6413 Leadership Development'],'H4 27':['ZZBU6411 Organisational Development'],'H5 27':['ZZBU6413 Leadership Development']} },
+        { label: 'Electives', type: 'elective', items: {'H4 25':['ZZBU6502 Analytics & Business'],'H6 25':['ZZBU6103 Entrepreneurship & Innovation'],'H3 26':['ZZBU6502 Analytics & Business'],'H4 26':['ZZBU6103 Entrepreneurship & Innovation'],'H5 26':['ZZBU6412 Managing People & Organisations'],'H3 27':['ZZBU6412 Managing People & Organisations'],'H5 27':['ZZBU6103 Entrepreneurship & Innovation']} },
+        { label: 'Capstone', type: 'capstone', items: {'H4 25':['ZZBU6008 Strategic Consulting Project'],'H1 26':['ZZBU6008 Strategic Consulting Project'],'H4 26':['ZZBU6008 Strategic Consulting Project'],'H1 27':['ZZBU6008 Strategic Consulting Project'],'H4 27':['ZZBU6008 Strategic Consulting Project']} },
+      ]
+    },
+
+    'Psychology': {
+      sps: ['H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27'],
+      cats: [
+        { label: 'Introductory Courses', type: 'coreA', items: {'H6 25':['ZZPS5002 Introduction to Psychology 2'],'H1 26':['ZZPS5001 Introduction to Psychology 1'],'H2 26':['ZZPS5002 Introduction to Psychology 2'],'H3 26':['ZZPS5001 Introduction to Psychology 1'],'H4 26':['ZZPS5002 Introduction to Psychology 2'],'H5 26':['ZZPS5001 Introduction to Psychology 1'],'H6 26':['ZZPS5002 Introduction to Psychology 2'],'H1 27':['ZZPS5001 Introduction to Psychology 1'],'H2 27':['ZZPS5002 Introduction to Psychology 2'],'H3 27':['ZZPS5001 Introduction to Psychology 1'],'H4 27':['ZZPS5002 Introduction to Psychology 2'],'H5 27':['ZZPS5001 Introduction to Psychology 1'],'H6 27':['ZZPS5002 Introduction to Psychology 2']} },
+        { label: 'Methods (pre-reqs: Intro 1+2)', type: 'coreB', items: {'H6 25':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H1 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H2 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H3 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H4 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H5 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H6 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H1 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H2 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H3 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H4 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H5 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H6 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry']} },
+        { label: 'Advanced Methods (pre-reqs: 5001-5003)', type: 'spec1', items: {'H6 25':['ZZPS5004 Advanced Data Analysis & Methods'],'H1 26':['ZZPS5004 Advanced Data Analysis & Methods'],'H2 26':['ZZPS5004 Advanced Data Analysis & Methods'],'H3 26':['ZZPS5004 Advanced Data Analysis & Methods'],'H4 26':['ZZPS5004 Advanced Data Analysis & Methods'],'H5 26':['ZZPS5004 Advanced Data Analysis & Methods'],'H6 26':['ZZPS5004 Advanced Data Analysis & Methods'],'H1 27':['ZZPS5004 Advanced Data Analysis & Methods'],'H2 27':['ZZPS5004 Advanced Data Analysis & Methods'],'H3 27':['ZZPS5004 Advanced Data Analysis & Methods'],'H4 27':['ZZPS5004 Advanced Data Analysis & Methods'],'H5 27':['ZZPS5004 Advanced Data Analysis & Methods'],'H6 27':['ZZPS5004 Advanced Data Analysis & Methods']} },
+        { label: 'Advanced Courses (pre-reqs: 5001-5004)', type: 'spec2', items: {'H6 25':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H1 26':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H2 26':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H3 26':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H4 26':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H5 26':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H6 26':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H1 27':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H2 27':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H3 27':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H4 27':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H5 27':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology'],'H6 27':['ZZPS5005 Behavioural Neuroscience','ZZPS5006 Psychology Across the Lifespan','ZZPS5007 The Individual, Culture & Society','ZZPS5008 Perception & Cognition','ZZPS5009 Abnormal Psychology']} },
+        { label: 'Capstone (pre-req: all 9 courses)', type: 'capstone', items: {'H6 25':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H1 26':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H2 26':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H3 26':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H4 26':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H5 26':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H6 26':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H1 27':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H2 27':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H3 27':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H4 27':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H5 27':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills'],'H6 27':['ZZPS5010 Psychological Assessment, Ethics & Professional Skills']} },
+      ]
+    },
+
+    'Project Management': {
+      sps: ['H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27','H1 28','H2 28','H3 28','H4 28','H5 28','H6 28'],
+      cats: [
+        { label: 'Core 1 (All levels)', type: 'coreA', items: {'H1 26':['ZZCA8303 Project Mgmt Body of Knowledge'],'H2 26':['ZZCA8302 Project Administration'],'H5 26':['ZZCA8303 Project Mgmt Body of Knowledge'],'H6 26':['ZZCA8302 Project Administration'],'H1 27':['ZZCA8147 The Business of Managing Projects'],'H3 27':['ZZCA8303 Project Mgmt Body of Knowledge'],'H4 27':['ZZCA8302 Project Administration'],'H2 28':['ZZCA8303 Project Mgmt Body of Knowledge'],'H3 28':['ZZCA8302 Project Administration'],'H6 28':['ZZCA8303 Project Mgmt Body of Knowledge']} },
+        { label: 'Core 2 (GC choose 2; M all 3)', type: 'coreB', items: {'H3 26':['ZZCA8301 Project Risk Management'],'H4 26':['ZZCA8310 Project Schedule & Budget Control'],'H5 26':['ZZCA8147 The Business of Managing Projects'],'H2 27':['ZZCA8301 Project Risk Management'],'H3 27':['ZZCA8310 Project Schedule & Budget Control'],'H4 27':['ZZCA8147 The Business of Managing Projects'],'H1 28':['ZZCA8301 Project Risk Management'],'H2 28':['ZZCA8310 Project Schedule & Budget Control'],'H3 28':['ZZCA8147 The Business of Managing Projects'],'H5 28':['ZZCA8301 Project Risk Management'],'H6 28':['ZZCA8310 Project Schedule & Budget Control']} },
+        { label: 'Spec: Leadership (GD/M — all 4)', type: 'spec1', items: {'H5 26':['ZZCA8145 ESG for Projects'],'H6 26':['ZZCA8203 Project Change Management'],'H1 27':['ZZCA8101 Strategic Leadership'],'H2 27':['ZZCA8401 Digital Transformation in AI'],'H3 27':['ZZCA8145 ESG for Projects'],'H4 27':['ZZCA8203 Project Change Management'],'H5 27':['ZZCA8101 Strategic Leadership'],'H6 27':['ZZCA8401 Digital Transformation in AI'],'H1 28':['ZZCA8145 ESG for Projects'],'H2 28':['ZZCA8203 Project Change Management'],'H3 28':['ZZCA8101 Strategic Leadership'],'H4 28':['ZZCA8401 Digital Transformation in AI'],'H5 28':['ZZCA8145 ESG for Projects'],'H6 28':['ZZCA8203 Project Change Management']} },
+        { label: 'Electives', type: 'elective', items: {'H1 26':['ZZBU6502 Analytics & Business'],'H2 26':['ZZBU6411 Organisational Development'],'H3 26':['ZZLJ8211 Corporate Governance & Leadership'],'H4 26':['ZZBU6502 Analytics & Business','ZZLJ8212 Commercial Contract Law','ZZBU6002 Financial Management'],'H5 27':['ZZBU5611 Strategic Decision Making'],'H1 27':['ZZBU6502 Analytics & Business'],'H2 27':['ZZBU6411 Organisational Development'],'H3 27':['ZZBU5611 Strategic Decision Making','ZZLJ8211 Corporate Governance & Leadership'],'H4 27':['ZZBU6502 Analytics & Business','ZZLJ8212 Commercial Contract Law','ZZBU6002 Financial Management']} },
+        { label: 'Capstone (Masters only)', type: 'capstone', items: {'H5 27':['ZZCA8300 Program & Portfolio Management'],'H2 28':['ZZCA8300 Program & Portfolio Management'],'H1 28':['ZZCA8300 Program & Portfolio Management']} },
+      ]
+    },
+  };
+
+  /* =====================================================
+     COURSE PLANNER RENDERING
+     ===================================================== */
+  function initPlanner() {
+    const progSel = document.getElementById('planner-program');
+    const spSel = document.getElementById('planner-sp');
+    const countSel = document.getElementById('planner-count');
+
+    // Populate program dropdown
+    Object.keys(PLANNER_PROGRAMS).forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      progSel.appendChild(opt);
+    });
+
+    progSel.addEventListener('change', () => {
+      const prog = PLANNER_PROGRAMS[progSel.value];
+      spSel.innerHTML = '';
+      if (!prog) { spSel.innerHTML = '<option>— Select program first —</option>'; return; }
+      prog.sps.forEach((sp, i) => {
+        const opt = document.createElement('option');
+        opt.value = sp;
+        opt.textContent = sp;
+        spSel.appendChild(opt);
+      });
+      renderPlanner();
+    });
+
+    spSel.addEventListener('change', renderPlanner);
+    countSel.addEventListener('change', renderPlanner);
+  }
+
+  function compareSP(a, b) {
+    // Compare study period labels like "H3 26", "H1 27"
+    const [hA, yA] = a.split(' ');
+    const [hB, yB] = b.split(' ');
+    const yearDiff = parseInt(yA) - parseInt(yB);
+    if (yearDiff !== 0) return yearDiff;
+    return parseInt(hA.slice(1)) - parseInt(hB.slice(1));
+  }
+
+  function renderPlanner() {
+    const progName = document.getElementById('planner-program').value;
+    const startSP = document.getElementById('planner-sp').value;
+    const count = parseInt(document.getElementById('planner-count').value);
+    const seq = document.getElementById('planner-sequence');
+
+    if (!progName || !startSP) {
+      seq.innerHTML = '<div class="planner-empty">Select a program and study period to view the course carousel.</div>';
+      return;
+    }
+
+    const prog = PLANNER_PROGRAMS[progName];
+    if (!prog) return;
+
+    const startIdx = prog.sps.indexOf(startSP);
+    if (startIdx === -1) return;
+
+    const endIdx = Math.min(startIdx + count, prog.sps.length);
+    const visibleSPs = prog.sps.slice(startIdx, endIdx);
+
+    seq.innerHTML = '';
+
+    if (prog.note) {
+      const note = document.createElement('div');
+      note.className = 'planner-note';
+      note.style.cssText = 'flex-shrink:0;width:100%;font-size:0.75rem;color:#888;padding:8px 0;';
+      note.textContent = '⚠️ ' + prog.note;
+      seq.appendChild(note);
+    }
+
+    visibleSPs.forEach(sp => {
+      const tile = document.createElement('div');
+      tile.className = 'sp-tile';
+
+      // Header
+      const parts = sp.split(' ');
+      const hex = parts[0]; // e.g. "H3"
+      const yr = parts[1]; // e.g. "26"
+      const fullYr = '20' + yr;
+      tile.innerHTML = `<div class="sp-tile-head">
+        <div class="sp-label">${hex} ${fullYr}</div>
+        <div class="sp-year">Study Period ${hex.slice(1)} · ${fullYr}</div>
+      </div>`;
+
+      const body = document.createElement('div');
+      body.className = 'sp-tile-body';
+
+      prog.cats.forEach(cat => {
+        const courses = cat.items[sp];
+        if (!courses || courses.length === 0) return; // skip empty
+
+        const catEl = document.createElement('div');
+        catEl.className = `sp-cat cat-${cat.type}`;
+
+        const head = document.createElement('div');
+        head.className = 'sp-cat-head';
+        head.textContent = cat.label;
+        catEl.appendChild(head);
+
+        const catBody = document.createElement('div');
+        catBody.className = 'sp-cat-body';
+        courses.forEach(course => {
+          const c = document.createElement('div');
+          c.className = 'sp-course';
+          // Split code from name
+          const spaceIdx = course.indexOf(' ');
+          if (spaceIdx > 0 && course.match(/^[A-Z]{4}\d{4}/)) {
+            const code = course.substring(0, spaceIdx);
+            const name = course.substring(spaceIdx + 1);
+            c.innerHTML = `<span class="sp-course-code">${code}</span> ${name}`;
+          } else {
+            c.textContent = course;
+          }
+          catBody.appendChild(c);
+        });
+        catEl.appendChild(catBody);
+        body.appendChild(catEl);
+      });
+
+      if (body.children.length === 0) {
+        body.innerHTML = '<div class="sp-no-courses">No courses scheduled</div>';
+      }
+      tile.appendChild(body);
+      seq.appendChild(tile);
+    });
+
+    if (visibleSPs.length === 0) {
+      seq.innerHTML = '<div class="planner-empty">No study periods available for the selected range.</div>';
+    }
+  }
+
+  initPlanner();
 </script>
 </body>
 </html>
