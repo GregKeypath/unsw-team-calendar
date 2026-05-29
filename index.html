@@ -724,8 +724,9 @@
     /* ── Pacing Board ── */
     .pacing-wrap { padding: 20px 32px 40px; max-width: 1600px; margin: 0 auto; }
     .pacing-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-    .pacing-hex-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pacing-hex-nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .pacing-ssa-nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .pacing-filter-label { font-size: 0.68rem; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; min-width: 90px; }
     .pacing-ssa-label { font-size: 0.68rem; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
 
     .hex-btn {
@@ -1902,26 +1903,29 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   }
 
   function renderPacing() {
-    // Hex nav
+    // ── Study Period nav ──────────────────────────────────────────
     const nav = document.getElementById('pacing-hex-nav');
     if (nav) {
-      nav.innerHTML = Object.entries(activePacingData).map(([key, val]) =>
-        `<button class="hex-btn ${key === activePacingHex ? 'active' : ''}" data-hex="${key}">${val.label}</button>`
-      ).join('');
+      nav.innerHTML =
+        `<span class="pacing-filter-label">Study Period:</span>` +
+        `<button class="hex-btn ${!activePacingHex ? 'active' : ''}" data-hex="">All Periods</button>` +
+        Object.entries(activePacingData).map(([key, val]) =>
+          `<button class="hex-btn ${key === activePacingHex ? 'active' : ''}" data-hex="${key}">${val.label}</button>`
+        ).join('');
       nav.querySelectorAll('.hex-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          activePacingHex = btn.dataset.hex;
-          activePacingSSA = null;
+          activePacingHex = btn.dataset.hex || null;
           renderPacing();
         });
       });
     }
 
-    // SSA nav
+    // ── Advisor nav ───────────────────────────────────────────────
     const ssaNav = document.getElementById('pacing-ssa-nav');
     if (ssaNav) {
-      ssaNav.innerHTML = `<span class="pacing-ssa-label">View by SSA:</span>` +
-        `<button class="ssa-btn ${!activePacingSSA ? 'active' : ''}" data-ssa="">All SSAs</button>` +
+      ssaNav.innerHTML =
+        `<span class="pacing-filter-label">Advisor:</span>` +
+        `<button class="ssa-btn ${!activePacingSSA ? 'active' : ''}" data-ssa="">All Advisors</button>` +
         ALL_SSA_NAMES.filter(n => !HIDDEN_SSA.includes(n)).map(name =>
           `<button class="ssa-btn ${activePacingSSA === name ? 'active' : ''}" data-ssa="${name}">${name.split(' ')[0]}</button>`
         ).join('');
@@ -1936,37 +1940,53 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const content = document.getElementById('pacing-content');
     if (!content) return;
 
-    if (activePacingSSA) {
-      // Cross-hex view: each card shows one SSA's metric across all hexamesters
+    // ── 4 filter combinations ─────────────────────────────────────
+    if (!activePacingHex && activePacingSSA) {
+      // All Periods + specific advisor → advisor's progression across every study period
       const rowItems = Object.entries(activePacingData).map(([hexKey, hexData]) => {
         const rowIdx = hexData.rows.findIndex(row => row.name === activePacingSSA);
         if (rowIdx === -1) return null;
-        const r = hexData.rows[rowIdx];
         return {
-          label: `<span class="hex-name">${hexData.label}</span>`,
+          label:    `<span class="hex-name">${hexData.label}</span>`,
           fullName: hexData.label,
-          r: calcDerived(r),
-          showKpi: true, isTotal: false, isHex: hexKey === activePacingHex,
+          r:        calcDerived(hexData.rows[rowIdx]),
+          showKpi: true, isTotal: false, isHex: false,
           hexKey, rowIdx
         };
       }).filter(Boolean);
       content.innerHTML = buildSectionCards(rowItems);
-    } else {
-      // Hex view: each card shows all SSAs for the selected hexamester
+
+    } else if (activePacingHex && activePacingSSA) {
+      // Specific period + specific advisor → that person's data for that period
       const hex = activePacingData[activePacingHex];
+      if (!hex) return;
+      const rowIdx = hex.rows.findIndex(r => r.name === activePacingSSA);
+      if (rowIdx === -1) { content.innerHTML = '<p style="padding:20px;color:#888">No data for this combination.</p>'; return; }
+      content.innerHTML = buildSectionCards([{
+        label:    `<span class="ssa-name">${hex.rows[rowIdx].name.split(' ')[0]}</span>`,
+        fullName: hex.rows[rowIdx].name,
+        r:        calcDerived(hex.rows[rowIdx]),
+        showKpi: true, isTotal: false, isHex: false,
+        hexKey: activePacingHex, rowIdx
+      }]);
+
+    } else {
+      // Specific period (or default H3) + all advisors → all advisors for that period
+      const hexKey = activePacingHex || 'H3';
+      const hex = activePacingData[hexKey];
       if (!hex) return;
       const visibleRows = hex.rows.filter(r => !HIDDEN_SSA.includes(r.name));
       const rowItems = [
-        ...visibleRows.map((r, idx) => ({
-          label: `<span class="ssa-name">${r.name.split(' ')[0]}</span>`,
+        ...visibleRows.map(r => ({
+          label:    `<span class="ssa-name">${r.name.split(' ')[0]}</span>`,
           fullName: r.name,
-          r: calcDerived(r),
+          r:        calcDerived(r),
           showKpi: true, isTotal: false, isHex: false,
-          hexKey: activePacingHex, rowIdx: hex.rows.indexOf(r)
+          hexKey, rowIdx: hex.rows.indexOf(r)
         })),
         { label: '<span class="ssa-name" style="color:#888">Total</span>', fullName: 'UNSW Total',
           r: calcTotal(visibleRows), showKpi: false, isTotal: true, isHex: false,
-          hexKey: activePacingHex, rowIdx: 'total' }
+          hexKey, rowIdx: 'total' }
       ];
       content.innerHTML = buildSectionCards(rowItems);
     }
