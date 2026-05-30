@@ -3148,12 +3148,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     },
   };
 
-  // Strip 2025 study periods from all programs
+  // Remove SPs before 2025 from all programs (keep H* 25 onwards)
+  // cat.items data is preserved — only the sps list (dropdown) is trimmed
   Object.values(PLANNER_PROGRAMS).forEach(prog => {
-    prog.sps = prog.sps.filter(sp => parseInt(sp.split(' ')[1]) >= 26);
-    prog.cats.forEach(cat => {
-      Object.keys(cat.items).filter(sp => parseInt(sp.split(' ')[1]) < 26).forEach(sp => delete cat.items[sp]);
-    });
+    prog.sps = prog.sps.filter(sp => parseInt(sp.split(' ')[1]) >= 25);
   });
 
   /* =====================================================
@@ -3177,7 +3175,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     progSel.addEventListener('change', () => {
       const prog = PLANNER_PROGRAMS[progSel.value];
       spSel.innerHTML = '';
-      if (!prog) { spSel.innerHTML = '<option>— Select program first —</option>'; renderPlanMap(); return; }
+      if (!prog || prog.sps.length === 0) { spSel.innerHTML = '<option value="">— No current study periods —</option>'; renderPlanMap(); return; }
       prog.sps.forEach(sp => {
         const opt = document.createElement('option');
         opt.value = sp;
