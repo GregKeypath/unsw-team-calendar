@@ -1106,7 +1106,47 @@
     .plan-chip-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 0.65rem; padding: 0 1px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
     .plan-chip-remove:hover { color: #ef4444; }
     .plan-drop-hint { font-size: 0.65rem; color: #d1d5db; text-align: center; padding: 12px 4px; font-style: italic; }
+    .plan-col-body.drag-invalid { background: rgba(239,68,68,0.06); outline: 2px dashed #ef4444; }
+    .plan-col-body.drag-invalid .plan-drop-hint { color: #fca5a5; }
+    .plan-chip { background: #f3f4f6; border-radius: 6px; padding: 5px 6px; display: flex; align-items: flex-start; gap: 4px; border-left: 3px solid #ccc; }
+    .plan-chip.cat-coreA  { border-left-color: #1e3a5f; background: #eff6ff; }
+    .plan-chip.cat-coreA  .plan-chip-cat { color: #1e3a5f; }
+    .plan-chip.cat-coreB  { border-left-color: #6d28d9; background: #faf5ff; }
+    .plan-chip.cat-coreB  .plan-chip-cat { color: #6d28d9; }
+    .plan-chip.cat-spec1  { border-left-color: #14532d; background: #f0fdf4; }
+    .plan-chip.cat-spec1  .plan-chip-cat { color: #14532d; }
+    .plan-chip.cat-spec2  { border-left-color: #92400e; background: #fffbeb; }
+    .plan-chip.cat-spec2  .plan-chip-cat { color: #92400e; }
+    .plan-chip.cat-spec3  { border-left-color: #1e40af; background: #eff6ff; }
+    .plan-chip.cat-spec3  .plan-chip-cat { color: #1e40af; }
+    .plan-chip.cat-spec4  { border-left-color: #134e4a; background: #f0fdfa; }
+    .plan-chip.cat-spec4  .plan-chip-cat { color: #134e4a; }
+    .plan-chip.cat-elective { border-left-color: #881337; background: #fff1f2; }
+    .plan-chip.cat-elective .plan-chip-cat { color: #881337; }
+    .plan-chip.cat-capstone { border-left-color: #111; background: #fffbeb; }
+    .plan-chip.cat-capstone .plan-chip-cat { color: #111; }
+    .plan-chip-cat { font-size: 0.52rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 2px; opacity: 0.85; }
     .plan-empty-msg { font-size: 0.8rem; color: #9ca3af; text-align: center; padding: 28px 20px; width: 100%; }
+    /* Export modal */
+    .plan-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .plan-modal-box { background: #fff; border-radius: 14px; max-width: 980px; width: 100%; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,0.35); }
+    .plan-modal-hd { padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .plan-modal-hd h2 { flex: 1; font-size: 0.95rem; font-weight: 800; margin: 0; color: #111; }
+    .plan-modal-sub { font-size: 0.7rem; color: #6b7280; font-weight: 400; }
+    .plan-modal-btn { padding: 6px 14px; border: none; border-radius: 7px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+    .plan-modal-btn:hover { opacity: 0.8; }
+    .plan-modal-btn-print { background: #1e3a5f; color: #fff; }
+    .plan-modal-btn-close { background: #e5e7eb; color: #374151; }
+    .plan-modal-body { flex: 1; overflow: auto; padding: 20px; }
+    .plan-export-grid { display: flex; gap: 12px; flex-wrap: nowrap; min-width: max-content; }
+    .plan-export-col { flex: 0 0 168px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.09); }
+    .plan-export-col-hd { background: #1a1a1a; color: #e8c55a; padding: 9px 12px; text-align: center; font-size: 0.86rem; font-weight: 800; }
+    .plan-export-col-body { border: 1px solid #e5e7eb; border-top: none; padding: 8px; display: flex; flex-direction: column; gap: 6px; min-height: 60px; }
+    .plan-export-chip { border-radius: 5px; padding: 6px 8px; border-left: 3px solid #ccc; }
+    .plan-export-chip-cat { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 2px; }
+    .plan-export-chip-code { font-family: monospace; font-size: 0.63rem; font-weight: 700; color: #333; display: block; }
+    .plan-export-chip-name { font-size: 0.68rem; line-height: 1.35; color: #222; display: block; margin-top: 2px; }
+    .plan-export-empty { font-size: 0.62rem; color: #d1d5db; text-align: center; padding: 14px 4px; font-style: italic; }
 
     /* Print styles */
     @media print {
@@ -1317,7 +1357,7 @@
       <div class="plan-hd">
         <h3>📋 Degree Path Plan <span class="plan-hd-sub">drag units from above into a study period</span></h3>
         <button class="plan-btn plan-btn-clear" id="plan-clear-btn">✕ Clear</button>
-        <button class="plan-btn plan-btn-copy" id="plan-copy-btn">📋 Copy</button>
+        <button class="plan-btn plan-btn-copy" id="plan-export-btn">⬆ Export</button>
       </div>
       <div class="plan-scroll" id="plan-scroll">
         <div class="plan-empty-msg">Select a program above to start building your degree plan.</div>
@@ -1364,6 +1404,23 @@
   </div>
 </div>
 
+
+<!-- Export modal -->
+<div id="plan-export-modal" class="plan-modal-overlay" style="display:none;" role="dialog" aria-modal="true">
+  <div class="plan-modal-box">
+    <div class="plan-modal-hd">
+      <div style="flex:1; min-width:0;">
+        <h2 id="plan-modal-title">Degree Path Plan</h2>
+        <div class="plan-modal-sub" id="plan-modal-sub"></div>
+      </div>
+      <button class="plan-modal-btn plan-modal-btn-print" id="plan-modal-print-btn">🖨 Print / Save as PDF</button>
+      <button class="plan-modal-btn plan-modal-btn-close" id="plan-modal-close-btn">✕ Close</button>
+    </div>
+    <div class="plan-modal-body">
+      <div id="plan-export-content"></div>
+    </div>
+  </div>
+</div>
 
 <script>
   const TAGS = [
@@ -3157,7 +3214,20 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   /* =====================================================
      COURSE PLANNER RENDERING
      ===================================================== */
-  let planData = {}; // { 'H3 26': [{code, name, cat},...], ... }
+  let planData = {}; // { 'H3 26': [{code, name, cat, catLabel},...], ... }
+  let currentDrag = null; // tracks the unit being dragged so drop zones can validate
+
+  const CAT_COLORS = {
+    coreA:    { border: '#1e3a5f', bg: '#eff6ff', text: '#1e3a5f' },
+    coreB:    { border: '#6d28d9', bg: '#faf5ff', text: '#6d28d9' },
+    spec1:    { border: '#14532d', bg: '#f0fdf4', text: '#14532d' },
+    spec2:    { border: '#92400e', bg: '#fffbeb', text: '#92400e' },
+    spec3:    { border: '#1e40af', bg: '#eff6ff', text: '#1e40af' },
+    spec4:    { border: '#134e4a', bg: '#f0fdfa', text: '#134e4a' },
+    elective: { border: '#881337', bg: '#fff1f2', text: '#881337' },
+    capstone: { border: '#111',    bg: '#fffbeb', text: '#111'    },
+  };
+  function getCatColor(t) { return CAT_COLORS[t] || { border: '#ccc', bg: '#f9fafb', text: '#666' }; }
 
   function initPlanner() {
     const progSel = document.getElementById('planner-program');
@@ -3203,29 +3273,20 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       }
     });
 
-    // Copy plan to clipboard
-    document.getElementById('plan-copy-btn').addEventListener('click', () => {
-      const progName = document.getElementById('planner-program').value || 'Unknown Program';
-      const lines = [`Degree Plan — ${progName}`, ''];
-      const sorted = Object.entries(planData).sort(([a], [b]) => compareSP(a, b));
-      sorted.forEach(([sp, units]) => {
-        if (!units || units.length === 0) return;
-        const parts = sp.split(' ');
-        lines.push(`${parts[0]} 20${parts[1]}`);
-        units.forEach(u => lines.push(`  ${u.code}  ${u.name}`));
-        lines.push('');
-      });
-      const text = lines.join('\n').trim();
-      if (!text || sorted.every(([, u]) => !u.length)) {
-        alert('No units in the plan yet.'); return;
-      }
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = document.getElementById('plan-copy-btn');
-        const orig = btn.textContent;
-        btn.textContent = '✓ Copied!';
-        setTimeout(() => btn.textContent = orig, 2000);
-      }).catch(() => alert('Could not access clipboard.'));
+    // Export plan — open visual modal
+    document.getElementById('plan-export-btn').addEventListener('click', openExportModal);
+
+    // Modal close
+    document.getElementById('plan-modal-close-btn').addEventListener('click', () => {
+      document.getElementById('plan-export-modal').style.display = 'none';
     });
+    document.getElementById('plan-export-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('plan-export-modal'))
+        document.getElementById('plan-export-modal').style.display = 'none';
+    });
+
+    // Modal print
+    document.getElementById('plan-modal-print-btn').addEventListener('click', printExportModal);
   }
 
   function compareSP(a, b) {
@@ -3304,11 +3365,23 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           c.innerHTML = `<span class="sp-unit-cat">${cat.label}</span><span class="sp-unit-code">${code}</span> <span class="sp-unit-name">${name}</span>`;
           if (!inPlan) {
             c.addEventListener('dragstart', e => {
+              // Collect every SP across all categories where this unit code appears
+              const validSPs = [];
+              prog.cats.forEach(c2 => {
+                Object.entries(c2.items).forEach(([isp, courses]) => {
+                  if (courses.some(cs => cs === code || cs.startsWith(code + ' '))) {
+                    if (!validSPs.includes(isp)) validSPs.push(isp);
+                  }
+                });
+              });
+              currentDrag = { code, name, cat: cat.type, catLabel: cat.label, validSPs };
               e.dataTransfer.setData('planCode', code);
               e.dataTransfer.setData('planName', name);
               e.dataTransfer.setData('planCat', cat.type);
+              e.dataTransfer.setData('planCatLabel', cat.label);
               e.dataTransfer.effectAllowed = 'copy';
             });
+            c.addEventListener('dragend', () => { currentDrag = null; });
           }
           body.appendChild(c);
         });
@@ -3373,10 +3446,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       } else {
         units.forEach(u => {
           const chip = document.createElement('div');
-          chip.className = 'plan-chip';
+          chip.className = `plan-chip cat-${u.cat}`;
           const txt = document.createElement('div');
           txt.className = 'plan-chip-text';
-          txt.innerHTML = `<span class="plan-chip-code">${u.code}</span><span class="plan-chip-name">${u.name}</span>`;
+          txt.innerHTML = `<span class="plan-chip-cat">${u.catLabel || ''}</span><span class="plan-chip-code">${u.code}</span><span class="plan-chip-name">${u.name}</span>`;
           const rmBtn = document.createElement('button');
           rmBtn.className = 'plan-chip-remove';
           rmBtn.title = 'Remove';
@@ -3395,23 +3468,37 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       // Drop zone events
       body.addEventListener('dragover', e => {
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'copy';
-        body.classList.add('drag-over');
+        const isValid = !currentDrag || currentDrag.validSPs.includes(sp);
+        if (isValid) {
+          e.dataTransfer.dropEffect = 'copy';
+          body.classList.add('drag-over');
+          body.classList.remove('drag-invalid');
+        } else {
+          e.dataTransfer.dropEffect = 'none';
+          body.classList.add('drag-invalid');
+          body.classList.remove('drag-over');
+        }
       });
       body.addEventListener('dragleave', e => {
-        if (!body.contains(e.relatedTarget)) body.classList.remove('drag-over');
+        if (!body.contains(e.relatedTarget)) {
+          body.classList.remove('drag-over');
+          body.classList.remove('drag-invalid');
+        }
       });
       body.addEventListener('drop', e => {
         e.preventDefault();
         body.classList.remove('drag-over');
+        body.classList.remove('drag-invalid');
         const code = e.dataTransfer.getData('planCode');
         const name = e.dataTransfer.getData('planName');
         const catType = e.dataTransfer.getData('planCat');
+        const catLabel = e.dataTransfer.getData('planCatLabel');
         if (!code) return;
+        // Reject drop into an SP where this unit isn't offered
+        if (currentDrag && !currentDrag.validSPs.includes(sp)) return;
         if (!planData[sp]) planData[sp] = [];
-        // Prevent duplicate in same SP
         if (planData[sp].some(u => u.code === code)) return;
-        planData[sp].push({ code, name, cat: catType });
+        planData[sp].push({ code, name, cat: catType, catLabel });
         renderPlanMap();
         renderPlanner();
       });
@@ -3419,6 +3506,100 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       col.appendChild(body);
       scroll.appendChild(col);
     });
+  }
+
+  function openExportModal() {
+    const progName = document.getElementById('planner-program').value || '';
+    const startSP  = document.getElementById('planner-sp').value;
+    const count    = parseInt(document.getElementById('planner-count').value) || 6;
+    const prog     = PLANNER_PROGRAMS[progName];
+
+    const hasUnits = Object.values(planData).some(arr => arr && arr.length > 0);
+    if (!hasUnits) { alert('Add some units to the plan first.'); return; }
+
+    // Determine ordered SP columns (same slice as the plan map)
+    let startIdx = prog ? prog.sps.indexOf(startSP) : -1;
+    if (startIdx === -1) startIdx = 0;
+    const planSPs = prog ? prog.sps.slice(startIdx, startIdx + count) : [];
+
+    // Modal header
+    document.getElementById('plan-modal-title').textContent = `Degree Path Plan — ${progName || 'Unknown Program'}`;
+    document.getElementById('plan-modal-sub').textContent   = `${planSPs.length} study periods · ${Object.values(planData).flat().length} units planned`;
+
+    // Build visual grid
+    const content = document.getElementById('plan-export-content');
+    content.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.className = 'plan-export-grid';
+
+    planSPs.forEach(sp => {
+      const units = planData[sp] || [];
+      const parts  = sp.split(' ');
+      const col    = document.createElement('div');
+      col.className = 'plan-export-col';
+
+      const hd = document.createElement('div');
+      hd.className = 'plan-export-col-hd';
+      hd.textContent = `${parts[0]} 20${parts[1]}`;
+      col.appendChild(hd);
+
+      const body = document.createElement('div');
+      body.className = 'plan-export-col-body';
+
+      if (units.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'plan-export-empty';
+        empty.textContent = '—';
+        body.appendChild(empty);
+      } else {
+        units.forEach(u => {
+          const cc   = getCatColor(u.cat);
+          const chip = document.createElement('div');
+          chip.className = 'plan-export-chip';
+          chip.style.cssText = `border-left-color:${cc.border};background:${cc.bg};`;
+          chip.innerHTML = `<span class="plan-export-chip-cat" style="color:${cc.text}">${u.catLabel || ''}</span>`
+                         + `<span class="plan-export-chip-code">${u.code}</span>`
+                         + `<span class="plan-export-chip-name">${u.name}</span>`;
+          body.appendChild(chip);
+        });
+      }
+      col.appendChild(body);
+      grid.appendChild(col);
+    });
+
+    content.appendChild(grid);
+    document.getElementById('plan-export-modal').style.display = 'flex';
+  }
+
+  function printExportModal() {
+    const title   = document.getElementById('plan-modal-title').textContent;
+    const sub     = document.getElementById('plan-modal-sub').textContent;
+    const content = document.getElementById('plan-export-content').innerHTML;
+    const win = window.open('', '_blank', 'width=1100,height=750');
+    win.document.write(`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>${title}</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; padding: 28px 32px; background: #fff; color: #111; }
+  h1 { font-size: 1.05rem; font-weight: 800; margin: 0 0 4px; }
+  p  { font-size: 0.72rem; color: #6b7280; margin: 0 0 18px; }
+  .plan-export-grid { display: flex; gap: 12px; flex-wrap: wrap; }
+  .plan-export-col  { flex: 0 0 155px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1); break-inside: avoid; }
+  .plan-export-col-hd { background: #1a1a1a; color: #e8c55a; padding: 8px 10px; text-align: center; font-size: 0.84rem; font-weight: 800; }
+  .plan-export-col-body { border: 1px solid #e5e7eb; border-top: none; padding: 7px; display: flex; flex-direction: column; gap: 5px; min-height: 50px; }
+  .plan-export-chip { border-radius: 4px; padding: 5px 7px; border-left: 3px solid #ccc; }
+  .plan-export-chip-cat  { font-size: 0.48rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 2px; }
+  .plan-export-chip-code { font-family: monospace; font-size: 0.61rem; font-weight: 700; color: #333; display: block; }
+  .plan-export-chip-name { font-size: 0.66rem; line-height: 1.3; color: #222; display: block; margin-top: 2px; }
+  .plan-export-empty { font-size: 0.6rem; color: #d1d5db; text-align: center; padding: 12px 4px; font-style: italic; }
+  @media print { body { padding: 15px 18px; } }
+</style></head>
+<body>
+  <h1>${title}</h1><p>${sub}</p>
+  ${content}
+  <script>window.onload = () => window.print();<\/script>
+</body></html>`);
+    win.document.close();
   }
 
   initPlanner();
