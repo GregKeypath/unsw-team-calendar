@@ -3177,13 +3177,15 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     progSel.addEventListener('change', () => {
       const prog = PLANNER_PROGRAMS[progSel.value];
       spSel.innerHTML = '';
-      if (!prog) { spSel.innerHTML = '<option>— Select program first —</option>'; return; }
+      if (!prog) { spSel.innerHTML = '<option>— Select program first —</option>'; renderPlanMap(); return; }
       prog.sps.forEach(sp => {
         const opt = document.createElement('option');
         opt.value = sp;
         opt.textContent = sp;
         spSel.appendChild(opt);
       });
+      // Explicitly lock the first SP so renderPlanMap reads the right value
+      spSel.value = prog.sps[0];
       planData = {}; // Reset plan when program changes
       renderPlanner();
       renderPlanMap();
@@ -3331,16 +3333,17 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const progName = document.getElementById('planner-program').value;
     const startSP = document.getElementById('planner-sp').value;
 
-    if (!progName || !startSP) {
+    if (!progName) {
       scroll.innerHTML = '<div class="plan-empty-msg">Select a program above to start building your degree plan.</div>';
       return;
     }
 
     const prog = PLANNER_PROGRAMS[progName];
-    if (!prog) return;
+    if (!prog) { scroll.innerHTML = '<div class="plan-empty-msg">Select a program above to start building your degree plan.</div>'; return; }
 
-    const startIdx = prog.sps.indexOf(startSP);
-    if (startIdx === -1) return;
+    // Always anchor to the selected SP; fall back to first if not matched
+    let startIdx = prog.sps.indexOf(startSP);
+    if (startIdx === -1) startIdx = 0;
     const planSPs = prog.sps.slice(startIdx, startIdx + 12);
 
     scroll.innerHTML = '';
