@@ -3192,7 +3192,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     });
 
     spSel.addEventListener('change', () => { renderPlanner(); renderPlanMap(); });
-    countSel.addEventListener('change', renderPlanner);
+    countSel.addEventListener('change', () => { renderPlanner(); renderPlanMap(); });
 
     // Clear plan
     document.getElementById('plan-clear-btn').addEventListener('click', () => {
@@ -3344,7 +3344,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     // Always anchor to the selected SP; fall back to first if not matched
     let startIdx = prog.sps.indexOf(startSP);
     if (startIdx === -1) startIdx = 0;
-    const planSPs = prog.sps.slice(startIdx, startIdx + 12);
+    const count = parseInt(document.getElementById('planner-count').value) || 6;
+    const planSPs = prog.sps.slice(startIdx, startIdx + count);
 
     scroll.innerHTML = '';
 
