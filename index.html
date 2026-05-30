@@ -3150,9 +3150,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   // Strip 2025 study periods from all programs
   Object.values(PLANNER_PROGRAMS).forEach(prog => {
-    prog.sps = prog.sps.filter(sp => !sp.endsWith(' 25'));
+    prog.sps = prog.sps.filter(sp => parseInt(sp.split(' ')[1]) >= 26);
     prog.cats.forEach(cat => {
-      Object.keys(cat.items).filter(sp => sp.endsWith(' 25')).forEach(sp => delete cat.items[sp]);
+      Object.keys(cat.items).filter(sp => parseInt(sp.split(' ')[1]) < 26).forEach(sp => delete cat.items[sp]);
     });
   });
 
