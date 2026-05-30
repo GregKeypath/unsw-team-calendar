@@ -1078,8 +1078,8 @@
     .sp-unit.cat-spec3  .sp-unit-cat { color: #1e40af; }
     .sp-unit.cat-spec4  { border-left-color: #134e4a; background: #f0fdfa; }
     .sp-unit.cat-spec4  .sp-unit-cat { color: #134e4a; }
-    .sp-unit.cat-elective { border-left-color: #881337; background: #fff1f2; }
-    .sp-unit.cat-elective .sp-unit-cat { color: #881337; }
+    .sp-unit.cat-elective { border-left-color: #9A7D0A; background: #FEFCE8; }
+    .sp-unit.cat-elective .sp-unit-cat { color: #7C6110; }
     .sp-unit.cat-capstone { border-left-color: #111; background: #fffbeb; }
     .sp-unit.cat-capstone .sp-unit-cat { color: #111; }
 
@@ -1121,8 +1121,8 @@
     .plan-chip.cat-spec3  .plan-chip-cat { color: #1e40af; }
     .plan-chip.cat-spec4  { border-left-color: #134e4a; background: #f0fdfa; }
     .plan-chip.cat-spec4  .plan-chip-cat { color: #134e4a; }
-    .plan-chip.cat-elective { border-left-color: #881337; background: #fff1f2; }
-    .plan-chip.cat-elective .plan-chip-cat { color: #881337; }
+    .plan-chip.cat-elective { border-left-color: #9A7D0A; background: #FEFCE8; }
+    .plan-chip.cat-elective .plan-chip-cat { color: #7C6110; }
     .plan-chip.cat-capstone { border-left-color: #111; background: #fffbeb; }
     .plan-chip.cat-capstone .plan-chip-cat { color: #111; }
     .plan-chip-cat { font-size: 0.52rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 2px; opacity: 0.85; }
@@ -3249,7 +3249,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     spec2:    { border: '#92400e', bg: '#fffbeb', text: '#92400e' },
     spec3:    { border: '#1e40af', bg: '#eff6ff', text: '#1e40af' },
     spec4:    { border: '#134e4a', bg: '#f0fdfa', text: '#134e4a' },
-    elective: { border: '#881337', bg: '#fff1f2', text: '#881337' },
+    elective: { border: '#9A7D0A', bg: '#FEFCE8', text: '#7C6110' },
     capstone: { border: '#111',    bg: '#fffbeb', text: '#111'    },
   };
   function getCatColor(t) { return CAT_COLORS[t] || { border: '#ccc', bg: '#f9fafb', text: '#666' }; }
@@ -3546,8 +3546,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         `<tr><td>${a.name}</td><td class="wt">${a.weight}</td><td class="due">${a.due || ''}</td></tr>`
       ).join('');
       const closItems = (info.clos || []).map(c => `<li>${c}</li>`).join('');
-      const techTags  = (info.tech || []).map(t => `<span>${t}</span>`).join('');
-      const books     = (info.textbooks || []).map(b => `<div class="plan-export-book">📖 ${b}</div>`).join('');
       return `<div class="plan-export-unit-card" style="border-left-color:${cc.border};background:${cc.bg};">
         <div class="plan-export-unit-top">
           <span class="plan-export-unit-badge" style="color:${cc.text}">${u.catLabel || ''}</span>
@@ -3558,8 +3556,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         ${info.description ? `<div class="plan-export-unit-desc">${info.description}</div>` : ''}
         ${closItems ? `<div class="plan-export-sec">Key Learning Outcomes</div><ul class="plan-export-clos">${closItems}</ul>` : ''}
         ${assessRows ? `<div class="plan-export-sec">Assessments</div><table class="plan-export-assess">${assessRows}</table>` : ''}
-        ${techTags ? `<div class="plan-export-sec">Tools & Platform</div><div class="plan-export-tech-row">${techTags}</div>` : ''}
-        ${books}
       </div>`;
     } else {
       // DOM element version for the modal
@@ -3589,16 +3585,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         });
         html += '</table>';
       }
-
-      if (info.tech && info.tech.length) {
-        html += `<div class="plan-export-sec">Tools & Platform</div><div class="plan-export-tech-row">`;
-        info.tech.forEach(t => { html += `<span>${t}</span>`; });
-        html += '</div>';
-      }
-
-      (info.textbooks || []).forEach(b => {
-        html += `<div class="plan-export-book">📖 ${b}</div>`;
-      });
 
       card.innerHTML = html;
       return card;
