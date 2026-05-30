@@ -1041,7 +1041,7 @@
     .planner-select:focus { outline: none; border-color: var(--accent); }
     .planner-print-btn { padding: 8px 18px; background: var(--accent); color: var(--accent-text); border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; margin-top: 20px; }
     .planner-print-btn:hover { background: var(--accent-dark); }
-    .planner-body { flex: 1; overflow: hidden; position: relative; }
+    .planner-body { flex: 0 0 42vh; overflow: hidden; position: relative; }
     .planner-sequence { display: flex; gap: 0; overflow-x: auto; height: 100%; padding: 20px 24px; gap: 12px; align-items: flex-start; }
     .planner-empty { color: #aaa; font-size: 0.95rem; padding: 40px; text-align: center; width: 100%; }
     .planner-note { font-size: 0.75rem; color: #888; padding: 8px 24px; background: #fffbeb; border-top: 1px solid #fde68a; }
@@ -1051,7 +1051,7 @@
     .sp-tile-head { background: #111; color: #fff; padding: 12px 14px; text-align: center; }
     .sp-tile-head .sp-label { font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; color: var(--accent); }
     .sp-tile-head .sp-year { font-size: 0.72rem; font-weight: 500; color: #aaa; margin-top: 1px; }
-    .sp-tile-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: calc(100vh - 340px); }
+    .sp-tile-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: calc(42vh - 80px); }
 
     /* Category section within SP tile */
     .sp-cat { border-radius: 8px; overflow: hidden; }
@@ -1079,16 +1079,51 @@
     .cat-capstone .sp-cat-head { background: #111; color: #FFD100; }
     .cat-capstone .sp-cat-body { background: #fffbeb; }
 
+    /* Draggable unit tile in catalogue */
+    .sp-unit-tile { cursor: grab; border-radius: 5px; padding: 2px 3px; transition: opacity 0.18s, background 0.12s; }
+    .sp-unit-tile:hover { background: rgba(0,0,0,0.05); }
+    .sp-unit-tile:active { cursor: grabbing; }
+    .sp-unit-tile.in-plan { opacity: 0.38; cursor: not-allowed; }
+    .sp-unit-tile.in-plan .sp-course { text-decoration: line-through; color: #aaa; }
+    .sp-unit-tile.in-plan .sp-course-code { color: #bbb; }
+
+    /* Degree Path Plan section */
+    .plan-section { flex: 1; min-height: 0; display: flex; flex-direction: column; border-top: 2px solid #d1d5db; background: #f3f4f6; }
+    .plan-hd { background: #111; color: #fff; padding: 9px 24px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .plan-hd h3 { font-size: 0.85rem; font-weight: 700; color: var(--accent); flex: 1; margin: 0; letter-spacing: 0.4px; text-transform: uppercase; }
+    .plan-hd-sub { font-size: 0.65rem; color: #6b7280; font-weight: 400; font-style: italic; margin-left: 6px; text-transform: none; letter-spacing: 0; }
+    .plan-btn { padding: 5px 12px; border: none; border-radius: 7px; font-size: 0.76rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; }
+    .plan-btn:hover { opacity: 0.8; }
+    .plan-btn-clear { background: #374151; color: #d1d5db; }
+    .plan-btn-copy { background: var(--accent); color: var(--accent-text); }
+    .plan-scroll { flex: 1; overflow-x: auto; overflow-y: hidden; display: flex; padding: 12px 20px 14px; gap: 10px; align-items: flex-start; min-height: 0; }
+    .plan-col { flex-shrink: 0; width: 180px; background: #fff; border-radius: 11px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; flex-direction: column; }
+    .plan-col-hd { background: #1a1a1a; color: var(--accent); padding: 8px 10px; border-radius: 11px 11px 0 0; text-align: center; font-size: 0.86rem; font-weight: 800; flex-shrink: 0; }
+    .plan-col-body { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 80px; transition: background 0.15s, outline 0.1s; border-radius: 0 0 11px 11px; }
+    .plan-col-body.drag-over { background: rgba(var(--accent-rgb),0.1); outline: 2px dashed var(--accent); }
+    .plan-chip { background: #f3f4f6; border-radius: 6px; padding: 5px 6px; display: flex; align-items: flex-start; gap: 4px; }
+    .plan-chip-text { flex: 1; min-width: 0; }
+    .plan-chip-code { font-family: monospace; font-weight: 700; color: #444; font-size: 0.63rem; display: block; white-space: nowrap; }
+    .plan-chip-name { color: #222; font-size: 0.67rem; line-height: 1.3; word-break: break-word; display: block; margin-top: 1px; }
+    .plan-chip-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 0.65rem; padding: 0 1px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+    .plan-chip-remove:hover { color: #ef4444; }
+    .plan-drop-hint { font-size: 0.65rem; color: #d1d5db; text-align: center; padding: 12px 4px; font-style: italic; }
+    .plan-empty-msg { font-size: 0.8rem; color: #9ca3af; text-align: center; padding: 28px 20px; width: 100%; }
+
     /* Print styles */
     @media print {
       .top-bar, .site-header, .tab-nav, .planner-header { display: none !important; }
       .tab-panel { display: none !important; }
       #tab-planner { display: block !important; }
       .planner-wrap { height: auto; }
-      .planner-body { overflow: visible; }
+      .planner-body { overflow: visible; flex: none; height: auto; }
       .planner-sequence { overflow: visible; flex-wrap: wrap; padding: 0; }
       .sp-tile { break-inside: avoid; }
       .sp-tile-body { max-height: none; overflow: visible; }
+      .plan-section { flex: none; height: auto; }
+      .plan-scroll { overflow: visible; flex-wrap: wrap; height: auto; }
+      .plan-col { break-inside: avoid; }
+      .plan-hd .plan-btn { display: none; }
       body { background: white; }
       .planner-print-btn { display: none; }
     }
@@ -1278,6 +1313,16 @@
     <div class="planner-body">
       <div class="planner-sequence" id="planner-sequence">
         <div class="planner-empty">Select a program and study period to view the course carousel.</div>
+      </div>
+    </div>
+    <div class="plan-section">
+      <div class="plan-hd">
+        <h3>📋 Degree Path Plan <span class="plan-hd-sub">drag units from above into a study period</span></h3>
+        <button class="plan-btn plan-btn-clear" id="plan-clear-btn">✕ Clear</button>
+        <button class="plan-btn plan-btn-copy" id="plan-copy-btn">📋 Copy</button>
+      </div>
+      <div class="plan-scroll" id="plan-scroll">
+        <div class="plan-empty-msg">Select a program above to start building your degree plan.</div>
       </div>
     </div>
   </div>
@@ -3108,6 +3153,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   /* =====================================================
      COURSE PLANNER RENDERING
      ===================================================== */
+  let planData = {}; // { 'H3 26': [{code, name, cat},...], ... }
+
   function initPlanner() {
     const progSel = document.getElementById('planner-program');
     const spSel = document.getElementById('planner-sp');
@@ -3125,17 +3172,54 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const prog = PLANNER_PROGRAMS[progSel.value];
       spSel.innerHTML = '';
       if (!prog) { spSel.innerHTML = '<option>— Select program first —</option>'; return; }
-      prog.sps.forEach((sp, i) => {
+      prog.sps.forEach(sp => {
         const opt = document.createElement('option');
         opt.value = sp;
         opt.textContent = sp;
         spSel.appendChild(opt);
       });
+      planData = {}; // Reset plan when program changes
       renderPlanner();
+      renderPlanMap();
     });
 
-    spSel.addEventListener('change', renderPlanner);
+    spSel.addEventListener('change', () => { renderPlanner(); renderPlanMap(); });
     countSel.addEventListener('change', renderPlanner);
+
+    // Clear plan
+    document.getElementById('plan-clear-btn').addEventListener('click', () => {
+      const hasItems = Object.values(planData).some(arr => arr.length > 0);
+      if (!hasItems) return;
+      if (confirm('Clear all units from the degree plan?')) {
+        planData = {};
+        renderPlanMap();
+        renderPlanner();
+      }
+    });
+
+    // Copy plan to clipboard
+    document.getElementById('plan-copy-btn').addEventListener('click', () => {
+      const progName = document.getElementById('planner-program').value || 'Unknown Program';
+      const lines = [`Degree Plan — ${progName}`, ''];
+      const sorted = Object.entries(planData).sort(([a], [b]) => compareSP(a, b));
+      sorted.forEach(([sp, units]) => {
+        if (!units || units.length === 0) return;
+        const parts = sp.split(' ');
+        lines.push(`${parts[0]} 20${parts[1]}`);
+        units.forEach(u => lines.push(`  ${u.code}  ${u.name}`));
+        lines.push('');
+      });
+      const text = lines.join('\n').trim();
+      if (!text || sorted.every(([, u]) => !u.length)) {
+        alert('No units in the plan yet.'); return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('plan-copy-btn');
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      }).catch(() => alert('Could not access clipboard.'));
+    });
   }
 
   function compareSP(a, b) {
@@ -3210,15 +3294,31 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         catBody.className = 'sp-cat-body';
         courses.forEach(course => {
           const c = document.createElement('div');
-          c.className = 'sp-course';
-          // Split code from name
           const spaceIdx = course.indexOf(' ');
+          let code = '', name = course;
           if (spaceIdx > 0 && course.match(/^[A-Z]{4}\d{4}/)) {
-            const code = course.substring(0, spaceIdx);
-            const name = course.substring(spaceIdx + 1);
+            code = course.substring(0, spaceIdx);
+            name = course.substring(spaceIdx + 1);
+          }
+          // Check if this unit is already placed in the plan (by code)
+          const inPlan = code !== '' && Object.values(planData).some(arr => arr.some(u => u.code === code));
+          c.className = 'sp-course sp-unit-tile' + (inPlan ? ' in-plan' : '');
+          c.draggable = !inPlan;
+          c.dataset.code = code;
+          c.dataset.name = name;
+          c.dataset.cat = cat.type;
+          if (code) {
             c.innerHTML = `<span class="sp-course-code">${code}</span> ${name}`;
           } else {
             c.textContent = course;
+          }
+          if (!inPlan) {
+            c.addEventListener('dragstart', e => {
+              e.dataTransfer.setData('planCode', code);
+              e.dataTransfer.setData('planName', name);
+              e.dataTransfer.setData('planCat', cat.type);
+              e.dataTransfer.effectAllowed = 'copy';
+            });
           }
           catBody.appendChild(c);
         });
@@ -3236,6 +3336,99 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     if (visibleSPs.length === 0) {
       seq.innerHTML = '<div class="planner-empty">No study periods available for the selected range.</div>';
     }
+  }
+
+  function renderPlanMap() {
+    const scroll = document.getElementById('plan-scroll');
+    const progName = document.getElementById('planner-program').value;
+    const startSP = document.getElementById('planner-sp').value;
+
+    if (!progName || !startSP) {
+      scroll.innerHTML = '<div class="plan-empty-msg">Select a program above to start building your degree plan.</div>';
+      return;
+    }
+
+    const prog = PLANNER_PROGRAMS[progName];
+    if (!prog) return;
+
+    const startIdx = prog.sps.indexOf(startSP);
+    if (startIdx === -1) return;
+    const planSPs = prog.sps.slice(startIdx, startIdx + 12);
+
+    scroll.innerHTML = '';
+
+    planSPs.forEach(sp => {
+      const col = document.createElement('div');
+      col.className = 'plan-col';
+      col.dataset.sp = sp;
+
+      const parts = sp.split(' ');
+      const hex = parts[0];
+      const yr = '20' + parts[1];
+
+      const hd = document.createElement('div');
+      hd.className = 'plan-col-hd';
+      hd.textContent = `${hex} ${yr}`;
+      col.appendChild(hd);
+
+      const body = document.createElement('div');
+      body.className = 'plan-col-body';
+
+      const units = planData[sp] || [];
+      if (units.length === 0) {
+        const hint = document.createElement('div');
+        hint.className = 'plan-drop-hint';
+        hint.textContent = 'Drop units here';
+        body.appendChild(hint);
+      } else {
+        units.forEach(u => {
+          const chip = document.createElement('div');
+          chip.className = 'plan-chip';
+          const txt = document.createElement('div');
+          txt.className = 'plan-chip-text';
+          txt.innerHTML = `<span class="plan-chip-code">${u.code}</span><span class="plan-chip-name">${u.name}</span>`;
+          const rmBtn = document.createElement('button');
+          rmBtn.className = 'plan-chip-remove';
+          rmBtn.title = 'Remove';
+          rmBtn.textContent = '✕';
+          rmBtn.addEventListener('click', () => {
+            planData[sp] = (planData[sp] || []).filter(x => x.code !== u.code);
+            renderPlanMap();
+            renderPlanner();
+          });
+          chip.appendChild(txt);
+          chip.appendChild(rmBtn);
+          body.appendChild(chip);
+        });
+      }
+
+      // Drop zone events
+      body.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        body.classList.add('drag-over');
+      });
+      body.addEventListener('dragleave', e => {
+        if (!body.contains(e.relatedTarget)) body.classList.remove('drag-over');
+      });
+      body.addEventListener('drop', e => {
+        e.preventDefault();
+        body.classList.remove('drag-over');
+        const code = e.dataTransfer.getData('planCode');
+        const name = e.dataTransfer.getData('planName');
+        const catType = e.dataTransfer.getData('planCat');
+        if (!code) return;
+        if (!planData[sp]) planData[sp] = [];
+        // Prevent duplicate in same SP
+        if (planData[sp].some(u => u.code === code)) return;
+        planData[sp].push({ code, name, cat: catType });
+        renderPlanMap();
+        renderPlanner();
+      });
+
+      col.appendChild(body);
+      scroll.appendChild(col);
+    });
   }
 
   initPlanner();
