@@ -1443,6 +1443,7 @@
         <button class="planner-print-btn" id="planner-print-btn" onclick="window.print()">🖨️ Print</button>
       </div>
     </div>
+    <div id="planner-rules" style="display:none;padding:8px 24px 0;"></div>
     <div class="planner-body">
       <div class="planner-sequence" id="planner-sequence">
         <div class="planner-empty">Select a program and study period to view the course carousel.</div>
@@ -3537,6 +3538,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     if (!progName || !startSP) {
       seq.innerHTML = '<div class="planner-empty">Select a program and study period to view the course carousel.</div>';
+      const rp = document.getElementById('planner-rules'); if (rp) { rp.innerHTML = ''; rp.style.display = 'none'; }
       return;
     }
 
@@ -3551,25 +3553,24 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     seq.innerHTML = '';
 
-    // Show program rules from PROGRAM_RULES if available
+    // Show program rules in the dedicated rules banner above the carousel
+    const rulesPanel = document.getElementById('planner-rules');
     const progRuleData = PROGRAM_RULES[progName];
     if (progRuleData) {
-      const note = document.createElement('div');
-      note.style.cssText = 'flex-shrink:0;width:100%;box-sizing:border-box;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:9px 12px;margin-bottom:10px;font-size:0.7rem;';
-      let rulesHTML = '<div style="font-weight:800;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.4px;color:#92400e;margin-bottom:5px;">📋 Program Rules <span style="font-weight:400;text-transform:none;font-size:0.65rem;color:#b45309;">(for reference — you may be planning remaining units only)</span></div>';
+      let rulesHTML = '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:9px 12px;margin-bottom:8px;font-size:0.7rem;">';
+      rulesHTML += '<div style="font-weight:800;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.4px;color:#92400e;margin-bottom:5px;">📋 Program Rules <span style="font-weight:400;text-transform:none;font-size:0.65rem;color:#b45309;">(for reference — you may be planning remaining units only)</span></div>';
       progRuleData.levels.forEach(lv => {
-        rulesHTML += '<div style="padding:2px 0;color:#78350f;line-height:1.45;">';
-        rulesHTML += '<span style="font-weight:700;">' + lv.label + '</span> — ' + lv.note;
-        rulesHTML += '</div>';
+        rulesHTML += '<div style="padding:2px 0;color:#78350f;line-height:1.45;"><span style="font-weight:700;">' + lv.label + '</span> — ' + lv.note + '</div>';
       });
-      note.innerHTML = rulesHTML;
-      seq.appendChild(note);
+      rulesHTML += '</div>';
+      rulesPanel.innerHTML = rulesHTML;
+      rulesPanel.style.display = 'block';
     } else if (prog.note) {
-      const note = document.createElement('div');
-      note.className = 'planner-note';
-      note.style.cssText = 'flex-shrink:0;width:100%;font-size:0.75rem;color:#888;padding:8px 0;';
-      note.textContent = '⚠️ ' + prog.note;
-      seq.appendChild(note);
+      rulesPanel.innerHTML = '<div class="planner-note" style="font-size:0.75rem;color:#888;padding:8px 0;">⚠️ ' + prog.note + '</div>';
+      rulesPanel.style.display = 'block';
+    } else {
+      rulesPanel.innerHTML = '';
+      rulesPanel.style.display = 'none';
     }
 
     visibleSPs.forEach(sp => {
