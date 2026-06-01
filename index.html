@@ -741,15 +741,25 @@
     .kanban-sep.sep-auto::before, .kanban-sep.sep-auto::after { background: #fde68a; }
     .kanban-sep.sep-auto .kanban-sep-label { color: #b45309; }
     .cat-other_resp { background: #ede9fe; color: #5b21b6; border-color: #8b5cf6; }
-    /* Other Responsibilities — compact single-line style */
-    .kanban-sep.sep-other { margin-top: 10px; padding-top: 6px; border-top: 1px solid #f3f4f6; }
-    .kanban-card.cat-other_resp { padding: 3px 7px; min-height: 0; align-items: center; overflow: hidden; }
-    .kanban-card.cat-other_resp .card-check { width: 13px; height: 13px; min-width: 13px; flex-shrink: 0; font-size: 0.55rem; margin-top: 0; }
-    .kanban-card.cat-other_resp .card-text { font-size: 0.68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: normal; padding-right: 36px; line-height: 1.6; }
-    .kanban-card.cat-other_resp .card-url-link { display: none; }
-    .kanban-card.cat-other_resp:hover .card-url-link { display: inline; font-size: 0.58rem; }
-    .kanban-card.cat-other_resp .card-comment { display: none; }
-    .kanban-card.cat-other_resp.done .card-text { text-decoration: line-through; color: #aaa; }
+    /* Horizontal strips below the board */
+    .kanban-strip { margin-top: 10px; }
+    .kanban-strip-label { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; padding: 4px 2px 5px; display: flex; align-items: center; gap: 6px; }
+    .kanban-strip-label.lbl-other { color: #7c3aed; }
+    .kanban-strip-label.lbl-auto  { color: #b45309; }
+    .kanban-strip-row { display: flex; gap: 12px; min-width: max-content; align-items: flex-start; }
+    .kanban-strip-cell { width: 230px; flex-shrink: 0; background: #fff; border-radius: 8px; padding: 5px 6px; border: 1px solid #f3f4f6; min-height: 30px; }
+    .kanban-strip-cell.drag-over { outline: 2px dashed #8b5cf6; background: rgba(139,92,246,0.05); }
+    .kanban-strip-cell.drag-over-auto { outline: 2px dashed #f59e0b; background: rgba(245,158,11,0.05); }
+    /* Compact single-line card style for strip items */
+    .kanban-card.cat-other_resp, .kanban-card.cat-automated { padding: 3px 7px; min-height: 0; align-items: center; overflow: hidden; margin-bottom: 2px; }
+    .kanban-card.cat-other_resp .card-check, .kanban-card.cat-automated .card-check { width: 13px; height: 13px; min-width: 13px; flex-shrink: 0; font-size: 0.55rem; margin-top: 0; }
+    .kanban-card.cat-other_resp .card-text, .kanban-card.cat-automated .card-text { font-size: 0.68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: normal; padding-right: 36px; line-height: 1.6; }
+    .kanban-card.cat-other_resp .card-url-link, .kanban-card.cat-automated .card-url-link { display:none; }
+    .kanban-card.cat-other_resp:hover .card-url-link, .kanban-card.cat-automated:hover .card-url-link { display:inline; font-size:0.58rem; }
+    .kanban-card.cat-other_resp .card-comment, .kanban-card.cat-automated .card-comment { display: none; }
+    .kanban-card.cat-other_resp.done .card-text, .kanban-card.cat-automated.done .card-text { text-decoration: line-through; color: #aaa; }
+    .kanban-strip-add { width: 100%; margin-top: 3px; padding: 3px; background: none; border: 1px dashed #e5e7eb; border-radius: 5px; color: #aaa; font-size: 0.68rem; cursor: pointer; text-align: left; }
+    .kanban-strip-add:hover { border-color: var(--accent); color: #111; }
     /* Kanban — urgent card */
     .kanban-card.urgent { outline: 1.5px solid #ef4444; }
     .card-urgent-btn { color: #d1d5db; }
@@ -1385,6 +1395,8 @@
 <div class="tab-panel" id="tab-kanban">
   <div class="kanban-wrap">
     <div class="kanban-board" id="kanban-board"></div>
+    <div class="kanban-strip" id="kanban-other-strip"></div>
+    <div class="kanban-strip" id="kanban-auto-strip"></div>
   </div>
 </div>
 
@@ -3193,72 +3205,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         cancelBtn.addEventListener('click', () => rowEl.remove());
       });
 
-      // ── Other Responsibilities section ──
-      body.appendChild(makeSep('📌 Other Responsibilities', 'sep-other'));
-      otherCards.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
-      const addOtherBtn = document.createElement('button');
-      addOtherBtn.className = 'kanban-add-btn';
-      addOtherBtn.textContent = '+ Add responsibility';
-      addOtherBtn.addEventListener('click', () => {
-        const textarea = document.createElement('textarea');
-        textarea.className = 'card-edit-textarea';
-        textarea.placeholder = 'Responsibility description...';
-        const urlInput = document.createElement('input');
-        urlInput.type = 'text'; urlInput.className = 'card-url-input'; urlInput.placeholder = 'Link / Report URL (optional)';
-        const commentInput = document.createElement('textarea');
-        commentInput.className = 'card-comment-input'; commentInput.rows = 2; commentInput.placeholder = 'Notes (optional)';
-        const saveBtn = document.createElement('button'); saveBtn.className = 'card-save-btn'; saveBtn.textContent = '✓ Add';
-        const cancelBtn = document.createElement('button'); cancelBtn.className = 'card-cancel-btn'; cancelBtn.textContent = '✕';
-        const rowEl = document.createElement('div'); rowEl.className = 'kanban-new-row';
-        const actRow = document.createElement('div'); actRow.className = 'card-edit-actions';
-        actRow.appendChild(saveBtn); actRow.appendChild(cancelBtn);
-        rowEl.appendChild(textarea); rowEl.appendChild(urlInput); rowEl.appendChild(commentInput); rowEl.appendChild(actRow);
-        body.insertBefore(rowEl, addOtherBtn); textarea.focus();
-        saveBtn.addEventListener('click', () => {
-          const text = textarea.value.trim(); if (!text) return;
-          const card = { id: 'k' + Date.now(), text, cat: 'other_resp' };
-          if (urlInput.value.trim()) card.url = urlInput.value.trim();
-          if (commentInput.value.trim()) card.comment = commentInput.value.trim();
-          if (!kanbanBoard[col.id]) kanbanBoard[col.id] = [];
-          kanbanBoard[col.id].push(card); saveKanban(); renderKanban();
-        });
-        cancelBtn.addEventListener('click', () => rowEl.remove());
-      });
-      body.appendChild(addOtherBtn);
-
-      // ── Automated Emails / SMS section ──
-      body.appendChild(makeSep('📧 Automated Emails & SMS', 'sep-auto'));
-      autoCards.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
-      const addAutoBtn = document.createElement('button');
-      addAutoBtn.className = 'kanban-add-btn';
-      addAutoBtn.textContent = '+ Add automated';
-      addAutoBtn.addEventListener('click', () => {
-        const textarea = document.createElement('textarea');
-        textarea.className = 'card-edit-textarea';
-        textarea.placeholder = 'Email / SMS description...';
-        const urlInput = document.createElement('input');
-        urlInput.type = 'text'; urlInput.className = 'card-url-input'; urlInput.placeholder = 'Template / Report URL (optional)';
-        const commentInput = document.createElement('textarea');
-        commentInput.className = 'card-comment-input'; commentInput.rows = 2; commentInput.placeholder = 'Channel, timing, notes (optional)';
-        const saveBtn = document.createElement('button'); saveBtn.className = 'card-save-btn'; saveBtn.textContent = '✓ Add';
-        const cancelBtn = document.createElement('button'); cancelBtn.className = 'card-cancel-btn'; cancelBtn.textContent = '✕';
-        const rowEl = document.createElement('div'); rowEl.className = 'kanban-new-row';
-        const actRow = document.createElement('div'); actRow.className = 'card-edit-actions';
-        actRow.appendChild(saveBtn); actRow.appendChild(cancelBtn);
-        rowEl.appendChild(textarea); rowEl.appendChild(urlInput); rowEl.appendChild(commentInput); rowEl.appendChild(actRow);
-        body.insertBefore(rowEl, addAutoBtn); textarea.focus();
-        saveBtn.addEventListener('click', () => {
-          const text = textarea.value.trim(); if (!text) return;
-          const card = { id: 'k' + Date.now(), text, cat: 'automated' };
-          if (urlInput.value.trim()) card.url = urlInput.value.trim();
-          if (commentInput.value.trim()) card.comment = commentInput.value.trim();
-          if (!kanbanBoard[col.id]) kanbanBoard[col.id] = [];
-          kanbanBoard[col.id].push(card); saveKanban(); renderKanban();
-        });
-        cancelBtn.addEventListener('click', () => rowEl.remove());
-      });
-      body.appendChild(addAutoBtn);
-
       body.addEventListener('dragover', e => { e.preventDefault(); body.classList.add('drag-over'); });
       body.addEventListener('dragleave', () => body.classList.remove('drag-over'));
       body.addEventListener('drop', e => {
@@ -3324,6 +3270,91 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       body.appendChild(addBtn);
       board.appendChild(colEl);
     });
+
+    // ── Horizontal strips for Other Responsibilities & Automated ──
+    function makeStripCell(colId, stripCards, catType) {
+      const cell = document.createElement('div');
+      cell.className = 'kanban-strip-cell';
+      cell.dataset.col = colId;
+      stripCards.forEach(card => cell.appendChild(createKanbanCard(card, colId)));
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'kanban-strip-add';
+      addBtn.textContent = catType === 'other_resp' ? '+ Add' : '+ Add automated';
+      addBtn.addEventListener('click', () => {
+        const ta = document.createElement('textarea');
+        ta.className = 'card-edit-textarea';
+        ta.placeholder = catType === 'other_resp' ? 'Responsibility...' : 'Email / SMS description...';
+        const urlIn = document.createElement('input');
+        urlIn.type = 'text'; urlIn.className = 'card-url-input'; urlIn.placeholder = 'URL (optional)';
+        const sv = document.createElement('button'); sv.className = 'card-save-btn'; sv.textContent = '✓ Add';
+        const cn = document.createElement('button'); cn.className = 'card-cancel-btn'; cn.textContent = '✕';
+        const row = document.createElement('div'); row.className = 'kanban-new-row';
+        const ar = document.createElement('div'); ar.className = 'card-edit-actions';
+        ar.appendChild(sv); ar.appendChild(cn);
+        row.appendChild(ta); row.appendChild(urlIn); row.appendChild(ar);
+        cell.insertBefore(row, addBtn); ta.focus();
+        sv.addEventListener('click', () => {
+          const text = ta.value.trim(); if (!text) return;
+          const card = { id: 'k' + Date.now(), text, cat: catType };
+          if (urlIn.value.trim()) card.url = urlIn.value.trim();
+          if (!kanbanBoard[colId]) kanbanBoard[colId] = [];
+          kanbanBoard[colId].push(card); saveKanban(); renderKanban();
+        });
+        cn.addEventListener('click', () => row.remove());
+      });
+      cell.appendChild(addBtn);
+
+      const overClass = catType === 'other_resp' ? 'drag-over' : 'drag-over-auto';
+      cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add(overClass); });
+      cell.addEventListener('dragleave', () => cell.classList.remove(overClass));
+      cell.addEventListener('drop', e => {
+        e.preventDefault(); cell.classList.remove(overClass);
+        document.querySelectorAll('.drag-insert-above,.drag-insert-below').forEach(el => el.classList.remove('drag-insert-above','drag-insert-below'));
+        const cardId = e.dataTransfer.getData('kanbanCardId');
+        const fromCol = e.dataTransfer.getData('kanbanFromCol');
+        if (!cardId) return;
+        const src = kanbanBoard[fromCol];
+        if (!src) return;
+        const fi = src.findIndex(c => c.id === cardId);
+        if (fi === -1) return;
+        const [moved] = src.splice(fi, 1);
+        moved.cat = catType; // ensure correct cat when dropping into strip
+        if (!kanbanBoard[colId]) kanbanBoard[colId] = [];
+        kanbanBoard[colId].push(moved);
+        kDragInsert = null; saveKanban(); renderKanban();
+      });
+      return cell;
+    }
+
+    const otherStrip = document.getElementById('kanban-other-strip');
+    const autoStrip  = document.getElementById('kanban-auto-strip');
+    otherStrip.innerHTML = '';
+    autoStrip.innerHTML  = '';
+
+    const otherLbl = document.createElement('div');
+    otherLbl.className = 'kanban-strip-label lbl-other';
+    otherLbl.textContent = '📌 Other Responsibilities';
+    otherStrip.appendChild(otherLbl);
+    const otherRow = document.createElement('div');
+    otherRow.className = 'kanban-strip-row';
+    KANBAN_COLS.forEach(col => {
+      const cards = (kanbanBoard[col.id] || []).filter(c => c.cat === 'other_resp');
+      otherRow.appendChild(makeStripCell(col.id, cards, 'other_resp'));
+    });
+    otherStrip.appendChild(otherRow);
+
+    const autoLbl = document.createElement('div');
+    autoLbl.className = 'kanban-strip-label lbl-auto';
+    autoLbl.textContent = '📧 Automated Emails & SMS';
+    autoStrip.appendChild(autoLbl);
+    const autoRow = document.createElement('div');
+    autoRow.className = 'kanban-strip-row';
+    KANBAN_COLS.forEach(col => {
+      const cards = (kanbanBoard[col.id] || []).filter(c => c.cat === 'automated');
+      autoRow.appendChild(makeStripCell(col.id, cards, 'automated'));
+    });
+    autoStrip.appendChild(autoRow);
   }
 
   function createKanbanCard(card, colId) {
