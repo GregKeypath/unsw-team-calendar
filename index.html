@@ -741,6 +741,14 @@
     .kanban-sep.sep-auto::before, .kanban-sep.sep-auto::after { background: #fde68a; }
     .kanban-sep.sep-auto .kanban-sep-label { color: #b45309; }
     .cat-other_resp { background: #ede9fe; color: #5b21b6; border-color: #8b5cf6; }
+    /* Other Responsibilities — compact single-line style */
+    .kanban-sep.sep-other { margin-top: 10px; padding-top: 6px; border-top: 1px solid #f3f4f6; }
+    .kanban-card.cat-other_resp { padding: 3px 6px; min-height: 0; align-items: center; }
+    .kanban-card.cat-other_resp .card-check { width: 13px; height: 13px; min-width: 13px; font-size: 0.55rem; margin-top: 0; }
+    .kanban-card.cat-other_resp .card-text { font-size: 0.68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+    .kanban-card.cat-other_resp .card-url-link { font-size: 0.58rem; }
+    .kanban-card.cat-other_resp .card-comment { font-size: 0.58rem; }
+    .kanban-card.cat-other_resp.done .card-text { text-decoration: line-through; color: #aaa; }
     /* Kanban — urgent card */
     .kanban-card.urgent { outline: 1.5px solid #ef4444; }
     .card-urgent-btn { color: #d1d5db; }
