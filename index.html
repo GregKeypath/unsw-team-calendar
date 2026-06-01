@@ -2968,7 +2968,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   // ── Kanban Board ──────────────────────────────────────────────
   const KANBAN_BASE = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
-  let activeKanbanHex  = 'H3'; // will be auto-detected on load
+  let activeKanbanHex  = 'H4'; // default; auto-detected on load
   let activeKanbanYear = '26';
   function getKanbanDB() {
     return `${KANBAN_BASE}/kanban_${activeKanbanHex}_${activeKanbanYear}.json`;
@@ -2982,7 +2982,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     { id: 'week-6',  label: 'Week 6' },
     { id: 'week-7',  label: 'Week 7' },
   ];
-  const KANBAN_HEXES = ['H1','H2','H3','H4','H5','H6'];
+  const KANBAN_HEXES = ['H4','H5','H6'];
   const KANBAN_YEARS = ['25','26','27'];
 
   const KANBAN_CATS = {
@@ -3101,12 +3101,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     if (!nav) return;
     // Year prev/next + hex buttons
     nav.innerHTML =
-      `<button class="hex-btn" id="knav-prev-yr">‹ 20${parseInt(activeKanbanYear)-1}</button>` +
-      `<span style="font-size:0.75rem;font-weight:700;color:#374151;padding:0 4px;">20${activeKanbanYear}</span>` +
-      `<button class="hex-btn" id="knav-next-yr">20${parseInt(activeKanbanYear)+1} ›</button>` +
-      `<span style="width:8px;"></span>` +
+      `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 4px;align-self:center;">20${activeKanbanYear}</span>` +
       KANBAN_HEXES.map(h =>
-        `<button class="hex-btn${h === activeKanbanHex ? ' active' : ''}" data-khex="${h}">${h}</button>`
+        `<button class="hex-btn${h === activeKanbanHex ? ' active' : ''}" data-khex="${h}">${h} 20${activeKanbanYear}</button>`
       ).join('') +
       `<button class="hex-btn" id="knav-reset-template" style="margin-left:12px;font-size:0.65rem;">↺ Reset to Template</button>`;
 
@@ -3115,14 +3112,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         activeKanbanHex = btn.dataset.khex;
         loadKanban();
       });
-    });
-    nav.querySelector('#knav-prev-yr').addEventListener('click', () => {
-      const yi = KANBAN_YEARS.indexOf(activeKanbanYear);
-      if (yi > 0) { activeKanbanYear = KANBAN_YEARS[yi - 1]; loadKanban(); }
-    });
-    nav.querySelector('#knav-next-yr').addEventListener('click', () => {
-      const yi = KANBAN_YEARS.indexOf(activeKanbanYear);
-      if (yi < KANBAN_YEARS.length - 1) { activeKanbanYear = KANBAN_YEARS[yi + 1]; loadKanban(); }
     });
     nav.querySelector('#knav-reset-template').addEventListener('click', () => {
       if (confirm(`Reset ${activeKanbanHex} 20${activeKanbanYear} to the master template? This will overwrite all current data for this hex.`)) {
@@ -3139,8 +3128,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const todayWk = UNSW_WEEKS[todayKey];
     if (todayWk && !kanbanBoard) {
-      // Map hex number to H-label (UNSW_WEEKS stores hex as number 1-6)
-      activeKanbanHex = `H${todayWk.hex || 3}`;
+      const hex = todayWk.hex || 4;
+      // Clamp to available hexes (H4-H6); if H1-H3 default to H4
+      activeKanbanHex = KANBAN_HEXES.includes(`H${hex}`) ? `H${hex}` : 'H4';
       activeKanbanYear = String(now.getFullYear()).slice(2);
     }
     renderKanbanHexNav();
