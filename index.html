@@ -3479,7 +3479,20 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     seq.innerHTML = '';
 
-    if (prog.note) {
+    // Show program rules from PROGRAM_RULES if available
+    const progRuleData = PROGRAM_RULES[progName];
+    if (progRuleData) {
+      const note = document.createElement('div');
+      note.style.cssText = 'flex-shrink:0;width:100%;box-sizing:border-box;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:9px 12px;margin-bottom:10px;font-size:0.7rem;';
+      let rulesHTML = '<div style="font-weight:800;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.4px;color:#92400e;margin-bottom:5px;">📋 Program Rules <span style="font-weight:400;text-transform:none;font-size:0.65rem;color:#b45309;">(for reference — you may be planning remaining units only)</span></div>';
+      progRuleData.levels.forEach(lv => {
+        rulesHTML += '<div style="padding:2px 0;color:#78350f;line-height:1.45;">';
+        rulesHTML += '<span style="font-weight:700;">' + lv.label + '</span> — ' + lv.note;
+        rulesHTML += '</div>';
+      });
+      note.innerHTML = rulesHTML;
+      seq.appendChild(note);
+    } else if (prog.note) {
       const note = document.createElement('div');
       note.className = 'planner-note';
       note.style.cssText = 'flex-shrink:0;width:100%;font-size:0.75rem;color:#888;padding:8px 0;';
@@ -3745,6 +3758,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const content = document.getElementById('plan-export-content');
     content.innerHTML = '';
 
+    // Disclaimer
+    const disc = document.createElement('div');
+    disc.style.cssText = 'background:#fff1f2;border:1px solid #fca5a5;border-radius:5px;padding:8px 12px;margin-bottom:14px;font-size:0.71rem;color:#991b1b;font-weight:700;';
+    disc.textContent = '⚠️ Disclaimer: Unit availability, assessment structure, and course details are subject to change prior to the commencement of each study period. Always confirm current offerings with UNSW before enrolling.';
+    content.appendChild(disc);
+
     // ── Section 1: compact overview grid ──────────────────────────────────
     const grid = document.createElement('div');
     grid.className = 'plan-export-grid';
@@ -3889,6 +3908,7 @@ body { font-family: Arial, sans-serif; padding: 24px 28px; background: #fff; col
   <h1>${title}</h1>
   <p>${sub} &nbsp;·&nbsp; Prepared ${today}</p>
 </div>
+<div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:5px;padding:7px 11px;margin-bottom:14px;font-size:0.68rem;color:#991b1b;font-weight:700;">⚠️ Disclaimer: Unit availability, assessment structure, and course details are subject to change prior to the commencement of each study period. Always confirm current offerings with UNSW before enrolling.</div>
 ${gridHTML}
 ${cardsHTML}
 <script>window.onload = () => window.print();<\/script>
