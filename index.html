@@ -1426,6 +1426,7 @@
 <!-- Kanban tab -->
 <div class="tab-panel" id="tab-kanban">
   <div class="kanban-wrap">
+    <div class="pacing-hex-nav" id="kanban-hex-nav" style="margin-bottom:16px;"></div>
     <div class="kanban-board" id="kanban-board"></div>
     <div class="kanban-strip" id="kanban-other-strip"></div>
     <div class="kanban-strip" id="kanban-auto-strip"></div>
@@ -2966,11 +2967,14 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   });
 
   // ── Kanban Board ──────────────────────────────────────────────
-  const KANBAN_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/kanban.json';
+  const KANBAN_BASE = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
+  let activeKanbanHex  = 'H3'; // will be auto-detected on load
+  let activeKanbanYear = '26';
+  function getKanbanDB() {
+    return `${KANBAN_BASE}/kanban_${activeKanbanHex}_${activeKanbanYear}.json`;
+  }
 
   const KANBAN_COLS = [
-    { id: 'o-week',  label: 'O-Week' },
-    { id: 'week-1',  label: 'Week 1' },
     { id: 'week-2',  label: 'Week 2' },
     { id: 'week-3',  label: 'Week 3' },
     { id: 'week-4',  label: 'Week 4' },
@@ -2978,6 +2982,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     { id: 'week-6',  label: 'Week 6' },
     { id: 'week-7',  label: 'Week 7' },
   ];
+  const KANBAN_HEXES = ['H1','H2','H3','H4','H5','H6'];
+  const KANBAN_YEARS = ['25','26','27'];
 
   const KANBAN_CATS = {
     priority:    { label: 'Priority',              dot: '#EF4444' },
@@ -2991,40 +2997,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   };
 
   const KANBAN_INITIAL = {
-    'o-week': [
-      { id:'k4',  text:'Suspension appeal deadline Wednesday (H1 only)', cat:'priority' },
-      { id:'k5',  text:'Results released on Friday', cat:'admin' },
-      { id:'k6',  text:'Re-enrolment last attempts: 1. T1-T2  2. Registration  3. Reengagement', cat:'priority' },
-      { id:'k7',  text:'Incomplete Enrollment Review', cat:'calls' },
-      { id:'k8',  text:'No Pre-Req Calls', cat:'calls' },
-      { id:'k9',  text:'#Previous TP Dropped - At Risk Calls', cat:'calls' },
-      { id:'k10', text:'Failed Current Term → Follow up email (no contact)', cat:'calls' },
-      { id:'k11', text:'Outbound Remaining Welcome Calls', cat:'welcome' },
-      { id:'k12', text:'High Risk Course Enrolment At Risk Calls', cat:'calls' },
-      { id:'k13', text:'Introductory emails to Course Convenors (1 Leader, SSA shared email)', cat:'admin' },
-      { id:'k14', text:'Incomplete Enrolment List from SLC to SDIT', cat:'admin' },
-      { id:'k15', text:'Post Making Connections webinar slides in Hubs', cat:'admin' },
-      { id:'k16', text:'Lead: Graduated - Failed Last TP List (Friday Morning)', cat:'leadership' },
-      { id:'k17', text:'Welcome Call Tracking', cat:'admin' },
-      { id:'k18', text:'Welcome Webinar', cat:'webinar' },
-    ],
-    'week-1': [
-      { id:'k19', text:'Census on Thursday', cat:'priority' },
-      { id:'k20', text:'Track Academic Standing Drop Risk', cat:'priority' },
-      { id:'k21', text:'Final & Incomplete Enrolments on Monday', cat:'priority' },
-      { id:'k22', text:'Escalate LATE ENROLLMENTS Tue: Failed Current TP → Next Term Graduated', cat:'priority' },
-      { id:'k23', text:'Incomplete Enrollment Drop Tuesday', cat:'admin' },
-      { id:'k24', text:'Late Enrolment - Failed Prereq (Incomplete Pre-req)', cat:'calls' },
-      { id:'k25', text:'Academic Standing Calls', cat:'calls' },
-      { id:'k26', text:'Failed Current Term → Failed Subject Last 12 Months follow up email', cat:'calls' },
-      { id:'k27', text:'High Risk Course Enrolment At Risk Calls', cat:'calls' },
-      { id:'k28', text:'LMS Non-Access x2 Attempts (minimum)', cat:'calls' },
-      { id:'k29', text:'LMS Non-Access - Canvas: Angela to send Wednesday outlines', cat:'admin' },
-      { id:'k30', text:'Lead: Academic Standing & Appeals', cat:'leadership' },
-      { id:'k31', text:'Welcome Call Tracking', cat:'welcome' },
-      { id:'k32', text:'Incomplete Requisite List from SLC', cat:'admin' },
-      { id:'k33', text:'PGIPT Approvals list → ROPS for GC>M sheet & CRM update', cat:'admin' },
-    ],
     'week-2': [
       { id:'k34', text:'Post Census Wrapup & Degree Pathing', cat:'priority' },
       { id:'k35', text:'Suspension appeal deadline Tuesday, outcomes Thursday', cat:'priority' },
@@ -3124,9 +3096,56 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   let kanbanBoard = null;
   let kDragInsert = null; // { colId, refId, before }
 
+  function renderKanbanHexNav() {
+    const nav = document.getElementById('kanban-hex-nav');
+    if (!nav) return;
+    // Year prev/next + hex buttons
+    nav.innerHTML =
+      `<button class="hex-btn" id="knav-prev-yr">‹ 20${parseInt(activeKanbanYear)-1}</button>` +
+      `<span style="font-size:0.75rem;font-weight:700;color:#374151;padding:0 4px;">20${activeKanbanYear}</span>` +
+      `<button class="hex-btn" id="knav-next-yr">20${parseInt(activeKanbanYear)+1} ›</button>` +
+      `<span style="width:8px;"></span>` +
+      KANBAN_HEXES.map(h =>
+        `<button class="hex-btn${h === activeKanbanHex ? ' active' : ''}" data-khex="${h}">${h}</button>`
+      ).join('') +
+      `<button class="hex-btn" id="knav-reset-template" style="margin-left:12px;font-size:0.65rem;">↺ Reset to Template</button>`;
+
+    nav.querySelectorAll('[data-khex]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeKanbanHex = btn.dataset.khex;
+        loadKanban();
+      });
+    });
+    nav.querySelector('#knav-prev-yr').addEventListener('click', () => {
+      const yi = KANBAN_YEARS.indexOf(activeKanbanYear);
+      if (yi > 0) { activeKanbanYear = KANBAN_YEARS[yi - 1]; loadKanban(); }
+    });
+    nav.querySelector('#knav-next-yr').addEventListener('click', () => {
+      const yi = KANBAN_YEARS.indexOf(activeKanbanYear);
+      if (yi < KANBAN_YEARS.length - 1) { activeKanbanYear = KANBAN_YEARS[yi + 1]; loadKanban(); }
+    });
+    nav.querySelector('#knav-reset-template').addEventListener('click', () => {
+      if (confirm(`Reset ${activeKanbanHex} 20${activeKanbanYear} to the master template? This will overwrite all current data for this hex.`)) {
+        kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
+        kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
+        saveKanban(); renderKanban();
+      }
+    });
+  }
+
   async function loadKanban() {
+    // Auto-detect current hex from today's date
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const todayWk = UNSW_WEEKS[todayKey];
+    if (todayWk && !kanbanBoard) {
+      // Map hex number to H-label (UNSW_WEEKS stores hex as number 1-6)
+      activeKanbanHex = `H${todayWk.hex || 3}`;
+      activeKanbanYear = String(now.getFullYear()).slice(2);
+    }
+    renderKanbanHexNav();
     try {
-      const res = await fetch(KANBAN_DB);
+      const res = await fetch(getKanbanDB());
       const data = await res.json();
       if (data && typeof data === 'object' && Object.keys(data).length > 0) {
         kanbanBoard = {};
@@ -3137,29 +3156,26 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           else if (typeof val === 'object') kanbanBoard[col] = Object.values(val).filter(Boolean);
           else kanbanBoard[col] = [];
         }
-        // Ensure all columns exist
         KANBAN_COLS.forEach(c => { if (!kanbanBoard[c.id]) kanbanBoard[c.id] = []; });
         if (!kanbanBoard._themes) kanbanBoard._themes = {};
         if (!kanbanBoard._tasks) kanbanBoard._tasks = [];
         if (!kanbanBoard._automated) kanbanBoard._automated = [];
       } else {
+        // First time for this hex — copy master template
         kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
-        kanbanBoard._themes = {};
-        kanbanBoard._tasks = [];
-        kanbanBoard._automated = [];
+        kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
+        saveKanban(); // persist the template for this hex
       }
     } catch(e) {
       kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
-      kanbanBoard._themes = {};
-      kanbanBoard._tasks = [];
-      kanbanBoard._automated = [];
+      kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
     }
     renderKanban();
   }
 
   async function saveKanban() {
     try {
-      await fetch(KANBAN_DB, {
+      await fetch(getKanbanDB(), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(kanbanBoard)
@@ -3259,8 +3275,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const todayWeek = UNSW_WEEKS[todayKey];
     let currentColId = null;
     if (todayWeek) {
-      currentColId = todayWeek.label === 'O-Week' ? 'o-week'
-                   : 'week-' + todayWeek.label.replace('Week ', '');
+      // Map current week to column id (Week 2-7 only; O-Week and Week 1 show Week 2)
+      const wlabel = todayWeek.label;
+      if (wlabel === 'O-Week' || wlabel === 'Week 1') currentColId = 'week-2';
+      else currentColId = 'week-' + wlabel.replace('Week ', '');
     }
 
     KANBAN_COLS.forEach(col => {
