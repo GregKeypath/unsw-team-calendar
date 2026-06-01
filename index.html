@@ -1188,6 +1188,55 @@
       body { background: white; }
       .planner-print-btn { display: none; }
     }
+
+    /* ── Student Triage Tab ─────────────────────────────── */
+    .triage-layout { display:grid; grid-template-columns:340px 1fr; min-height:600px; }
+    .triage-form { padding:24px 20px; border-right:1px solid #e5e7eb; background:#fafafa; overflow-y:auto; }
+    .triage-output { padding:24px; overflow-y:auto; }
+    .triage-heading { font-size:1.05rem; font-weight:800; color:#111; margin:0 0 4px; }
+    .triage-subhead { font-size:0.71rem; color:#6b7280; margin:0 0 20px; line-height:1.5; }
+    .triage-field { margin-bottom:16px; }
+    .triage-field > label { display:block; font-size:0.68rem; font-weight:700; color:#374151; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
+    .triage-hint { font-size:0.63rem; font-weight:400; color:#9ca3af; text-transform:none; letter-spacing:0; }
+    .triage-field select, .triage-field input[type=text], .triage-field textarea { width:100%; border:1px solid #d1d5db; border-radius:6px; padding:7px 10px; font-size:0.77rem; color:#111; background:#fff; outline:none; box-sizing:border-box; font-family:inherit; }
+    .triage-field select:focus, .triage-field input[type=text]:focus, .triage-field textarea:focus { border-color:#1e3a5f; box-shadow:0 0 0 2px rgba(30,58,95,.08); }
+    .triage-checks { display:flex; flex-wrap:wrap; gap:5px; }
+    .triage-check { display:flex; align-items:center; gap:5px; font-size:0.71rem; color:#374151; cursor:pointer; padding:4px 9px; border:1px solid #e5e7eb; border-radius:4px; background:#fff; transition:all .1s; user-select:none; }
+    .triage-check:hover { border-color:#1e3a5f; background:#eff6ff; }
+    .triage-check.is-checked { border-color:#1e3a5f; background:#eff6ff; color:#1e3a5f; font-weight:600; }
+    .triage-check input[type=checkbox] { display:none; }
+    .triage-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; min-height:6px; }
+    .triage-tag { display:flex; align-items:center; gap:4px; background:#1e3a5f; color:#fff; border-radius:3px; padding:2px 7px; font-size:0.67rem; font-family:monospace; }
+    .triage-tag-x { cursor:pointer; opacity:.65; }
+    .triage-tag-x:hover { opacity:1; }
+    .triage-run-btn { width:100%; padding:10px; background:#1e3a5f; color:#fff; border:none; border-radius:6px; font-size:0.82rem; font-weight:700; cursor:pointer; margin-top:4px; transition:background .15s; }
+    .triage-run-btn:hover { background:#152d4d; }
+    .triage-clear-btn { width:100%; padding:7px; background:transparent; color:#6b7280; border:1px solid #e5e7eb; border-radius:6px; font-size:0.72rem; cursor:pointer; margin-top:6px; font-family:inherit; }
+    .triage-clear-btn:hover { background:#f9fafb; }
+    .tr-empty { text-align:center; padding:60px 20px; color:#9ca3af; }
+    .tr-empty-icon { font-size:2.5rem; margin-bottom:12px; }
+    .tr-empty p { font-size:0.78rem; max-width:320px; margin:0 auto; line-height:1.6; }
+    .tr-results-hd { font-size:0.68rem; font-weight:800; color:#6b7280; text-transform:uppercase; letter-spacing:.5px; margin-bottom:14px; }
+    .tr-rec-card { border:1px solid #e5e7eb; border-left:4px solid #ccc; border-radius:6px; padding:14px 16px; margin-bottom:12px; background:#fff; }
+    .tr-rec-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
+    .tr-rec-rank { width:20px; height:20px; border-radius:50%; background:#1e3a5f; color:#fff; font-size:0.63rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .tr-rec-badge { font-size:0.48rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; padding:2px 6px; border-radius:3px; background:#f3f4f6; }
+    .tr-rec-code { font-family:monospace; font-size:0.68rem; font-weight:700; color:#555; }
+    .tr-rec-match { margin-left:auto; font-size:0.6rem; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; }
+    .tr-rec-match.strong { background:#d1fae5; color:#065f46; }
+    .tr-rec-match.good { background:#dbeafe; color:#1e40af; }
+    .tr-rec-match.possible { background:#f3f4f6; color:#6b7280; }
+    .tr-rec-name { font-size:0.9rem; font-weight:700; color:#111; margin-bottom:5px; line-height:1.3; }
+    .tr-rec-desc { font-size:0.69rem; color:#374151; line-height:1.55; margin-bottom:10px; }
+    .tr-rec-sec { font-size:0.55rem; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#9ca3af; margin:8px 0 4px; }
+    .tr-rec-reasons { list-style:none; padding:0; margin:0 0 6px; }
+    .tr-rec-reasons li { font-size:0.69rem; color:#374151; padding:2px 0 2px 14px; position:relative; line-height:1.4; }
+    .tr-rec-reasons li::before { content:'✓'; position:absolute; left:0; color:#059669; font-size:0.6rem; top:3px; }
+    .tr-rec-script { font-size:0.71rem; color:#1e3a5f; line-height:1.65; background:#eff6ff; border-left:3px solid #93c5fd; padding:8px 11px; border-radius:0 4px 4px 0; margin-bottom:6px; }
+    .tr-rec-clos { list-style:none; padding:0; margin:0; }
+    .tr-rec-clos li { font-size:0.67rem; color:#374151; padding:1px 0 1px 13px; position:relative; line-height:1.4; }
+    .tr-rec-clos li::before { content:'▸'; position:absolute; left:2px; color:#9ca3af; font-size:0.58rem; top:3px; }
+    .tr-no-results { text-align:center; padding:40px 20px; color:#6b7280; font-size:0.78rem; }
   </style>
 </head>
 <body>
@@ -1220,6 +1269,7 @@
   <button class="tab-btn" data-tab="pacing">📈 Pacing Board</button>
   <button class="tab-btn" data-tab="wishlist">⭐ Wishlist</button>
   <button class="tab-btn" data-tab="planner">📚 Course Planner</button>
+  <button class="tab-btn" data-tab="triage">🎯 Student Triage</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
@@ -1427,6 +1477,80 @@
   </div>
 </div>
 
+
+<!-- Student Triage Tab -->
+<div class="tab-panel" id="tab-triage">
+  <div class="triage-layout">
+    <!-- Left: Form -->
+    <div class="triage-form">
+      <h2 class="triage-heading">Student Triage</h2>
+      <p class="triage-subhead">Enter student details to generate personalised elective recommendations and advisor talking points.</p>
+
+      <div class="triage-field">
+        <label>Program</label>
+        <select id="tr-program"><option value="">— Select Program —</option></select>
+      </div>
+
+      <div class="triage-field">
+        <label>Why is the student studying? <span class="triage-hint">select all that apply</span></label>
+        <div class="triage-checks" id="tr-goals">
+          <label class="triage-check"><input type="checkbox" value="career_change">Career Change</label>
+          <label class="triage-check"><input type="checkbox" value="promotion">Promotion / Leadership</label>
+          <label class="triage-check"><input type="checkbox" value="upskill">Technical Upskilling</label>
+          <label class="triage-check"><input type="checkbox" value="credential">Industry Credential</label>
+          <label class="triage-check"><input type="checkbox" value="personal">Personal Development</label>
+          <label class="triage-check"><input type="checkbox" value="academic">Academic Progress</label>
+        </div>
+      </div>
+
+      <div class="triage-field">
+        <label>Industry</label>
+        <select id="tr-industry">
+          <option value="">— Select Industry —</option>
+          <option>Finance &amp; Banking</option>
+          <option>Technology &amp; IT</option>
+          <option>Healthcare &amp; Medical</option>
+          <option>Human Resources &amp; People</option>
+          <option>Marketing &amp; Communications</option>
+          <option>Management Consulting</option>
+          <option>Government &amp; Public Sector</option>
+          <option>Legal &amp; Compliance</option>
+          <option>Operations &amp; Project Management</option>
+          <option>Education &amp; Training</option>
+          <option>Entrepreneurship &amp; Innovation</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="triage-field">
+        <label>Job Title / Role <span class="triage-hint">optional</span></label>
+        <input type="text" id="tr-role" placeholder="e.g. Financial Analyst, HR Manager, Team Lead">
+      </div>
+
+      <div class="triage-field">
+        <label>Units Already Completed <span class="triage-hint">type code + Enter</span></label>
+        <input type="text" id="tr-completed-input" placeholder="e.g. ZZBU6001">
+        <div class="triage-tags" id="tr-completed-tags"></div>
+      </div>
+
+      <div class="triage-field">
+        <label>Goals &amp; Additional Context <span class="triage-hint">optional</span></label>
+        <textarea id="tr-comments" rows="3" placeholder="e.g. wants to move into a data analytics role, currently in banking compliance, interested in leadership track..."></textarea>
+      </div>
+
+      <button class="triage-run-btn" id="tr-run-btn">🔍 Find Best Electives</button>
+      <button class="triage-clear-btn" id="tr-clear-btn">↺ Clear Form</button>
+    </div>
+
+    <!-- Right: Output -->
+    <div class="triage-output" id="tr-output">
+      <div class="tr-empty">
+        <div class="tr-empty-icon">🎯</div>
+        <p>Fill in the student details and click <strong>Find Best Electives</strong> to get personalised recommendations and advisor talking points.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Export modal -->
 <div id="plan-export-modal" class="plan-modal-overlay" style="display:none;" role="dialog" aria-modal="true">
@@ -3762,7 +3886,228 @@ ${cardsHTML}
     win.document.close();
   }
 
+  // ── Student Triage ────────────────────────────────────────────
+  function initTriage() {
+    const IND_KW = {
+      'Finance & Banking':            ['finance','financial','investment','banking','portfolio','equity','valuation','derivatives','capital','fund','market','risk','asset','return','monetary','economic','treasury'],
+      'Technology & IT':              ['technology','digital','data','analytics','programming','software','system','tech','cloud','computing','database','algorithm','machine','intelligence','cyber','coding','automation'],
+      'Healthcare & Medical':         ['health','medical','clinical','patient','care','hospital','pharmaceutical','wellbeing','mental','therapy','disease','welfare','nursing','aged'],
+      'Human Resources & People':     ['human resource','talent','recruit','workforce','employee','people','performance','reward','engagement','diversity','wellbeing','learning and development','organisational','hr '],
+      'Marketing & Communications':   ['marketing','brand','customer','social media','digital','campaign','consumer','communications','content','advertising','segmentation','market research','promotion'],
+      'Management Consulting':        ['consulting','strategy','advisory','client','stakeholder','problem','solution','recommendation','analysis','framework','engagement','transformation'],
+      'Government & Public Sector':   ['government','policy','public sector','regulation','compliance','governance','regulatory','legislation','sector','civic','public service'],
+      'Legal & Compliance':           ['law','legal','contract','compliance','regulation','governance','ethics','liability','rights','obligation','legislation','corporate governance'],
+      'Operations & Project Management':['operations','supply chain','logistics','process','efficiency','project','schedule','risk','budget','delivery','agile','management','planning'],
+      'Education & Training':         ['education','learning','training','teaching','development','curriculum','knowledge','skill','capability','pedagogy'],
+      'Entrepreneurship & Innovation': ['startup','entrepreneur','innovation','venture','disruption','agile','growth','scale','new business','opportunity','creative','disruptive'],
+    };
+
+    const GOAL_KW = {
+      career_change: ['introduction','fundamentals','principles','overview','foundational','broad','general','explore','foundation','transition','versatile','applied'],
+      promotion:     ['leadership','management','strategy','executive','organisational','governance','decision','influence','stakeholder','strategic','lead','direct','senior'],
+      upskill:       ['technical','advanced','tools','quantitative','modelling','programming','data','analysis','practical','applied','hands','methodology','coding'],
+      credential:    ['professional','industry','ethics','compliance','standards','practice','credential','framework','recognised','certification','governance'],
+      personal:      ['interest','broad','explore','concepts','understand','awareness','perspective','critical','self'],
+      academic:      ['theory','research','academic','literature','advanced','critical','evaluation','scholarly','empirical'],
+    };
+
+    const CAT_COL = { spec1:'#14532d', spec2:'#92400e', spec3:'#1e40af', spec4:'#134e4a', elective:'#9A7D0A' };
+
+    // Populate program selector
+    const progSel = document.getElementById('tr-program');
+    Object.keys(PLANNER_PROGRAMS).forEach(name => {
+      const o = document.createElement('option');
+      o.value = name; o.textContent = name;
+      progSel.appendChild(o);
+    });
+
+    // Goal chip toggles
+    document.querySelectorAll('#tr-goals .triage-check').forEach(lbl => {
+      lbl.addEventListener('click', () => {
+        const cb = lbl.querySelector('input');
+        cb.checked = !cb.checked;
+        lbl.classList.toggle('is-checked', cb.checked);
+      });
+    });
+
+    // Tag input for completed units
+    const compInput = document.getElementById('tr-completed-input');
+    const compTags  = document.getElementById('tr-completed-tags');
+    const completed = [];
+    function addTag(raw) {
+      const code = raw.toUpperCase().trim().replace(/,/g,'');
+      if (!code || completed.includes(code)) return;
+      completed.push(code);
+      const tag = document.createElement('span');
+      tag.className = 'triage-tag';
+      const x = document.createElement('span');
+      x.className = 'triage-tag-x'; x.textContent = '×';
+      x.addEventListener('click', () => { completed.splice(completed.indexOf(code), 1); tag.remove(); });
+      tag.append(code + ' ', x);
+      compTags.appendChild(tag);
+      compInput.value = '';
+    }
+    compInput.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(compInput.value); } });
+    compInput.addEventListener('blur', () => { if (compInput.value.trim()) addTag(compInput.value); });
+
+    // Extract unique elective/spec units from a program (skip coreA, coreB, capstone)
+    function getElectives(progName) {
+      const prog = PLANNER_PROGRAMS[progName];
+      if (!prog) return [];
+      const seen = {};
+      prog.cats.forEach(cat => {
+        if (['coreA','coreB','capstone'].includes(cat.type)) return;
+        Object.values(cat.items).forEach(arr => {
+          arr.forEach(str => {
+            const parts = str.trim().split(' ');
+            const code = parts[0];
+            if (!code.startsWith('ZZ') || seen[code]) return;
+            seen[code] = { code, name: parts.slice(1).join(' '), catLabel: cat.label, catType: cat.type };
+          });
+        });
+      });
+      return Object.values(seen);
+    }
+
+    // Score a unit against student context
+    function scoreUnit(code, industry, goals, role, comments) {
+      const info = COURSE_INFO[code] || {};
+      const corpus = [info.description || '', ...(info.clos || [])].join(' ').toLowerCase();
+      let score = 0;
+      const reasons = [];
+
+      const indKws = IND_KW[industry] || [];
+      const indHits = indKws.filter(kw => corpus.includes(kw));
+      if (indHits.length) {
+        score += indHits.length * 2;
+        reasons.push('Relevant to your ' + industry + ' background — covers ' + indHits.slice(0,3).join(', '));
+      }
+
+      goals.forEach(g => {
+        const gHits = (GOAL_KW[g] || []).filter(kw => corpus.includes(kw));
+        if (gHits.length) {
+          score += gHits.length * 3;
+          const label = {career_change:'career change',promotion:'moving into leadership',upskill:'technical upskilling',credential:'industry credentialing',personal:'personal development',academic:'academic progression'}[g] || g;
+          if (!reasons.some(r => r.includes(label)))
+            reasons.push('Aligns with your goal of ' + label);
+        }
+      });
+
+      const freeText = (role + ' ' + comments).toLowerCase();
+      const freeWords = [...new Set(freeText.split(/\W+/).filter(w => w.length > 4))];
+      const freeHits = freeWords.filter(w => corpus.includes(w));
+      score += freeHits.length;
+      if (freeHits.length >= 2)
+        reasons.push('Matches your specific context: ' + freeHits.slice(0,4).join(', '));
+
+      if (!reasons.length && info.description)
+        reasons.push('Available elective — review the unit details below to assess fit');
+
+      return { score, reasons: [...new Set(reasons)] };
+    }
+
+    // Build advisor talking-point script
+    function buildScript(info, industry, goals) {
+      if (!info || !info.description) return '';
+      const assess = info.assessments || [];
+      const clos   = info.clos || [];
+      const parts  = [];
+
+      const firstSentence = (info.description.split(/\.\s+/)[0] || info.description).trim();
+      if (firstSentence) parts.push('“' + firstSentence + '.');
+
+      const practical = assess.filter(a => /project|report|case|presentation|analysis|essay|portfolio|plan/i.test(a.name));
+      if (practical.length) {
+        parts.push('The assessments include a ' + practical[0].name + ' (' + practical[0].weight + '), so the student leaves with something tangible they can apply directly in their work.');
+      } else if (assess.length) {
+        parts.push('There are ' + assess.length + ' assessments structured to build practical skills progressively across the hexamester.');
+      }
+
+      if (clos.length) {
+        const indKws = IND_KW[industry] || [];
+        let best = clos[0]; let bestScore = 0;
+        clos.forEach(c => { const s = indKws.filter(kw => c.toLowerCase().includes(kw)).length; if (s > bestScore) { bestScore = s; best = c; } });
+        const suffix = goals.includes('promotion') ? ' — key for stepping into a leadership role'
+          : goals.includes('career_change') ? ' — which translates well across industries'
+          : goals.includes('upskill') ? ' — a hands-on, job-ready outcome'
+          : '';
+        const cloText = best.replace(/^(Gain |Develop |Understand |Apply |Demonstrate |Identify |Analyse |Create |Evaluate )/i,'');
+        parts.push('By the end, students will be able to ' + cloText.toLowerCase().replace(/\.$/, '') + suffix + '.”');
+      }
+
+      return parts.join(' ');
+    }
+
+    // Build one recommendation card
+    function buildCard(rank, unit, score, reasons, info, industry, goals) {
+      const cc = CAT_COL[unit.catType] || '#6b7280';
+      const [matchLabel, matchCls] = score >= 8 ? ['Strong Match','strong'] : score >= 4 ? ['Good Match','good'] : ['Possible Match','possible'];
+      const closHTML  = (info.clos || []).slice(0,4).map(c => '<li>' + c + '</li>').join('');
+      const reasonsHTML = reasons.map(r => '<li>' + r + '</li>').join('');
+      const script = buildScript(info, industry, goals);
+      const desc = (info.description || '').substring(0, 300) + ((info.description||'').length > 300 ? '…' : '');
+      return '<div class="tr-rec-card" style="border-left-color:' + cc + '">' +
+        '<div class="tr-rec-top">' +
+          '<span class="tr-rec-rank">' + rank + '</span>' +
+          '<span class="tr-rec-badge" style="color:' + cc + '">' + unit.catLabel + '</span>' +
+          '<span class="tr-rec-code">' + unit.code + '</span>' +
+          '<span class="tr-rec-match ' + matchCls + '">' + matchLabel + '</span>' +
+        '</div>' +
+        '<div class="tr-rec-name">' + unit.name + '</div>' +
+        (desc ? '<div class="tr-rec-desc">' + desc + '</div>' : '') +
+        (reasonsHTML ? '<div class="tr-rec-sec">Why this unit?</div><ul class="tr-rec-reasons">' + reasonsHTML + '</ul>' : '') +
+        (script ? '<div class="tr-rec-sec">Advisor Talking Points</div><div class="tr-rec-script">' + script + '</div>' : '') +
+        (closHTML ? '<div class="tr-rec-sec">Key Learning Outcomes</div><ul class="tr-rec-clos">' + closHTML + '</ul>' : '') +
+        '</div>';
+    }
+
+    // Run triage
+    function runTriage() {
+      const progName = document.getElementById('tr-program').value;
+      const industry = document.getElementById('tr-industry').value;
+      const role     = document.getElementById('tr-role').value.trim();
+      const comments = document.getElementById('tr-comments').value.trim();
+      const goals    = Array.from(document.querySelectorAll('#tr-goals input:checked')).map(cb => cb.value);
+      const output   = document.getElementById('tr-output');
+
+      if (!progName) { alert('Please select a program first.'); return; }
+
+      const electives = getElectives(progName).filter(u => !completed.includes(u.code));
+      if (!electives.length) { output.innerHTML = '<div class="tr-no-results">No elective units found for this program.</div>'; return; }
+
+      const hasContext = industry || goals.length || role || comments;
+      const scored = electives.map(u => {
+        const { score, reasons } = scoreUnit(u.code, industry, goals, role, comments);
+        return { ...u, score, reasons };
+      }).sort((a, b) => b.score - a.score);
+
+      const top = scored.slice(0, 5);
+      let html = '<div class="tr-results-hd">Top ' + top.length + ' Recommended Electives — ' + progName + '</div>';
+      if (!hasContext) html = '<div class="tr-results-hd">Available Electives — ' + progName + '</div>' +
+        '<p style="font-size:.72rem;color:#6b7280;margin:0 0 14px">No preferences entered — add industry and goals for personalised recommendations.</p>';
+
+      top.forEach((u, i) => { html += buildCard(i + 1, u, u.score, u.reasons, COURSE_INFO[u.code] || {}, industry, goals); });
+      output.innerHTML = html;
+    }
+
+    // Clear
+    function clearTriage() {
+      document.getElementById('tr-program').value = '';
+      document.getElementById('tr-industry').value = '';
+      document.getElementById('tr-role').value = '';
+      document.getElementById('tr-comments').value = '';
+      document.querySelectorAll('#tr-goals input').forEach(cb => cb.checked = false);
+      document.querySelectorAll('#tr-goals .triage-check').forEach(l => l.classList.remove('is-checked'));
+      completed.length = 0; compTags.innerHTML = '';
+      document.getElementById('tr-output').innerHTML = '<div class="tr-empty"><div class="tr-empty-icon">🎯</div><p>Fill in the student details and click <strong>Find Best Electives</strong> to get personalised recommendations and advisor talking points.</p></div>';
+    }
+
+    document.getElementById('tr-run-btn').addEventListener('click', runTriage);
+    document.getElementById('tr-clear-btn').addEventListener('click', clearTriage);
+  }
+
   initPlanner();
+  initTriage();
 </script>
 </body>
 </html>
