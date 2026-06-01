@@ -760,6 +760,38 @@
     .kanban-card.cat-other_resp.done .card-text, .kanban-card.cat-automated.done .card-text { text-decoration: line-through; color: #aaa; }
     .kanban-strip-add { width: 100%; margin-top: 3px; padding: 3px; background: none; border: 1px dashed #e5e7eb; border-radius: 5px; color: #aaa; font-size: 0.68rem; cursor: pointer; text-align: left; }
     .kanban-strip-add:hover { border-color: var(--accent); color: #111; }
+    /* Kanban task edit modal */
+    .kedit-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9000; display:flex; align-items:center; justify-content:center; }
+    .kedit-overlay.hidden { display:none; }
+    .kedit-modal { background:#fff; border-radius:14px; width:420px; max-width:96vw; box-shadow:0 8px 40px rgba(0,0,0,0.22); overflow:hidden; }
+    .kedit-header { padding:16px 20px 14px; border-bottom:1px solid #f3f4f6; }
+    .kedit-header h3 { font-size:0.95rem; font-weight:800; color:#111; margin:0; }
+    .kedit-body { padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
+    .kedit-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#6b7280; margin-bottom:4px; }
+    .kedit-body textarea, .kedit-body input[type=text] { width:100%; border:1px solid #e5e7eb; border-radius:7px; padding:8px 10px; font-size:0.8rem; font-family:inherit; resize:vertical; box-sizing:border-box; outline:none; }
+    .kedit-body textarea:focus, .kedit-body input[type=text]:focus { border-color:#374151; }
+    /* Priority traffic light */
+    .kedit-prio-row { display:flex; gap:7px; flex-wrap:wrap; }
+    .kedit-prio-opt { display:flex; align-items:center; gap:5px; padding:5px 11px; border-radius:20px; border:2px solid transparent; cursor:pointer; font-size:0.75rem; font-weight:600; user-select:none; transition:all .12s; }
+    .kedit-prio-opt input { display:none; }
+    .kedit-prio-opt.prio-none   { background:#f3f4f6; color:#6b7280; }
+    .kedit-prio-opt.prio-green  { background:#d1fae5; color:#065f46; }
+    .kedit-prio-opt.prio-yellow { background:#fef9c3; color:#854d0e; }
+    .kedit-prio-opt.prio-red    { background:#fee2e2; color:#991b1b; }
+    .kedit-prio-opt.selected    { border-color:#374151; box-shadow:0 0 0 1px #374151; }
+    /* Category row */
+    .kedit-cat-row { display:flex; flex-wrap:wrap; gap:5px; }
+    .kedit-cat-opt { padding:3px 10px; border-radius:12px; border:2px solid transparent; cursor:pointer; font-size:0.71rem; font-weight:600; user-select:none; transition:border-color .12s; }
+    .kedit-cat-opt.selected { border-color:#111; }
+    .kedit-footer { padding:12px 20px 16px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #f3f4f6; }
+    .kedit-save-btn { background:#111; color:#fff; border:none; border-radius:7px; padding:8px 22px; font-size:0.8rem; font-weight:700; cursor:pointer; }
+    .kedit-save-btn:hover { background:#374151; }
+    .kedit-cancel-btn { background:none; border:1px solid #e5e7eb; border-radius:7px; padding:8px 16px; font-size:0.8rem; cursor:pointer; color:#6b7280; }
+    /* Priority badge on card */
+    .card-prio-badge { font-size:0.55rem; font-weight:800; padding:1px 5px; border-radius:8px; white-space:nowrap; margin-right:2px; }
+    .card-prio-badge.prio-red    { background:#fee2e2; color:#991b1b; }
+    .card-prio-badge.prio-yellow { background:#fef9c3; color:#854d0e; }
+    .card-prio-badge.prio-green  { background:#d1fae5; color:#065f46; }
     /* Kanban — urgent card */
     .kanban-card.urgent { outline: 1.5px solid #ef4444; }
     .card-urgent-btn { color: #d1d5db; }
@@ -3107,6 +3139,77 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return sep;
   }
 
+  // ── Kanban card edit modal ────────────────────────────────────
+  let keditColId = null, keditCardId = null;
+
+  function openKanbanEdit(card, colId) {
+    keditColId = colId; keditCardId = card.id;
+    document.getElementById('kedit-text').value = card.text || '';
+    document.getElementById('kedit-url').value = card.url || '';
+    document.getElementById('kedit-comment').value = card.comment || '';
+
+    // Priority radio
+    document.querySelectorAll('#kedit-prio-row .kedit-prio-opt').forEach(lbl => {
+      const val = lbl.querySelector('input').value;
+      const sel = (card.priority || '') === val;
+      lbl.classList.toggle('selected', sel);
+      lbl.querySelector('input').checked = sel;
+    });
+    document.querySelectorAll('#kedit-prio-row .kedit-prio-opt').forEach(lbl => {
+      lbl.onclick = () => {
+        document.querySelectorAll('#kedit-prio-row .kedit-prio-opt').forEach(l => l.classList.remove('selected'));
+        lbl.classList.add('selected');
+        lbl.querySelector('input').checked = true;
+      };
+    });
+
+    // Category pills
+    const catRow = document.getElementById('kedit-cat-row');
+    catRow.innerHTML = '';
+    Object.entries(KANBAN_CATS).forEach(([key, cat]) => {
+      const opt = document.createElement('div');
+      opt.className = 'kedit-cat-opt' + (card.cat === key ? ' selected' : '');
+      opt.textContent = cat.label;
+      opt.style.background = key === 'priority' ? '#FEE2E2' : key === 'calls' ? '#DBEAFE' : key === 'admin' ? '#F3F4F6' : key === 'leadership' ? '#EDE9FE' : key === 'welcome' ? '#D1FAE5' : key === 'automated' ? '#FEF3C7' : key === 'webinar' ? '#FFEDD5' : key === 'other_resp' ? '#EDE9FE' : '#F9FAFB';
+      opt.style.color = '#374151';
+      opt.dataset.cat = key;
+      opt.addEventListener('click', () => {
+        catRow.querySelectorAll('.kedit-cat-opt').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      });
+      catRow.appendChild(opt);
+    });
+
+    document.getElementById('kedit-overlay').classList.remove('hidden');
+    setTimeout(() => document.getElementById('kedit-text').focus(), 50);
+  }
+
+  document.getElementById('kedit-save').addEventListener('click', () => {
+    if (!keditColId || !keditCardId) return;
+    const col = kanbanBoard[keditColId];
+    if (!col) return;
+    const idx = col.findIndex(c => c.id === keditCardId);
+    if (idx === -1) return;
+    const newText = document.getElementById('kedit-text').value.trim();
+    if (!newText) return;
+    const prio = document.querySelector('#kedit-prio-row input:checked')?.value || '';
+    const cat  = document.querySelector('#kedit-cat-row .selected')?.dataset.cat || col[idx].cat;
+    col[idx].text     = newText;
+    col[idx].url      = document.getElementById('kedit-url').value.trim() || undefined;
+    col[idx].comment  = document.getElementById('kedit-comment').value.trim() || undefined;
+    col[idx].priority = prio || undefined;
+    col[idx].cat      = cat;
+    saveKanban(); renderKanban();
+    document.getElementById('kedit-overlay').classList.add('hidden');
+  });
+  document.getElementById('kedit-cancel').addEventListener('click', () => {
+    document.getElementById('kedit-overlay').classList.add('hidden');
+  });
+  document.getElementById('kedit-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('kedit-overlay'))
+      document.getElementById('kedit-overlay').classList.add('hidden');
+  });
+
   function renderKanban() {
     const board = document.getElementById('kanban-board');
     if (!board) return;
@@ -3381,7 +3484,16 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     const textEl = document.createElement('span');
     textEl.className = 'card-text';
-    textEl.textContent = card.text;
+    // Priority badge
+    if (card.priority) {
+      const prioLabels = { red: '🔴 EOD', yellow: '🟡 EOW', green: '🟢 Ongoing' };
+      const badge = document.createElement('span');
+      badge.className = `card-prio-badge prio-${card.priority}`;
+      badge.textContent = prioLabels[card.priority] || '';
+      textEl.appendChild(badge);
+      textEl.appendChild(document.createTextNode(' '));
+    }
+    textEl.appendChild(document.createTextNode(card.text));
 
     const actions = document.createElement('div');
     actions.className = 'card-actions';
@@ -3457,56 +3569,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     // Edit
     editBtn.addEventListener('click', e => {
       e.stopPropagation();
-      el.setAttribute('draggable', 'false');
-      const textarea = document.createElement('textarea');
-      textarea.className = 'card-edit-textarea';
-      textarea.value = card.text;
-      const urlInput = document.createElement('input');
-      urlInput.type = 'text';
-      urlInput.className = 'card-url-input';
-      urlInput.placeholder = 'Report URL (optional)';
-      urlInput.value = card.url || '';
-      const commentInput = document.createElement('textarea');
-      commentInput.className = 'card-comment-input';
-      commentInput.rows = 2;
-      commentInput.placeholder = 'Comment (optional)';
-      commentInput.value = card.comment || '';
-      const saveBtn = document.createElement('button');
-      saveBtn.className = 'card-save-btn';
-      saveBtn.textContent = '✓ Save';
-      const cancelBtn = document.createElement('button');
-      cancelBtn.className = 'card-cancel-btn';
-      cancelBtn.textContent = '✕ Cancel';
-      const editRow = document.createElement('div');
-      editRow.className = 'card-edit-actions';
-      editRow.appendChild(saveBtn);
-      editRow.appendChild(cancelBtn);
-      el.innerHTML = '';
-      el.appendChild(textarea);
-      el.appendChild(urlInput);
-      el.appendChild(commentInput);
-      el.appendChild(editRow);
-      textarea.focus();
-      saveBtn.addEventListener('click', () => {
-        const newText = textarea.value.trim();
-        if (!newText) return;
-        card.text = newText;
-        const urlVal = urlInput.value.trim();
-        const commentVal = commentInput.value.trim();
-        card.url = urlVal || undefined;
-        card.comment = commentVal || undefined;
-        const col = kanbanBoard[colId];
-        const idx = col ? col.findIndex(c => c.id === card.id) : -1;
-        if (idx !== -1) {
-          col[idx].text = newText;
-          col[idx].url = card.url;
-          col[idx].comment = card.comment;
-        }
-        saveKanban();
-        renderKanban();
-      });
-      cancelBtn.addEventListener('click', () => renderKanban());
+      openKanbanEdit(card, colId);
     });
+
 
     // Delete
     delBtn.addEventListener('click', e => {
@@ -4915,5 +4980,43 @@ ${cardsHTML}
   initPlanner();
   initTriage();
 </script>
+
+<!-- Kanban card edit modal -->
+<div class="kedit-overlay hidden" id="kedit-overlay">
+  <div class="kedit-modal">
+    <div class="kedit-header"><h3>✏️ Edit Task</h3></div>
+    <div class="kedit-body">
+      <div>
+        <div class="kedit-label">Task</div>
+        <textarea id="kedit-text" rows="3"></textarea>
+      </div>
+      <div>
+        <div class="kedit-label">Priority</div>
+        <div class="kedit-prio-row" id="kedit-prio-row">
+          <label class="kedit-prio-opt prio-none"><input type="radio" name="keprio" value="">⚪ No priority</label>
+          <label class="kedit-prio-opt prio-green"><input type="radio" name="keprio" value="green">🟢 Start / Ongoing</label>
+          <label class="kedit-prio-opt prio-yellow"><input type="radio" name="keprio" value="yellow">🟡 By End of Week</label>
+          <label class="kedit-prio-opt prio-red"><input type="radio" name="keprio" value="red">🔴 By End of Day</label>
+        </div>
+      </div>
+      <div>
+        <div class="kedit-label">Category</div>
+        <div class="kedit-cat-row" id="kedit-cat-row"></div>
+      </div>
+      <div>
+        <div class="kedit-label">Link / Report URL</div>
+        <input type="text" id="kedit-url" placeholder="https://...">
+      </div>
+      <div>
+        <div class="kedit-label">Notes</div>
+        <textarea id="kedit-comment" rows="2" placeholder="Add notes..."></textarea>
+      </div>
+    </div>
+    <div class="kedit-footer">
+      <button class="kedit-cancel-btn" id="kedit-cancel">Cancel</button>
+      <button class="kedit-save-btn" id="kedit-save">Save Changes</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
