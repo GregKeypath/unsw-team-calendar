@@ -4537,109 +4537,136 @@ ${cardsHTML}
   // ── Program Rules (from Master Carousel) ─────────────────────
   const PROGRAM_RULES = {
     'Applied Finance': { levels: [
+      // GCAF: Core A mandatory; Core B + spec pools are elective options
       { label:'Graduate Certificate (GCAF) — 4 courses, 24UOC', code:'GCAF', totalCourses:4, electiveSlots:2,
-        mandatory:['ZZBU8702','ZZBU8701'],
+        mandatory:['ZZBU8702','ZZBU8701'], electivePool:['coreB','spec2','spec3','spec4'],
         note:'Must complete ZZBU8702 Corporate Finance + ZZBU8701 Portfolio Management, then choose 2 electives. Core B courses (ZZBU8704–ZZBU8708) count as elective options.' },
+      // GDAF: Core A+B mostly mandatory; Management/FinTech/Analytics pools as electives
       { label:'Graduate Diploma (GDAF) — 8 courses, 48UOC', code:'GDAF', totalCourses:8, electiveSlots:2,
-        mandatory:['ZZBU8702','ZZBU8701','ZZBU8703'],
+        mandatory:['ZZBU8702','ZZBU8701','ZZBU8703'], electivePool:['coreB','spec2','spec3','spec4'],
         note:'Complete at least 6 core courses (A+B). Students can swap up to 2 core courses for electives from Management, FinTech, or Analytics pools.' },
+      // MAF: All 8 core mandatory; only spec pools are free electives
       { label:'Master of Applied Finance (MAF) — 12 courses, 72UOC', code:'MAF', totalCourses:12, electiveSlots:4,
         mandatory:['ZZBU8702','ZZBU8701','ZZBU8703','ZZBU8704','ZZBU8705','ZZBU8706','ZZBU8707','ZZBU8708'],
+        electivePool:['spec2','spec3','spec4'],
         note:'Complete all 8 core courses (Core A + Core B), then choose 4 elective courses from Management, FinTech, and Analytics pools.' },
     ]},
     'Analytics': { levels: [
+      // GC-GA: Any 4 from core or specialisations (broad choice)
       { label:'GC General Analytics — 4 courses, 24UOC', code:'GC-GA', totalCourses:4, electiveSlots:4,
-        mandatory:[], excludeCatTypes:['spec3'],
+        mandatory:[], electivePool:['coreA','coreB','spec1','spec2'], excludeCatTypes:['spec3'],
         note:'Any 4 courses from core and specialisation categories (excluding ZZBU6407 and HRM electives). Pre-reqs must be met.' },
+      // GC-MA: ZZBU6501 mandatory; choose 3 from Marketing spec
       { label:'GC Marketing Analytics — 4 courses, 24UOC', code:'GC-MA', totalCourses:4, electiveSlots:3,
-        mandatory:['ZZBU6501'], excludeCatTypes:['spec2','spec3'],
+        mandatory:['ZZBU6501'], electivePool:['spec1'],
         note:'Must complete ZZBU6501 Introductory Data Analysis + 3 Marketing Analytics specialisation courses. Pre-reqs must be met.' },
+      // GD: Any 8 from core or specialisations
       { label:'Graduate Diploma — 8 courses, 48UOC', code:'GD', totalCourses:8, electiveSlots:8,
-        mandatory:[], excludeCatTypes:[],
+        mandatory:[], electivePool:['coreA','coreB','spec1','spec2'],
         note:'Any 8 courses from core and specialisations (excluding ZZBU6407 and HRM electives). Pre-reqs must be met.' },
+      // Masters: All 8 core mandatory; elective from declared specialisation
       { label:'Masters — General Analytics — 12 courses, 72UOC', code:'M-GA', totalCourses:12, electiveSlots:3,
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516'],
-        excludeCatTypes:['spec1','spec3'],
+        electivePool:['spec2'],
         note:'Complete all 8 core courses, declare General Analytics specialisation, choose 3 courses from blue/dark green pool + capstone (ZZBU6601).' },
       { label:'Masters — Marketing Analytics — 12 courses, 72UOC', code:'M-MKT', totalCourses:12, electiveSlots:0,
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516','ZZBU6513','ZZBU6512','ZZBU6514'],
-        excludeCatTypes:['spec2','spec3'],
+        electivePool:['spec1'],
         note:'Complete all 8 core + all 3 Marketing Analytics courses (ZZBU6513, ZZBU6512, ZZBU6514) + capstone (ZZBU6601). Fully prescribed.' },
       { label:'Masters — HR Analytics — 12 courses, 72UOC', code:'M-HRA', totalCourses:12, electiveSlots:2,
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516','ZZBU6404','ZZBU6407'],
-        excludeCatTypes:['spec1','spec2'],
+        electivePool:['elective'],
         note:'Complete all 8 core + ZZBU6404 HR Analytics + ZZBU6407 HR IS + 2 HRM electives + capstone (ZZBU6601).' },
     ]},
     'Business Law': { levels: [
+      // GC: All core courses are selectable choices (not all mandatory)
       { label:'Graduate Certificate in Business Law — 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:3,
-        mandatory:['ZZLJ8100'],
-        electivePool: ['coreA', 'elective'],
+        mandatory:['ZZLJ8100'], electivePool:['coreA','elective'],
         note:'Must complete ZZLJ8100 Law Regulation & Ethics + choose 3 from: ZZBU6414, ZZLJ8211, ZZLJ8212, ZZLJ9223. Pathways to Master of Management available.' },
     ]},
     'Cyber Security': { levels: [
+      // GC: No free electives — all 4 core are mandatory
       { label:'Graduate Certificate — 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:0,
-        mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'],
+        mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'], electivePool:['spec1','spec2'],
         note:'Complete all 4 core courses. No free elective selection at GCert level.' },
+      // GD: Choose one specialisation track
       { label:'Graduate Diploma — 8 courses, 48UOC', code:'GD', totalCourses:8, electiveSlots:4,
-        mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'],
+        mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'], electivePool:['spec1','spec2','elective'],
         note:'4 core courses + choose specialisation: Security Management & Leadership (SML) or Security Engineering (ENG). Minimum 18UOC (3 courses) from chosen spec.' },
+      // Masters: Core + specialisation + cross-spec electives
       { label:'Masters — 12 courses, 72UOC', code:'M', totalCourses:12, electiveSlots:3,
-        mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'],
+        mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'], electivePool:['spec1','spec2','elective'],
         note:'4 core + min 18UOC from chosen specialisation + 18UOC electives (incl. 6UOC cross-spec elective). Masters-only capstone from chosen spec.' },
     ]},
     'Data Science': { levels: [
+      // GC: 2 core mandatory; choose 2 from elective pools
       { label:'Graduate Certificate — 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:2,
-        mandatory:['ZZSC9001','ZZEN9021'],
+        mandatory:['ZZSC9001','ZZEN9021'], electivePool:['spec1','spec2'],
         note:'Must complete ZZSC9001 Foundations of Data Science + ZZEN9021 Principles of Programming, then choose 2 elective courses.' },
+      // GD: 5 core mandatory; choose 3 from elective pools
       { label:'Graduate Diploma — 8 courses, 48UOC', code:'GD', totalCourses:8, electiveSlots:3,
-        mandatory:['ZZSC9001','ZZEN9021','ZZSC5905','ZZSC5806','ZZSC5836'],
+        mandatory:['ZZSC9001','ZZEN9021','ZZSC5905','ZZSC5806','ZZSC5836'], electivePool:['spec1','spec2'],
         note:'Complete 2 GCert core + 3 GDip core (ZZSC5905, ZZSC5806, ZZSC5836) + choose 3 elective courses.' },
+      // Masters: 5 core mandatory; choose 6 from elective pools
       { label:'Masters — 12 courses, 72UOC', code:'M', totalCourses:12, electiveSlots:6,
-        mandatory:['ZZSC9001','ZZEN9021','ZZSC5905','ZZSC5806','ZZSC5836'],
+        mandatory:['ZZSC9001','ZZEN9021','ZZSC5905','ZZSC5806','ZZSC5836'], electivePool:['spec1','spec2'],
         note:'Complete 2 GCert core + 3 GDip core + 6 elective courses + capstone (ZZSC9020). Capstone requires 48UOC completed first.' },
     ]},
     'Human Resource Management': { levels: [
+      // GCHRA: spec1 mandatory; 1 free elective from elective pool only
       { label:'GCHRA — HR Analytics, 4 courses, 24UOC', code:'GCHRA', totalCourses:4, electiveSlots:1,
-        mandatory:['ZZBU6501','ZZBU6404','ZZBU6407'], excludeCatTypes:['spec2','spec3'],
+        mandatory:['ZZBU6501','ZZBU6404','ZZBU6407'], electivePool:['elective'],
         note:'Must complete ZZBU6501 IDA + ZZBU6404 HR Analytics + ZZBU6407 HR IS + 1 elective from the HRM elective pool.' },
+      // GCHRM: ZZBU6401 mandatory; 3 electives from full HRM pool
       { label:'GCHRM — Human Resource Management, 4 courses, 24UOC', code:'GCHRM', totalCourses:4, electiveSlots:3,
-        mandatory:['ZZBU6401'], excludeCatTypes:[],
+        mandatory:['ZZBU6401'], electivePool:['spec1','spec2','spec3','elective'],
         note:'Must complete ZZBU6401 HR Policies & Practices + choose 3 electives from the HRM elective pool.' },
+      // GCDEI: spec2 mandatory; 1 free elective from elective pool
       { label:'GCDEI — Diversity, Equity & Inclusion, 4 courses, 24UOC', code:'GCDEI', totalCourses:4, electiveSlots:1,
-        mandatory:['ZZBU6402','ZZBU6403','ZZBU6406'], excludeCatTypes:['spec1','spec3'],
+        mandatory:['ZZBU6402','ZZBU6403','ZZBU6406'], electivePool:['elective'],
         note:'Must complete ZZBU6402 Employee Wellbeing + ZZBU6403 Sustainability & HR + ZZBU6406 DEI + 1 elective from the HRM elective pool.' },
+      // GCLOD: spec3 mandatory; 2 free electives from elective pool
       { label:'GCLOD — Leadership & Org Development, 4 courses, 24UOC', code:'GCLOD', totalCourses:4, electiveSlots:2,
-        mandatory:['ZZBU6411','ZZBU6413'], excludeCatTypes:['spec1','spec2'],
+        mandatory:['ZZBU6411','ZZBU6413'], electivePool:['elective'],
         note:'Must complete ZZBU6411 Organisational Development + ZZBU6413 Leadership Development + 2 electives from the HRM elective pool.' },
+      // MHRM: 4 core mandatory; 8 free from full HRM pool
       { label:'Masters of HRM — 12 courses, 72UOC', code:'MHRM', totalCourses:12, electiveSlots:8,
-        mandatory:['ZZBU6401','ZZBU6410','ZZBU6412','ZZBU6414'], excludeCatTypes:[],
+        mandatory:['ZZBU6401','ZZBU6410','ZZBU6412','ZZBU6414'], electivePool:['spec1','spec2','spec3','elective'],
         note:'Complete 4 core HRM courses + 8 electives from the full HRM elective pool. Can include a specialisation area (HRA, DEI, or LOD — 24UOC each).' },
     ]},
     'Management': { levels: [
+      // GCB: Any 4 from the entire core course list (coreA + spec types)
       { label:'GC Business — 4 courses, 24UOC', code:'GCB', totalCourses:4, electiveSlots:4,
-        mandatory:[], excludeCatTypes:[],
+        mandatory:[], electivePool:['coreA','spec1','spec2','elective'],
         note:'Any combination of 4 courses from the core course list. All core courses offered every 4 hexamesters.' },
+      // GCBL: ZZLJ8100 mandatory; 3 from Business Law spec
       { label:'GC Business Law — 4 courses, 24UOC', code:'GCBL', totalCourses:4, electiveSlots:3,
-        mandatory:['ZZLJ8100'], excludeCatTypes:['spec2','elective'],
+        mandatory:['ZZLJ8100'], electivePool:['spec1'],
         note:'Must complete ZZLJ8100 Law Regulation & Ethics + 3 Business Law courses (ZZLJ8211, ZZLJ8212, ZZBU6414, ZZLJ9223).' },
+      // MM: At least 5 core + capstone; remaining electives from all pools
       { label:'Master of Management — 12 courses, 72UOC', code:'MM', totalCourses:12, electiveSlots:6,
-        mandatory:['ZZBU6008'], excludeCatTypes:[],
+        mandatory:['ZZBU6008'], electivePool:['coreA','spec1','spec2','elective'],
         note:'At least 5 core courses + ZZBU6008 capstone + up to 6 electives. RPL often granted for ZZBU6002, ZZBU6003, ZZBU6004, ZZLJ8100.' },
     ]},
     'Psychology': { levels: [
       { label:'Graduate Diploma in Psychology — 10 courses, 60UOC', code:'GDP', totalCourses:10, electiveSlots:0,
         mandatory:['ZZPS5001','ZZPS5002','ZZPS5003','ZZPS5004','ZZPS5005','ZZPS5006','ZZPS5007','ZZPS5008','ZZPS5009','ZZPS5010'],
+        electivePool:[],
         note:'Fully prescribed program — all 10 courses are mandatory in sequence. No elective selection. APAC accredited.' },
     ]},
     'Project Management': { levels: [
+      // GC: 2 mandatory core + choose 2 from coreB (Core 2); no free electives
       { label:'Graduate Certificate — 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:0,
-        mandatory:['ZZCA8303','ZZCA8302'],
+        mandatory:['ZZCA8303','ZZCA8302'], electivePool:['coreB'],
         note:'Must complete ZZCA8303 PMBOK + ZZCA8302 Project Admin + choose 2 of 3 Core 2 courses (ZZCA8301, ZZCA8310, ZZCA8147). No free electives.' },
+      // GD: All prescribed — 2 core + 2 coreB + 4 spec; no free electives
       { label:'Graduate Diploma — 8 courses, 48UOC', code:'GD', totalCourses:8, electiveSlots:0,
-        mandatory:['ZZCA8303','ZZCA8302','ZZCA8145','ZZCA8203','ZZCA8101','ZZCA8401'],
+        mandatory:['ZZCA8303','ZZCA8302','ZZCA8145','ZZCA8203','ZZCA8101','ZZCA8401'], electivePool:['coreB','spec1'],
         note:'2 yellow core + 2 of 3 Core 2 + all 4 Leadership specialisation courses. No free electives at GDip level.' },
+      // MPM: All core/spec/capstone mandatory; 2 free electives from elective pool
       { label:'Master of Project Management — 12 courses, 72UOC', code:'MPM', totalCourses:12, electiveSlots:2,
         mandatory:['ZZCA8303','ZZCA8302','ZZCA8301','ZZCA8310','ZZCA8147','ZZCA8145','ZZCA8203','ZZCA8101','ZZCA8401','ZZCA8300'],
+        electivePool:['elective'],
         note:'2 yellow + all 3 Core 2 + all 4 Leadership spec + capstone (ZZCA8300) + 2 free electives from analytics, HRM, management or business law pools.' },
     ]},
   };
