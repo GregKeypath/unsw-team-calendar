@@ -4573,7 +4573,8 @@ ${cardsHTML}
     'Business Law': { levels: [
       { label:'Graduate Certificate in Business Law — 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:3,
         mandatory:['ZZLJ8100'],
-        note:'Must complete ZZLJ8100 Law Regulation & Ethics + 3 courses from the Business Law pool. Pathways to Master of Management available.' },
+        electivePool: ['coreA', 'elective'],
+        note:'Must complete ZZLJ8100 Law Regulation & Ethics + choose 3 from: ZZBU6414, ZZLJ8211, ZZLJ8212, ZZLJ9223. Pathways to Master of Management available.' },
     ]},
     'Cyber Security': { levels: [
       { label:'Graduate Certificate — 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:0,
@@ -4793,22 +4794,27 @@ ${cardsHTML}
       if (added === 0) alert('All planned units are already in your lists.');
     });
 
-    // Extract unique elective/spec units from a program (skip coreA, coreB, capstone)
-    // Respects excludeCatTypes from the selected qualification level
+    // Extract unique elective/spec units from a program
+    // electivePool on levelRules overrides the default coreA/coreB/capstone exclusion
     // If filterSP is set, only includes units offered in that specific study period
     function getElectives(progName, levelCode, filterSP) {
       const prog = PLANNER_PROGRAMS[progName];
       if (!prog) return [];
       const progRules  = PROGRAM_RULES[progName];
       const levelRules = progRules ? progRules.levels.find(l => l.code === levelCode) : null;
-      const excludeCats = levelRules ? (levelRules.excludeCatTypes || []) : [];
+      const excludeCats  = levelRules ? (levelRules.excludeCatTypes || []) : [];
+      const electivePool = levelRules ? (levelRules.electivePool || null) : null;
       const seen = {};
       prog.cats.forEach(cat => {
-        if (['coreA','coreB','capstone'].includes(cat.type)) return;
+        if (electivePool) {
+          if (!electivePool.includes(cat.type)) return; // only include specified pool
+        } else {
+          if (['coreA','coreB','capstone'].includes(cat.type)) return; // default exclusions
+        }
         if (excludeCats.includes(cat.type)) return;
         const itemSets = filterSP
-          ? (cat.items[filterSP] ? [cat.items[filterSP]] : []) // only items in this SP
-          : Object.values(cat.items);                           // all SPs
+          ? (cat.items[filterSP] ? [cat.items[filterSP]] : [])
+          : Object.values(cat.items);
         itemSets.forEach(arr => {
           arr.forEach(str => {
             const parts = str.trim().split(' ');
@@ -4819,6 +4825,22 @@ ${cardsHTML}
         });
       });
       return Object.values(seen);
+    }
+
+    // Find all SPs a unit runs in for a program
+    function getUnitRunSPs(progName, code) {
+      const prog = PLANNER_PROGRAMS[progName];
+      if (!prog) return [];
+      const runs = new Set();
+      prog.cats.forEach(cat => {
+        Object.entries(cat.items).forEach(([sp, units]) => {
+          if (units.some(u => u.startsWith(code + ' ') || u === code)) runs.add(sp);
+        });
+      });
+      return [...runs].sort((a, b) => {
+        const [ha, ya] = a.split(' '); const [hb, yb] = b.split(' ');
+        return (parseInt(ya)*10 + parseInt(ha.slice(1))) - (parseInt(yb)*10 + parseInt(hb.slice(1)));
+      });
     }
 
     // Score a unit against student context
@@ -4910,6 +4932,7 @@ ${cardsHTML}
         (reasonsHTML ? '<div class="tr-rec-sec">Why this unit?</div><ul class="tr-rec-reasons">' + reasonsHTML + '</ul>' : '') +
         (script ? '<div class="tr-rec-sec">Advisor Talking Points</div><div class="tr-rec-script">' + script + '</div>' : '') +
         (closHTML ? '<div class="tr-rec-sec">Key Learning Outcomes</div><ul class="tr-rec-clos">' + closHTML + '</ul>' : '') +
+        (info._nextRuns ? '<div style="font-size:0.62rem;color:#6b7280;margin-top:6px;padding-top:5px;border-top:1px solid #f3f4f6;">📅 Offered in: ' + info._nextRuns + '</div>' : '') +
         '</div>';
     }
 
@@ -4938,10 +4961,22 @@ ${cardsHTML}
         return;
       }
 
-      const allElectives = getElectives(progName, levelCode, filterSP).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
-      if (!allElectives.length) {
-        const spMsg = filterSP ? ` in ${filterSP.split(' ')[0]} 20${filterSP.split(' ')[1]}` : '';
-        output.innerHTML = '<div class="tr-no-results">No elective units found' + spMsg + ' — try a different study period or check completed/planned lists.</div>';
+      let allElectives = getElectives(progName, levelCode, filterSP).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
+      let spFallbackNote = '';
+
+      // If SP filter returned nothing, fall back to full pool + note when units next run
+      if (allElectives.length === 0 && filterSP) {
+        const fallback = getElectives(progName, levelCode, null).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
+        if (fallback.length) {
+          allElectives = fallback;
+          const spFmt = filterSP.split(' ')[0] + ' 20' + filterSP.split(' ')[1];
+          spFallbackNote = '⚠️ No electives run in ' + spFmt + ' — showing all available electives. Next scheduled offerings shown on each card.';
+        } else {
+          output.innerHTML = '<div class="tr-no-results">No elective units available — all have been completed or planned.</div>';
+          return;
+        }
+      } else if (allElectives.length === 0) {
+        output.innerHTML = '<div class="tr-no-results">No elective units available — all have been completed or planned.</div>';
         return;
       }
 
@@ -4951,9 +4986,9 @@ ${cardsHTML}
         return { ...u, score, reasons };
       }).sort((a, b) => b.score - a.score);
 
-      const top = scored.slice(0, 3);
+      const top = scored.slice(0, Math.min(3, scored.length));
 
-      // Build slots banner using level rules
+      // Build slots banner
       let bannerHTML = '';
       if (levelRules) {
         const doneCount    = completed.filter(c => !levelRules.mandatory.includes(c)).length;
@@ -4966,6 +5001,25 @@ ${cardsHTML}
         if (plannedCount) bannerHTML += ' <span style="opacity:0.8">(' + plannedCount + ' planned, ' + doneCount + ' completed)</span>';
         if (mandatoryLeft.length) bannerHTML += ' · Mandatory still needed: <strong>' + mandatoryLeft.join(', ') + '</strong>';
         bannerHTML += '<br><span style="font-size:0.67rem;opacity:0.85">' + levelRules.note + '</span>';
+        bannerHTML += '</div>';
+      }
+
+      // SP fallback note
+      if (spFallbackNote) {
+        bannerHTML += '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:5px;padding:8px 12px;margin-bottom:10px;font-size:0.71rem;color:#9a3412;">' + spFallbackNote + '</div>';
+      }
+
+      // Limited choice banner — ≤2 electives total in pool
+      if (allElectives.length <= 2) {
+        const unitWord = allElectives.length === 1 ? 'elective unit is' : 'elective units are';
+        bannerHTML += '<div style="background:#fefce8;border:1px solid #fde047;border-radius:5px;padding:9px 12px;margin-bottom:10px;font-size:0.71rem;color:#854d0e;">';
+        bannerHTML += '⚠️ <strong>Limited Elective Choice</strong> — Only ' + allElectives.length + ' ' + unitWord + ' available for this program.';
+        if (allElectives.length === 1) {
+          const u = allElectives[0];
+          const runs = getUnitRunSPs(progName, u.code).map(sp => sp.split(' ')[0] + ' 20' + sp.split(' ')[1]);
+          bannerHTML += ' <strong>' + (u.name || u.code) + '</strong> runs in: <strong>' + (runs.join(', ') || 'check carousel') + '</strong>.';
+          bannerHTML += '<br>⚡ If the student does not complete this unit they will need to wait for the next offering — potentially creating a study break in their degree path.';
+        }
         bannerHTML += '</div>';
       }
 
@@ -4986,10 +5040,15 @@ ${cardsHTML}
 
       let html = bannerHTML + plannedHTML;
       const spLabel = filterSP ? ' · ' + filterSP.split(' ')[0] + ' 20' + filterSP.split(' ')[1] : '';
-      html += '<div class="tr-results-hd">Top 3 Recommended Electives — ' + progName + spLabel + '</div>';
+      const hd = top.length === 1 ? '1 Available Elective' : 'Top ' + top.length + ' Recommended Electives';
+      html += '<div class="tr-results-hd">' + hd + ' — ' + progName + spLabel + '</div>';
       if (!hasContext) html += '<p style="font-size:.72rem;color:#6b7280;margin:0 0 14px">No preferences entered — add industry and goals for personalised recommendations.</p>';
 
-      top.forEach((u, i) => { html += buildCard(i + 1, u, u.score, u.reasons, COURSE_INFO[u.code] || {}, industry, goals); });
+      top.forEach((u, i) => {
+        const runs = getUnitRunSPs(progName, u.code).map(sp => sp.split(' ')[0] + ' 20' + sp.split(' ')[1]);
+        const infoPlus = Object.assign({}, COURSE_INFO[u.code] || {}, { _nextRuns: runs.join(', ') });
+        html += buildCard(i + 1, u, u.score, u.reasons, infoPlus, industry, goals);
+      });
       output.innerHTML = html;
     }
 
