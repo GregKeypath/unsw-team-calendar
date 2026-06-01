@@ -1547,7 +1547,10 @@
       <h2 id="detail-title">Event Details</h2>
     </div>
     <div class="modal-body">
-      <div id="detail-tag-badge" class="event-tag-badge"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <div id="detail-tag-badge" class="event-tag-badge" style="flex-shrink:0;"></div>
+        <select id="detail-tag-select" style="font-size:0.78rem;border:1px solid #e5e7eb;border-radius:6px;padding:4px 10px;color:#374151;background:#f9fafb;cursor:pointer;outline:none;"></select>
+      </div>
       <div class="field-label">Link</div>
       <input type="text" id="detail-link" placeholder="https://..." maxlength="300" />
       <div class="field-label">Comments</div>
@@ -2240,17 +2243,32 @@
 
   function openDetail(key, idx) {
     const ev = events[key][idx];
-    const tag = TAGS[ev.tag] || TAGS[0];
     detailKey = key;
     detailIdx = idx;
 
     document.getElementById('detail-title').textContent = ev.name;
 
-    const badge = document.getElementById('detail-tag-badge');
-    badge.textContent = tag.label;
-    badge.style.background = tag.bg;
-    badge.style.color = tag.text;
-    badge.style.borderLeft = `3px solid ${tag.dot}`;
+    // Populate tag select
+    const sel = document.getElementById('detail-tag-select');
+    sel.innerHTML = '';
+    TAGS.forEach((t, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = t.label;
+      if (i === (ev.tag || 0)) opt.selected = true;
+      sel.appendChild(opt);
+    });
+
+    function applyBadge(tagIdx) {
+      const t = TAGS[tagIdx] || TAGS[0];
+      const badge = document.getElementById('detail-tag-badge');
+      badge.textContent = t.label;
+      badge.style.background = t.bg;
+      badge.style.color = t.text;
+      badge.style.borderLeft = `3px solid ${t.dot}`;
+    }
+    applyBadge(ev.tag || 0);
+    sel.onchange = () => applyBadge(parseInt(sel.value));
 
     document.getElementById('detail-link').value = ev.link || '';
     document.getElementById('detail-comments').value = ev.comments || '';
@@ -2265,7 +2283,8 @@
 
   document.getElementById('detail-save-btn').addEventListener('click', () => {
     if (detailKey === null || detailIdx === null) return;
-    events[detailKey][detailIdx].link = document.getElementById('detail-link').value.trim();
+    events[detailKey][detailIdx].tag      = parseInt(document.getElementById('detail-tag-select').value) || 0;
+    events[detailKey][detailIdx].link     = document.getElementById('detail-link').value.trim();
     events[detailKey][detailIdx].comments = document.getElementById('detail-comments').value.trim();
     saveEvents();
     render();
