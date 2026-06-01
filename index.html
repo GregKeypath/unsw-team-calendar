@@ -1259,6 +1259,51 @@
     .tr-rule-box strong { display:block; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; color:#92400e; }
     .tr-slots-banner { background:#eff6ff; border:1px solid #bfdbfe; border-radius:5px; padding:10px 14px; margin-bottom:16px; font-size:0.75rem; color:#1e40af; line-height:1.5; }
     .tr-slots-banner strong { font-weight:800; }
+    .card-url-link { display:inline-block; margin-top:3px; font-size:0.62rem; color:#3B82F6; text-decoration:none; }
+    .card-url-link:hover { text-decoration:underline; }
+    .card-comment { font-size:0.62rem; color:#6b7280; margin-top:3px; font-style:italic; line-height:1.4; }
+    .card-url-input { width:100%; border:1px solid #d1d5db; border-radius:4px; padding:4px 7px; font-size:0.73rem; margin-top:4px; box-sizing:border-box; }
+    .card-comment-input { width:100%; border:1px solid #d1d5db; border-radius:4px; padding:4px 7px; font-size:0.73rem; margin-top:4px; box-sizing:border-box; resize:vertical; }
+    .kanban-extra-section { margin-top:24px; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:16px 20px; }
+    .kanban-extra-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+    .kanban-extra-hd span { font-size:0.88rem; font-weight:800; color:#111; }
+    .kanban-extra-add-btn { background:none; border:1.5px dashed #d1d5db; border-radius:6px; color:#6b7280; font-size:0.73rem; padding:4px 12px; cursor:pointer; }
+    .kanban-extra-add-btn:hover { border-color:var(--accent); color:#111; }
+    .kanban-task-row { display:flex; align-items:flex-start; gap:8px; padding:7px 8px; border-radius:6px; margin-bottom:3px; background:#f9fafb; }
+    .kanban-task-row:hover { background:#f3f4f6; }
+    .kanban-task-check { background:none; border:2px solid #d1d5db; border-radius:4px; width:18px; height:18px; min-width:18px; cursor:pointer; font-size:0.65rem; color:transparent; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+    .kanban-task-check.done { background:#22c55e; border-color:#22c55e; color:#fff; }
+    .kanban-task-text { flex:1; font-size:0.78rem; color:#111; line-height:1.4; }
+    .kanban-task-text.done { text-decoration:line-through; color:#aaa; }
+    .kanban-task-meta { font-size:0.62rem; color:#9ca3af; white-space:nowrap; }
+    .kanban-task-actions { display:none; gap:3px; }
+    .kanban-task-row:hover .kanban-task-actions { display:flex; }
+    .kanban-task-act-btn { background:none; border:none; cursor:pointer; font-size:0.7rem; color:#9ca3af; padding:1px 3px; }
+    .kanban-task-act-btn:hover { color:#ef4444; }
+    .kanban-task-form { background:#f9fafb; border:1px solid #e5e7eb; border-radius:6px; padding:10px; margin-bottom:8px; }
+    .kanban-task-form input, .kanban-task-form select, .kanban-task-form textarea { width:100%; border:1px solid #d1d5db; border-radius:4px; padding:5px 8px; font-size:0.73rem; margin-bottom:5px; box-sizing:border-box; font-family:inherit; }
+    .kanban-task-form-row { display:flex; gap:6px; margin-bottom:5px; }
+    .kanban-task-form-row input, .kanban-task-form-row select { margin-bottom:0; }
+    .kanban-task-form-btns { display:flex; gap:6px; }
+    .kanban-task-save-btn { background:var(--accent); color:var(--accent-text,#111); border:none; border-radius:5px; padding:5px 14px; font-size:0.73rem; font-weight:700; cursor:pointer; }
+    .kanban-task-cancel-btn { background:none; border:1px solid #e5e7eb; border-radius:5px; padding:5px 10px; font-size:0.73rem; cursor:pointer; color:#6b7280; }
+    .kanban-auto-table { width:100%; border-collapse:collapse; font-size:0.76rem; }
+    .kanban-auto-table th { font-size:0.63rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; text-align:left; padding:4px 8px 8px; border-bottom:1px solid #e5e7eb; }
+    .kanban-auto-table td { padding:7px 8px; border-bottom:1px solid #f3f4f6; vertical-align:top; color:#374151; }
+    .kanban-auto-table tr:last-child td { border-bottom:none; }
+    .kanban-auto-table tr:hover td { background:#f9fafb; }
+    .auto-ch-email { background:#dbeafe; color:#1e40af; font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:3px; }
+    .auto-ch-sms   { background:#d1fae5; color:#065f46; font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:3px; }
+    .auto-ch-both  { background:#ede9fe; color:#5b21b6; font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:3px; }
+    .auto-status-active  { color:#16a34a; font-weight:700; font-size:0.72rem; }
+    .auto-status-paused  { color:#d97706; font-weight:700; font-size:0.72rem; }
+    .auto-status-draft   { color:#9ca3af; font-weight:700; font-size:0.72rem; }
+    .auto-act-btn { background:none; border:none; cursor:pointer; font-size:0.68rem; color:#9ca3af; padding:1px 4px; }
+    .auto-act-btn:hover { color:#ef4444; }
+    .auto-url-link { color:#3B82F6; text-decoration:none; font-size:0.68rem; }
+    .auto-url-link:hover { text-decoration:underline; }
+    .kanban-auto-form { background:#f9fafb; border:1px solid #e5e7eb; border-radius:6px; padding:10px; margin-bottom:8px; display:grid; grid-template-columns:1fr 1fr 2fr 1fr 1fr; gap:6px; align-items:center; }
+    .kanban-auto-form input, .kanban-auto-form select { border:1px solid #d1d5db; border-radius:4px; padding:5px 7px; font-size:0.72rem; font-family:inherit; width:100%; box-sizing:border-box; }
   </style>
 </head>
 <body>
@@ -1326,6 +1371,25 @@
 <div class="tab-panel" id="tab-kanban">
   <div class="kanban-wrap">
     <div class="kanban-board" id="kanban-board"></div>
+
+    <div class="kanban-extra-section" id="kanban-tasks-section">
+      <div class="kanban-extra-hd">
+        <span>📌 Other Responsibilities & Ongoing Tasks</span>
+        <button class="kanban-extra-add-btn" id="kanban-add-task-btn">+ Add Task</button>
+      </div>
+      <div id="kanban-tasks-list"></div>
+    </div>
+
+    <div class="kanban-extra-section" id="kanban-auto-section">
+      <div class="kanban-extra-hd">
+        <span>📧 Automated Emails & SMS</span>
+        <button class="kanban-extra-add-btn" id="kanban-add-auto-btn">+ Add</button>
+      </div>
+      <table class="kanban-auto-table">
+        <thead><tr><th>Timing</th><th>Channel</th><th>Description</th><th>URL</th><th>Status</th><th></th></tr></thead>
+        <tbody id="kanban-auto-body"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -2976,13 +3040,19 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         // Ensure all columns exist
         KANBAN_COLS.forEach(c => { if (!kanbanBoard[c.id]) kanbanBoard[c.id] = []; });
         if (!kanbanBoard._themes) kanbanBoard._themes = {};
+        if (!kanbanBoard._tasks) kanbanBoard._tasks = [];
+        if (!kanbanBoard._automated) kanbanBoard._automated = [];
       } else {
         kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
         kanbanBoard._themes = {};
+        kanbanBoard._tasks = [];
+        kanbanBoard._automated = [];
       }
     } catch(e) {
       kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
       kanbanBoard._themes = {};
+      kanbanBoard._tasks = [];
+      kanbanBoard._automated = [];
     }
     renderKanban();
   }
@@ -3058,6 +3128,14 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const textarea = document.createElement('textarea');
         textarea.className = 'card-edit-textarea';
         textarea.placeholder = 'Type item...';
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.className = 'card-url-input';
+        urlInput.placeholder = 'Report URL (optional)';
+        const commentInput = document.createElement('textarea');
+        commentInput.className = 'card-comment-input';
+        commentInput.rows = 2;
+        commentInput.placeholder = 'Comment (optional)';
         const saveBtn = document.createElement('button');
         saveBtn.className = 'card-save-btn';
         saveBtn.textContent = '✓ Add';
@@ -3071,6 +3149,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         actRow.appendChild(saveBtn);
         actRow.appendChild(cancelBtn);
         rowEl.appendChild(textarea);
+        rowEl.appendChild(urlInput);
+        rowEl.appendChild(commentInput);
         rowEl.appendChild(actRow);
         body.insertBefore(rowEl, addBtn);
         textarea.focus();
@@ -3078,6 +3158,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           const text = textarea.value.trim();
           if (!text) return;
           const newCard = { id: 'k' + Date.now(), text, cat: 'admin' };
+          const urlVal = urlInput.value.trim();
+          const commentVal = commentInput.value.trim();
+          if (urlVal) newCard.url = urlVal;
+          if (commentVal) newCard.comment = commentVal;
           if (!kanbanBoard[col.id]) kanbanBoard[col.id] = [];
           kanbanBoard[col.id].push(newCard);
           saveKanban();
@@ -3151,6 +3235,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       body.appendChild(addBtn);
       board.appendChild(colEl);
     });
+    renderTasks();
+    renderAutomated();
   }
 
   function createKanbanCard(card, colId) {
@@ -3210,6 +3296,21 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     actions.appendChild(delBtn);
     el.appendChild(checkBtn);
     el.appendChild(textEl);
+    if (card.url) {
+      const urlLink = document.createElement('a');
+      urlLink.className = 'card-url-link';
+      urlLink.href = card.url;
+      urlLink.target = '_blank';
+      urlLink.rel = 'noopener';
+      urlLink.textContent = '🔗 View Report';
+      el.appendChild(urlLink);
+    }
+    if (card.comment) {
+      const commentDiv = document.createElement('div');
+      commentDiv.className = 'card-comment';
+      commentDiv.textContent = card.comment;
+      el.appendChild(commentDiv);
+    }
     el.appendChild(actions);
 
     el.addEventListener('dragover', e => {
@@ -3242,6 +3343,16 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const textarea = document.createElement('textarea');
       textarea.className = 'card-edit-textarea';
       textarea.value = card.text;
+      const urlInput = document.createElement('input');
+      urlInput.type = 'text';
+      urlInput.className = 'card-url-input';
+      urlInput.placeholder = 'Report URL (optional)';
+      urlInput.value = card.url || '';
+      const commentInput = document.createElement('textarea');
+      commentInput.className = 'card-comment-input';
+      commentInput.rows = 2;
+      commentInput.placeholder = 'Comment (optional)';
+      commentInput.value = card.comment || '';
       const saveBtn = document.createElement('button');
       saveBtn.className = 'card-save-btn';
       saveBtn.textContent = '✓ Save';
@@ -3254,15 +3365,25 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       editRow.appendChild(cancelBtn);
       el.innerHTML = '';
       el.appendChild(textarea);
+      el.appendChild(urlInput);
+      el.appendChild(commentInput);
       el.appendChild(editRow);
       textarea.focus();
       saveBtn.addEventListener('click', () => {
         const newText = textarea.value.trim();
         if (!newText) return;
         card.text = newText;
+        const urlVal = urlInput.value.trim();
+        const commentVal = commentInput.value.trim();
+        card.url = urlVal || undefined;
+        card.comment = commentVal || undefined;
         const col = kanbanBoard[colId];
         const idx = col ? col.findIndex(c => c.id === card.id) : -1;
-        if (idx !== -1) col[idx].text = newText;
+        if (idx !== -1) {
+          col[idx].text = newText;
+          col[idx].url = card.url;
+          col[idx].comment = card.comment;
+        }
         saveKanban();
         renderKanban();
       });
@@ -3281,6 +3402,156 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     });
 
     return el;
+  }
+
+  function renderTasks() {
+    const list = document.getElementById('kanban-tasks-list');
+    if (!list) return;
+    const tasks = (kanbanBoard._tasks) || [];
+    list.innerHTML = '';
+    if (tasks.length === 0) {
+      list.innerHTML = '<div style="font-size:0.74rem;color:#9ca3af;padding:8px 0;">No tasks yet — click + Add Task to add one.</div>';
+    }
+    tasks.forEach((task, idx) => {
+      const row = document.createElement('div');
+      row.className = 'kanban-task-row';
+      const chk = document.createElement('button');
+      chk.className = 'kanban-task-check' + (task.done ? ' done' : '');
+      chk.textContent = task.done ? '✓' : '';
+      chk.addEventListener('click', () => {
+        task.done = !task.done;
+        (kanbanBoard._tasks || [])[idx] = task;
+        saveKanban(); renderTasks();
+      });
+      const txt = document.createElement('span');
+      txt.className = 'kanban-task-text' + (task.done ? ' done' : '');
+      txt.textContent = task.text;
+      const meta = document.createElement('span');
+      meta.className = 'kanban-task-meta';
+      meta.textContent = [task.owner, task.freq].filter(Boolean).join(' · ');
+      const acts = document.createElement('div');
+      acts.className = 'kanban-task-actions';
+      const delBtn = document.createElement('button');
+      delBtn.className = 'kanban-task-act-btn';
+      delBtn.textContent = '✕';
+      delBtn.title = 'Delete';
+      delBtn.addEventListener('click', () => {
+        kanbanBoard._tasks.splice(idx, 1);
+        saveKanban(); renderTasks();
+      });
+      acts.appendChild(delBtn);
+      row.appendChild(chk); row.appendChild(txt); row.appendChild(meta); row.appendChild(acts);
+      list.appendChild(row);
+    });
+
+    // Add task form
+    const addBtn = document.getElementById('kanban-add-task-btn');
+    if (addBtn) {
+      addBtn.onclick = null;
+      addBtn.addEventListener('click', () => {
+        const form = document.createElement('div');
+        form.className = 'kanban-task-form';
+        const textIn = document.createElement('input');
+        textIn.placeholder = 'Task description *';
+        const fr = document.createElement('div');
+        fr.className = 'kanban-task-form-row';
+        const ownerIn = document.createElement('input');
+        ownerIn.placeholder = 'Owner (optional)';
+        const freqSel = document.createElement('select');
+        ['Frequency','Daily','Weekly','Monthly','Each hexamester','As needed'].forEach(f => {
+          const o = document.createElement('option');
+          o.value = f === 'Frequency' ? '' : f;
+          o.textContent = f;
+          freqSel.appendChild(o);
+        });
+        fr.appendChild(ownerIn); fr.appendChild(freqSel);
+        const btns = document.createElement('div');
+        btns.className = 'kanban-task-form-btns';
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'kanban-task-save-btn';
+        saveBtn.textContent = '✓ Add';
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'kanban-task-cancel-btn';
+        cancelBtn.textContent = 'Cancel';
+        btns.appendChild(saveBtn); btns.appendChild(cancelBtn);
+        form.appendChild(textIn); form.appendChild(fr); form.appendChild(btns);
+        const sec = document.getElementById('kanban-tasks-section');
+        sec.insertBefore(form, sec.querySelector('#kanban-tasks-list'));
+        textIn.focus();
+        saveBtn.addEventListener('click', () => {
+          const txt = textIn.value.trim();
+          if (!txt) return;
+          if (!kanbanBoard._tasks) kanbanBoard._tasks = [];
+          kanbanBoard._tasks.push({ id:'t'+Date.now(), text:txt, owner:ownerIn.value.trim(), freq:freqSel.value, done:false });
+          saveKanban(); renderTasks(); form.remove();
+        });
+        cancelBtn.addEventListener('click', () => form.remove());
+      });
+    }
+  }
+
+  function renderAutomated() {
+    const tbody = document.getElementById('kanban-auto-body');
+    if (!tbody) return;
+    const items = (kanbanBoard._automated) || [];
+    tbody.innerHTML = '';
+    if (items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="color:#9ca3af;font-size:0.72rem;padding:10px 8px;">No automated comms yet — click + Add to add one.</td></tr>';
+    }
+    items.forEach((item, idx) => {
+      const chMap = { email:'auto-ch-email', sms:'auto-ch-sms', both:'auto-ch-both' };
+      const stMap = { active:'auto-status-active', paused:'auto-status-paused', draft:'auto-status-draft' };
+      const tr = document.createElement('tr');
+      const urlCell = item.url ? `<a class="auto-url-link" href="${item.url}" target="_blank" rel="noopener">🔗 Open</a>` : '—';
+      const chLabel = item.channel === 'email' ? 'Email' : item.channel === 'sms' ? 'SMS' : 'Email + SMS';
+      tr.innerHTML = `<td>${item.timing || '—'}</td><td><span class="${chMap[item.channel] || 'auto-ch-email'}">${chLabel}</span></td><td>${item.description || ''}</td><td>${urlCell}</td><td><span class="${stMap[item.status] || 'auto-status-active'}">${(item.status||'active').charAt(0).toUpperCase()+(item.status||'active').slice(1)}</span></td><td><button class="auto-act-btn" title="Delete">✕</button></td>`;
+      tr.querySelector('.auto-act-btn').addEventListener('click', () => {
+        kanbanBoard._automated.splice(idx, 1);
+        saveKanban(); renderAutomated();
+      });
+      tbody.appendChild(tr);
+    });
+
+    const addBtn = document.getElementById('kanban-add-auto-btn');
+    if (addBtn) {
+      addBtn.onclick = null;
+      addBtn.addEventListener('click', () => {
+        const existing = document.querySelector('.kanban-auto-form');
+        if (existing) { existing.remove(); return; }
+        const form = document.createElement('div');
+        form.className = 'kanban-auto-form';
+        const timingIn = document.createElement('input');
+        timingIn.placeholder = 'Timing (e.g. Week 3)';
+        const chSel = document.createElement('select');
+        [['email','Email'],['sms','SMS'],['both','Email + SMS']].forEach(([v,l]) => {
+          const o = document.createElement('option'); o.value = v; o.textContent = l;
+          chSel.appendChild(o);
+        });
+        const descIn = document.createElement('input');
+        descIn.placeholder = 'Description *';
+        const urlIn = document.createElement('input');
+        urlIn.placeholder = 'URL (optional)';
+        const stSel = document.createElement('select');
+        [['active','Active'],['paused','Paused'],['draft','Draft']].forEach(([v,l]) => {
+          const o = document.createElement('option'); o.value = v; o.textContent = l;
+          stSel.appendChild(o);
+        });
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = '✓ Add';
+        saveBtn.style.cssText = 'background:var(--accent);border:none;border-radius:4px;padding:5px 12px;font-size:0.72rem;font-weight:700;cursor:pointer;';
+        form.appendChild(timingIn); form.appendChild(chSel); form.appendChild(descIn);
+        form.appendChild(urlIn); form.appendChild(stSel); form.appendChild(saveBtn);
+        const sec = document.getElementById('kanban-auto-section');
+        sec.querySelector('.kanban-auto-table').before(form);
+        timingIn.focus();
+        saveBtn.addEventListener('click', () => {
+          if (!descIn.value.trim()) return;
+          if (!kanbanBoard._automated) kanbanBoard._automated = [];
+          kanbanBoard._automated.push({ id:'a'+Date.now(), timing:timingIn.value.trim(), channel:chSel.value, description:descIn.value.trim(), url:urlIn.value.trim(), status:stSel.value });
+          saveKanban(); renderAutomated(); form.remove();
+        });
+      });
+    }
   }
 
   /* =====================================================
