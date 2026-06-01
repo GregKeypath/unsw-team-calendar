@@ -1521,6 +1521,11 @@
         <div class="tr-rule-box" id="tr-rule-box" style="display:none;"></div>
       </div>
 
+      <div class="triage-field" id="tr-sp-field" style="display:none;">
+        <label>Enrolling Study Period <span class="triage-hint">optional — filters to units running that SP</span></label>
+        <select id="tr-sp"><option value="">— All study periods —</option></select>
+      </div>
+
       <div class="triage-field">
         <label>Why is the student studying? <span class="triage-hint">select all that apply</span></label>
         <div class="triage-checks" id="tr-goals">
@@ -4185,9 +4190,16 @@ ${cardsHTML}
       progSel.appendChild(o);
     });
 
-    // When program changes → populate level dropdown
+    const spSel   = document.getElementById('tr-sp');
+    const spField = document.getElementById('tr-sp-field');
+
+    // When program changes → populate level + SP dropdowns
     progSel.addEventListener('change', () => {
-      const rules = PROGRAM_RULES[progSel.value];
+      const progName = progSel.value;
+      const rules    = PROGRAM_RULES[progName];
+      const prog     = PLANNER_PROGRAMS[progName];
+
+      // Level dropdown
       levelSel.innerHTML = '<option value="">— Select Level —</option>';
       ruleBox.style.display = 'none';
       if (rules) {
@@ -4199,6 +4211,21 @@ ${cardsHTML}
         levelField.style.display = 'block';
       } else {
         levelField.style.display = 'none';
+      }
+
+      // SP dropdown — show SPs from 2025 onward for this program
+      spSel.innerHTML = '<option value="">— All study periods —</option>';
+      if (prog && prog.sps) {
+        prog.sps.forEach(sp => {
+          const parts = sp.split(' ');
+          const o = document.createElement('option');
+          o.value = sp;
+          o.textContent = `${parts[0]} 20${parts[1]}`;
+          spSel.appendChild(o);
+        });
+        spField.style.display = 'block';
+      } else {
+        spField.style.display = 'none';
       }
     });
 
@@ -4276,17 +4303,21 @@ ${cardsHTML}
 
     // Extract unique elective/spec units from a program (skip coreA, coreB, capstone)
     // Respects excludeCatTypes from the selected qualification level
-    function getElectives(progName, levelCode) {
+    // If filterSP is set, only includes units offered in that specific study period
+    function getElectives(progName, levelCode, filterSP) {
       const prog = PLANNER_PROGRAMS[progName];
       if (!prog) return [];
-      const progRules = PROGRAM_RULES[progName];
+      const progRules  = PROGRAM_RULES[progName];
       const levelRules = progRules ? progRules.levels.find(l => l.code === levelCode) : null;
       const excludeCats = levelRules ? (levelRules.excludeCatTypes || []) : [];
       const seen = {};
       prog.cats.forEach(cat => {
         if (['coreA','coreB','capstone'].includes(cat.type)) return;
-        if (excludeCats.includes(cat.type)) return; // excluded for this qualification level
-        Object.values(cat.items).forEach(arr => {
+        if (excludeCats.includes(cat.type)) return;
+        const itemSets = filterSP
+          ? (cat.items[filterSP] ? [cat.items[filterSP]] : []) // only items in this SP
+          : Object.values(cat.items);                           // all SPs
+        itemSets.forEach(arr => {
           arr.forEach(str => {
             const parts = str.trim().split(' ');
             const code = parts[0];
@@ -4394,6 +4425,7 @@ ${cardsHTML}
     function runTriage() {
       const progName   = document.getElementById('tr-program').value;
       const levelCode  = document.getElementById('tr-level').value;
+      const filterSP   = document.getElementById('tr-sp').value;
       const industry   = document.getElementById('tr-industry').value;
       const role       = document.getElementById('tr-role').value.trim();
       const comments   = document.getElementById('tr-comments').value.trim();
@@ -4414,8 +4446,12 @@ ${cardsHTML}
         return;
       }
 
-      const allElectives = getElectives(progName, levelCode).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
-      if (!allElectives.length) { output.innerHTML = '<div class="tr-no-results">No remaining elective units found — all available electives are already in your completed or planned lists.</div>'; return; }
+      const allElectives = getElectives(progName, levelCode, filterSP).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
+      if (!allElectives.length) {
+        const spMsg = filterSP ? ` in ${filterSP.split(' ')[0]} 20${filterSP.split(' ')[1]}` : '';
+        output.innerHTML = '<div class="tr-no-results">No elective units found' + spMsg + ' — try a different study period or check completed/planned lists.</div>';
+        return;
+      }
 
       const hasContext = industry || goals.length || role || comments;
       const scored = allElectives.map(u => {
@@ -4457,7 +4493,8 @@ ${cardsHTML}
       }
 
       let html = bannerHTML + plannedHTML;
-      html += '<div class="tr-results-hd">Top 3 Recommended Electives — ' + progName + '</div>';
+      const spLabel = filterSP ? ' · ' + filterSP.split(' ')[0] + ' 20' + filterSP.split(' ')[1] : '';
+      html += '<div class="tr-results-hd">Top 3 Recommended Electives — ' + progName + spLabel + '</div>';
       if (!hasContext) html += '<p style="font-size:.72rem;color:#6b7280;margin:0 0 14px">No preferences entered — add industry and goals for personalised recommendations.</p>';
 
       top.forEach((u, i) => { html += buildCard(i + 1, u, u.score, u.reasons, COURSE_INFO[u.code] || {}, industry, goals); });
@@ -4470,6 +4507,8 @@ ${cardsHTML}
       document.getElementById('tr-level').innerHTML = '<option value="">— Select Level —</option>';
       document.getElementById('tr-level-field').style.display = 'none';
       document.getElementById('tr-rule-box').style.display = 'none';
+      document.getElementById('tr-sp').innerHTML = '<option value="">— All study periods —</option>';
+      document.getElementById('tr-sp-field').style.display = 'none';
       document.getElementById('tr-industry').value = '';
       document.getElementById('tr-role').value = '';
       document.getElementById('tr-comments').value = '';
