@@ -1717,6 +1717,44 @@
   </div>
 </div>
 
+<!-- Kanban card edit modal -->
+<div class="kedit-overlay hidden" id="kedit-overlay">
+  <div class="kedit-modal">
+    <div class="kedit-header"><h3>✏️ Edit Task</h3></div>
+    <div class="kedit-body">
+      <div>
+        <div class="kedit-label">Task</div>
+        <textarea id="kedit-text" rows="3"></textarea>
+      </div>
+      <div>
+        <div class="kedit-label">Priority</div>
+        <div class="kedit-prio-row" id="kedit-prio-row">
+          <label class="kedit-prio-opt prio-none"><input type="radio" name="keprio" value="">⚪ No priority</label>
+          <label class="kedit-prio-opt prio-green"><input type="radio" name="keprio" value="green">🟢 Start / Ongoing</label>
+          <label class="kedit-prio-opt prio-yellow"><input type="radio" name="keprio" value="yellow">🟡 By End of Week</label>
+          <label class="kedit-prio-opt prio-red"><input type="radio" name="keprio" value="red">🔴 By End of Day</label>
+        </div>
+      </div>
+      <div>
+        <div class="kedit-label">Category</div>
+        <div class="kedit-cat-row" id="kedit-cat-row"></div>
+      </div>
+      <div>
+        <div class="kedit-label">Link / Report URL</div>
+        <input type="text" id="kedit-url" placeholder="https://...">
+      </div>
+      <div>
+        <div class="kedit-label">Notes</div>
+        <textarea id="kedit-comment" rows="2" placeholder="Add notes..."></textarea>
+      </div>
+    </div>
+    <div class="kedit-footer">
+      <button class="kedit-cancel-btn" id="kedit-cancel">Cancel</button>
+      <button class="kedit-save-btn" id="kedit-save">Save Changes</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const TAGS = [
     { label: 'Internal Meeting', bg: '#DBEAFE', text: '#1D4ED8', dot: '#3B82F6' },
@@ -4981,42 +5019,6 @@ ${cardsHTML}
   initTriage();
 </script>
 
-<!-- Kanban card edit modal -->
-<div class="kedit-overlay hidden" id="kedit-overlay">
-  <div class="kedit-modal">
-    <div class="kedit-header"><h3>✏️ Edit Task</h3></div>
-    <div class="kedit-body">
-      <div>
-        <div class="kedit-label">Task</div>
-        <textarea id="kedit-text" rows="3"></textarea>
-      </div>
-      <div>
-        <div class="kedit-label">Priority</div>
-        <div class="kedit-prio-row" id="kedit-prio-row">
-          <label class="kedit-prio-opt prio-none"><input type="radio" name="keprio" value="">⚪ No priority</label>
-          <label class="kedit-prio-opt prio-green"><input type="radio" name="keprio" value="green">🟢 Start / Ongoing</label>
-          <label class="kedit-prio-opt prio-yellow"><input type="radio" name="keprio" value="yellow">🟡 By End of Week</label>
-          <label class="kedit-prio-opt prio-red"><input type="radio" name="keprio" value="red">🔴 By End of Day</label>
-        </div>
-      </div>
-      <div>
-        <div class="kedit-label">Category</div>
-        <div class="kedit-cat-row" id="kedit-cat-row"></div>
-      </div>
-      <div>
-        <div class="kedit-label">Link / Report URL</div>
-        <input type="text" id="kedit-url" placeholder="https://...">
-      </div>
-      <div>
-        <div class="kedit-label">Notes</div>
-        <textarea id="kedit-comment" rows="2" placeholder="Add notes..."></textarea>
-      </div>
-    </div>
-    <div class="kedit-footer">
-      <button class="kedit-cancel-btn" id="kedit-cancel">Cancel</button>
-      <button class="kedit-save-btn" id="kedit-save">Save Changes</button>
-    </div>
-  </div>
-</div>
+
 </body>
 </html>
