@@ -3947,19 +3947,25 @@ ${cardsHTML}
     ]},
     'Analytics': { levels: [
       { label:'GC General Analytics — 4 courses, 24UOC', code:'GC-GA', totalCourses:4, electiveSlots:4,
-        mandatory:[], note:'Any 4 courses from core and specialisation categories (excluding ZZBU6407 and HRM electives). Pre-reqs must be met.' },
+        mandatory:[], excludeCatTypes:['spec3'],
+        note:'Any 4 courses from core and specialisation categories (excluding ZZBU6407 and HRM electives). Pre-reqs must be met.' },
       { label:'GC Marketing Analytics — 4 courses, 24UOC', code:'GC-MA', totalCourses:4, electiveSlots:3,
-        mandatory:['ZZBU6501'], note:'Must complete ZZBU6501 Introductory Data Analysis + 3 Marketing Analytics specialisation courses. Pre-reqs must be met.' },
+        mandatory:['ZZBU6501'], excludeCatTypes:['spec2','spec3'],
+        note:'Must complete ZZBU6501 Introductory Data Analysis + 3 Marketing Analytics specialisation courses. Pre-reqs must be met.' },
       { label:'Graduate Diploma — 8 courses, 48UOC', code:'GD', totalCourses:8, electiveSlots:8,
-        mandatory:[], note:'Any 8 courses from core and specialisations (excluding ZZBU6407 and HRM electives). Pre-reqs must be met.' },
+        mandatory:[], excludeCatTypes:[],
+        note:'Any 8 courses from core and specialisations (excluding ZZBU6407 and HRM electives). Pre-reqs must be met.' },
       { label:'Masters — General Analytics — 12 courses, 72UOC', code:'M-GA', totalCourses:12, electiveSlots:3,
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516'],
+        excludeCatTypes:['spec1','spec3'],
         note:'Complete all 8 core courses, declare General Analytics specialisation, choose 3 courses from blue/dark green pool + capstone (ZZBU6601).' },
       { label:'Masters — Marketing Analytics — 12 courses, 72UOC', code:'M-MKT', totalCourses:12, electiveSlots:0,
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516','ZZBU6513','ZZBU6512','ZZBU6514'],
+        excludeCatTypes:['spec2','spec3'],
         note:'Complete all 8 core + all 3 Marketing Analytics courses (ZZBU6513, ZZBU6512, ZZBU6514) + capstone (ZZBU6601). Fully prescribed.' },
       { label:'Masters — HR Analytics — 12 courses, 72UOC', code:'M-HRA', totalCourses:12, electiveSlots:2,
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516','ZZBU6404','ZZBU6407'],
+        excludeCatTypes:['spec1','spec2'],
         note:'Complete all 8 core + ZZBU6404 HR Analytics + ZZBU6407 HR IS + 2 HRM electives + capstone (ZZBU6601).' },
     ]},
     'Business Law': { levels: [
@@ -4162,12 +4168,17 @@ ${cardsHTML}
     });
 
     // Extract unique elective/spec units from a program (skip coreA, coreB, capstone)
-    function getElectives(progName) {
+    // Respects excludeCatTypes from the selected qualification level
+    function getElectives(progName, levelCode) {
       const prog = PLANNER_PROGRAMS[progName];
       if (!prog) return [];
+      const progRules = PROGRAM_RULES[progName];
+      const levelRules = progRules ? progRules.levels.find(l => l.code === levelCode) : null;
+      const excludeCats = levelRules ? (levelRules.excludeCatTypes || []) : [];
       const seen = {};
       prog.cats.forEach(cat => {
         if (['coreA','coreB','capstone'].includes(cat.type)) return;
+        if (excludeCats.includes(cat.type)) return; // excluded for this qualification level
         Object.values(cat.items).forEach(arr => {
           arr.forEach(str => {
             const parts = str.trim().split(' ');
@@ -4296,7 +4307,7 @@ ${cardsHTML}
         return;
       }
 
-      const allElectives = getElectives(progName).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
+      const allElectives = getElectives(progName, levelCode).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
       if (!allElectives.length) { output.innerHTML = '<div class="tr-no-results">No remaining elective units found — all available electives are already in your completed or planned lists.</div>'; return; }
 
       const hasContext = industry || goals.length || role || comments;
