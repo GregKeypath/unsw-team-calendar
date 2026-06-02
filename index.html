@@ -2969,8 +2969,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
       if (btn.dataset.tab === 'pacing') {
         if (!activePacingData) loadPacingData().then(() => { renderPacing(); initPacingUpload(); });
-        else initPacingUpload();
-        else renderPacing();
+        else { renderPacing(); initPacingUpload(); }
       }
     });
   });
