@@ -5758,35 +5758,24 @@ ${cardsHTML}
   function initDropRate() {
     const spSel = document.getElementById('dr-sp-select');
 
-    // Detect current SP from today's date
-    const now = new Date();
-    const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    const todayWk = UNSW_WEEKS[todayKey];
-    let currentSpVal = null;
-    if (todayWk) {
-      currentSpVal = `H${todayWk.hex} ${String(now.getFullYear()).slice(2)}`;
-    }
+    // Show H4 2026 onwards — hide past SPs (historical data still used for reference badges)
+    const START_SP = 'H4 26';
+    function spToNum(sp) { const [h,y]=sp.split(' '); return parseInt(y)*10+parseInt(h.slice(1)); }
+    const startNum = spToNum(START_SP);
 
-    function spToNum(sp) {
-      const [h, y] = sp.split(' ');
-      return parseInt(y) * 10 + parseInt(h.slice(1));
-    }
-    const currentNum = currentSpVal ? spToNum(currentSpVal) : 0;
-
-    // Collect & sort all SPs, filter to current onwards
     const allSPs = new Set();
     Object.values(PLANNER_PROGRAMS).forEach(prog => prog.sps.forEach(sp => allSPs.add(sp)));
     [...allSPs]
       .sort((a, b) => spToNum(a) - spToNum(b))
-      .filter(sp => spToNum(sp) >= currentNum)
+      .filter(sp => spToNum(sp) >= startNum)
       .forEach(sp => {
         const o = document.createElement('option');
         o.value = sp; o.textContent = `${sp.split(' ')[0]} 20${sp.split(' ')[1]}`;
         spSel.appendChild(o);
       });
 
-    // Auto-select current SP
-    if (currentSpVal) spSel.value = currentSpVal;
+    // Default to H4 2026
+    spSel.value = START_SP;
     spSel.addEventListener('change', () => renderDropRateGrid(spSel.value));
   }
 
