@@ -5631,14 +5631,36 @@ ${cardsHTML}
 
   const DR_CAT_COLORS = { 'Applied Finance':'#1e3a5f','Analytics':'#065f46','Business Law':'#7c3aed','Cyber Security':'#1e40af','Data Science':'#9a3412','Human Resource Management':'#5b21b6','Management':'#92400e','Psychology':'#0f766e','Project Management':'#374151' };
 
-  // Build rate field HTML — extracted to avoid nested ternary issues in template literal
+  function spToSortKey(s) { const [h,y]=s.split(' '); return parseInt(y)*10+parseInt(h.slice(1)); }
+
+  // Build rate field HTML — shows locked rate for selected SP, falls back to most recent historical SP
   function drRateFieldHtml(sp, code, currentRate) {
+    // 1. Exact match for selected SP
     const locked = getLockedRate(sp, code);
     if (locked !== undefined) {
       const cls = rateClass(locked);
-      const display = locked || '—';
-      return `<div class="dr-rate-locked ${cls}"><span class="dr-lock-icon">🔒</span> ${display}</div>`;
+      return `<div class="dr-rate-locked ${cls}"><span class="dr-lock-icon">🔒</span> ${locked || '—'}</div>`;
     }
+
+    // 2. Find most recent prior SP with historical data for this unit
+    const currentKey = spToSortKey(sp);
+    let bestSP = null, bestKey = -1, bestRate = null;
+    for (const [s, rates] of Object.entries(HISTORICAL_DROP_RATES)) {
+      const k = spToSortKey(s);
+      if (k < currentKey && rates[code] !== undefined && k > bestKey) {
+        bestKey = k; bestSP = s; bestRate = rates[code];
+      }
+    }
+    if (bestSP) {
+      const cls = rateClass(bestRate);
+      const spLbl = bestSP.split(' ')[0] + ' 20' + bestSP.split(' ')[1];
+      return `<div class="dr-rate-locked ${cls}" style="opacity:0.8;" title="Most recent data — last ran in ${spLbl}">
+        <span class="dr-lock-icon">📊</span> ${bestRate || '—'}
+        <span style="font-size:0.6rem;font-weight:500;opacity:0.8;">${spLbl}</span>
+      </div>`;
+    }
+
+    // 3. No historical data — editable field
     const safe = (currentRate || '').replace(/"/g, '&quot;');
     return `<input class="dr-rate-input" type="text" placeholder="e.g. 12%" value="${safe}" data-code="${code}">`;
   }
