@@ -43,41 +43,35 @@
 
     /* Tab navigation */
     .tab-nav {
-      background: #e9ecef;
-      padding: 0 24px;
+      background: #fff;
+      padding: 8px 20px;
       display: flex;
-      align-items: flex-end;
-      gap: 3px;
-      border-bottom: 2px solid #c8cdd3;
+      align-items: center;
+      gap: 2px;
+      border-bottom: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
 
     .tab-btn {
-      padding: 9px 20px;
-      font-size: 0.78rem;
-      font-weight: 600;
+      padding: 7px 14px;
+      font-size: 0.76rem;
+      font-weight: 500;
       color: #6b7280;
-      background: #d4d9df;
-      border: 1.5px solid #c0c6cd;
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      letter-spacing: 0.2px;
-      position: relative;
-      bottom: -2px;
+      letter-spacing: 0.1px;
       transition: background 0.12s, color 0.12s;
       white-space: nowrap;
     }
 
-    .tab-btn:hover:not(.active) { background: #c8cdd3; color: #374151; }
+    .tab-btn:hover:not(.active) { background: #f3f4f6; color: #374151; }
 
     .tab-btn.active {
-      background: #fff;
-      color: #111;
-      font-weight: 700;
-      border-color: #c0c6cd;
-      border-bottom: 2px solid #fff;
-      padding-top: 11px;
-      z-index: 2;
+      background: #1e3a5f;
+      color: #fff;
+      font-weight: 600;
     }
 
     /* Tab panels */
