@@ -3804,8 +3804,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     actions.appendChild(urgentBtn);
     actions.appendChild(editBtn);
     actions.appendChild(delBtn);
-    el.appendChild(checkBtn);
-    el.appendChild(textEl);
+    // Wrap title + URL + comment in a vertical column so extras sit below the title
+    const cardBody = document.createElement('div');
+    cardBody.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;';
+    cardBody.appendChild(textEl);
     if (card.url) {
       const urlLink = document.createElement('a');
       urlLink.className = 'card-url-link';
@@ -3813,14 +3815,16 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       urlLink.target = '_blank';
       urlLink.rel = 'noopener';
       urlLink.textContent = '🔗 View Report';
-      el.appendChild(urlLink);
+      cardBody.appendChild(urlLink);
     }
     if (card.comment) {
       const commentDiv = document.createElement('div');
       commentDiv.className = 'card-comment';
       commentDiv.textContent = card.comment;
-      el.appendChild(commentDiv);
+      cardBody.appendChild(commentDiv);
     }
+    el.appendChild(checkBtn);
+    el.appendChild(cardBody);
     el.appendChild(actions);
 
     el.addEventListener('dragover', e => {
