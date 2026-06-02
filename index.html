@@ -1294,6 +1294,13 @@
     .dr-field-label { font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin-bottom:4px; }
     .dr-rate-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.82rem; width:100%; box-sizing:border-box; outline:none; font-family:inherit; }
     .dr-rate-input:focus { border-color:#1e3a5f; }
+    .dr-rate-locked { display:inline-flex; align-items:center; gap:6px; border-radius:6px; padding:6px 12px; font-size:0.88rem; font-weight:800; width:100%; box-sizing:border-box; }
+    .dr-rate-locked .dr-lock-icon { font-size:0.65rem; opacity:0.7; }
+    .dr-rate-locked.rate-green  { background:#d1fae5; color:#065f46; }
+    .dr-rate-locked.rate-amber  { background:#fef3c7; color:#92400e; }
+    .dr-rate-locked.rate-orange { background:#ffedd5; color:#9a3412; }
+    .dr-rate-locked.rate-red    { background:#fee2e2; color:#991b1b; }
+    .dr-rate-locked.rate-none   { background:#f3f4f6; color:#9ca3af; }
     .dr-notes-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.75rem; width:100%; box-sizing:border-box; outline:none; resize:vertical; font-family:inherit; line-height:1.4; min-height:60px; }
     .dr-notes-input:focus { border-color:#1e3a5f; }
     .dr-save-btn { align-self:flex-end; background:#1e3a5f; color:#fff; border:none; border-radius:6px; padding:5px 14px; font-size:0.72rem; font-weight:700; cursor:pointer; }
@@ -5488,7 +5495,60 @@ ${cardsHTML}
   document.getElementById('sync-cancel-btn').addEventListener('click', () => document.getElementById('sync-modal-overlay').classList.add('hidden'));
   document.getElementById('sync-modal-overlay').addEventListener('click', e => { if (e.target.id === 'sync-modal-overlay') document.getElementById('sync-modal-overlay').classList.add('hidden'); });
 
-  // ── Unit Drop Rate ────────────────────────────────────────────
+  // ── Historical Drop Rate ──────────────────────────────────────
+  // Locked historical data from official drop analysis reports
+  const HISTORICAL_DROP_RATES = {
+    'H3 26': {
+      'ZZBU6007': '0%',
+      'ZZCA9206': '3%',
+      'ZZCA9202': '12%',
+      'ZZBU6516': '7%',
+      'ZZBU8502': '12%',
+      'ZZBU6402': '3%',
+      'ZZBU6103': '3%',
+      'ZZBU8708': '11%',
+      'ZZBU6002': '4%',
+      'ZZBU8706': '10%',
+      'ZZBU6410': '10%',
+      'ZZBU6501': '8%',
+      'ZZBU6413': '15%',
+      'ZZCA9208': '0%',
+      'ZZBU6514': '3%',
+      'ZZSC5855': '15%',
+      'ZZEN9213': '8%',
+      'ZZBU8701': '15%',
+      'ZZEN9021': '8%',
+      'ZZBU8507': '5%',
+      'ZZEN9209': '0%',
+      'ZZSC5905': '10%',
+      'ZZBU6408': '8%',
+      'ZZPS5002': '0%',
+      'ZZLJ8212': null,
+      'ZZPS5009': null,
+      'ZZPS5004': null,
+      'ZZPS5005': null,
+      'ZZPS5003': null,
+      'ZZPS5008': null,
+      'ZZPS5010': null,
+      'ZZPS5006': null,
+      'ZZPS5007': null,
+    }
+  };
+
+  function getLockedRate(sp, code) {
+    return (HISTORICAL_DROP_RATES[sp] || {})[code];
+  }
+
+  function rateClass(pctStr) {
+    if (!pctStr) return 'rate-none';
+    const n = parseFloat(pctStr);
+    if (n === 0)    return 'rate-green';
+    if (n <= 5)     return 'rate-green';
+    if (n <= 10)    return 'rate-amber';
+    if (n <= 14)    return 'rate-orange';
+    return 'rate-red';
+  }
+
   const DROPRATE_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/unit_notes.json';
   let unitNotes = {}; // { 'ZZBU6001': { dropRates: {'H3 26':'12%'}, notes: '...' } }
   let drLoaded = false;
@@ -5568,7 +5628,9 @@ ${cardsHTML}
         <div class="dr-fields">
           <div>
             <div class="dr-field-label">Drop Rate (${sp.split(' ')[0]} 20${sp.split(' ')[1]})</div>
-            <input class="dr-rate-input" type="text" placeholder="e.g. 12%" value="${currentRate}" data-code="${u.code}">
+            ${getLockedRate(sp, u.code) !== undefined
+              ? `<div class="dr-rate-locked ${rateClass(getLockedRate(sp, u.code))}"><span class="dr-lock-icon">🔒</span>${getLockedRate(sp, u.code) || '—'}</div>`
+              : `<input class="dr-rate-input" type="text" placeholder="e.g. 12%" value="${currentRate}" data-code="${u.code}">`}
           </div>
           <div>
             <div class="dr-field-label">Selling Points & Team Notes</div>
@@ -5581,7 +5643,8 @@ ${cardsHTML}
         </div>`;
 
       card.querySelector('.dr-save-btn').addEventListener('click', async () => {
-        const rate  = card.querySelector('.dr-rate-input').value.trim();
+        const rateInput = card.querySelector('.dr-rate-input');
+        const rate  = rateInput ? rateInput.value.trim() : '';
         const notes = card.querySelector('.dr-notes-input').value.trim();
         const savedSpan = card.querySelector('.dr-saved');
         await saveUnitNote(u.code, sp, rate, notes);
