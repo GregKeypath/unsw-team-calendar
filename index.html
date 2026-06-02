@@ -1301,7 +1301,7 @@
     .dr-rate-locked.rate-orange { background:#ffedd5; color:#9a3412; }
     .dr-rate-locked.rate-red    { background:#fee2e2; color:#991b1b; }
     .dr-rate-locked.rate-none   { background:#f3f4f6; color:#9ca3af; }
-    .dr-notes-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.75rem; width:100%; box-sizing:border-box; outline:none; resize:vertical; font-family:inherit; line-height:1.4; min-height:60px; }
+    .dr-notes-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.75rem; width:100%; box-sizing:border-box; outline:none; resize:vertical; font-family:inherit; line-height:1.6; min-height:70px; }
     .dr-notes-input:focus { border-color:#1e3a5f; }
     .dr-save-btn { align-self:flex-end; background:#1e3a5f; color:#fff; border:none; border-radius:6px; padding:5px 14px; font-size:0.72rem; font-weight:700; cursor:pointer; }
     .dr-save-btn:hover { background:#152d4d; }
@@ -5594,65 +5594,105 @@ ${cardsHTML}
     return Object.values(units).sort((a, b) => a.code.localeCompare(b.code));
   }
 
+  const DR_CAT_COLORS = { 'Applied Finance':'#1e3a5f','Analytics':'#065f46','Business Law':'#7c3aed','Cyber Security':'#1e40af','Data Science':'#9a3412','Human Resource Management':'#5b21b6','Management':'#92400e','Psychology':'#0f766e','Project Management':'#374151' };
+
+  // Build rate field HTML — extracted to avoid nested ternary issues in template literal
+  function drRateFieldHtml(sp, code, currentRate) {
+    const locked = getLockedRate(sp, code);
+    if (locked !== undefined) {
+      const cls = rateClass(locked);
+      const display = locked || '—';
+      return `<div class="dr-rate-locked ${cls}"><span class="dr-lock-icon">🔒</span> ${display}</div>`;
+    }
+    const safe = (currentRate || '').replace(/"/g, '&quot;');
+    return `<input class="dr-rate-input" type="text" placeholder="e.g. 12%" value="${safe}" data-code="${code}">`;
+  }
+
+  function buildDrCard(u, sp) {
+    const info = COURSE_INFO[u.code] || {};
+    const saved = unitNotes[u.code] || {};
+    const currentRate = (saved.dropRates || {})[sp] || '';
+    const currentNotes = saved.notes || '';
+    const borderColor = DR_CAT_COLORS[u.programs[0]] || '#e5e7eb';
+    const spLabel = sp.split(' ')[0] + ' 20' + sp.split(' ')[1];
+
+    const card = document.createElement('div');
+    card.className = 'dr-card';
+    card.style.borderTopColor = borderColor;
+
+    card.innerHTML = `
+      <div class="dr-card-head">
+        <div class="dr-code">${u.code}</div>
+        <div class="dr-name">${u.name}</div>
+      </div>
+      ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;margin-bottom:4px;">${info.description.substring(0,160)}…</div>` : ''}
+      <div class="dr-fields">
+        <div>
+          <div class="dr-field-label">Drop Rate (${spLabel})</div>
+          ${drRateFieldHtml(sp, u.code, currentRate)}
+        </div>
+        <div>
+          <div class="dr-field-label">Selling Points & Notes <span style="font-weight:400;font-size:0.6rem;color:#9ca3af;">• bullet per line</span></div>
+          <textarea class="dr-notes-input" placeholder="• Add a selling point&#10;• Talk to specific outcomes&#10;• Flag any considerations" data-code="${u.code}">${currentNotes}</textarea>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+        <span class="dr-saved">✓ Saved</span>
+        <button class="dr-save-btn" data-code="${u.code}">Save</button>
+      </div>`;
+
+    // Auto-prefix bullet points on Enter
+    const ta = card.querySelector('.dr-notes-input');
+    ta.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const pos = ta.selectionStart;
+        const val = ta.value;
+        const newVal = val.slice(0, pos) + '\n• ' + val.slice(pos);
+        ta.value = newVal;
+        ta.selectionStart = ta.selectionEnd = pos + 3;
+      }
+    });
+    ta.addEventListener('focus', () => {
+      if (!ta.value.trim()) ta.value = '• ';
+    });
+
+    card.querySelector('.dr-save-btn').addEventListener('click', async () => {
+      const rateInput = card.querySelector('.dr-rate-input');
+      const rate  = rateInput ? rateInput.value.trim() : '';
+      const notes = ta.value.trim();
+      const savedSpan = card.querySelector('.dr-saved');
+      await saveUnitNote(u.code, sp, rate, notes);
+      savedSpan.style.display = 'inline';
+      setTimeout(() => { savedSpan.style.display = 'none'; }, 2000);
+    });
+
+    return card;
+  }
+
   function renderDropRateGrid(sp) {
     const grid = document.getElementById('droprate-grid');
     if (!sp) { grid.innerHTML = '<div class="dr-empty">Select a study period to see units running that hex.</div>'; return; }
     const units = getUnitsForSP(sp);
     if (!units.length) { grid.innerHTML = '<div class="dr-empty">No units found for ' + sp.split(' ')[0] + ' 20' + sp.split(' ')[1] + '.</div>'; return; }
 
-    const catColors = { 'Applied Finance':'#1e3a5f','Analytics':'#065f46','Business Law':'#7c3aed','Cyber Security':'#1e40af','Data Science':'#9a3412','Human Resource Management':'#5b21b6','Management':'#92400e','Psychology':'#0f766e','Project Management':'#374151' };
+    // Group by primary program
+    const byProgram = {};
+    units.forEach(u => {
+      const prog = u.programs[0];
+      if (!byProgram[prog]) byProgram[prog] = [];
+      byProgram[prog].push(u);
+    });
 
     grid.innerHTML = '';
-    units.forEach(u => {
-      const info = COURSE_INFO[u.code] || {};
-      const saved = unitNotes[u.code] || {};
-      const currentRate = (saved.dropRates || {})[sp] || '';
-      const currentNotes = saved.notes || '';
-      const borderColor = catColors[u.programs[0]] || '#e5e7eb';
-
-      const card = document.createElement('div');
-      card.className = 'dr-card';
-      card.style.borderTopColor = borderColor;
-
-      const progTags = u.programs.map(p =>
-        `<span class="dr-prog-tag" style="background:${catColors[p]}22;color:${catColors[p]}">${p}</span>`
-      ).join('');
-
-      card.innerHTML = `
-        <div class="dr-card-head">
-          <div class="dr-code">${u.code}</div>
-          <div class="dr-name">${u.name}</div>
-        </div>
-        <div class="dr-programs">${progTags}</div>
-        ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;">${info.description.substring(0,150)}…</div>` : ''}
-        <div class="dr-fields">
-          <div>
-            <div class="dr-field-label">Drop Rate (${sp.split(' ')[0]} 20${sp.split(' ')[1]})</div>
-            ${getLockedRate(sp, u.code) !== undefined
-              ? `<div class="dr-rate-locked ${rateClass(getLockedRate(sp, u.code))}"><span class="dr-lock-icon">🔒</span>${getLockedRate(sp, u.code) || '—'}</div>`
-              : `<input class="dr-rate-input" type="text" placeholder="e.g. 12%" value="${currentRate}" data-code="${u.code}">`}
-          </div>
-          <div>
-            <div class="dr-field-label">Selling Points & Team Notes</div>
-            <textarea class="dr-notes-input" placeholder="Add selling points, talking points, or notes for the team…" data-code="${u.code}">${currentNotes}</textarea>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
-          <span class="dr-saved">✓ Saved</span>
-          <button class="dr-save-btn" data-code="${u.code}">Save</button>
-        </div>`;
-
-      card.querySelector('.dr-save-btn').addEventListener('click', async () => {
-        const rateInput = card.querySelector('.dr-rate-input');
-        const rate  = rateInput ? rateInput.value.trim() : '';
-        const notes = card.querySelector('.dr-notes-input').value.trim();
-        const savedSpan = card.querySelector('.dr-saved');
-        await saveUnitNote(u.code, sp, rate, notes);
-        savedSpan.style.display = 'inline';
-        setTimeout(() => { savedSpan.style.display = 'none'; }, 2000);
-      });
-
-      grid.appendChild(card);
+    Object.entries(byProgram).sort((a,b) => a[0].localeCompare(b[0])).forEach(([prog, progUnits]) => {
+      const color = DR_CAT_COLORS[prog] || '#374151';
+      // Program header
+      const hd = document.createElement('div');
+      hd.style.cssText = `grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:16px;padding-bottom:6px;border-bottom:2px solid ${color};`;
+      hd.innerHTML = `<span style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:${color};">${prog}</span><span style="font-size:0.68rem;color:#9ca3af;">${progUnits.length} unit${progUnits.length!==1?'s':''}</span>`;
+      grid.appendChild(hd);
+      progUnits.forEach(u => grid.appendChild(buildDrCard(u, sp)));
     });
   }
 
