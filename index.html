@@ -1294,7 +1294,7 @@
     .dr-field-label { font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin-bottom:4px; }
     .dr-rate-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.82rem; width:100%; box-sizing:border-box; outline:none; font-family:inherit; }
     .dr-rate-input:focus { border-color:#1e3a5f; }
-    .dr-rate-locked { display:inline-flex; align-items:center; gap:6px; border-radius:6px; padding:6px 12px; font-size:0.88rem; font-weight:800; width:100%; box-sizing:border-box; }
+    .dr-rate-locked { display:inline-flex; align-items:center; gap:5px; border-radius:6px; padding:5px 10px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
     .dr-rate-locked .dr-lock-icon { font-size:0.65rem; opacity:0.7; }
     .dr-rate-locked.rate-green  { background:#d1fae5; color:#065f46; }
     .dr-rate-locked.rate-amber  { background:#fef3c7; color:#92400e; }
@@ -5621,20 +5621,22 @@ ${cardsHTML}
     card.style.borderTopColor = borderColor;
 
     card.innerHTML = `
-      <div class="dr-card-head">
-        <div class="dr-code">${u.code}</div>
-        <div class="dr-name">${u.name}</div>
-      </div>
-      ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;margin-bottom:4px;">${info.description.substring(0,160)}…</div>` : ''}
-      <div class="dr-fields">
-        <div>
-          <div class="dr-field-label">Drop Rate (${spLabel})</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div style="flex:1;min-width:0;">
+          <div class="dr-card-head">
+            <div class="dr-code">${u.code}</div>
+            <div class="dr-name">${u.name}</div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;text-align:right;">
+          <div class="dr-field-label" style="margin-bottom:4px;">${spLabel}</div>
           ${drRateFieldHtml(sp, u.code, currentRate)}
         </div>
-        <div>
-          <div class="dr-field-label">Selling Points & Notes <span style="font-weight:400;font-size:0.6rem;color:#9ca3af;">• bullet per line</span></div>
-          <textarea class="dr-notes-input" placeholder="• Add a selling point&#10;• Talk to specific outcomes&#10;• Flag any considerations" data-code="${u.code}">${currentNotes}</textarea>
-        </div>
+      </div>
+      ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;margin-bottom:6px;">${info.description.substring(0,160)}…</div>` : ''}
+      <div>
+        <div class="dr-field-label" style="margin-bottom:4px;">Selling Points & Notes <span style="font-weight:400;font-size:0.6rem;color:#9ca3af;">• bullet per line</span></div>
+        <textarea class="dr-notes-input" placeholder="• Add a selling point&#10;• Talk to specific outcomes&#10;• Flag any considerations" data-code="${u.code}">${currentNotes}</textarea>
       </div>
       <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
         <span class="dr-saved">✓ Saved</span>
