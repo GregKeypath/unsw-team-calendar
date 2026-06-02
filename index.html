@@ -815,6 +815,26 @@
     }
     .hex-btn:hover { border-color: var(--accent); color: #111; }
     .hex-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); box-shadow: 0 2px 8px rgba(var(--accent-rgb),0.4); }
+    .pacing-upload-bar { display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap; }
+    .pacing-upload-btn { padding:6px 14px; border-radius:7px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all .12s; }
+    .pacing-upload-btn:hover { border-color:#1e3a5f; color:#1e3a5f; }
+    .pacing-upload-note { font-size:0.67rem; color:#9ca3af; }
+    .pacing-upload-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9000; display:flex; align-items:center; justify-content:center; }
+    .pacing-upload-overlay.hidden { display:none; }
+    .pacing-upload-modal { background:#fff; border-radius:12px; width:520px; max-width:96vw; box-shadow:0 8px 40px rgba(0,0,0,0.22); overflow:hidden; }
+    .pacing-upload-modal-hd { padding:14px 18px; border-bottom:1px solid #f3f4f6; display:flex; align-items:center; justify-content:space-between; }
+    .pacing-upload-modal-hd h3 { font-size:0.9rem; font-weight:800; margin:0; }
+    .pacing-upload-modal-body { padding:16px 18px; }
+    .pacing-upload-modal-body p { font-size:0.75rem; color:#374151; margin:0 0 10px; line-height:1.5; }
+    .pacing-upload-drop { border:2px dashed #d1d5db; border-radius:8px; padding:28px 16px; text-align:center; cursor:pointer; transition:all .12s; }
+    .pacing-upload-drop:hover, .pacing-upload-drop.over { border-color:#1e3a5f; background:#eff6ff; }
+    .pacing-upload-drop p { font-size:0.78rem; color:#6b7280; margin:4px 0 0; }
+    .pacing-upload-preview { margin-top:12px; font-size:0.72rem; color:#374151; background:#f9fafb; border:1px solid #e5e7eb; border-radius:6px; padding:8px 10px; max-height:160px; overflow-y:auto; }
+    .pacing-upload-modal-ft { padding:12px 18px; display:flex; justify-content:flex-end; gap:8px; border-top:1px solid #f3f4f6; }
+    .pacing-upload-modal-ft button { padding:7px 18px; border-radius:7px; font-size:0.78rem; font-weight:700; cursor:pointer; }
+    .pu-cancel { background:none; border:1px solid #e5e7eb; color:#6b7280; }
+    .pu-import { background:#1e3a5f; border:none; color:#fff; }
+    .pu-import:disabled { background:#9ca3af; cursor:not-allowed; }
 
     .ssa-btn {
       padding: 5px 14px; border-radius: 20px; border: 1.5px solid #e5e5e5;
@@ -1439,6 +1459,11 @@
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
       <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
+      <div class="pacing-upload-bar">
+        <button class="pacing-upload-btn" id="pacing-upload-btn">📤 Upload Cohort CSV</button>
+        <button class="pacing-upload-btn" id="pacing-template-btn">⬇ Download Template</button>
+        <span class="pacing-upload-note">Upload a CSV export to auto-update this hex's pacing data</span>
+      </div>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
   </div>
@@ -1714,6 +1739,30 @@
     </div>
     <div class="plan-modal-body">
       <div id="plan-export-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Pacing upload modal -->
+<div class="pacing-upload-overlay hidden" id="pacing-upload-overlay">
+  <div class="pacing-upload-modal">
+    <div class="pacing-upload-modal-hd">
+      <h3>📤 Upload Cohort Data</h3>
+      <button class="pu-cancel" id="pu-close-btn" style="border:none;background:none;font-size:1rem;cursor:pointer;color:#9ca3af;">✕</button>
+    </div>
+    <div class="pacing-upload-modal-body">
+      <p>Upload a CSV file with one row per advisor. Download the template to see the required column format. KPI ratings (K-R, K-S, K-6) are preserved from the current board and not overwritten by upload.</p>
+      <div class="pacing-upload-drop" id="pu-drop-zone">
+        <div style="font-size:1.8rem;">📄</div>
+        <div style="font-weight:700;font-size:0.82rem;margin-top:6px;">Drop CSV here or click to browse</div>
+        <p>Accepts .csv files</p>
+        <input type="file" id="pu-file-input" accept=".csv" style="display:none;">
+      </div>
+      <div class="pacing-upload-preview" id="pu-preview" style="display:none;"></div>
+    </div>
+    <div class="pacing-upload-modal-ft">
+      <button class="pu-cancel" id="pu-cancel-btn">Cancel</button>
+      <button class="pu-import" id="pu-import-btn" disabled>Import to Board</button>
     </div>
   </div>
 </div>
@@ -2589,6 +2638,150 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return data;
   }
 
+  // ── Pacing CSV Upload ─────────────────────────────────────────
+  // Column map: CSV header (lowercase, trimmed) → internal field name
+  const PACING_CSV_MAP = {
+    'name': 'name', 'advisor': 'name', 'advisor name': 'name',
+    'cohort': 'cohort', 'cohort size': 'cohort', 'total cohort': 'cohort',
+    'enrolled target': 'st', 'target': 'st', 'enrolment target': 'st',
+    'enrolled': 'en', 'enrolment': 'en', 'actual enrolled': 'en',
+    'enrolled %': 'pctSt', 'enrolled pct': 'pctSt', 'enrolment %': 'pctSt',
+    'attempted': 'it', 'it': 'it',
+    'attempted %': 'pctIt', 'attempted pct': 'pctIt',
+    'completed assessments': 'stt', 'completed': 'stt', 'stt': 'stt',
+    'completed %': 'pctSt2', 'completed pct': 'pctSt2',
+    't1-t2': 't1t2', 't1t2': 't1t2', 't1/t2': 't1t2',
+    't1-t2 %': 'pctT1', 't1t2 %': 'pctT1', 't1t2 pct': 'pctT1',
+    'gc to masters': 'gcm', 'gc>m': 'gcm', 'gcm': 'gcm', 'gc to m': 'gcm',
+    'gc to m %': 'gcmC', 'gc>m %': 'gcmC', 'gcm %': 'gcmC', 'gcm pct': 'gcmC',
+    'called to date': 'ctd', 'calls to date': 'ctd', 'ctd': 'ctd',
+    'called %': 'cPct', 'ctd %': 'cPct', 'called pct': 'cPct',
+    'calls': 'calls', 'calls this period': 'calls', 'calls this week': 'calls',
+    'students to see': 'sts', 'sts': 'sts',
+    'completion rate': 'cr', 'cr': 'cr',
+    'call quality': 'cq', 'cq': 'cq',
+  };
+
+  const PACING_TEMPLATE_HEADERS = [
+    'Name','Cohort','Enrolled Target','Enrolled','Enrolled %',
+    'Attempted','Attempted %','Completed Assessments','Completed %',
+    'T1-T2','T1-T2 %','GC to Masters','GC to M %',
+    'Called to Date','Called %','Calls','Students to See','Completion Rate','Call Quality'
+  ];
+
+  function parseCSV(text) {
+    const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l => l.trim());
+    return lines.map(line => {
+      const cols = []; let cur = ''; let inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += ch; }
+      }
+      cols.push(cur.trim());
+      return cols;
+    });
+  }
+
+  function csvRowToRow(headers, cells, existingRow) {
+    const row = existingRow ? { ...existingRow } : {};
+    headers.forEach((h, i) => {
+      const field = PACING_CSV_MAP[h.toLowerCase().trim()];
+      if (!field) return;
+      const raw = (cells[i] || '').trim();
+      if (field === 'name') { row.name = raw; return; }
+      // Percentage fields — keep as string
+      if (['pctSt','pctIt','pctSt2','pctT1','gcmC','cPct','cr','cq'].includes(field)) {
+        row[field] = raw || '—'; return;
+      }
+      // Numeric fields
+      const n = parseFloat(raw.replace(/[%,]/g, ''));
+      row[field] = isNaN(n) ? (raw === '—' || raw === '' ? 0 : 0) : n;
+    });
+    return row;
+  }
+
+  let puParsedRows = null;
+
+  function initPacingUpload() {
+    const overlay = document.getElementById('pacing-upload-overlay');
+    const dropZone = document.getElementById('pu-drop-zone');
+    const fileInput = document.getElementById('pu-file-input');
+    const preview  = document.getElementById('pu-preview');
+    const importBtn = document.getElementById('pu-import-btn');
+
+    function closeUpload() { overlay.classList.add('hidden'); puParsedRows = null; preview.style.display = 'none'; preview.innerHTML = ''; importBtn.disabled = true; fileInput.value = ''; }
+    document.getElementById('pu-close-btn').addEventListener('click', closeUpload);
+    document.getElementById('pu-cancel-btn').addEventListener('click', closeUpload);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeUpload(); });
+
+    document.getElementById('pacing-upload-btn').addEventListener('click', () => overlay.classList.remove('hidden'));
+
+    document.getElementById('pacing-template-btn').addEventListener('click', () => {
+      const csv = PACING_TEMPLATE_HEADERS.join(',') + '\n' +
+        (activePacingData && activePacingHex && activePacingData[activePacingHex]
+          ? activePacingData[activePacingHex].rows.map(r =>
+              [r.name, r.cohort, r.st, r.en, r.pctSt, r.it, r.pctIt, r.stt, r.pctSt2,
+               r.t1t2, r.pctT1, r.gcm, r.gcmC, r.ctd, r.cPct, r.calls||'', r.sts||'', r.cr, r.cq||''].join(',')
+            ).join('\n')
+          : 'Example Advisor,300,200,185,92%,180,97%,175,94%,40,80%,5,35%,250,83%,60,30,40%,85%');
+      const blob = new Blob([csv], {type:'text/csv'});
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `pacing_template_${activePacingHex || 'H4'}.csv`; a.click();
+    });
+
+    function processFile(file) {
+      if (!file || !file.name.endsWith('.csv')) { alert('Please select a .csv file.'); return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        const rows = parseCSV(e.target.result);
+        if (rows.length < 2) { alert('CSV appears empty or has no data rows.'); return; }
+        const headers = rows[0];
+        const dataRows = rows.slice(1).filter(r => r.some(c => c.trim()));
+        puParsedRows = dataRows.map(cells => csvRowToRow(headers, cells, null));
+        const valid = puParsedRows.filter(r => r.name);
+        if (!valid.length) { alert('No valid rows found. Check that the Name column is present.'); puParsedRows = null; return; }
+        puParsedRows = valid;
+        preview.style.display = 'block';
+        preview.innerHTML = '<strong>Preview (' + valid.length + ' advisors):</strong><br>' +
+          valid.map(r => `• ${r.name} — Cohort: ${r.cohort||'?'}, Enrolled: ${r.en||'?'}, Called to Date: ${r.ctd||'?'}`).join('<br>');
+        importBtn.disabled = false;
+      };
+      reader.readAsText(file);
+    }
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => processFile(fileInput.files[0]));
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+    dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('over'); processFile(e.dataTransfer.files[0]); });
+
+    importBtn.addEventListener('click', () => {
+      if (!puParsedRows || !activePacingHex) return;
+      const hex = activePacingHex;
+      if (!activePacingData[hex]) activePacingData[hex] = { label: hex + ' · 20' + (new Date().getFullYear()+'').slice(2), rows: [] };
+      // Merge: preserve KPI ratings from existing rows matched by name
+      const existing = activePacingData[hex].rows || [];
+      activePacingData[hex].rows = puParsedRows.map(r => {
+        const prev = existing.find(e => e.name === r.name) || {};
+        const merged = { ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null };
+        // Recalculate derived fields
+        const t1t2t = (merged.pctT1 && merged.pctT1 !== '—' && merged.t1t2 > 0)
+          ? Math.round(merged.t1t2 / (parseFloat(merged.pctT1) / 100)) : 0;
+        const gcmt = (merged.gcmC && merged.gcmC !== '—' && merged.gcm > 0)
+          ? Math.round(merged.gcm / (parseFloat(merged.gcmC) / 100)) : 0;
+        const t1t2pool = t1t2t > 0 ? Math.round(t1t2t / 0.80) : 0;
+        return { ...merged, t1t2t, gcmt, t1t2pool };
+      });
+      activePacingData[hex].total = calcTotal(activePacingData[hex].rows);
+      savePacingData();
+      renderPacing();
+      closeUpload();
+      alert('✅ Cohort data imported for ' + hex + ' — ' + puParsedRows.length + ' advisors updated.');
+    });
+  }
+
   async function loadPacingData() {
     try {
       const res = await fetch(PACING_DB);
@@ -2775,7 +2968,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       else if (btn.dataset.tab === 'wishlist') renderWishlist();
       if (btn.dataset.tab === 'kanban' && !kanbanBoard) loadKanban();
       if (btn.dataset.tab === 'pacing') {
-        if (!activePacingData) loadPacingData().then(() => renderPacing());
+        if (!activePacingData) loadPacingData().then(() => { renderPacing(); initPacingUpload(); });
+        else initPacingUpload();
         else renderPacing();
       }
     });
