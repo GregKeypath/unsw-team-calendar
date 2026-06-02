@@ -725,7 +725,7 @@
     /* Kanban — week theme bar */
     .kanban-col-theme { background: rgba(0,0,0,0.38); padding: 5px 12px; }
     .kanban-col.current-week .kanban-col-theme { background: rgba(0,0,0,0.14); }
-    .kanban-theme-input { width: 100%; border: none; background: transparent; color: rgba(255,255,255,0.7); font-size: 0.66rem; font-style: italic; padding: 0; outline: none; }
+    .kanban-theme-input { width: 100%; border: none; background: transparent; color: rgba(255,255,255,0.7); font-size: 0.66rem; font-style: italic; padding: 0; outline: none; resize: none; overflow: hidden; line-height: 1.4; font-family: inherit; display: block; }
     .kanban-theme-input::placeholder { color: rgba(255,255,255,0.22); }
     .kanban-theme-input:focus { color: #fff; }
     /* Kanban — section dividers */
@@ -3629,18 +3629,20 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       // Theme bar
       const themeBar = document.createElement('div');
       themeBar.className = 'kanban-col-theme';
-      const themeInput = document.createElement('input');
+      const themeInput = document.createElement('textarea');
       themeInput.className = 'kanban-theme-input';
-      themeInput.type = 'text';
       themeInput.placeholder = 'Add a theme for this week…';
       themeInput.value = (kanbanBoard._themes || {})[col.id] || '';
-      themeInput.maxLength = 80;
+      themeInput.rows = 1;
+      function autoResize() { themeInput.style.height = 'auto'; themeInput.style.height = themeInput.scrollHeight + 'px'; }
+      themeInput.addEventListener('input', autoResize);
+      setTimeout(autoResize, 0);
       themeInput.addEventListener('change', () => {
         if (!kanbanBoard._themes) kanbanBoard._themes = {};
         kanbanBoard._themes[col.id] = themeInput.value.trim();
         saveKanban();
       });
-      themeInput.addEventListener('keydown', e => { if (e.key === 'Enter') themeInput.blur(); });
+      themeInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); themeInput.blur(); } });
       themeBar.appendChild(themeInput);
 
       colEl.appendChild(header);
