@@ -750,13 +750,9 @@
     .kanban-strip-cell { width: 230px; flex-shrink: 0; background: #fff; border-radius: 8px; padding: 5px 6px; border: 1px solid #f3f4f6; min-height: 30px; }
     .kanban-strip-cell.drag-over { outline: 2px dashed #8b5cf6; background: rgba(139,92,246,0.05); }
     .kanban-strip-cell.drag-over-auto { outline: 2px dashed #f59e0b; background: rgba(245,158,11,0.05); }
-    /* Compact single-line card style for strip items */
-    .kanban-card.cat-other_resp, .kanban-card.cat-automated { padding: 3px 7px; min-height: 0; align-items: center; overflow: hidden; margin-bottom: 2px; }
-    .kanban-card.cat-other_resp .card-check, .kanban-card.cat-automated .card-check { width: 13px; height: 13px; min-width: 13px; flex-shrink: 0; font-size: 0.55rem; margin-top: 0; }
-    .kanban-card.cat-other_resp .card-text, .kanban-card.cat-automated .card-text { font-size: 0.68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: normal; padding-right: 36px; line-height: 1.6; }
-    .kanban-card.cat-other_resp .card-url-link, .kanban-card.cat-automated .card-url-link { display:none; }
-    .kanban-card.cat-other_resp:hover .card-url-link, .kanban-card.cat-automated:hover .card-url-link { display:inline; font-size:0.58rem; }
-    .kanban-card.cat-other_resp .card-comment, .kanban-card.cat-automated .card-comment { display: none; }
+    /* Strip card style — same wrapping as regular cards, just slightly compact */
+    .kanban-card.cat-other_resp, .kanban-card.cat-automated { margin-bottom: 2px; }
+    .kanban-card.cat-other_resp .card-text, .kanban-card.cat-automated .card-text { font-size: 0.72rem; }
     .kanban-card.cat-other_resp.done .card-text, .kanban-card.cat-automated.done .card-text { text-decoration: line-through; color: #aaa; }
     .kanban-strip-add { width: 100%; margin-top: 3px; padding: 3px; background: none; border: 1px dashed #e5e7eb; border-radius: 5px; color: #aaa; font-size: 0.68rem; cursor: pointer; text-align: left; }
     .kanban-strip-add:hover { border-color: var(--accent); color: #111; }
