@@ -1282,6 +1282,31 @@
       .planner-print-btn { display: none; }
     }
 
+    /* ── Unit Drop Rate Tab ─────────────────────────────── */
+    .droprate-wrap { padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+    .droprate-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+    .droprate-header h2 { font-size:1.1rem; font-weight:800; color:#111; margin:0; }
+    .droprate-sp-select { border:1px solid #e5e7eb; border-radius:7px; padding:8px 12px; font-size:0.82rem; color:#111; background:#fff; outline:none; }
+    .droprate-sp-select:focus { border-color:#1e3a5f; }
+    .droprate-save-note { font-size:0.67rem; color:#9ca3af; margin-left:auto; }
+    .droprate-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; }
+    .dr-card { background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:16px; border-top:3px solid #e5e7eb; display:flex; flex-direction:column; gap:10px; }
+    .dr-card-head { display:flex; align-items:flex-start; gap:10px; }
+    .dr-code { font-family:monospace; font-size:0.7rem; font-weight:700; color:#6b7280; white-space:nowrap; margin-top:2px; }
+    .dr-name { font-size:0.88rem; font-weight:700; color:#111; line-height:1.3; flex:1; }
+    .dr-programs { display:flex; flex-wrap:wrap; gap:4px; }
+    .dr-prog-tag { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; padding:2px 7px; border-radius:10px; background:#f3f4f6; color:#374151; }
+    .dr-fields { display:grid; grid-template-columns:120px 1fr; gap:10px; align-items:start; }
+    .dr-field-label { font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin-bottom:4px; }
+    .dr-rate-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.82rem; width:100%; box-sizing:border-box; outline:none; font-family:inherit; }
+    .dr-rate-input:focus { border-color:#1e3a5f; }
+    .dr-notes-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.75rem; width:100%; box-sizing:border-box; outline:none; resize:vertical; font-family:inherit; line-height:1.4; min-height:60px; }
+    .dr-notes-input:focus { border-color:#1e3a5f; }
+    .dr-save-btn { align-self:flex-end; background:#1e3a5f; color:#fff; border:none; border-radius:6px; padding:5px 14px; font-size:0.72rem; font-weight:700; cursor:pointer; }
+    .dr-save-btn:hover { background:#152d4d; }
+    .dr-saved { font-size:0.65rem; color:#059669; display:none; }
+    .dr-empty { text-align:center; padding:60px; color:#9ca3af; font-size:0.82rem; }
+
     /* ── Student Triage Tab ─────────────────────────────── */
     .triage-layout { display:grid; grid-template-columns:340px 1fr; min-height:600px; }
     .triage-form { padding:24px 20px; border-right:1px solid #e5e7eb; background:#fafafa; overflow-y:auto; }
@@ -1418,9 +1443,10 @@
   <button class="tab-btn active" data-tab="calendar">Calendar</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">Pacing Board</button>
-  <button class="tab-btn" data-tab="wishlist">Wishlist</button>
   <button class="tab-btn" data-tab="planner">Course Planner</button>
   <button class="tab-btn" data-tab="triage">Student Triage</button>
+  <button class="tab-btn" data-tab="droprate">Unit Drop Rate</button>
+  <button class="tab-btn" data-tab="wishlist">Wishlist</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
@@ -1642,6 +1668,22 @@
   </div>
 </div>
 
+
+<!-- Unit Drop Rate Tab -->
+<div class="tab-panel" id="tab-droprate">
+  <div class="droprate-wrap">
+    <div class="droprate-header">
+      <h2>Unit Drop Rate</h2>
+      <select id="dr-sp-select" class="droprate-sp-select">
+        <option value="">— Select Study Period —</option>
+      </select>
+      <span class="droprate-save-note">Changes save automatically and are shared with the team</span>
+    </div>
+    <div id="droprate-grid" class="droprate-grid">
+      <div class="dr-empty">Select a study period to see units running that hex.</div>
+    </div>
+  </div>
+</div>
 
 <!-- Student Triage Tab -->
 <div class="tab-panel" id="tab-triage">
@@ -5451,6 +5493,142 @@ ${cardsHTML}
   document.getElementById('sync-confirm-btn').addEventListener('click', runSyncToCalendar);
   document.getElementById('sync-cancel-btn').addEventListener('click', () => document.getElementById('sync-modal-overlay').classList.add('hidden'));
   document.getElementById('sync-modal-overlay').addEventListener('click', e => { if (e.target.id === 'sync-modal-overlay') document.getElementById('sync-modal-overlay').classList.add('hidden'); });
+
+  // ── Unit Drop Rate ────────────────────────────────────────────
+  const DROPRATE_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/unit_notes.json';
+  let unitNotes = {}; // { 'ZZBU6001': { dropRates: {'H3 26':'12%'}, notes: '...' } }
+  let drLoaded = false;
+
+  async function loadUnitNotes() {
+    try {
+      const res = await fetch(DROPRATE_DB);
+      const data = await res.json();
+      unitNotes = (data && typeof data === 'object') ? data : {};
+    } catch(e) { unitNotes = {}; }
+    drLoaded = true;
+  }
+
+  async function saveUnitNote(code, sp, rate, notes) {
+    if (!unitNotes[code]) unitNotes[code] = { dropRates: {}, notes: '' };
+    if (sp) unitNotes[code].dropRates[sp] = rate;
+    unitNotes[code].notes = notes;
+    try {
+      await fetch(DROPRATE_DB, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(unitNotes)
+      });
+    } catch(e) {}
+  }
+
+  function getUnitsForSP(sp) {
+    const units = {};
+    for (const [progName, prog] of Object.entries(PLANNER_PROGRAMS)) {
+      prog.cats.forEach(cat => {
+        const items = cat.items[sp];
+        if (!items) return;
+        items.forEach(str => {
+          const parts = str.trim().split(' ');
+          const code = parts[0];
+          if (!code.startsWith('ZZ')) return;
+          const name = parts.slice(1).join(' ');
+          if (!units[code]) units[code] = { code, name, programs: [] };
+          if (!units[code].programs.includes(progName)) units[code].programs.push(progName);
+        });
+      });
+    }
+    return Object.values(units).sort((a, b) => a.code.localeCompare(b.code));
+  }
+
+  function renderDropRateGrid(sp) {
+    const grid = document.getElementById('droprate-grid');
+    if (!sp) { grid.innerHTML = '<div class="dr-empty">Select a study period to see units running that hex.</div>'; return; }
+    const units = getUnitsForSP(sp);
+    if (!units.length) { grid.innerHTML = '<div class="dr-empty">No units found for ' + sp.split(' ')[0] + ' 20' + sp.split(' ')[1] + '.</div>'; return; }
+
+    const catColors = { 'Applied Finance':'#1e3a5f','Analytics':'#065f46','Business Law':'#7c3aed','Cyber Security':'#1e40af','Data Science':'#9a3412','Human Resource Management':'#5b21b6','Management':'#92400e','Psychology':'#0f766e','Project Management':'#374151' };
+
+    grid.innerHTML = '';
+    units.forEach(u => {
+      const info = COURSE_INFO[u.code] || {};
+      const saved = unitNotes[u.code] || {};
+      const currentRate = (saved.dropRates || {})[sp] || '';
+      const currentNotes = saved.notes || '';
+      const borderColor = catColors[u.programs[0]] || '#e5e7eb';
+
+      const card = document.createElement('div');
+      card.className = 'dr-card';
+      card.style.borderTopColor = borderColor;
+
+      const progTags = u.programs.map(p =>
+        `<span class="dr-prog-tag" style="background:${catColors[p]}22;color:${catColors[p]}">${p}</span>`
+      ).join('');
+
+      card.innerHTML = `
+        <div class="dr-card-head">
+          <div class="dr-code">${u.code}</div>
+          <div class="dr-name">${u.name}</div>
+        </div>
+        <div class="dr-programs">${progTags}</div>
+        ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;">${info.description.substring(0,150)}…</div>` : ''}
+        <div class="dr-fields">
+          <div>
+            <div class="dr-field-label">Drop Rate (${sp.split(' ')[0]} 20${sp.split(' ')[1]})</div>
+            <input class="dr-rate-input" type="text" placeholder="e.g. 12%" value="${currentRate}" data-code="${u.code}">
+          </div>
+          <div>
+            <div class="dr-field-label">Selling Points & Team Notes</div>
+            <textarea class="dr-notes-input" placeholder="Add selling points, talking points, or notes for the team…" data-code="${u.code}">${currentNotes}</textarea>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+          <span class="dr-saved">✓ Saved</span>
+          <button class="dr-save-btn" data-code="${u.code}">Save</button>
+        </div>`;
+
+      card.querySelector('.dr-save-btn').addEventListener('click', async () => {
+        const rate  = card.querySelector('.dr-rate-input').value.trim();
+        const notes = card.querySelector('.dr-notes-input').value.trim();
+        const savedSpan = card.querySelector('.dr-saved');
+        await saveUnitNote(u.code, sp, rate, notes);
+        savedSpan.style.display = 'inline';
+        setTimeout(() => { savedSpan.style.display = 'none'; }, 2000);
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  function initDropRate() {
+    const spSel = document.getElementById('dr-sp-select');
+    // Populate SP options from all programs (H1 25 onwards)
+    const allSPs = new Set();
+    Object.values(PLANNER_PROGRAMS).forEach(prog => prog.sps.forEach(sp => allSPs.add(sp)));
+    [...allSPs].sort((a,b) => {
+      const [ha,ya] = a.split(' '); const [hb,yb] = b.split(' ');
+      return (parseInt(ya)*10+parseInt(ha.slice(1))) - (parseInt(yb)*10+parseInt(hb.slice(1)));
+    }).forEach(sp => {
+      const o = document.createElement('option');
+      o.value = sp; o.textContent = `${sp.split(' ')[0]} 20${sp.split(' ')[1]}`;
+      spSel.appendChild(o);
+    });
+
+    spSel.addEventListener('change', () => renderDropRateGrid(spSel.value));
+  }
+
+  // Load drop rate data when tab is first opened
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.tab === 'droprate' && !drLoaded) {
+        loadUnitNotes().then(() => {
+          initDropRate();
+          renderDropRateGrid(document.getElementById('dr-sp-select').value);
+        });
+      } else if (btn.dataset.tab === 'droprate') {
+        renderDropRateGrid(document.getElementById('dr-sp-select').value);
+      }
+    });
+  });
 
   initPlanner();
   initTriage();
