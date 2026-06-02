@@ -1254,6 +1254,7 @@
     .plan-export-tech-row { font-size: 0.68rem; color: #374151; margin-bottom: 4px; }
     .plan-export-tech-row span { background: #f1f5f9; border-radius: 3px; padding: 1px 5px; margin-right: 4px; display: inline-block; }
     .plan-export-book { font-size: 0.67rem; color: #374151; font-style: italic; padding-top: 6px; border-top: 1px solid #f3f4f6; margin-top: 4px; }
+    .sync-modal-overlay.hidden { display: none !important; }
 
     /* Print styles */
     @media print {
@@ -1446,6 +1447,7 @@
 <div class="tab-panel" id="tab-kanban">
   <div class="kanban-wrap">
     <div class="pacing-hex-nav" id="kanban-hex-nav" style="margin-bottom:16px;"></div>
+    <button class="pacing-upload-btn" id="kanban-sync-cal-btn" style="margin-bottom:8px;">📅 Sync Engagement Tasks to Calendar</button>
     <div class="kanban-board" id="kanban-board"></div>
     <div class="kanban-strip" id="kanban-other-strip"></div>
     <div class="kanban-strip" id="kanban-auto-strip"></div>
@@ -1738,6 +1740,18 @@
     </div>
     <div class="plan-modal-body">
       <div id="plan-export-content"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sync-modal-overlay hidden" id="sync-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9000;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:12px;width:480px;max-width:96vw;box-shadow:0 8px 40px rgba(0,0,0,0.22);overflow:hidden;max-height:90vh;display:flex;flex-direction:column;">
+    <div style="padding:14px 18px;border-bottom:1px solid #f3f4f6;"><h3 style="margin:0;font-size:0.9rem;font-weight:800;">📅 Sync Engagement Tasks to Calendar</h3>
+    <p style="margin:6px 0 0;font-size:0.72rem;color:#6b7280;">Select which day-specific tasks to add to the calendar across all hexamesters. Already-existing events won't be duplicated.</p></div>
+    <div id="sync-task-list" style="padding:12px 18px;overflow-y:auto;flex:1;"></div>
+    <div style="padding:12px 18px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px;">
+      <button id="sync-cancel-btn" style="padding:7px 16px;border-radius:7px;border:1px solid #e5e7eb;background:none;font-size:0.78rem;cursor:pointer;color:#6b7280;">Cancel</button>
+      <button id="sync-confirm-btn" style="padding:7px 18px;border-radius:7px;border:none;background:#1e3a5f;color:#fff;font-size:0.78rem;font-weight:700;cursor:pointer;">Add to Calendar</button>
     </div>
   </div>
 </div>
@@ -5347,6 +5361,88 @@ ${cardsHTML}
     document.getElementById('tr-run-btn').addEventListener('click', runTriage);
     document.getElementById('tr-clear-btn').addEventListener('click', clearTriage);
   }
+
+  // All engagement strategy tasks that reference a specific day
+  const ENGAGEMENT_SYNC_TASKS = [
+    { text: 'Results Released', week: 'O-Week', day: 4, hex: null },           // Friday
+    { text: 'Suspension Appeal Deadline (H1 only)', week: 'O-Week', day: 2, hex: 1 }, // Wed H1 only
+    { text: 'Census', week: 'Week 1', day: 3, hex: null },                     // Thursday
+    { text: 'Final & Incomplete Enrolments', week: 'Week 1', day: 0, hex: null }, // Monday
+    { text: 'Incomplete Enrollment Drop', week: 'Week 1', day: 1, hex: null },  // Tuesday
+    { text: 'Escalate Late Enrollments', week: 'Week 1', day: 1, hex: null },  // Tuesday
+    { text: 'LMS Non-Access - Canvas Outlines', week: 'Week 1', day: 2, hex: null }, // Wednesday
+    { text: 'Suspension Appeal Deadline', week: 'Week 2', day: 1, hex: null }, // Tuesday
+    { text: 'Suspension Appeal Outcomes', week: 'Week 2', day: 3, hex: null }, // Thursday
+    { text: 'PGIPT FEE-HELP Received from SLC', week: 'Week 2', day: 0, hex: null }, // Monday
+    { text: 'WADMs Drop', week: 'Week 3', day: 1, hex: null },                 // Tuesday
+    { text: 'IPT Opens', week: 'Week 3', day: 0, hex: null },                  // Monday
+    { text: 'WADM Risk Reengagement Calls', week: 'Week 3', day: 0, hex: null },// Monday
+    { text: 'Academic Discontinue Deadline (AW Grade)', week: 'Week 5', day: 4, hex: null }, // Friday
+    { text: 'PGIPT Deadline', week: 'Week 6', day: 4, hex: null },             // Friday
+  ];
+
+  // Find all calendar dates matching a given weekLabel + dayOfWeek + optional hex
+  function getEngagementDates(weekLabel, dayOffset, hexFilter) {
+    // dayOffset: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri
+    // JS getDay: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+    const jsDay = dayOffset + 1; // Mon=1...Fri=5
+    const found = [];
+    for (const [dateStr, wk] of Object.entries(UNSW_WEEKS)) {
+      if (!wk || wk.label !== weekLabel) continue;
+      if (hexFilter !== null && wk.hex !== hexFilter) continue;
+      const d = new Date(dateStr + 'T00:00:00');
+      if (d.getDay() === jsDay && !found.includes(dateStr)) found.push(dateStr);
+    }
+    return found.sort();
+  }
+
+  function openSyncModal() {
+    const overlay = document.getElementById('sync-modal-overlay');
+    const list    = document.getElementById('sync-task-list');
+    list.innerHTML = '';
+    ENGAGEMENT_SYNC_TASKS.forEach((task, i) => {
+      const dates = getEngagementDates(task.week, task.day, task.hex);
+      if (!dates.length) return;
+      const dayName = ['Mon','Tue','Wed','Thu','Fri'][task.day];
+      const label = document.createElement('label');
+      label.style.cssText = 'display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f3f4f6;font-size:0.75rem;cursor:pointer;';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = true; cb.dataset.idx = i;
+      cb.style.marginTop = '2px; flex-shrink:0';
+      const info = document.createElement('div');
+      info.innerHTML = '<strong>' + task.text + '</strong> <span style="color:#9ca3af">(' + task.week + ' · ' + dayName + ')</span><br><span style="font-size:0.67rem;color:#6b7280;">' + dates.slice(0,4).join(', ') + (dates.length > 4 ? ' +' + (dates.length-4) + ' more' : '') + '</span>';
+      label.appendChild(cb);
+      label.appendChild(info);
+      list.appendChild(label);
+    });
+    overlay.classList.remove('hidden');
+  }
+
+  async function runSyncToCalendar() {
+    const checked = Array.from(document.querySelectorAll('#sync-task-list input:checked'));
+    if (!checked.length) { alert('No tasks selected.'); return; }
+    let added = 0;
+    checked.forEach(cb => {
+      const task = ENGAGEMENT_SYNC_TASKS[parseInt(cb.dataset.idx)];
+      const dates = getEngagementDates(task.week, task.day, task.hex);
+      dates.forEach(dateStr => {
+        if (!events[dateStr]) events[dateStr] = [];
+        if (!events[dateStr].some(e => e.name === task.text)) {
+          events[dateStr].push({ name: task.text, tag: 1 });
+          added++;
+        }
+      });
+    });
+    saveEvents();
+    render();
+    document.getElementById('sync-modal-overlay').classList.add('hidden');
+    alert('✅ Added ' + added + ' calendar entries from ' + checked.length + ' engagement tasks.');
+  }
+
+  document.getElementById('kanban-sync-cal-btn').addEventListener('click', openSyncModal);
+  document.getElementById('sync-confirm-btn').addEventListener('click', runSyncToCalendar);
+  document.getElementById('sync-cancel-btn').addEventListener('click', () => document.getElementById('sync-modal-overlay').classList.add('hidden'));
+  document.getElementById('sync-modal-overlay').addEventListener('click', e => { if (e.target.id === 'sync-modal-overlay') document.getElementById('sync-modal-overlay').classList.add('hidden'); });
 
   initPlanner();
   initTriage();
