@@ -3375,7 +3375,14 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           else if (typeof val === 'object') kanbanBoard[col] = Object.values(val).filter(Boolean);
           else kanbanBoard[col] = [];
         }
-        KANBAN_COLS.forEach(c => { if (!kanbanBoard[c.id]) kanbanBoard[c.id] = []; });
+        // Restore any columns missing from Firebase using the master template
+        KANBAN_COLS.forEach(c => {
+          if (!kanbanBoard[c.id] || kanbanBoard[c.id].length === 0) {
+            kanbanBoard[c.id] = KANBAN_INITIAL[c.id]
+              ? JSON.parse(JSON.stringify(KANBAN_INITIAL[c.id]))
+              : [];
+          }
+        });
         if (!kanbanBoard._themes) kanbanBoard._themes = {};
         if (!kanbanBoard._tasks) kanbanBoard._tasks = [];
         if (!kanbanBoard._automated) kanbanBoard._automated = [];
