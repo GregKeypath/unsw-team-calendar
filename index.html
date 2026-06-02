@@ -1439,7 +1439,7 @@
   <button class="tab-btn" data-tab="pacing">Pacing Board</button>
   <button class="tab-btn" data-tab="planner">Course Planner</button>
   <button class="tab-btn" data-tab="triage">Student Triage</button>
-  <button class="tab-btn" data-tab="droprate">Unit Drop Rate</button>
+  <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="wishlist">Wishlist</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
@@ -1663,11 +1663,11 @@
 </div>
 
 
-<!-- Unit Drop Rate Tab -->
+<!-- Historical Drop Rate Tab -->
 <div class="tab-panel" id="tab-droprate">
   <div class="droprate-wrap">
     <div class="droprate-header">
-      <h2>Unit Drop Rate</h2>
+      <h2>Historical Drop Rate</h2>
       <select id="dr-sp-select" class="droprate-sp-select">
         <option value="">— Select Study Period —</option>
       </select>
@@ -5595,18 +5595,36 @@ ${cardsHTML}
 
   function initDropRate() {
     const spSel = document.getElementById('dr-sp-select');
-    // Populate SP options from all programs (H1 25 onwards)
+
+    // Detect current SP from today's date
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+    const todayWk = UNSW_WEEKS[todayKey];
+    let currentSpVal = null;
+    if (todayWk) {
+      currentSpVal = `H${todayWk.hex} ${String(now.getFullYear()).slice(2)}`;
+    }
+
+    function spToNum(sp) {
+      const [h, y] = sp.split(' ');
+      return parseInt(y) * 10 + parseInt(h.slice(1));
+    }
+    const currentNum = currentSpVal ? spToNum(currentSpVal) : 0;
+
+    // Collect & sort all SPs, filter to current onwards
     const allSPs = new Set();
     Object.values(PLANNER_PROGRAMS).forEach(prog => prog.sps.forEach(sp => allSPs.add(sp)));
-    [...allSPs].sort((a,b) => {
-      const [ha,ya] = a.split(' '); const [hb,yb] = b.split(' ');
-      return (parseInt(ya)*10+parseInt(ha.slice(1))) - (parseInt(yb)*10+parseInt(hb.slice(1)));
-    }).forEach(sp => {
-      const o = document.createElement('option');
-      o.value = sp; o.textContent = `${sp.split(' ')[0]} 20${sp.split(' ')[1]}`;
-      spSel.appendChild(o);
-    });
+    [...allSPs]
+      .sort((a, b) => spToNum(a) - spToNum(b))
+      .filter(sp => spToNum(sp) >= currentNum)
+      .forEach(sp => {
+        const o = document.createElement('option');
+        o.value = sp; o.textContent = `${sp.split(' ')[0]} 20${sp.split(' ')[1]}`;
+        spSel.appendChild(o);
+      });
 
+    // Auto-select current SP
+    if (currentSpVal) spSel.value = currentSpVal;
     spSel.addEventListener('change', () => renderDropRateGrid(spSel.value));
   }
 
@@ -5616,7 +5634,8 @@ ${cardsHTML}
       if (btn.dataset.tab === 'droprate' && !drLoaded) {
         loadUnitNotes().then(() => {
           initDropRate();
-          renderDropRateGrid(document.getElementById('dr-sp-select').value);
+          const sel = document.getElementById('dr-sp-select');
+          if (sel.value) renderDropRateGrid(sel.value);
         });
       } else if (btn.dataset.tab === 'droprate') {
         renderDropRateGrid(document.getElementById('dr-sp-select').value);
