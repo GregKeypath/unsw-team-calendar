@@ -43,33 +43,41 @@
 
     /* Tab navigation */
     .tab-nav {
-      background: #fff;
-      box-shadow: 0 1px 0 #e5e5e5;
-      padding: 0 32px;
+      background: #e9ecef;
+      padding: 0 24px;
       display: flex;
-      gap: 0;
+      align-items: flex-end;
+      gap: 3px;
+      border-bottom: 2px solid #c8cdd3;
     }
 
     .tab-btn {
-      padding: 12px 24px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #888;
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
+      padding: 9px 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #6b7280;
+      background: #d4d9df;
+      border: 1.5px solid #c0c6cd;
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
       cursor: pointer;
       letter-spacing: 0.2px;
-      transition: color 0.15s, border-color 0.15s;
-      border-radius: 8px 8px 0 0;
+      position: relative;
+      bottom: -2px;
+      transition: background 0.12s, color 0.12s;
+      white-space: nowrap;
     }
 
-    .tab-btn:hover { color: #111; }
+    .tab-btn:hover:not(.active) { background: #c8cdd3; color: #374151; }
 
     .tab-btn.active {
+      background: #fff;
       color: #111;
-      border-bottom-color: var(--accent);
+      font-weight: 700;
+      border-color: #c0c6cd;
+      border-bottom: 2px solid #fff;
+      padding-top: 11px;
+      z-index: 2;
     }
 
     /* Tab panels */
@@ -1407,12 +1415,12 @@
 
 <!-- Tab navigation -->
 <nav class="tab-nav">
-  <button class="tab-btn active" data-tab="calendar">📅 Calendar</button>
-  <button class="tab-btn" data-tab="kanban">📊 Engagement Strategy</button>
-  <button class="tab-btn" data-tab="pacing">📈 Pacing Board</button>
-  <button class="tab-btn" data-tab="wishlist">⭐ Wishlist</button>
-  <button class="tab-btn" data-tab="planner">📚 Course Planner</button>
-  <button class="tab-btn" data-tab="triage">🎯 Student Triage</button>
+  <button class="tab-btn active" data-tab="calendar">Calendar</button>
+  <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
+  <button class="tab-btn" data-tab="pacing">Pacing Board</button>
+  <button class="tab-btn" data-tab="wishlist">Wishlist</button>
+  <button class="tab-btn" data-tab="planner">Course Planner</button>
+  <button class="tab-btn" data-tab="triage">Student Triage</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
