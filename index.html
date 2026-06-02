@@ -3168,6 +3168,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   }
 
   const KANBAN_COLS = [
+    { id: 'o-week',  label: 'O-Week' },
+    { id: 'week-1',  label: 'Week 1' },
     { id: 'week-2',  label: 'Week 2' },
     { id: 'week-3',  label: 'Week 3' },
     { id: 'week-4',  label: 'Week 4' },
@@ -3190,6 +3192,40 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   };
 
   const KANBAN_INITIAL = {
+    'o-week': [
+      { id:'k4',  text:'Suspension appeal deadline Wednesday (H1 only)', cat:'priority' },
+      { id:'k5',  text:'Results released on Friday', cat:'admin' },
+      { id:'k6',  text:'Re-enrolment last attempts: 1. T1-T2  2. Registration  3. Reengagement', cat:'priority' },
+      { id:'k7',  text:'Incomplete Enrollment Review', cat:'calls' },
+      { id:'k8',  text:'No Pre-Req Calls', cat:'calls' },
+      { id:'k9',  text:'#Previous TP Dropped - At Risk Calls', cat:'calls' },
+      { id:'k10', text:'Failed Current Term → Follow up email (no contact)', cat:'calls' },
+      { id:'k11', text:'Outbound Remaining Welcome Calls', cat:'welcome' },
+      { id:'k12', text:'High Risk Course Enrolment At Risk Calls', cat:'calls' },
+      { id:'k13', text:'Introductory emails to Course Convenors (1 Leader, SSA shared email)', cat:'admin' },
+      { id:'k14', text:'Incomplete Enrolment List from SLC to SDIT', cat:'admin' },
+      { id:'k15', text:'Post Making Connections webinar slides in Hubs', cat:'admin' },
+      { id:'k16', text:'Lead: Graduated - Failed Last TP List (Friday Morning)', cat:'leadership' },
+      { id:'k17', text:'Welcome Call Tracking', cat:'admin' },
+      { id:'k18', text:'Welcome Webinar', cat:'webinar' },
+    ],
+    'week-1': [
+      { id:'k19', text:'Census on Thursday', cat:'priority' },
+      { id:'k20', text:'Track Academic Standing Drop Risk', cat:'priority' },
+      { id:'k21', text:'Final & Incomplete Enrolments on Monday', cat:'priority' },
+      { id:'k22', text:'Escalate LATE ENROLLMENTS Tue: Failed Current TP → Next Term Graduated', cat:'priority' },
+      { id:'k23', text:'Incomplete Enrollment Drop Tuesday', cat:'admin' },
+      { id:'k24', text:'Late Enrolment - Failed Prereq (Incomplete Pre-req)', cat:'calls' },
+      { id:'k25', text:'Academic Standing Calls', cat:'calls' },
+      { id:'k26', text:'Failed Current Term → Failed Subject Last 12 Months follow up email', cat:'calls' },
+      { id:'k27', text:'High Risk Course Enrolment At Risk Calls', cat:'calls' },
+      { id:'k28', text:'LMS Non-Access x2 Attempts (minimum)', cat:'calls' },
+      { id:'k29', text:'LMS Non-Access - Canvas: Angela to send Wednesday outlines', cat:'admin' },
+      { id:'k30', text:'Lead: Academic Standing & Appeals', cat:'leadership' },
+      { id:'k31', text:'Welcome Call Tracking', cat:'welcome' },
+      { id:'k32', text:'Incomplete Requisite List from SLC', cat:'admin' },
+      { id:'k33', text:'PGIPT Approvals list → ROPS for GC>M sheet & CRM update', cat:'admin' },
+    ],
     'week-2': [
       { id:'k34', text:'Post Census Wrapup & Degree Pathing', cat:'priority' },
       { id:'k35', text:'Suspension appeal deadline Tuesday, outcomes Thursday', cat:'priority' },
@@ -3458,10 +3494,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const todayWeek = UNSW_WEEKS[todayKey];
     let currentColId = null;
     if (todayWeek) {
-      // Map current week to column id (Week 2-7 only; O-Week and Week 1 show Week 2)
-      const wlabel = todayWeek.label;
-      if (wlabel === 'O-Week' || wlabel === 'Week 1') currentColId = 'week-2';
-      else currentColId = 'week-' + wlabel.replace('Week ', '');
+      currentColId = todayWeek.label === 'O-Week' ? 'o-week'
+                   : 'week-' + todayWeek.label.replace('Week ', '');
     }
 
     KANBAN_COLS.forEach(col => {
