@@ -1592,6 +1592,12 @@
             <option value="">— Select program —</option>
           </select>
         </div>
+        <div class="planner-control-group" id="planner-qual-group" style="display:none;">
+          <label class="planner-label">Qualification Level</label>
+          <select id="planner-qual" class="planner-select">
+            <option value="">— Select level —</option>
+          </select>
+        </div>
         <div class="planner-control-group">
           <label class="planner-label">Starting study period</label>
           <select id="planner-sp" class="planner-select">
@@ -4286,8 +4292,24 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         opt.textContent = sp;
         spSel.appendChild(opt);
       });
-      // Explicitly lock the first SP so renderPlanMap reads the right value
       spSel.value = prog.sps[0];
+
+      // Populate qualification level dropdown
+      const qualSel = document.getElementById('planner-qual');
+      const qualGrp = document.getElementById('planner-qual-group');
+      const progRules = PROGRAM_RULES[progSel.value];
+      qualSel.innerHTML = '<option value="">— Select level —</option>';
+      if (progRules && progRules.levels) {
+        progRules.levels.forEach(lv => {
+          const o = document.createElement('option');
+          o.value = lv.code; o.textContent = lv.label;
+          qualSel.appendChild(o);
+        });
+        qualGrp.style.display = 'block';
+      } else {
+        qualGrp.style.display = 'none';
+      }
+
       planData = {}; // Reset plan when program changes
       renderPlanner();
       renderPlanMap();
@@ -5078,10 +5100,15 @@ ${cardsHTML}
         levelField.style.display = 'none';
       }
 
-      // SP dropdown — show SPs from 2025 onward for this program
+      // SP dropdown — show only current and future SPs
       spSel.innerHTML = '<option value="">— All study periods —</option>';
       if (prog && prog.sps) {
-        prog.sps.forEach(sp => {
+        const now2 = new Date();
+        const tk = `${now2.getFullYear()}-${String(now2.getMonth()+1).padStart(2,'0')}-${String(now2.getDate()).padStart(2,'0')}`;
+        const twk = UNSW_WEEKS[tk];
+        const curNum = twk ? parseInt(String(now2.getFullYear()).slice(2))*10 + twk.hex : 0;
+        const toNum = sp => { const [h,y]=sp.split(' '); return parseInt(y)*10+parseInt(h.slice(1)); };
+        prog.sps.filter(sp => toNum(sp) >= curNum).forEach(sp => {
           const parts = sp.split(' ');
           const o = document.createElement('option');
           o.value = sp;
@@ -5161,30 +5188,39 @@ ${cardsHTML}
     // Import from Course Planner — brings across program, units and triggers level/SP population
     document.getElementById('tr-import-plan-btn').addEventListener('click', () => {
       const plannerProgram = document.getElementById('planner-program').value;
+      const plannerQual    = document.getElementById('planner-qual').value;
       const allPlanCodes   = Object.values(planData).flat().map(u => u.code);
 
       if (!plannerProgram && !allPlanCodes.length) {
-        alert('Nothing to import — select a program and add units to the Course Planner first.');
+        alert('Nothing to import — select a program in the Course Planner first.');
         return;
       }
 
-      // 1. Set program selector and trigger its change event to populate levels + SPs
+      // 1. Set program and trigger change to populate level + SP dropdowns
       if (plannerProgram && progSel.value !== plannerProgram) {
         progSel.value = plannerProgram;
         progSel.dispatchEvent(new Event('change'));
       }
 
-      // 2. Import planned unit codes
+      // 2. Set qualification level if chosen in the planner
+      if (plannerQual) {
+        levelSel.value = plannerQual;
+        levelSel.dispatchEvent(new Event('change'));
+      }
+
+      // 3. Import planned unit codes
       let added = 0;
       allPlanCodes.forEach(code => {
         if (!planned.includes(code) && !completed.includes(code)) { addPlannedTag(code); added++; }
       });
 
       const msgs = [];
-      if (plannerProgram) msgs.push('Program set to ' + plannerProgram);
+      if (plannerProgram) msgs.push('Program: ' + plannerProgram);
+      if (plannerQual) msgs.push('Level imported');
       if (added > 0) msgs.push(added + ' unit' + (added !== 1 ? 's' : '') + ' imported');
       else if (allPlanCodes.length) msgs.push('Units already in your lists');
-      if (msgs.length) alert('✅ ' + msgs.join(' · ') + '. Select your qualification level to continue.');
+      if (!plannerQual) msgs.push('select a qualification level to continue');
+      if (msgs.length) alert('✅ ' + msgs.join(' · ') + '.');
     });
 
     // Extract unique elective/spec units from a program
