@@ -4738,14 +4738,14 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     // Disclaimer
     const disc = document.createElement('div');
-    disc.style.cssText = 'background:#fff1f2;border:1px solid #fca5a5;border-radius:5px;padding:8px 12px;margin-bottom:14px;font-size:0.71rem;color:#991b1b;font-weight:700;';
-    disc.textContent = '⚠️ Disclaimer: Unit availability, assessment structure, and course details are subject to change prior to the commencement of each study period. Always confirm current offerings with UNSW before enrolling.';
+    disc.style.cssText = 'background:#fff1f2;border:2px solid #ef4444;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:0.73rem;color:#991b1b;font-weight:700;line-height:1.5;';
+    disc.innerHTML = '⚠️ <strong>IMPORTANT DISCLAIMER</strong><br>Unit availability, assessment details, and study period offerings are subject to change. This plan is indicative only — students must confirm current enrolment requirements directly with UNSW before enrolling in any course.';
     content.appendChild(disc);
 
-    // ── Section 1: compact overview grid ──────────────────────────────────
+    // ── Section 1: compact overview grid (only SPs with units or breaks) ──
     const grid = document.createElement('div');
     grid.className = 'plan-export-grid';
-    planSPs.forEach(sp => {
+    planSPs.filter(sp => breakSPs[sp] || (planData[sp] && planData[sp].length > 0)).forEach(sp => {
       const units = planData[sp] || [];
       const parts = sp.split(' ');
       const col   = document.createElement('div');
@@ -4760,8 +4760,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       if (breakSPs[sp]) {
         body.style.cssText = 'background:repeating-linear-gradient(45deg,#f9fafb,#f9fafb 6px,#f3f4f6 6px,#f3f4f6 12px);';
         body.innerHTML = '<div class="plan-export-empty" style="color:#9ca3af;">⏸ Study Break</div>';
-      } else if (units.length === 0) {
-        body.innerHTML = '<div class="plan-export-empty">—</div>';
       } else {
         units.forEach(u => {
           const cc  = getCatColor(u.cat);
@@ -4811,9 +4809,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const sub      = document.getElementById('plan-modal-sub').textContent;
     const today    = new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
 
-    // Build grid HTML
+    // Build grid HTML — only include SPs with units or breaks (skip empty)
     let gridHTML = '<div class="plan-export-grid">';
-    planSPs.forEach(sp => {
+    planSPs.filter(sp => breakSPs[sp] || (planData[sp] && planData[sp].length > 0)).forEach(sp => {
       const units = planData[sp] || [];
       const parts = sp.split(' ');
       const hdStyle = breakSPs[sp] ? ' style="background:#4b5563;color:#e5e7eb;"' : '';
@@ -4821,8 +4819,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       gridHTML += `<div class="plan-export-col"><div class="plan-export-col-hd"${hdStyle}>${parts[0]} 20${parts[1]}</div><div class="plan-export-col-body"${bodyStyle}>`;
       if (breakSPs[sp]) {
         gridHTML += '<div class="plan-export-empty" style="color:#9ca3af;">⏸ Study Break</div>';
-      } else if (units.length === 0) {
-        gridHTML += '<div class="plan-export-empty">—</div>';
       } else {
         units.forEach(u => {
           const cc = getCatColor(u.cat);
@@ -4894,7 +4890,7 @@ body { font-family: Arial, sans-serif; padding: 24px 28px; background: #fff; col
   <h1>${title}</h1>
   <p>${sub} &nbsp;·&nbsp; Prepared ${today}</p>
 </div>
-<div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:5px;padding:7px 11px;margin-bottom:14px;font-size:0.68rem;color:#991b1b;font-weight:700;">⚠️ Disclaimer: Unit availability, assessment structure, and course details are subject to change prior to the commencement of each study period. Always confirm current offerings with UNSW before enrolling.</div>
+<div style="background:#fff1f2;border:2px solid #ef4444;border-radius:6px;padding:10px 14px;margin-bottom:16px;font-size:0.7rem;color:#991b1b;font-weight:700;line-height:1.5;">⚠️ <strong>IMPORTANT DISCLAIMER</strong><br>Unit availability, assessment details, and study period offerings are subject to change. This plan is indicative only — students must confirm current enrolment requirements directly with UNSW before enrolling in any course.</div>
 ${gridHTML}
 ${cardsHTML}
 <script>window.onload = () => window.print();<\/script>
