@@ -4318,6 +4318,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           o.value = lv.code; o.textContent = lv.label;
           qualSel.appendChild(o);
         });
+        // Auto-select if only one level available
+        if (progRules.levels.length === 1) qualSel.value = progRules.levels[0].code;
         qualGrp.style.display = 'block';
       } else {
         qualGrp.style.display = 'none';
@@ -5162,6 +5164,11 @@ ${cardsHTML}
           o.value = lv.code; o.textContent = lv.label;
           levelSel.appendChild(o);
         });
+        // Auto-select if only one level available
+        if (rules.levels.length === 1) {
+          levelSel.value = rules.levels[0].code;
+          levelSel.dispatchEvent(new Event('change'));
+        }
         levelField.style.display = 'block';
       } else {
         levelField.style.display = 'none';
