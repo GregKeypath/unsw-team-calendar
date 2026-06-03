@@ -1182,11 +1182,12 @@
     .plan-chip-name { color: #222; font-size: 0.67rem; line-height: 1.3; word-break: break-word; display: block; margin-top: 1px; }
     .plan-chip-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 0.65rem; padding: 0 1px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
     .plan-chip-remove:hover { color: #ef4444; }
-    .plan-chip-status { background: none; border: none; cursor: pointer; font-size: 0.62rem; padding: 0 2px; line-height: 1; flex-shrink: 0; color: #d1d5db; margin-top: 1px; }
-    .plan-chip-status:hover { color: #16a34a; }
-    .plan-chip.is-completed { opacity: 0.6; border-left-color: #16a34a !important; background: #f0fdf4 !important; }
-    .plan-chip.is-completed .plan-chip-status { color: #16a34a; }
+    .plan-chip-status { display:block; width:100%; margin-top:5px; background:none; border:1px dashed #d1d5db; border-radius:4px; cursor:pointer; font-size:0.58rem; font-weight:600; padding:2px 5px; text-align:center; color:#9ca3af; line-height:1.4; transition:all .12s; }
+    .plan-chip-status:hover { border-color:#16a34a; color:#16a34a; background:#f0fdf4; }
+    .plan-chip.is-completed .plan-chip-status { background:#d1fae5; border:1px solid #6ee7b7; color:#065f46; font-weight:700; }
+    .plan-chip.is-completed { border-left-color: #16a34a !important; background: #f0fdf4 !important; }
     .plan-chip.is-completed .plan-chip-code { text-decoration: line-through; color: #6b7280; }
+    .plan-chip.is-completed .plan-chip-name { color: #6b7280; }
     .tr-gap-section { margin-top: 16px; }
     .tr-gap-hd { font-size:0.68rem; font-weight:800; color:#7c3aed; text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; padding:6px 10px; background:#ede9fe; border-radius:6px; }
     .tr-gap-sp { margin-bottom:14px; }
@@ -4567,20 +4568,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         units.forEach(u => {
           const chip = document.createElement('div');
           chip.className = `plan-chip cat-${u.cat}${u.status === 'completed' ? ' is-completed' : ''}`;
+          chip.style.flexDirection = 'column';
+          chip.style.alignItems = 'stretch';
+          const topRow = document.createElement('div');
+          topRow.style.cssText = 'display:flex;align-items:flex-start;gap:4px;';
           const txt = document.createElement('div');
           txt.className = 'plan-chip-text';
           txt.innerHTML = `<span class="plan-chip-cat">${u.catLabel || ''}</span><span class="plan-chip-code">${u.code}</span><span class="plan-chip-name">${u.name}</span>`;
-          // Status toggle button (✓ = completed, ○ = planned)
-          const statusBtn = document.createElement('button');
-          statusBtn.className = 'plan-chip-status';
-          statusBtn.title = u.status === 'completed' ? 'Mark as planned' : 'Mark as completed';
-          statusBtn.textContent = u.status === 'completed' ? '✓' : '○';
-          statusBtn.addEventListener('click', () => {
-            const arr = planData[sp] || [];
-            const idx = arr.findIndex(x => x.code === u.code);
-            if (idx !== -1) arr[idx].status = arr[idx].status === 'completed' ? 'planned' : 'completed';
-            renderPlanMap(); renderPlanner();
-          });
           const rmBtn = document.createElement('button');
           rmBtn.className = 'plan-chip-remove';
           rmBtn.title = 'Remove';
@@ -4590,9 +4584,20 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
             renderPlanMap();
             renderPlanner();
           });
-          chip.appendChild(txt);
+          topRow.appendChild(txt);
+          topRow.appendChild(rmBtn);
+          // Status toggle — full-width pill below the unit name
+          const statusBtn = document.createElement('button');
+          statusBtn.className = 'plan-chip-status';
+          statusBtn.textContent = u.status === 'completed' ? '✓ Completed — click to mark as Planned' : '○ Planned — click to mark as Completed';
+          statusBtn.addEventListener('click', () => {
+            const arr = planData[sp] || [];
+            const idx = arr.findIndex(x => x.code === u.code);
+            if (idx !== -1) arr[idx].status = arr[idx].status === 'completed' ? 'planned' : 'completed';
+            renderPlanMap(); renderPlanner();
+          });
+          chip.appendChild(topRow);
           chip.appendChild(statusBtn);
-          chip.appendChild(rmBtn);
           body.appendChild(chip);
         });
       }
