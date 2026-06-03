@@ -5158,13 +5158,33 @@ ${cardsHTML}
     plannedInput.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addPlannedTag(plannedInput.value); } });
     plannedInput.addEventListener('blur', () => { if (plannedInput.value.trim()) addPlannedTag(plannedInput.value); });
 
-    // Import from Course Planner
+    // Import from Course Planner — brings across program, units and triggers level/SP population
     document.getElementById('tr-import-plan-btn').addEventListener('click', () => {
-      const allPlanCodes = Object.values(planData).flat().map(u => u.code);
-      if (!allPlanCodes.length) { alert('No units in the Course Planner yet. Add units to your degree path plan first.'); return; }
+      const plannerProgram = document.getElementById('planner-program').value;
+      const allPlanCodes   = Object.values(planData).flat().map(u => u.code);
+
+      if (!plannerProgram && !allPlanCodes.length) {
+        alert('Nothing to import — select a program and add units to the Course Planner first.');
+        return;
+      }
+
+      // 1. Set program selector and trigger its change event to populate levels + SPs
+      if (plannerProgram && progSel.value !== plannerProgram) {
+        progSel.value = plannerProgram;
+        progSel.dispatchEvent(new Event('change'));
+      }
+
+      // 2. Import planned unit codes
       let added = 0;
-      allPlanCodes.forEach(code => { if (!planned.includes(code) && !completed.includes(code)) { addPlannedTag(code); added++; } });
-      if (added === 0) alert('All planned units are already in your lists.');
+      allPlanCodes.forEach(code => {
+        if (!planned.includes(code) && !completed.includes(code)) { addPlannedTag(code); added++; }
+      });
+
+      const msgs = [];
+      if (plannerProgram) msgs.push('Program set to ' + plannerProgram);
+      if (added > 0) msgs.push(added + ' unit' + (added !== 1 ? 's' : '') + ' imported');
+      else if (allPlanCodes.length) msgs.push('Units already in your lists');
+      if (msgs.length) alert('✅ ' + msgs.join(' · ') + '. Select your qualification level to continue.');
     });
 
     // Extract unique elective/spec units from a program
