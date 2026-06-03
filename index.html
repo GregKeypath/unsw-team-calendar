@@ -4960,7 +4960,26 @@ ${cardsHTML}
       // MM: At least 5 core + capstone; remaining electives from all pools
       { label:'Master of Management — 12 courses, 72UOC', code:'MM', totalCourses:12, electiveSlots:6,
         mandatory:['ZZBU6008'], electivePool:['coreA','spec1','spec2','elective'],
-        note:'At least 5 core courses + ZZBU6008 capstone + up to 6 electives. RPL often granted for ZZBU6002, ZZBU6003, ZZBU6004, ZZLJ8100.' },
+        note:'At least 5 core courses + ZZBU6008 capstone + up to 6 electives. RPL often granted for ZZBU6002, ZZBU6003, ZZBU6004, ZZLJ8100.',
+        electiveClusters: [
+          { name:'Strategy & Innovation Leadership',
+            forWho:'Professionals moving toward senior leadership, consulting or transformation roles. Operations managers, project leads, consultants and emerging executives who want to shape strategy and drive change.',
+            codes:['ZZBU6103','ZZBU6101','ZZBU6008','ZZBU6508'],
+            keywords:['strategy','leadership','consulting','transformation','senior','executive','change','innovation','operations'] },
+          { name:'Finance & Investment Leadership',
+            forWho:'Business leaders seeking a deeper understanding of complex financial concepts.',
+            codes:['ZZBU8702','ZZBU8703','ZZBU8705','ZZBU8707','ZZBU8701','ZZBU8704','ZZBU6509','ZZBU8708'],
+            keywords:['finance','financial','investment','banking','portfolio','equity','valuation','derivatives','capital','fund','cfa'] },
+          { name:'Business & Analytics Leadership',
+            forWho:'Managers and analysts wanting to strengthen commercial, performance and customer analytics capability.',
+            codes:['ZZBU6511','ZZBU6502','ZZBU6512','ZZBU6513','ZZBU6514','ZZBU6507','ZZBU6505'],
+            keywords:['analytics','data','marketing','digital','customer','commercial','performance','insight','visualisation','modelling'] },
+          { name:'FinTech & Digital Finance',
+            forWho:'Those seeking to lead digital transformation in financial services.',
+            codes:['ZZBU8501','ZZBU8511','ZZBU8510','ZZBU8502','ZZBU8503','ZZBU8508','ZZBU8509','ZZBU8505','ZZBU6516'],
+            keywords:['fintech','digital','technology','payments','blockchain','insurtech','regtech','decentralised','disruption','ai','lending'] },
+        ]
+      },
     ]},
     'Psychology': { levels: [
       { label:'Graduate Diploma in Psychology — 10 courses, 60UOC', code:'GDP', totalCourses:10, electiveSlots:0,
@@ -5185,7 +5204,16 @@ ${cardsHTML}
     }
 
     // Score a unit against student context
-    function scoreUnit(code, industry, goals, role, comments) {
+    // Find which elective cluster a unit belongs to (for programs that define clusters)
+    function getUnitCluster(progName, levelCode, code) {
+      const pr = PROGRAM_RULES[progName];
+      if (!pr) return null;
+      const lv = pr.levels.find(l => l.code === levelCode);
+      if (!lv || !lv.electiveClusters) return null;
+      return lv.electiveClusters.find(c => c.codes.includes(code)) || null;
+    }
+
+    function scoreUnit(code, industry, goals, role, comments, progName, levelCode) {
       const info = COURSE_INFO[code] || {};
       const corpus = [info.description || '', ...(info.clos || [])].join(' ').toLowerCase();
       let score = 0;
@@ -5215,10 +5243,22 @@ ${cardsHTML}
       if (freeHits.length >= 2)
         reasons.push('Matches your specific context: ' + freeHits.slice(0,4).join(', '));
 
+      // Bonus score: elective cluster keyword match (Management program)
+      const cluster = getUnitCluster(progName, levelCode, code);
+      if (cluster) {
+        const clusterHits = cluster.keywords.filter(kw =>
+          (industry + ' ' + role + ' ' + comments + ' ' + goals.join(' ')).toLowerCase().includes(kw)
+        );
+        if (clusterHits.length) {
+          score += clusterHits.length * 4;
+          reasons.push('Fits the "' + cluster.name + '" elective group — ' + cluster.forWho.split('.')[0]);
+        }
+      }
+
       if (!reasons.length && info.description)
         reasons.push('Available elective — review the unit details below to assess fit');
 
-      return { score, reasons: [...new Set(reasons)] };
+      return { score, reasons: [...new Set(reasons)], cluster };
     }
 
     // Build advisor talking-point script
@@ -5257,6 +5297,9 @@ ${cardsHTML}
     function buildCard(rank, unit, score, reasons, info, industry, goals) {
       const cc = CAT_COL[unit.catType] || '#6b7280';
       const [matchLabel, matchCls] = score >= 8 ? ['Strong Match','strong'] : score >= 4 ? ['Good Match','good'] : ['Possible Match','possible'];
+      const clusterBadge = unit.cluster
+        ? `<div style="font-size:0.62rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:4px;">📌 ${unit.cluster.name}</div>`
+        : '';
       const closHTML  = (info.clos || []).slice(0,4).map(c => '<li>' + c + '</li>').join('');
       const reasonsHTML = reasons.map(r => '<li>' + r + '</li>').join('');
       const script = buildScript(info, industry, goals);
@@ -5268,6 +5311,7 @@ ${cardsHTML}
           '<span class="tr-rec-code">' + unit.code + '</span>' +
           '<span class="tr-rec-match ' + matchCls + '">' + matchLabel + '</span>' +
         '</div>' +
+        clusterBadge +
         '<div class="tr-rec-name">' + unit.name + '</div>' +
         (desc ? '<div class="tr-rec-desc">' + desc + '</div>' : '') +
         (reasonsHTML ? '<div class="tr-rec-sec">Why this unit?</div><ul class="tr-rec-reasons">' + reasonsHTML + '</ul>' : '') +
@@ -5323,8 +5367,8 @@ ${cardsHTML}
 
       const hasContext = industry || goals.length || role || comments;
       const scored = allElectives.map(u => {
-        const { score, reasons } = scoreUnit(u.code, industry, goals, role, comments);
-        return { ...u, score, reasons };
+        const { score, reasons, cluster } = scoreUnit(u.code, industry, goals, role, comments, progName, levelCode);
+        return { ...u, score, reasons, cluster };
       }).sort((a, b) => b.score - a.score);
 
       const top = scored.slice(0, Math.min(3, scored.length));
