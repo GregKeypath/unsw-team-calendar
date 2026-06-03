@@ -4281,6 +4281,61 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   };
   function getCatColor(t) { return CAT_COLORS[t] || { border: '#ccc', bg: '#f9fafb', text: '#666' }; }
 
+  // ── Unit Pre-requisite Map ────────────────────────────────────
+  // Sources: UNSW carousel document, handbook review, course descriptions
+  const UNIT_PREREQS = {
+    // ── Analytics — units requiring IDA (ZZBU6501 Introductory Data Analysis)
+    'ZZBU6404': ['ZZBU6501'],  // HR Analytics
+    'ZZBU6507': ['ZZBU6501'],  // Data Visualisation & Communication
+    'ZZBU6509': ['ZZBU6501'],  // Financial Modelling
+    'ZZBU6511': ['ZZBU6501'],  // Predictive Analytics
+    'ZZBU6512': ['ZZBU6501'],  // Foundations of Marketing Analytics
+    'ZZBU6514': ['ZZBU6501'],  // Managing Customer Analytics
+    'ZZCA6510': ['ZZBU6501'],  // Decision Making in Analytics
+
+    // ── Data Science — FDS/PoP/SI family
+    'ZZSC5806': ['ZZSC9001', 'ZZSC5905'],  // Regression Analysis (FDS + SI)
+    'ZZSC5836': ['ZZEN9021'],              // Data Mining & Machine Learning (PoP)
+    'ZZSC5855': ['ZZSC9001', 'ZZSC5905'],  // Multivariate Analysis (FDS, SI)
+    'ZZSC5960': ['ZZSC9001'],              // Bayesian Inference (FDS)
+    'ZZEN9313': ['ZZEN9021'],              // Big Data Management (PoP)
+    'ZZEN9444': ['ZZEN9021'],              // Neural Networks & Deep Learning (PoP)
+
+    // ── Cyber Security
+    'ZZEN9212': ['ZZEN9213'],  // Advanced Penetration Testing requires basic Penetration Testing
+
+    // ── Applied Finance
+    'ZZBU8507': ['ZZBU8504'],  // Robo-Advice requires Technical Tools for FinTech
+
+    // ── HRM
+    'ZZBU6008': ['ZZBU6007'],  // Strategic Consulting Project requires Career Navigator
+
+    // ── Psychology — strictly sequential
+    'ZZPS5003': ['ZZPS5001', 'ZZPS5002'],
+    'ZZPS5004': ['ZZPS5001', 'ZZPS5002', 'ZZPS5003'],
+    'ZZPS5005': ['ZZPS5001', 'ZZPS5002', 'ZZPS5003', 'ZZPS5004'],
+    'ZZPS5006': ['ZZPS5001', 'ZZPS5002', 'ZZPS5003', 'ZZPS5004'],
+    'ZZPS5007': ['ZZPS5001', 'ZZPS5002', 'ZZPS5003', 'ZZPS5004'],
+    'ZZPS5008': ['ZZPS5001', 'ZZPS5002', 'ZZPS5003', 'ZZPS5004'],
+    'ZZPS5009': ['ZZPS5001', 'ZZPS5002', 'ZZPS5003', 'ZZPS5004'],
+    'ZZPS5010': ['ZZPS5001','ZZPS5002','ZZPS5003','ZZPS5004','ZZPS5005','ZZPS5006','ZZPS5007','ZZPS5008','ZZPS5009'],
+  };
+
+  // Return pre-reqs for a unit that are NOT yet in an earlier SP (or completed in the same SP)
+  function getUnmetPrereqs(code, targetSP, prog) {
+    const reqs = UNIT_PREREQS[code];
+    if (!reqs || !reqs.length) return [];
+    const targetIdx = prog ? prog.sps.indexOf(targetSP) : -1;
+    const satisfied = new Set();
+    // All units in earlier SPs count as satisfied
+    prog.sps.slice(0, Math.max(0, targetIdx)).forEach(sp => {
+      (planData[sp] || []).forEach(u => satisfied.add(u.code));
+    });
+    // Completed units in the SAME SP also count
+    (planData[targetSP] || []).filter(u => u.status === 'completed').forEach(u => satisfied.add(u.code));
+    return reqs.filter(req => !satisfied.has(req));
+  }
+
   function initPlanner() {
     const progSel = document.getElementById('planner-program');
     const spSel = document.getElementById('planner-sp');
@@ -4570,6 +4625,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         units.forEach(u => {
           const chip = document.createElement('div');
           chip.className = `plan-chip cat-${u.cat}${u.status === 'completed' ? ' is-completed' : ''}`;
+          // Check pre-requisites
+          const prog4req = PLANNER_PROGRAMS[document.getElementById('planner-program').value];
+          const unmetReqs = getUnmetPrereqs(u.code, sp, prog4req);
+
           chip.style.flexDirection = 'column';
           chip.style.alignItems = 'stretch';
           const topRow = document.createElement('div');
@@ -4600,6 +4659,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           });
           chip.appendChild(topRow);
           chip.appendChild(statusBtn);
+          // Pre-req warning badge
+          if (unmetReqs.length) {
+            const prereqWarn = document.createElement('div');
+            prereqWarn.style.cssText = 'background:#fef3c7;border:1px solid #fbbf24;border-radius:4px;padding:2px 6px;font-size:0.57rem;font-weight:700;color:#92400e;margin-top:3px;line-height:1.4;';
+            prereqWarn.textContent = '⚠️ Pre-req needed: ' + unmetReqs.join(', ');
+            chip.appendChild(prereqWarn);
+          }
           body.appendChild(chip);
         });
       }
@@ -4649,6 +4715,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         if (!planData[sp]) planData[sp] = [];
         if (planData[sp].some(u => u.code === code)) return;
         planData[sp].push({ code, name, cat: catType, catLabel });
+        // Warn if pre-reqs aren't satisfied
+        const progForReq = PLANNER_PROGRAMS[document.getElementById('planner-program').value];
+        const unmet = getUnmetPrereqs(code, sp, progForReq);
+        if (unmet.length) {
+          const names = unmet.map(c => { const ci = COURSE_INFO[c]; return ci ? c + ' ' + (ci.description||'').split(' ').slice(0,4).join(' ')+'…' : c; });
+          setTimeout(() => alert('⚠️ Pre-requisite check\n\n' + code + ' requires the following unit(s) to be completed first:\n• ' + names.join('\n• ') + '\n\nMake sure these appear in an earlier study period in the plan.'), 100);
+        }
         renderPlanMap();
         renderPlanner();
       });
