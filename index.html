@@ -5437,7 +5437,7 @@ ${cardsHTML}
       const clusterBadge = unit.cluster
         ? `<div style="font-size:0.62rem;font-weight:700;color:#7c3aed;background:#ede9fe;padding:2px 8px;border-radius:10px;display:inline-block;margin-bottom:4px;">📌 ${unit.cluster.name}</div>`
         : '';
-      const closHTML  = (info.clos || []).slice(0,4).map(c => '<li>' + c + '</li>').join('');
+      const closHTML  = ''; // CLOs removed from triage cards per user request
       const reasonsHTML = reasons.map(r => '<li>' + r + '</li>').join('');
       const script = buildScript(info, industry, goals);
       const desc = (info.description || '').substring(0, 220) + ((info.description||'').length > 220 ? '…' : '');
