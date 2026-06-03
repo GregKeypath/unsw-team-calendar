@@ -6008,9 +6008,17 @@ ${cardsHTML}
     const units = getUnitsForSP(sp);
     if (!units.length) { grid.innerHTML = '<div class="dr-empty">No units found for ' + sp.split(' ')[0] + ' 20' + sp.split(' ')[1] + '.</div>'; return; }
 
+    // Filter out units with a known drop rate of 5% or lower
+    const filteredUnits = units.filter(u => {
+      const rate = getEffectiveDropNum(sp, u.code);
+      return rate === null || rate > 5; // keep unknowns and anything above 5%
+    });
+
+    if (!filteredUnits.length) { grid.innerHTML = '<div class="dr-empty">No units with a drop rate above 5% for this period.</div>'; return; }
+
     // Group by primary program
     const byProgram = {};
-    units.forEach(u => {
+    filteredUnits.forEach(u => {
       const prog = u.programs[0];
       if (!byProgram[prog]) byProgram[prog] = [];
       byProgram[prog].push(u);
