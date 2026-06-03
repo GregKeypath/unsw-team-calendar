@@ -1182,6 +1182,16 @@
     .plan-chip-name { color: #222; font-size: 0.67rem; line-height: 1.3; word-break: break-word; display: block; margin-top: 1px; }
     .plan-chip-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 0.65rem; padding: 0 1px; line-height: 1; flex-shrink: 0; margin-top: 1px; }
     .plan-chip-remove:hover { color: #ef4444; }
+    .plan-chip-status { background: none; border: none; cursor: pointer; font-size: 0.62rem; padding: 0 2px; line-height: 1; flex-shrink: 0; color: #d1d5db; margin-top: 1px; }
+    .plan-chip-status:hover { color: #16a34a; }
+    .plan-chip.is-completed { opacity: 0.6; border-left-color: #16a34a !important; background: #f0fdf4 !important; }
+    .plan-chip.is-completed .plan-chip-status { color: #16a34a; }
+    .plan-chip.is-completed .plan-chip-code { text-decoration: line-through; color: #6b7280; }
+    .tr-gap-section { margin-top: 16px; }
+    .tr-gap-hd { font-size:0.68rem; font-weight:800; color:#7c3aed; text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; padding:6px 10px; background:#ede9fe; border-radius:6px; }
+    .tr-gap-sp { margin-bottom:14px; }
+    .tr-gap-sp-label { font-size:0.72rem; font-weight:700; color:#374151; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+    .tr-gap-sp-badge { background:#1e3a5f; color:#fff; font-size:0.6rem; font-weight:800; padding:2px 8px; border-radius:10px; }
     .plan-drop-hint { font-size: 0.65rem; color: #d1d5db; text-align: center; padding: 12px 4px; font-style: italic; }
     .plan-col-body.drag-invalid { background: rgba(239,68,68,0.06); outline: 2px dashed #ef4444; }
     .plan-col-body.drag-invalid .plan-drop-hint { color: #fca5a5; }
@@ -1772,6 +1782,7 @@
         <textarea id="tr-comments" rows="3" placeholder="e.g. wants to move into a data analytics role, currently in banking compliance, interested in leadership track..."></textarea>
       </div>
 
+      <input type="hidden" id="tr-planner-empty-sps" value="">
       <button class="triage-run-btn" id="tr-run-btn">🔍 Find Best Electives</button>
       <button class="triage-clear-btn" id="tr-clear-btn">↺ Clear Form</button>
     </div>
@@ -4554,10 +4565,21 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       } else {
         units.forEach(u => {
           const chip = document.createElement('div');
-          chip.className = `plan-chip cat-${u.cat}`;
+          chip.className = `plan-chip cat-${u.cat}${u.status === 'completed' ? ' is-completed' : ''}`;
           const txt = document.createElement('div');
           txt.className = 'plan-chip-text';
           txt.innerHTML = `<span class="plan-chip-cat">${u.catLabel || ''}</span><span class="plan-chip-code">${u.code}</span><span class="plan-chip-name">${u.name}</span>`;
+          // Status toggle button (✓ = completed, ○ = planned)
+          const statusBtn = document.createElement('button');
+          statusBtn.className = 'plan-chip-status';
+          statusBtn.title = u.status === 'completed' ? 'Mark as planned' : 'Mark as completed';
+          statusBtn.textContent = u.status === 'completed' ? '✓' : '○';
+          statusBtn.addEventListener('click', () => {
+            const arr = planData[sp] || [];
+            const idx = arr.findIndex(x => x.code === u.code);
+            if (idx !== -1) arr[idx].status = arr[idx].status === 'completed' ? 'planned' : 'completed';
+            renderPlanMap(); renderPlanner();
+          });
           const rmBtn = document.createElement('button');
           rmBtn.className = 'plan-chip-remove';
           rmBtn.title = 'Remove';
@@ -4568,6 +4590,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
             renderPlanner();
           });
           chip.appendChild(txt);
+          chip.appendChild(statusBtn);
           chip.appendChild(rmBtn);
           body.appendChild(chip);
         });
@@ -5245,17 +5268,36 @@ ${cardsHTML}
         levelSel.dispatchEvent(new Event('change'));
       }
 
-      // 3. Import planned unit codes
-      let added = 0;
-      allPlanCodes.forEach(code => {
-        if (!planned.includes(code) && !completed.includes(code)) { addPlannedTag(code); added++; }
+      // 3. Route by status: completed → completed tags, planned → planned tags
+      const allPlanUnits = Object.values(planData).flat();
+      let addedC = 0, addedP = 0;
+      allPlanUnits.forEach(u => {
+        if (u.status === 'completed') {
+          if (!completed.includes(u.code)) { addTag(u.code); addedC++; }
+        } else {
+          if (!planned.includes(u.code) && !completed.includes(u.code)) { addPlannedTag(u.code); addedP++; }
+        }
       });
+
+      // 4. Store empty SPs from the planner window for triage gap section
+      const plannerStartSP  = document.getElementById('planner-sp').value;
+      const plannerCount    = parseInt(document.getElementById('planner-count').value) || 6;
+      const plannerProg     = PLANNER_PROGRAMS[plannerProgram];
+      if (plannerProg && plannerStartSP) {
+        const startIdx = plannerProg.sps.indexOf(plannerStartSP);
+        if (startIdx !== -1) {
+          const planWindow = plannerProg.sps.slice(startIdx, startIdx + plannerCount);
+          const emptySPs = planWindow.filter(sp => !breakSPs[sp] && (!planData[sp] || planData[sp].length === 0));
+          document.getElementById('tr-planner-empty-sps').value = JSON.stringify(emptySPs);
+        }
+      }
 
       const msgs = [];
       if (plannerProgram) msgs.push('Program: ' + plannerProgram);
       if (plannerQual) msgs.push('Level imported');
-      if (added > 0) msgs.push(added + ' unit' + (added !== 1 ? 's' : '') + ' imported');
-      else if (allPlanCodes.length) msgs.push('Units already in your lists');
+      if (addedC) msgs.push(addedC + ' completed unit' + (addedC !== 1 ? 's' : ''));
+      if (addedP) msgs.push(addedP + ' planned unit' + (addedP !== 1 ? 's' : ''));
+      if (!addedC && !addedP && allPlanUnits.length) msgs.push('Units already in your lists');
       if (!plannerQual) msgs.push('select a qualification level to continue');
       if (msgs.length) alert('✅ ' + msgs.join(' · ') + '.');
     });
@@ -5571,6 +5613,31 @@ ${cardsHTML}
         const infoPlus = Object.assign({}, COURSE_INFO[u.code] || {}, { _nextRuns: runs.join(', ') });
         html += buildCard(i + 1, u, u.score, u.reasons, infoPlus, industry, goals);
       });
+      // ── Empty SP gap recommendations ──────────────────────────
+      const emptySPsRaw = document.getElementById('tr-planner-empty-sps').value;
+      if (emptySPsRaw) {
+        try {
+          const emptySPs = JSON.parse(emptySPsRaw).filter(sp => sp !== filterSP);
+          if (emptySPs.length) {
+            html += '<div class="tr-gap-section"><div class="tr-gap-hd">📅 Fill Your Empty Study Periods (' + emptySPs.length + ' gap' + (emptySPs.length !== 1 ? 's' : '') + ' in your plan)</div>';
+            emptySPs.forEach(sp => {
+              const spLabel = sp.split(' ')[0] + ' 20' + sp.split(' ')[1];
+              const gapUnits = getElectives(progName, levelCode, sp)
+                .filter(u => !completed.includes(u.code) && !planned.includes(u.code));
+              if (!gapUnits.length) return;
+              const gapScored = gapUnits.map(u => {
+                const { score, reasons, cluster } = scoreUnit(u.code, industry, goals, role, comments, progName, levelCode);
+                return { ...u, score, reasons, cluster };
+              }).sort((a,b) => b.score - a.score).slice(0, 3);
+              html += '<div class="tr-gap-sp"><div class="tr-gap-sp-label"><span class="tr-gap-sp-badge">' + spLabel + '</span> Top ' + gapScored.length + ' available</div>';
+              gapScored.forEach((u, i) => { html += buildCard(i+1, u, u.score, u.reasons, Object.assign({}, COURSE_INFO[u.code]||{}, {_nextRuns: ''}), industry, goals); });
+              html += '</div>';
+            });
+            html += '</div>';
+          }
+        } catch(e) {}
+      }
+
       output.innerHTML = html;
     }
 
@@ -5589,6 +5656,7 @@ ${cardsHTML}
       document.querySelectorAll('#tr-goals .triage-check').forEach(l => l.classList.remove('is-checked'));
       completed.length = 0; compTags.innerHTML = '';
       planned.length = 0; plannedTags.innerHTML = '';
+      document.getElementById('tr-planner-empty-sps').value = '';
       document.getElementById('tr-output').innerHTML = '<div class="tr-empty"><div class="tr-empty-icon">🎯</div><p>Fill in the student details and click <strong>Find Best Electives</strong> to get personalised recommendations and advisor talking points.</p></div>';
     }
 
