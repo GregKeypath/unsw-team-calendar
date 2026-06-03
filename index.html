@@ -5040,6 +5040,43 @@ ${cardsHTML}
 
   // ── Student Triage ────────────────────────────────────────────
   function initTriage() {
+    // Job title → industry + Management cluster boost
+    // Matched against the role field; gives same weight as a strong industry match
+    const ROLE_BOOST_MAP = [
+      { match:['financial analyst','finance analyst','investment analyst','portfolio manager','fund manager','equity analyst','equity research','treasury analyst','treasury manager','cfo','chief financial','finance manager','accountant','accounting manager','fp&a','financial planning','credit analyst','risk analyst'],
+        industry:'Finance & Banking', cluster:'Finance & Investment Leadership' },
+      { match:['data analyst','business analyst','data scientist','analytics manager','bi analyst','business intelligence','reporting analyst','insights analyst','data engineer','analytics lead','senior analyst','quantitative analyst'],
+        industry:'Technology & IT', cluster:'Business & Analytics Leadership' },
+      { match:['data science','machine learning','ai engineer','artificial intelligence','deep learning','nlp','neural network'],
+        industry:'Technology & IT', cluster:'Business & Analytics Leadership' },
+      { match:['hr manager','human resources','people and culture','people & culture','talent acquisition','learning and development','l&d manager','hr business partner','hr consultant','recruitment consultant','payroll manager','workforce planning','employee relations','talent manager','hrbp'],
+        industry:'Human Resources & People' },
+      { match:['marketing manager','digital marketing','brand manager','content manager','crm manager','growth manager','seo manager','social media manager','campaign manager','communications manager','marketing director','marketing lead','performance marketer'],
+        industry:'Marketing & Communications', cluster:'Business & Analytics Leadership' },
+      { match:['ceo','coo','general manager','managing director','executive director','vice president','head of','chief executive','chief operating','country manager','regional manager','gm '],
+        industry:'Management Consulting', cluster:'Strategy & Innovation Leadership', goalBoost:'promotion' },
+      { match:['consultant','senior consultant','strategy consultant','management consultant','strategic advisor','strategy manager','transformation manager','change manager','business transformation'],
+        industry:'Management Consulting', cluster:'Strategy & Innovation Leadership' },
+      { match:['fintech','digital transformation','innovation manager','product manager','technology manager','digital strategy','payments manager','banking technology','insurtech','blockchain','crypto','digital finance'],
+        industry:'Technology & IT', cluster:'FinTech & Digital Finance' },
+      { match:['compliance officer','risk and compliance','risk manager','regulatory manager','legal counsel','lawyer','solicitor','policy manager','governance manager','compliance manager','aml','kyc'],
+        industry:'Legal & Compliance', cluster:'Strategy & Innovation Leadership' },
+      { match:['project manager','program manager','project lead','delivery manager','scrum master','agile coach','project coordinator','pmo','project director'],
+        industry:'Operations & Project Management', cluster:'Strategy & Innovation Leadership' },
+      { match:['operations manager','operations director','supply chain manager','logistics manager','process improvement','continuous improvement','lean','operations lead'],
+        industry:'Operations & Project Management' },
+      { match:['nurse','doctor','physiotherapist','allied health','healthcare manager','clinical manager','medical officer','hospital administrator','health service'],
+        industry:'Healthcare & Medical' },
+      { match:['teacher','educator','trainer','learning manager','training manager','curriculum designer','instructional designer','rto','training coordinator'],
+        industry:'Education & Training' },
+      { match:['founder','co-founder','startup','entrepreneur','small business owner','self employed','business owner','director and owner'],
+        industry:'Entrepreneurship & Innovation', cluster:'Strategy & Innovation Leadership' },
+      { match:['software engineer','developer','software developer','programmer','engineering manager','tech lead','architect','devops','cloud engineer'],
+        industry:'Technology & IT' },
+      { match:['cyber security','security analyst','penetration tester','security engineer','infosec','soc analyst','threat intelligence','security consultant','security manager'],
+        industry:'Technology & IT' },
+    ];
+
     const IND_KW = {
       'Finance & Banking':            ['finance','financial','investment','banking','portfolio','equity','valuation','derivatives','capital','fund','market','risk','asset','return','monetary','economic','treasury'],
       'Technology & IT':              ['technology','digital','data','analytics','programming','software','system','tech','cloud','computing','database','algorithm','machine','intelligence','cyber','coding','automation'],
@@ -5305,6 +5342,37 @@ ${cardsHTML}
         }
       });
 
+      // Role title boost — lookup job title patterns for industry + cluster signals
+      if (role) {
+        const roleLower = role.toLowerCase();
+        ROLE_BOOST_MAP.forEach(entry => {
+          if (!entry.match.some(phrase => roleLower.includes(phrase))) return;
+
+          // Boost: treat matched industry the same as selecting it in the dropdown
+          const roleKws = IND_KW[entry.industry] || [];
+          const roleHits = roleKws.filter(kw => corpus.includes(kw));
+          if (roleHits.length) {
+            score += roleHits.length * 2;
+            if (!reasons.some(r => r.includes('role') || r.includes(entry.industry)))
+              reasons.push('Your ' + role + ' role aligns with this unit (' + roleHits.slice(0,3).join(', ') + ')');
+          }
+
+          // Boost: Management elective cluster match
+          const cluster = getUnitCluster(progName, levelCode, code);
+          if (cluster && entry.cluster && cluster.name === entry.cluster) {
+            score += 8;
+            if (!reasons.some(r => r.includes(cluster.name)))
+              reasons.push('Your role as ' + role + ' is a strong fit for the "' + cluster.name + '" pathway');
+          }
+
+          // Boost: goal alignment if entry maps to a specific goal
+          if (entry.goalBoost && goals.includes(entry.goalBoost)) {
+            score += 4;
+          }
+        });
+      }
+
+      // Free-text word matching (role + comments)
       const freeText = (role + ' ' + comments).toLowerCase();
       const freeWords = [...new Set(freeText.split(/\W+/).filter(w => w.length > 4))];
       const freeHits = freeWords.filter(w => corpus.includes(w));
