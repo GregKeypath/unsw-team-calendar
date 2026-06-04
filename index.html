@@ -4360,7 +4360,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         opt.textContent = sp;
         spSel.appendChild(opt);
       });
-      spSel.value = prog.sps[0];
+      // Default to current SP — detect from today's date via UNSW_WEEKS
+      const _now = new Date();
+      const _tk = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
+      const _wk = UNSW_WEEKS[_tk];
+      const _curSP = _wk ? `H${_wk.hex} ${String(_now.getFullYear()).slice(2)}` : null;
+      spSel.value = (_curSP && prog.sps.includes(_curSP)) ? _curSP : prog.sps[0];
 
       // Populate qualification level dropdown
       const qualSel = document.getElementById('planner-qual');
