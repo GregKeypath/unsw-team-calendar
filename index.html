@@ -2631,16 +2631,15 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   const PACING_SECTIONS = [
     { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
       cols:[
-        { h:'Target',      f:'st',    edit:true },
+        { h:'Inc Target',  f:'it',    edit:false },
         { h:'Enrolled',    f:'en',    edit:true },
-        { h:'% to Start',  f:'pctSt', edit:false, type:'pct' },
+        { h:'% Incentive', f:'pctIt', edit:false, type:'pct' },
       ]},
     { cls:'s-stretch', label:'🎯 Stretch Tracking', span:'',
       cols:[
-        { h:'Inc Target',    f:'it',    edit:false },
-        { h:'% Incentive',   f:'pctIt', edit:false, type:'pct' },
-        { h:'Str Target',    f:'stt',   edit:false },
-        { h:'% Stretch',     f:'pctSt2',edit:false, type:'pct' },
+        { h:'Str Target',  f:'stt',    edit:false },
+        { h:'Enrolled',    f:'en',     edit:false },
+        { h:'% Stretch',   f:'pctSt2', edit:false, type:'pct' },
       ]},
     { cls:'s-gcm', label:'🎓 GC > M Tracker', span:'',
       cols:[
