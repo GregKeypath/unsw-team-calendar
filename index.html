@@ -853,16 +853,19 @@
     .section-card.full { grid-column: span 12; }
     .section-card.half { grid-column: span 6; }
     .sc-hdr { padding: 9px 12px; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; }
-    /* Section colours */
-    .s-incentive { background: var(--sec-1-bg); color: var(--sec-1-txt); }
-    .s-stretch   { background: var(--sec-2-bg); color: var(--sec-2-txt); }
-    .s-gcm       { background: var(--sec-3-bg); color: var(--sec-3-txt); }
-    .s-sixtyDay  { background: var(--sec-4-bg); color: var(--sec-4-txt); }
-    .s-t1t2      { background: var(--sec-5-bg); color: var(--sec-5-txt); }
-    .s-kpi       { background: var(--sec-6-bg); color: var(--sec-6-txt); }
-    .s-weight        { background: var(--sec-7-bg); color: var(--sec-7-txt); }
-    .s-cohortContact { background: var(--sec-8-bg); color: var(--sec-8-txt); }
-    .s-start         { background: var(--sec-9-bg); color: var(--sec-9-txt); }
+    /* Section colours — applied to .sc-hdr only */
+    .sc-hdr.s-incentive    { background: var(--sec-1-bg); color: var(--sec-1-txt); }
+    .sc-hdr.s-stretch      { background: var(--sec-2-bg); color: var(--sec-2-txt); }
+    .sc-hdr.s-gcm          { background: var(--sec-3-bg); color: var(--sec-3-txt); }
+    .sc-hdr.s-sixtyDay     { background: var(--sec-4-bg); color: var(--sec-4-txt); }
+    .sc-hdr.s-t1t2         { background: var(--sec-5-bg); color: var(--sec-5-txt); }
+    .sc-hdr.s-kpi          { background: var(--sec-6-bg); color: var(--sec-6-txt); }
+    .sc-hdr.s-weight       { background: var(--sec-7-bg); color: var(--sec-7-txt); }
+    .sc-hdr.s-cohortContact{ background: var(--sec-8-bg); color: var(--sec-8-txt); }
+    .sc-hdr.s-start        { background: var(--sec-9-bg); color: var(--sec-9-txt); }
+    /* Drops card — red border on whole card, red header */
+    .section-card.s-drops  { border: 2px solid #ef4444 !important; }
+    .sc-hdr.s-drops        { background: #7f1d1d; color: #fecaca; }
     /* Mini-table inside each card */
     .sc-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
     .sc-table th { padding: 5px 8px; font-size: 0.57rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa; color: #777; text-align: left; white-space: nowrap; border-bottom: 1px solid #eee; }
@@ -2634,11 +2637,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     // ── Row 1: 4 × span-3 ──────────────────────────────────────────
     { cls:'s-start', label:'📋 Start Tracking', span:'',
       cols:[
-        { h:'Start Target', f:'st',     edit:true },
-        { h:'Enrolled',     f:'en',     edit:true },
-        { h:'% to Start',   f:'pctSt',  edit:false, type:'pct' },
-        { h:'ROPS',         f:'stRops', edit:false, type:'num-calc' },
-        { h:'Drop Rate',    f:'dr',     edit:true,  type:'pct-input' },
+        { h:'Start Target', f:'st',    edit:true },
+        { h:'Enrolled',     f:'en',    edit:true },
+        { h:'% to Start',   f:'pctSt', edit:false, type:'pct' },
       ]},
     { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
       cols:[
@@ -2658,7 +2659,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'GC-M Enrolled', f:'gcm',     edit:false },
         { h:'Conv %',        f:'gcmC',    edit:false, type:'pct' },
       ]},
-    // ── Row 2: 60 Day + Cohort Contact side by side ────────────────
+    // ── Row 2: Drops (3) + 60 Day (6) + Cohort Contact (3) = 12 ───
+    { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'',
+      cols:[
+        { h:'Drops',      f:'stRops', edit:false, type:'num-calc' },
+        { h:'Drop Rate',  f:'dr',     edit:true,  type:'pct-input' },
+      ]},
     { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'half',
       cols:[
         { h:'Cohort',              f:'cohort',          edit:false },
@@ -2667,7 +2673,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Remaining',           f:'remaining',       edit:false },
         { h:'Per Day to Census',   f:'remainingPerDay', edit:false },
       ]},
-    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'half',
+    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
       cols:[
         { h:'Cohort',              f:'cohort',           edit:false },
         { h:'Contacted (May–Jul)', f:'cohortContact',    edit:false },
@@ -3084,7 +3090,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   function buildSectionCards(rowItems) {
     return '<div class="pacing-grid">' +
       PACING_SECTIONS.map(sec => {
-        const cardCls = `section-card${sec.span ? ' ' + sec.span : ''}`;
+        const cardCls = `section-card ${sec.cls}${sec.span ? ' ' + sec.span : ''}`;
         const theadCols = sec.cols.map(c => `<th>${c.h}</th>`).join('');
         const tbodyRows = rowItems.map(item => {
           const cells = sec.cols.map(col => cellHtml(col, item.r, item)).join('');
