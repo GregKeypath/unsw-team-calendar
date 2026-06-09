@@ -1296,6 +1296,10 @@
     .droprate-sp-select { border:1px solid #e5e7eb; border-radius:7px; padding:8px 12px; font-size:0.82rem; color:#111; background:#fff; outline:none; }
     .droprate-sp-select:focus { border-color:#1e3a5f; }
     .droprate-save-note { font-size:0.67rem; color:#9ca3af; margin-left:auto; }
+    .dr-search { border:1px solid #e5e7eb; border-radius:7px; padding:8px 12px 8px 34px; font-size:0.82rem; color:#111; background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center; outline:none; width:210px; }
+    .dr-search:focus { border-color:#1e3a5f; }
+    .dr-search::placeholder { color:#9ca3af; }
+    .dr-rate-locked { display:inline-flex; align-items:center; gap:4px; border-radius:6px; padding:5px 9px; font-size:0.8rem; font-weight:800; white-space:nowrap; max-width:140px; overflow:hidden; text-overflow:ellipsis; }
     .droprate-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; }
     .dr-card { background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:16px; border-top:3px solid #e5e7eb; display:flex; flex-direction:column; gap:10px; }
     .dr-card.high-drop { background:#fff5f5; border-top-color:#ef4444 !important; box-shadow:0 2px 8px rgba(239,68,68,0.15); }
@@ -1309,8 +1313,7 @@
     .dr-field-label { font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin-bottom:4px; }
     .dr-rate-input { border:1px solid #e5e7eb; border-radius:6px; padding:6px 10px; font-size:0.82rem; width:100%; box-sizing:border-box; outline:none; font-family:inherit; }
     .dr-rate-input:focus { border-color:#1e3a5f; }
-    .dr-rate-locked { display:inline-flex; align-items:center; gap:5px; border-radius:6px; padding:5px 10px; font-size:0.82rem; font-weight:800; white-space:nowrap; }
-    .dr-rate-locked .dr-lock-icon { font-size:0.65rem; opacity:0.7; }
+    .dr-rate-locked .dr-lock-icon { font-size:0.65rem; opacity:0.7; flex-shrink:0; }
     .dr-rate-locked.rate-green  { background:#d1fae5; color:#065f46; }
     .dr-rate-locked.rate-amber  { background:#fef3c7; color:#92400e; }
     .dr-rate-locked.rate-orange { background:#ffedd5; color:#9a3412; }
@@ -1699,6 +1702,7 @@
       <select id="dr-sp-select" class="droprate-sp-select">
         <option value="">— Select Study Period —</option>
       </select>
+      <input id="dr-search" class="dr-search" type="text" placeholder="Search units…">
       <span class="droprate-save-note">Changes save automatically and are shared with the team</span>
     </div>
     <div id="droprate-grid" class="droprate-grid">
@@ -6166,6 +6170,8 @@ ${cardsHTML}
 
     const card = document.createElement('div');
     card.className = 'dr-card' + (isHighDrop ? ' high-drop' : '');
+    card.dataset.search = `${u.code} ${u.name} ${u.programs.join(' ')}`.toLowerCase();
+    card.dataset.prog = u.programs[0] || '';
     if (!isHighDrop) card.style.borderTopColor = borderColor;
 
     card.innerHTML = `
@@ -6177,8 +6183,8 @@ ${cardsHTML}
           </div>
           ${isHighDrop ? `<span class="dr-high-badge">⚠️ High Drop Risk</span>` : ''}
         </div>
-        <div style="flex-shrink:0;text-align:right;">
-          <div class="dr-field-label" style="margin-bottom:4px;">${spLabel}</div>
+        <div style="flex-shrink:0;text-align:right;min-width:95px;">
+          <div class="dr-field-label" style="margin-bottom:4px;white-space:nowrap;">${spLabel}</div>
           ${drRateFieldHtml(sp, u.code, currentRate)}
         </div>
       </div>
@@ -6223,6 +6229,8 @@ ${cardsHTML}
 
   function renderDropRateGrid(sp) {
     const grid = document.getElementById('droprate-grid');
+    const srch = document.getElementById('dr-search');
+    if (srch) srch.value = '';
     if (!sp) { grid.innerHTML = '<div class="dr-empty">Select a study period to see units running that hex.</div>'; return; }
     const units = getUnitsForSP(sp);
     if (!units.length) { grid.innerHTML = '<div class="dr-empty">No units found for ' + sp.split(' ')[0] + ' 20' + sp.split(' ')[1] + '.</div>'; return; }
@@ -6257,6 +6265,8 @@ ${cardsHTML}
       const color = DR_CAT_COLORS[prog] || '#374151';
       // Program header
       const hd = document.createElement('div');
+      hd.className = 'dr-prog-header';
+      hd.dataset.prog = prog;
       hd.style.cssText = `grid-column:1/-1;display:flex;align-items:center;gap:10px;margin-top:16px;padding-bottom:6px;border-bottom:2px solid ${color};`;
       hd.innerHTML = `<span style="font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:${color};">${prog}</span><span style="font-size:0.68rem;color:#9ca3af;">${progUnits.length} unit${progUnits.length!==1?'s':''}</span>`;
       grid.appendChild(hd);
@@ -6286,6 +6296,21 @@ ${cardsHTML}
     // Default to H4 2026
     spSel.value = START_SP;
     spSel.addEventListener('change', () => renderDropRateGrid(spSel.value));
+
+    // Search — live filter cards and hide empty program headers
+    document.getElementById('dr-search').addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      const grid = document.getElementById('droprate-grid');
+      grid.querySelectorAll('.dr-card').forEach(card => {
+        card.style.display = (!q || card.dataset.search.includes(q)) ? '' : 'none';
+      });
+      grid.querySelectorAll('.dr-prog-header').forEach(hd => {
+        const prog = hd.dataset.prog;
+        const hasVisible = [...grid.querySelectorAll(`.dr-card[data-prog="${CSS.escape(prog)}"]`)]
+          .some(c => c.style.display !== 'none');
+        hd.style.display = hasVisible ? '' : 'none';
+      });
+    });
   }
 
   // Load drop rate data when tab is first opened
