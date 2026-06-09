@@ -2991,12 +2991,28 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   }
 
   function overlayLockedTargets(dataset) {
-    // it/stt are non-editable locked values — always apply from hardcoded PACING_DATA
     for (const [hexKey, hexData] of Object.entries(PACING_DATA)) {
-      if (!dataset[hexKey]) continue;
+      // If this hex is missing from Firebase entirely, seed it from hardcoded data
+      if (!dataset[hexKey]) {
+        dataset[hexKey] = JSON.parse(JSON.stringify(hexData));
+        dataset[hexKey].total = calcTotal(dataset[hexKey].rows || []);
+        continue;
+      }
       hexData.rows.forEach(srcRow => {
-        const tgt = (dataset[hexKey].rows || []).find(r => r.name === srcRow.name);
-        if (tgt) { tgt.it = srcRow.it; tgt.stt = srcRow.stt; }
+        const fbRow = (dataset[hexKey].rows || []).find(r => r.name === srcRow.name);
+        if (!fbRow) return;
+        // Detect stale placeholder: it===0 && stt===0 means the row was never
+        // populated with real targets — do a full reset from hardcoded data,
+        // preserving only genuinely user-entered KPI fields
+        if (fbRow.it === 0 && fbRow.stt === 0) {
+          const keep = { kR: fbRow.kR, kS: fbRow.kS, k6: fbRow.k6,
+                         calls: fbRow.calls, sts: fbRow.sts, cq: fbRow.cq };
+          Object.assign(fbRow, srcRow, keep);
+        } else {
+          // Row has real data — only overlay the locked target fields
+          fbRow.it = srcRow.it;
+          fbRow.stt = srcRow.stt;
+        }
       });
       dataset[hexKey].total = calcTotal(dataset[hexKey].rows || []);
     }
