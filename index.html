@@ -25,6 +25,7 @@
       --sec-5-bg: #1e40af; --sec-5-txt: #bfdbfe;
       --sec-6-bg: #134e4a; --sec-6-txt: #99f6e4;
       --sec-7-bg: #881337; --sec-7-txt: #fda4af;
+      --sec-8-bg: #1c1917; --sec-8-txt: #fed7aa;
 
       /* Calendar day column tints */
       --day-mon: #EFF6FF;
@@ -858,7 +859,8 @@
     .s-sixtyDay  { background: var(--sec-4-bg); color: var(--sec-4-txt); }
     .s-t1t2      { background: var(--sec-5-bg); color: var(--sec-5-txt); }
     .s-kpi       { background: var(--sec-6-bg); color: var(--sec-6-txt); }
-    .s-weight    { background: var(--sec-7-bg); color: var(--sec-7-txt); }
+    .s-weight        { background: var(--sec-7-bg); color: var(--sec-7-txt); }
+    .s-cohortContact { background: var(--sec-8-bg); color: var(--sec-8-txt); }
     /* Mini-table inside each card */
     .sc-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
     .sc-table th { padding: 5px 8px; font-size: 0.57rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa; color: #777; text-align: left; white-space: nowrap; border-bottom: 1px solid #eee; }
@@ -2638,15 +2640,23 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ]},
     { cls:'s-gcm', label:'🎓 GC > M Tracker', span:'',
       cols:[
-        { h:'GC>M Enrolled', f:'gcm',  edit:true },
-        { h:'GC>M Target',   f:'gcmt', edit:true },
-        { h:'Conv %',        f:'gcmC', edit:false, type:'pct' },
+        { h:'GC-M Pool',     f:'gcmPool', edit:false },
+        { h:'GC-M Enrolled', f:'gcm',     edit:false },
+        { h:'Conv %',        f:'gcmC',    edit:false, type:'pct' },
       ]},
     { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'',
       cols:[
-        { h:'Cohort',    f:'cohort', edit:true },
-        { h:'Contacted', f:'ctd',    edit:true },
-        { h:'% Target',  f:'cPct',  edit:false, type:'pct' },
+        { h:'Cohort',              f:'cohort',          edit:false },
+        { h:'Contacted (≥21 May)', f:'ctd',             edit:false },
+        { h:'% Contacted',         f:'cPct',            edit:false, type:'pct' },
+        { h:'Remaining',           f:'remaining',       edit:false },
+        { h:'Per Day to Census',   f:'remainingPerDay', edit:false },
+      ]},
+    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
+      cols:[
+        { h:'Cohort',              f:'cohort',            edit:false },
+        { h:'Contacted (May–Jul)', f:'cohortContact',     edit:false },
+        { h:'% Contacted',         f:'cohortContactPct',  edit:false, type:'pct' },
       ]},
     { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'full',
       cols:[
@@ -2671,28 +2681,51 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ]},
   ];
 
+  const COHORT_CENSUS_DATE = '2026-07-16';
+  const COHORT_KPI_START   = new Date('2026-05-21T00:00:00');
+
+  function workingDaysUntil(dateStr) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const end   = new Date(dateStr); end.setHours(0,0,0,0);
+    if (today >= end) return 0;
+    let count = 0, cur = new Date(today);
+    while (cur < end) {
+      cur.setDate(cur.getDate() + 1);
+      const d = cur.getDay();
+      if (d !== 0 && d !== 6) count++;
+    }
+    return count;
+  }
+
   function calcDerived(r) {
     const pct = (a, b, dec) => (b > 0) ? (a / b * 100).toFixed(dec ?? 1) + '%' : '—';
     const t1t2CensusTarget = r.t1t2pool > 0 ? Math.round(r.t1t2pool * 0.80) : 0;
     const t1t2Needed       = t1t2CensusTarget > 0 ? Math.max(0, t1t2CensusTarget - (r.t1t2 || 0)) : '—';
     const t1t2Remaining    = r.t1t2pool > 0 ? Math.max(0, r.t1t2pool - (r.t1t2 || 0)) : '—';
+    const gcmDenom         = (r.gcmPool > 0) ? r.gcmPool : (r.gcmt || 0);
+    const remaining        = (r.cohort > 0) ? Math.max(0, r.cohort - (r.ctd || 0)) : 0;
+    const wdays            = workingDaysUntil(COHORT_CENSUS_DATE);
+    const remainingPerDay  = (remaining > 0 && wdays > 0) ? parseFloat((remaining / wdays).toFixed(1)) : 0;
     return {
       ...r,
       t1t2CensusTarget,
       t1t2Needed,
       t1t2Remaining,
-      pctSt:  pct(r.en,   r.st,                2),
-      pctIt:  pct(r.en,   r.it,                2),
-      pctSt2: pct(r.en,   r.stt,               0),
-      pctT1:  pct(r.t1t2, t1t2CensusTarget,    0),
-      gcmC:   pct(r.gcm,  r.gcmt,              0),
-      cPct:   pct(r.ctd,  r.cohort,            0),
+      remaining,
+      remainingPerDay,
+      pctSt:           pct(r.en,                r.st,            2),
+      pctIt:           pct(r.en,                r.it,            2),
+      pctSt2:          pct(r.en,                r.stt,           0),
+      pctT1:           pct(r.t1t2, t1t2CensusTarget,             0),
+      gcmC:            pct(r.gcm,               gcmDenom,        0),
+      cPct:            pct(r.ctd,               r.cohort,        0),
+      cohortContactPct:pct(r.cohortContact || 0, r.cohort,       0),
     };
   }
 
   function calcTotal(rows) {
     const s = { name: 'UNSW Total', cq: null, kR: null, kS: null, k6: null };
-    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','cohort','ctd'].forEach(f => {
+    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','remaining','cohortContact'].forEach(f => {
       s[f] = rows.reduce((acc, r) => acc + (Number(r[f]) || 0), 0);
     });
     const cs = rows.filter(r => r.calls).map(r => Number(r.calls));
@@ -2786,6 +2819,70 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return row;
   }
 
+  // ── Cohort-level CSV detection & parsing ──────────────────────
+  function isCohortCSV(headers) {
+    const hl = headers.map(h => h.toLowerCase().trim());
+    return hl.some(h => h.includes('substatus') || h.includes('next term enrollment') || h.includes('actual start term') || h.includes('last phone'));
+  }
+
+  function parseCohortLevel(headers, dataRows) {
+    const hl = headers.map(h => h.toLowerCase().trim());
+    const colIdx = (...variants) => { for (const v of variants) { const i = hl.findIndex(h => h.includes(v)); if (i !== -1) return i; } return -1; };
+
+    const iAdvisor = colIdx('advisor','ssa','student advisor','assigned advisor');
+    const iEnrol   = colIdx('next term enrollment','enrollment status','enrolment status','next term enrolment');
+    const iSub     = colIdx('substatus','sub status','sub-status');
+    const iStart   = colIdx('actual start term','start term','actual term');
+    const iPhone   = colIdx('last phone attempt','last phone');
+    const iContact = colIdx('last contact');
+
+    if (iAdvisor === -1) { alert('Cohort CSV: could not find Advisor/SSA column.'); return null; }
+
+    const parseD = s => { if (!s || !s.trim()) return null; const d = new Date(s.trim()); return isNaN(d.getTime()) ? null : d; };
+    const CENSUS_END = new Date('2026-07-16T23:59:59');
+
+    const ssaMap = {};
+    dataRows.forEach(cells => {
+      const raw = (cells[iAdvisor] || '').trim();
+      if (!raw) return;
+      // Normalize to known SSA names (first-name match)
+      const knownMatch = ALL_SSA_NAMES.find(k => {
+        const kl = k.toLowerCase(); const rl = raw.toLowerCase();
+        return kl === rl || kl.startsWith(rl.split(' ')[0]) || rl.startsWith(kl.split(' ')[0]);
+      });
+      const key = knownMatch || raw;
+      if (!ssaMap[key]) ssaMap[key] = [];
+      ssaMap[key].push({
+        enrollStatus: iEnrol   >= 0 ? (cells[iEnrol]   || '').trim() : '',
+        substatus:    iSub     >= 0 ? (cells[iSub]      || '').trim() : '',
+        startTerm:    iStart   >= 0 ? (cells[iStart]    || '').trim() : '',
+        lastPhone:    parseD(iPhone   >= 0 ? cells[iPhone]   : ''),
+        lastContact:  parseD(iContact >= 0 ? cells[iContact] : ''),
+      });
+    });
+
+    const wdays = workingDaysUntil(COHORT_CENSUS_DATE);
+
+    return Object.entries(ssaMap)
+      .filter(([name]) => !HIDDEN_SSA.includes(name))
+      .map(([name, students]) => {
+        const enLow  = s => s.enrollStatus.toLowerCase();
+        const subLow = s => s.substatus.toLowerCase();
+        const cohort         = students.length;
+        const en             = students.filter(s => enLow(s) === 'enrolled').length;
+        const gcm            = students.filter(s => subLow(s) === 'pending graduation' && enLow(s) === 'enrolled').length;
+        const gcmPool        = students.filter(s => subLow(s) === 'pending graduation' || enLow(s) === 'graduated').length;
+        const t3             = students.filter(s => s.startTerm.includes('2026 T3'));
+        const t1t2pool       = t3.length;
+        const t1t2           = t3.filter(s => enLow(s) === 'enrolled').length;
+        const ctd            = students.filter(s => s.lastPhone && s.lastPhone >= COHORT_KPI_START).length;
+        const remaining      = Math.max(0, cohort - ctd);
+        const remainingPerDay = (remaining > 0 && wdays > 0) ? parseFloat((remaining / wdays).toFixed(1)) : 0;
+        const cohortContact  = students.filter(s => s.lastContact && s.lastContact >= COHORT_KPI_START && s.lastContact <= CENSUS_END).length;
+        return { name, cohort, en, gcm, gcmPool, gcmt: gcmPool, t1t2pool, t1t2, ctd, remaining, remainingPerDay, cohortContact };
+      });
+  }
+
   let puParsedRows = null;
 
   function initPacingUpload() {
@@ -2821,16 +2918,37 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       reader.onload = e => {
         const rows = parseCSV(e.target.result);
         if (rows.length < 2) { alert('CSV appears empty or has no data rows.'); return; }
-        const headers = rows[0];
+        const headers  = rows[0];
         const dataRows = rows.slice(1).filter(r => r.some(c => c.trim()));
-        puParsedRows = dataRows.map(cells => csvRowToRow(headers, cells, null));
-        const valid = puParsedRows.filter(r => r.name);
-        if (!valid.length) { alert('No valid rows found. Check that the Name column is present.'); puParsedRows = null; return; }
-        puParsedRows = valid;
-        preview.style.display = 'block';
-        preview.innerHTML = '<strong>Preview (' + valid.length + ' advisors):</strong><br>' +
-          valid.map(r => `• ${r.name} — Cohort: ${r.cohort||'?'}, Enrolled: ${r.en||'?'}, Called to Date: ${r.ctd||'?'}`).join('<br>');
-        importBtn.disabled = false;
+
+        if (isCohortCSV(headers)) {
+          // ── Cohort-level (student rows) ──
+          const parsed = parseCohortLevel(headers, dataRows);
+          if (!parsed || !parsed.length) { puParsedRows = null; return; }
+          puParsedRows = parsed;
+          const wdays = workingDaysUntil(COHORT_CENSUS_DATE);
+          preview.style.display = 'block';
+          preview.innerHTML = `<strong>📋 Cohort upload detected — ${dataRows.length} students → ${parsed.length} advisors</strong>
+            <span style="font-size:0.72rem;color:#64748b;margin-left:6px;">(${wdays} working days to census 16 Jul)</span><br>` +
+            parsed.map(r =>
+              `• <b>${r.name}</b> — Cohort: ${r.cohort}, Enrolled: ${r.en}, ` +
+              `GC-M Pool: ${r.gcmPool} / Enrolled: ${r.gcm}, ` +
+              `T3 Pool: ${r.t1t2pool} / Enrolled: ${r.t1t2}, ` +
+              `Contacted (60d): ${r.ctd}, Remaining: ${r.remaining} (${r.remainingPerDay}/day), ` +
+              `Cohort Contact: ${r.cohortContact}`
+            ).join('<br>');
+          importBtn.disabled = false;
+        } else {
+          // ── Aggregate CSV (one row per advisor) ──
+          puParsedRows = dataRows.map(cells => csvRowToRow(headers, cells, null));
+          const valid = puParsedRows.filter(r => r.name);
+          if (!valid.length) { alert('No valid rows found. Check that the Name column is present.'); puParsedRows = null; return; }
+          puParsedRows = valid;
+          preview.style.display = 'block';
+          preview.innerHTML = '<strong>Preview (' + valid.length + ' advisors):</strong><br>' +
+            valid.map(r => `• ${r.name} — Cohort: ${r.cohort||'?'}, Enrolled: ${r.en||'?'}, Called to Date: ${r.ctd||'?'}`).join('<br>');
+          importBtn.disabled = false;
+        }
       };
       reader.readAsText(file);
     }
