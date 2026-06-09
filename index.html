@@ -2652,11 +2652,17 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Remaining',           f:'remaining',       edit:false },
         { h:'Per Day to Census',   f:'remainingPerDay', edit:false },
       ]},
-    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
+    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'half',
       cols:[
         { h:'Cohort',              f:'cohort',            edit:false },
         { h:'Contacted (May–Jul)', f:'cohortContact',     edit:false },
         { h:'% Contacted',         f:'cohortContactPct',  edit:false, type:'pct' },
+      ]},
+    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
+      cols:[
+        { h:'Avg Calls/Week',  f:'calls', edit:true },
+        { h:'Avg STS/Week',    f:'sts',   edit:true },
+        { h:'Call Quality %',  f:'cq',    edit:true,  type:'pct-input' },
       ]},
     { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'full',
       cols:[
@@ -2666,12 +2672,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'% to T1-T2',          f:'pctT1',             edit:false, type:'pct' },
         { h:'Enrolments Needed',   f:'t1t2Needed',        edit:false, type:'num-calc' },
         { h:'Remaining Opps',      f:'t1t2Remaining',     edit:false, type:'num-calc' },
-      ]},
-    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
-      cols:[
-        { h:'Avg Calls/Week',  f:'calls', edit:true },
-        { h:'Avg STS/Week',    f:'sts',   edit:true },
-        { h:'Call Quality %',  f:'cq',    edit:true,  type:'pct-input' },
       ]},
     { cls:'s-weight', label:'⚖️ Weightage', span:'half',
       cols:[
@@ -2967,7 +2967,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const existing = activePacingData[hex].rows || [];
       activePacingData[hex].rows = puParsedRows.map(r => {
         const prev = existing.find(e => e.name === r.name) || {};
-        const merged = { ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null };
+        const locked = (PACING_DATA[hex]?.rows || []).find(hr => hr.name === r.name) || {};
+        const merged = { ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null,
+          it: locked.it ?? prev.it ?? r.it ?? 0, stt: locked.stt ?? prev.stt ?? r.stt ?? 0 };
         // Recalculate derived fields
         const t1t2t = (merged.pctT1 && merged.pctT1 !== '—' && merged.t1t2 > 0)
           ? Math.round(merged.t1t2 / (parseFloat(merged.pctT1) / 100)) : 0;
@@ -2984,6 +2986,18 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     });
   }
 
+  function overlayLockedTargets(dataset) {
+    // it/stt are non-editable locked values — always apply from hardcoded PACING_DATA
+    for (const [hexKey, hexData] of Object.entries(PACING_DATA)) {
+      if (!dataset[hexKey]) continue;
+      hexData.rows.forEach(srcRow => {
+        const tgt = (dataset[hexKey].rows || []).find(r => r.name === srcRow.name);
+        if (tgt) { tgt.it = srcRow.it; tgt.stt = srcRow.stt; }
+      });
+      dataset[hexKey].total = calcTotal(dataset[hexKey].rows || []);
+    }
+  }
+
   async function loadPacingData() {
     try {
       const res = await fetch(PACING_DB);
@@ -2996,6 +3010,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     } catch(e) {
       activePacingData = initPacingData();
     }
+    overlayLockedTargets(activePacingData);
   }
 
   async function savePacingData() {
