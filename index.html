@@ -26,6 +26,7 @@
       --sec-6-bg: #134e4a; --sec-6-txt: #99f6e4;
       --sec-7-bg: #881337; --sec-7-txt: #fda4af;
       --sec-8-bg: #1c1917; --sec-8-txt: #fed7aa;
+      --sec-9-bg: #0c4a6e; --sec-9-txt: #7dd3fc;
 
       /* Calendar day column tints */
       --day-mon: #EFF6FF;
@@ -861,6 +862,7 @@
     .s-kpi       { background: var(--sec-6-bg); color: var(--sec-6-txt); }
     .s-weight        { background: var(--sec-7-bg); color: var(--sec-7-txt); }
     .s-cohortContact { background: var(--sec-8-bg); color: var(--sec-8-txt); }
+    .s-start         { background: var(--sec-9-bg); color: var(--sec-9-txt); }
     /* Mini-table inside each card */
     .sc-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
     .sc-table th { padding: 5px 8px; font-size: 0.57rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa; color: #777; text-align: left; white-space: nowrap; border-bottom: 1px solid #eee; }
@@ -2629,10 +2631,19 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   // Section definitions — each becomes its own card tile
   const PACING_SECTIONS = [
+    // ── Row 1: 4 × span-3 ──────────────────────────────────────────
+    { cls:'s-start', label:'📋 Start Tracking', span:'',
+      cols:[
+        { h:'Start Target', f:'st',     edit:true },
+        { h:'Enrolled',     f:'en',     edit:true },
+        { h:'% to Start',   f:'pctSt',  edit:false, type:'pct' },
+        { h:'ROPS',         f:'stRops', edit:false, type:'num-calc' },
+        { h:'Drop Rate',    f:'dr',     edit:true,  type:'pct-input' },
+      ]},
     { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
       cols:[
         { h:'Inc Target',  f:'it',    edit:false },
-        { h:'Enrolled',    f:'en',    edit:true },
+        { h:'Enrolled',    f:'en',    edit:false },
         { h:'% Incentive', f:'pctIt', edit:false, type:'pct' },
       ]},
     { cls:'s-stretch', label:'🎯 Stretch Tracking', span:'',
@@ -2647,7 +2658,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'GC-M Enrolled', f:'gcm',     edit:false },
         { h:'Conv %',        f:'gcmC',    edit:false, type:'pct' },
       ]},
-    { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'',
+    // ── Row 2: 60 Day + Cohort Contact side by side ────────────────
+    { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'half',
       cols:[
         { h:'Cohort',              f:'cohort',          edit:false },
         { h:'Contacted (≥21 May)', f:'ctd',             edit:false },
@@ -2657,24 +2669,26 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ]},
     { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'half',
       cols:[
-        { h:'Cohort',              f:'cohort',            edit:false },
-        { h:'Contacted (May–Jul)', f:'cohortContact',     edit:false },
-        { h:'% Contacted',         f:'cohortContactPct',  edit:false, type:'pct' },
+        { h:'Cohort',              f:'cohort',           edit:false },
+        { h:'Contacted (May–Jul)', f:'cohortContact',    edit:false },
+        { h:'% Contacted',         f:'cohortContactPct', edit:false, type:'pct' },
       ]},
-    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
-      cols:[
-        { h:'Avg Calls/Week',  f:'calls', edit:true },
-        { h:'Avg STS/Week',    f:'sts',   edit:true },
-        { h:'Call Quality %',  f:'cq',    edit:true,  type:'pct-input' },
-      ]},
+    // ── Row 3: T1-T2 full width ────────────────────────────────────
     { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'full',
       cols:[
-        { h:'Total T1-T2 Pool',    f:'t1t2pool',          edit:true },
-        { h:'Census Target (80%)', f:'t1t2CensusTarget',  edit:false, type:'num-calc' },
-        { h:'T1-T2 Enrollments',   f:'t1t2',              edit:true },
-        { h:'% to T1-T2',          f:'pctT1',             edit:false, type:'pct' },
-        { h:'Enrolments Needed',   f:'t1t2Needed',        edit:false, type:'num-calc' },
-        { h:'Remaining Opps',      f:'t1t2Remaining',     edit:false, type:'num-calc' },
+        { h:'Total T1-T2 Pool',    f:'t1t2pool',         edit:true },
+        { h:'Census Target (80%)', f:'t1t2CensusTarget', edit:false, type:'num-calc' },
+        { h:'T1-T2 Enrollments',   f:'t1t2',             edit:true },
+        { h:'% to T1-T2',          f:'pctT1',            edit:false, type:'pct' },
+        { h:'Enrolments Needed',   f:'t1t2Needed',       edit:false, type:'num-calc' },
+        { h:'Remaining Opps',      f:'t1t2Remaining',    edit:false, type:'num-calc' },
+      ]},
+    // ── Row 4: KPI + Weightage ─────────────────────────────────────
+    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
+      cols:[
+        { h:'Avg Calls/Week', f:'calls', edit:true },
+        { h:'Avg STS/Week',   f:'sts',   edit:true },
+        { h:'Call Quality %', f:'cq',    edit:true, type:'pct-input' },
       ]},
     { cls:'s-weight', label:'⚖️ Weightage', span:'half',
       cols:[
@@ -2706,6 +2720,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const t1t2Needed       = t1t2CensusTarget > 0 ? Math.max(0, t1t2CensusTarget - (r.t1t2 || 0)) : '—';
     const t1t2Remaining    = r.t1t2pool > 0 ? Math.max(0, r.t1t2pool - (r.t1t2 || 0)) : '—';
     const gcmDenom         = (r.gcmPool > 0) ? r.gcmPool : (r.gcmt || 0);
+    const stRops           = (r.st > 0) ? Math.max(0, r.st - (r.en || 0)) : '—';
     const remaining        = (r.cohort > 0) ? Math.max(0, r.cohort - (r.ctd || 0)) : 0;
     const wdays            = workingDaysUntil(COHORT_CENSUS_DATE);
     const remainingPerDay  = (remaining > 0 && wdays > 0) ? parseFloat((remaining / wdays).toFixed(1)) : 0;
@@ -2714,6 +2729,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       t1t2CensusTarget,
       t1t2Needed,
       t1t2Remaining,
+      stRops,
       remaining,
       remainingPerDay,
       pctSt:           pct(r.en,                r.st,            2),
