@@ -2662,8 +2662,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     // ── Row 2: Drops (3) + 60 Day (6) + Cohort Contact (3) = 12 ───
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'',
       cols:[
-        { h:'Drops',      f:'stRops', edit:false, type:'num-calc' },
-        { h:'Drop Rate',  f:'dr',     edit:true,  type:'pct-input' },
+        { h:'Drops',      f:'drops', edit:true },
+        { h:'Drop Rate',  f:'dr',    edit:true,  type:'pct-input' },
       ]},
     { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'half',
       cols:[
@@ -3025,7 +3025,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           const fbRow = (dataset[hexKey].rows || []).find(r => r.name === srcRow.name);
           if (!fbRow) return;
           const keep = { kR: fbRow.kR, kS: fbRow.kS, k6: fbRow.k6,
-                         calls: fbRow.calls, sts: fbRow.sts, cq: fbRow.cq };
+                         calls: fbRow.calls, sts: fbRow.sts, cq: fbRow.cq,
+                         drops: fbRow.drops, dr: fbRow.dr };
           if (fbRow.it === 0 && fbRow.stt === 0) {
             // Stale placeholder — full reset, preserve only user KPI fields
             Object.assign(fbRow, srcRow, keep);
