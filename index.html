@@ -692,6 +692,7 @@
     .unsw-badge.census          { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
     .unsw-badge.results         { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
     .unsw-badge.enrol-deadline  { background:#EDE9FE; color:#4C1D95; border-left:3px solid #7C3AED; }
+    .unsw-badge.late-enrol      { background:#FFF7ED; color:#9A3412; border-left:3px solid #F97316; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -1963,6 +1964,7 @@
     '2026-01-15':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-16':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-19':[{type:'enrol-deadline', label:'Enrol Deadline H1'}],
+    '2026-01-20':[{type:'late-enrol', label:'Late Enrol H1 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
     '2026-01-29':[{type:'census', label:'Census H1'}],
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
@@ -1971,6 +1973,7 @@
     '2026-03-12':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-13':[{type:'results',label:'Results H1'},{type:'o-week',label:'O-Week H2'}],
     '2026-03-16':[{type:'enrol-deadline', label:'Enrol Deadline H2'}],
+    '2026-03-17':[{type:'late-enrol', label:'Late Enrol H2 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
     '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
@@ -1979,6 +1982,7 @@
     '2026-05-07':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-08':[{type:'results',label:'Results H2'},{type:'o-week',label:'O-Week H3'}],
     '2026-05-11':[{type:'enrol-deadline', label:'Enrol Deadline H3'}],
+    '2026-05-12':[{type:'late-enrol', label:'Late Enrol H3 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
     '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
@@ -1987,6 +1991,7 @@
     '2026-07-02':[{type:'o-week', label:'O-Week H4'}],
     '2026-07-03':[{type:'results',label:'Results H3'},{type:'o-week',label:'O-Week H4'}],
     '2026-07-06':[{type:'enrol-deadline', label:'Enrol Deadline H4'}],
+    '2026-07-07':[{type:'late-enrol', label:'Late Enrol H4 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
     '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
@@ -1995,6 +2000,7 @@
     '2026-08-27':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-28':[{type:'results',label:'Results H4'},{type:'o-week',label:'O-Week H5'}],
     '2026-08-31':[{type:'enrol-deadline', label:'Enrol Deadline H5'}],
+    '2026-09-01':[{type:'late-enrol', label:'Late Enrol H5 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
     '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
@@ -2003,6 +2009,7 @@
     '2026-10-22':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-23':[{type:'results',label:'Results H5'},{type:'o-week',label:'O-Week H6'}],
     '2026-10-26':[{type:'enrol-deadline', label:'Enrol Deadline H6'}],
+    '2026-10-27':[{type:'late-enrol', label:'Late Enrol H6 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
   };
@@ -2352,9 +2359,10 @@
           const row = document.createElement('div');
           row.className = 'unsw-dates-row';
           unswItems.forEach(item => {
-            const badge = document.createElement('span');
+            const badge = item.link ? document.createElement('a') : document.createElement('span');
             badge.className = `unsw-badge ${item.type}`;
-            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : '✅';
+            if (item.link) { badge.href = item.link; badge.target = '_blank'; badge.rel = 'noopener'; badge.style.textDecoration = 'none'; }
+            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : '✅';
             badge.textContent = icon + ' ' + item.label;
             row.appendChild(badge);
           });
