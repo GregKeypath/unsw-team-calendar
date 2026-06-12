@@ -2637,9 +2637,11 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     // ── Row 1: 4 × span-3 ──────────────────────────────────────────
     { cls:'s-start', label:'📋 Start Tracking', span:'',
       cols:[
-        { h:'Start Target', f:'st',    edit:true },
-        { h:'Enrolled',     f:'en',    edit:true },
-        { h:'% to Start',   f:'pctSt', edit:false, type:'pct' },
+        { h:'Start Target',    f:'st',            edit:true },
+        { h:'Enrolled',        f:'en',            edit:true },
+        { h:'% to Start',      f:'pctSt',         edit:false, type:'pct' },
+        { h:'Needed',          f:'enNeeded',      edit:false, type:'num-calc' },
+        { h:'Per Day (7 Jul)', f:'enNeededPerDay', edit:false, type:'num-calc' },
       ]},
     { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
       cols:[
@@ -2704,7 +2706,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ]},
   ];
 
-  const COHORT_CENSUS_DATE = '2026-07-16';
+  const COHORT_CENSUS_DATE  = '2026-07-16';
+  const ENROL_CLOSE_DATE    = '2026-07-07';
   const COHORT_KPI_START   = new Date('2026-05-21T00:00:00');
 
   function workingDaysUntil(dateStr) {
@@ -2727,6 +2730,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const t1t2Remaining    = r.t1t2pool > 0 ? Math.max(0, r.t1t2pool - (r.t1t2 || 0)) : '—';
     const gcmDenom         = (r.gcmPool > 0) ? r.gcmPool : (r.gcmt || 0);
     const stRops           = (r.st > 0) ? Math.max(0, r.st - (r.en || 0)) : '—';
+    const enNeeded         = (r.st > 0) ? Math.max(0, r.st - (r.en || 0)) : '—';
+    const enWdays          = workingDaysUntil(ENROL_CLOSE_DATE);
+    const enNeededPerDay   = (typeof enNeeded === 'number' && enNeeded > 0 && enWdays > 0)
+                             ? parseFloat((enNeeded / enWdays).toFixed(1)) : '—';
     const remaining        = (r.remaining != null && r.remaining !== 0)
                              ? r.remaining
                              : (r.cohort > 0) ? Math.max(0, r.cohort - (r.ctd || 0)) : 0;
@@ -2738,6 +2745,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       t1t2Needed,
       t1t2Remaining,
       stRops,
+      enNeeded,
+      enNeededPerDay,
       remaining,
       remainingPerDay,
       pctSt:           pct(r.en,                r.st,            2),
