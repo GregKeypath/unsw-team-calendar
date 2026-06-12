@@ -688,9 +688,10 @@
     /* UNSW Key Date badges */
     .unsw-dates-row { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:4px; }
     .unsw-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.66rem; font-weight:700; padding:2px 6px 2px 5px; border-radius:6px; white-space:nowrap; letter-spacing:0.1px; }
-    .unsw-badge.o-week  { background:#FFF8D6; color:#7A5700; border-left:3px solid var(--accent); }
-    .unsw-badge.census  { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
-    .unsw-badge.results { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
+    .unsw-badge.o-week          { background:#FFF8D6; color:#7A5700; border-left:3px solid var(--accent); }
+    .unsw-badge.census          { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
+    .unsw-badge.results         { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
+    .unsw-badge.enrol-deadline  { background:#EDE9FE; color:#4C1D95; border-left:3px solid #7C3AED; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -1961,6 +1962,7 @@
     '2026-01-14':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-15':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-16':[{type:'o-week', label:'O-Week H1'}],
+    '2026-01-19':[{type:'enrol-deadline', label:'Enrol Deadline H1'}],
     '2026-01-29':[{type:'census', label:'Census H1'}],
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
@@ -1968,6 +1970,7 @@
     '2026-03-11':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-12':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-13':[{type:'results',label:'Results H1'},{type:'o-week',label:'O-Week H2'}],
+    '2026-03-16':[{type:'enrol-deadline', label:'Enrol Deadline H2'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
     '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
@@ -1975,6 +1978,7 @@
     '2026-05-06':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-07':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-08':[{type:'results',label:'Results H2'},{type:'o-week',label:'O-Week H3'}],
+    '2026-05-11':[{type:'enrol-deadline', label:'Enrol Deadline H3'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
     '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
@@ -1982,6 +1986,7 @@
     '2026-07-01':[{type:'o-week', label:'O-Week H4'}],
     '2026-07-02':[{type:'o-week', label:'O-Week H4'}],
     '2026-07-03':[{type:'results',label:'Results H3'},{type:'o-week',label:'O-Week H4'}],
+    '2026-07-06':[{type:'enrol-deadline', label:'Enrol Deadline H4'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
     '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
@@ -1989,6 +1994,7 @@
     '2026-08-26':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-27':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-28':[{type:'results',label:'Results H4'},{type:'o-week',label:'O-Week H5'}],
+    '2026-08-31':[{type:'enrol-deadline', label:'Enrol Deadline H5'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
     '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
@@ -1996,6 +2002,7 @@
     '2026-10-21':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-22':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-23':[{type:'results',label:'Results H5'},{type:'o-week',label:'O-Week H6'}],
+    '2026-10-26':[{type:'enrol-deadline', label:'Enrol Deadline H6'}],
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
   };
@@ -2707,7 +2714,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   ];
 
   const COHORT_CENSUS_DATE  = '2026-07-16';
-  const ENROL_CLOSE_DATE    = '2026-07-07';
+  const ENROL_CLOSE_DATE    = '2026-07-06';
   const COHORT_KPI_START   = new Date('2026-05-21T00:00:00');
 
   function workingDaysUntil(dateStr) {
