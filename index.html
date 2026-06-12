@@ -2668,9 +2668,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     { cls:'s-sixtyDay', label:'📞 60 Day Attempt', span:'half',
       cols:[
         { h:'Cohort',              f:'cohort',          edit:true },
-        { h:'Contacted (≥21 May)', f:'ctd',             edit:true },
+        { h:'Contacted (≥21 May)', f:'ctd',             edit:false },
         { h:'% Contacted',         f:'cPct',            edit:false, type:'pct' },
-        { h:'Remaining',           f:'remaining',       edit:false },
+        { h:'Remaining',           f:'remaining',       edit:true },
         { h:'Per Day to Census',   f:'remainingPerDay', edit:false },
       ]},
     { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
@@ -2727,7 +2727,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const t1t2Remaining    = r.t1t2pool > 0 ? Math.max(0, r.t1t2pool - (r.t1t2 || 0)) : '—';
     const gcmDenom         = (r.gcmPool > 0) ? r.gcmPool : (r.gcmt || 0);
     const stRops           = (r.st > 0) ? Math.max(0, r.st - (r.en || 0)) : '—';
-    const remaining        = (r.cohort > 0) ? Math.max(0, r.cohort - (r.ctd || 0)) : 0;
+    const remaining        = (r.remaining != null && r.remaining !== 0)
+                             ? r.remaining
+                             : (r.cohort > 0) ? Math.max(0, r.cohort - (r.ctd || 0)) : 0;
     const wdays            = workingDaysUntil(COHORT_CENSUS_DATE);
     const remainingPerDay  = (remaining > 0 && wdays > 0) ? parseFloat((remaining / wdays).toFixed(1)) : 0;
     return {
