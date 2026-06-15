@@ -1396,6 +1396,8 @@
     .tr-slots-banner strong { font-weight:800; }
     .card-url-link { display:inline-block; margin-top:3px; font-size:0.62rem; color:#3B82F6; text-decoration:none; }
     .card-url-link:hover { text-decoration:underline; }
+    .card-note-dot { display:inline-block; font-size:0.58rem; color:#9ca3af; margin-top:2px; }
+    .kanban-card:hover .card-note-dot { display:none; }
     .card-comment { font-size:0.62rem; color:#6b7280; margin-top:3px; font-style:italic; line-height:1.4; display:none; }
     .kanban-card:hover .card-comment { display:block; }
     .card-url-input { width:100%; border:1px solid #d1d5db; border-radius:4px; padding:4px 7px; font-size:0.73rem; margin-top:4px; box-sizing:border-box; }
@@ -4113,6 +4115,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       cardBody.appendChild(urlLink);
     }
     if (card.comment) {
+      const noteDot = document.createElement('span');
+      noteDot.className = 'card-note-dot';
+      noteDot.textContent = '💬 note';
+      cardBody.appendChild(noteDot);
       const commentDiv = document.createElement('div');
       commentDiv.className = 'card-comment';
       commentDiv.textContent = card.comment;
