@@ -4456,14 +4456,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   function addBreak(sp) {
     const prog = getProg();
     if (!prog) return;
-    const sps = prog.sps;
-    const i = sps.indexOf(sp);
-    if (i === -1) return;
-    // Shift all planData from i+1 onwards one slot forward (from the end backwards)
-    const end = Math.min(sps.length - 1, i + 24);
-    for (let j = end; j > i; j--) {
-      planData[sps[j]] = (planData[sps[j-1]] || []).map(u => ({...u}));
-    }
+    if (prog.sps.indexOf(sp) === -1) return;
     planData[sp] = [];
     breakSPs[sp] = true;
     renderPlanMap(); renderPlanner();
@@ -4472,15 +4465,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   function removeBreak(sp) {
     const prog = getProg();
     if (!prog) return;
-    const sps = prog.sps;
-    const i = sps.indexOf(sp);
     delete breakSPs[sp];
-    if (i === -1) { renderPlanMap(); renderPlanner(); return; }
-    // Shift planData from i+1 one slot backward
-    for (let j = i; j < sps.length - 1; j++) {
-      planData[sps[j]] = (planData[sps[j+1]] || []).map(u => ({...u}));
-    }
-    planData[sps[sps.length - 1]] = [];
     renderPlanMap(); renderPlanner();
   }
 
