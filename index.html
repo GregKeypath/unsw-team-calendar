@@ -2653,13 +2653,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   // Section definitions — each becomes its own card tile
   const PACING_SECTIONS = [
     // ── Row 1: 4 × span-3 ──────────────────────────────────────────
-    { cls:'s-start', label:'📋 Start Tracking', span:'',
+    { cls:'s-start', label:'📋 Start Tracking', span:'half',
       cols:[
-        { h:'Start Target',    f:'st',            edit:true },
-        { h:'Enrolled',        f:'en',            edit:true },
-        { h:'% to Start',      f:'pctSt',         edit:false, type:'pct' },
-        { h:'Needed',          f:'enNeeded',      edit:false, type:'num-calc' },
-        { h:'Per Day (7 Jul)', f:'enNeededPerDay', edit:false, type:'num-calc' },
+        { h:'Start Target', f:'st',             edit:true },
+        { h:'Enrolled',     f:'en',             edit:true },
+        { h:'% to Start',   f:'pctSt',          edit:false, type:'pct' },
+        { h:'Needed',       f:'enNeeded',       edit:false, type:'num-calc' },
+        { h:'Per Day',      f:'enNeededPerDay', edit:false, type:'num-calc' },
       ]},
     { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
       cols:[
