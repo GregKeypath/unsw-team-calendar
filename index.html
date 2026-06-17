@@ -1477,6 +1477,7 @@
   <button class="tab-btn" data-tab="triage">Student Triage</button>
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="wishlist">Wishlist</button>
+  <button class="tab-btn" data-tab="activity">Activity</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
@@ -1605,6 +1606,29 @@
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- Activity tab -->
+<div class="tab-panel" id="tab-activity">
+  <div class="act-wrap">
+    <div class="act-header">
+      <div class="act-title">📊 UNSW Activity Dashboard</div>
+      <div class="act-sub" id="act-sub">H4 · 2026 · KPI Tracking</div>
+    </div>
+    <div class="act-kpi-row" id="act-kpi-row"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+      <div class="act-section-label" style="margin-bottom:0">SSA Performance</div>
+      <div class="act-rag-legend">
+        <span class="act-rag-dot g" style="position:static;margin-right:3px"></span>On Track
+        <span class="act-rag-dot a" style="position:static;margin-left:12px;margin-right:3px"></span>Monitor
+        <span class="act-rag-dot r" style="position:static;margin-left:12px;margin-right:3px"></span>Needs Attention
+      </div>
+    </div>
+    <div class="act-adv-grid" id="act-adv-grid"></div>
+    <div class="act-section-label">Leaderboards</div>
+    <div class="act-lb-grid" id="act-lb-grid"></div>
+    <div class="act-footer">Data from KPI Tracking on the Pacing Board. Green = Calls/Wk &ge; 20 &amp; STS/Wk &ge; 10. Amber = Calls/Wk &ge; 10 or STS/Wk &ge; 5. Red = below targets or no data entered.</div>
   </div>
 </div>
 
@@ -5161,6 +5185,49 @@ body { font-family: Arial, sans-serif; padding: 24px 28px; background: #fff; col
 .plan-export-tech-row span { background: #f1f5f9; border-radius: 3px; padding: 1px 5px; margin-right: 3px; display: inline-block; margin-bottom: 2px; }
 .plan-export-book { font-size: 0.65rem; color: #374151; font-style: italic; padding-top: 5px; border-top: 1px solid #f3f4f6; margin-top: 4px; }
 @media print { body { padding: 12px 16px; } @page { margin: 1.5cm; } }
+
+/* ── Activity Tab — dark theme ───────────────────────── */
+#tab-activity {
+  background: #0d1117;
+  min-height: calc(100vh - 120px);
+  padding: 0;
+}
+.act-wrap { padding: 20px 24px 40px; }
+.act-header { margin-bottom: 18px; }
+.act-title { font-size: 1.25rem; font-weight: 700; color: #e2e8f0; letter-spacing: -0.01em; }
+.act-sub { font-size: 0.78rem; color: #475569; margin-top: 2px; }
+.act-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.act-kpi-card { background: #161b27; border: 1px solid #1e2d45; border-radius: 10px; padding: 16px 18px; }
+.act-kpi-val { font-size: 2rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.act-kpi-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: .6px; font-weight: 600; }
+.act-section-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #e2e8f0; margin-bottom: 10px; }
+.act-rag-legend { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #64748b; }
+.act-adv-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
+.act-adv-tile { background: #161b27; border: 1px solid #1e2d45; border-radius: 10px; padding: 14px; position: relative; cursor: default; }
+.act-adv-tile.g { border-color: #134e3a; }
+.act-adv-tile.a { border-color: #451a03; }
+.act-adv-tile.r { border-color: #4c0519; }
+.act-rag-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; position: absolute; top: 12px; right: 12px; }
+.act-rag-dot.g { background: #10b981; box-shadow: 0 0 6px #10b98166; }
+.act-rag-dot.a { background: #f59e0b; box-shadow: 0 0 6px #f59e0b66; }
+.act-rag-dot.r { background: #f43f5e; box-shadow: 0 0 6px #f43f5e66; }
+.act-adv-name { font-size: 0.8rem; font-weight: 600; color: #e2e8f0; margin-bottom: 10px; padding-right: 18px; }
+.act-adv-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.act-am-label { font-size: 0.6rem; color: #64748b; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 1px; }
+.act-am-value { font-size: 1rem; font-weight: 700; color: #cbd5e1; }
+.act-lb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.act-lb-card { background: #161b27; border: 1px solid #1e2d45; border-radius: 10px; padding: 14px 16px; }
+.act-lb-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+.act-lb-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid #1e2d45; }
+.act-lb-row:last-child { border-bottom: none; }
+.act-lb-rank { width: 20px; height: 20px; border-radius: 50%; background: #1e2d45; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #64748b; flex-shrink: 0; }
+.act-lb-rank.r1 { background: #f59e0b22; color: #f59e0b; }
+.act-lb-rank.r2 { background: #94a3b822; color: #94a3b8; }
+.act-lb-rank.r3 { background: #92400e22; color: #d97706; }
+.act-lb-name { flex: 1; font-size: 0.8rem; color: #cbd5e1; font-weight: 500; }
+.act-lb-val { font-size: 0.85rem; font-weight: 700; color: #e2e8f0; }
+.act-footer { font-size: 0.68rem; color: #374151; border-top: 1px solid #1e2d45; padding-top: 12px; }
+.act-no-data { color: #374151; font-size: 0.75rem; padding: 12px 0; font-style: italic; }
 </style></head>
 <body>
 <div class="print-header">
@@ -6392,6 +6459,113 @@ ${cardsHTML}
 
   initPlanner();
   initTriage();
+
+  // ── Activity Tab ───────────────────────────────────────
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.tab === 'activity') {
+        if (!activePacingData) {
+          loadPacingData().then(() => renderActivity());
+        } else {
+          renderActivity();
+        }
+      }
+    });
+  });
+
+  function actKpiCard(label, value, color) {
+    return `<div class="act-kpi-card">
+      <div class="act-kpi-val" style="color:${color}">${value}</div>
+      <div class="act-kpi-label">${label}</div>
+    </div>`;
+  }
+
+  function renderActivity() {
+    const hexKey = activePacingHex || 'H4';
+    const hexData = (activePacingData && activePacingData[hexKey])
+      ? activePacingData[hexKey]
+      : (PACING_DATA[hexKey] || null);
+    if (!hexData) return;
+
+    const rows = (hexData.rows || []).filter(r => r.name && r.name !== 'UNSW Total');
+
+    const totalCalls = rows.reduce((s, r) => s + (parseFloat(r.calls) || 0), 0);
+    const totalSts   = rows.reduce((s, r) => s + (parseFloat(r.sts) || 0), 0);
+    const cqRows     = rows.filter(r => r.cq != null && r.cq !== '' && r.cq !== '—' && !isNaN(parseFloat(r.cq)));
+    const avgCq      = cqRows.length ? (cqRows.reduce((s, r) => s + parseFloat(r.cq), 0) / cqRows.length).toFixed(1) : '—';
+    const avgConv    = totalCalls > 0 ? ((totalSts / totalCalls) * 100).toFixed(1) : '—';
+
+    document.getElementById('act-sub').textContent = `${hexData.label || hexKey} · ${rows.length} SSAs · KPI Tracking`;
+
+    document.getElementById('act-kpi-row').innerHTML =
+      actKpiCard('Total Calls / Wk', totalCalls || '—', '#6366f1') +
+      actKpiCard('Total STS / Wk', totalSts || '—', '#06b6d4') +
+      actKpiCard('STS / Call %', avgConv !== '—' ? avgConv + '%' : '—', '#10b981') +
+      actKpiCard('Avg Call Quality', avgCq !== '—' ? avgCq + '%' : '—', '#f59e0b');
+
+    function getRag(r) {
+      const c = parseFloat(r.calls) || 0;
+      const s = parseFloat(r.sts) || 0;
+      if (c >= 20 && s >= 10) return 'g';
+      if (c >= 10 || s >= 5)  return 'a';
+      return 'r';
+    }
+
+    const ragOrder = { r: 0, a: 1, g: 2 };
+    const sorted = [...rows].sort((a, b) => ragOrder[getRag(a)] - ragOrder[getRag(b)]);
+
+    document.getElementById('act-adv-grid').innerHTML = sorted.map(r => {
+      const rag  = getRag(r);
+      const c    = parseFloat(r.calls);
+      const s    = parseFloat(r.sts);
+      const conv = (!isNaN(c) && !isNaN(s) && c > 0) ? ((s / c) * 100).toFixed(1) + '%' : '—';
+      const cq   = (r.cq != null && r.cq !== '' && r.cq !== '—') ? r.cq + '%' : '—';
+      const shortName = r.name.split(' ').slice(0, 2).join(' ');
+      return `<div class="act-adv-tile ${rag}">
+        <div class="act-rag-dot ${rag}"></div>
+        <div class="act-adv-name">${shortName}</div>
+        <div class="act-adv-metrics">
+          <div><div class="act-am-label">Calls/Wk</div><div class="act-am-value">${isNaN(c) ? '—' : c}</div></div>
+          <div><div class="act-am-label">STS/Wk</div><div class="act-am-value">${isNaN(s) ? '—' : s}</div></div>
+          <div><div class="act-am-label">Conv%</div><div class="act-am-value">${conv}</div></div>
+          <div><div class="act-am-label">Call Qual</div><div class="act-am-value">${cq}</div></div>
+        </div>
+      </div>`;
+    }).join('');
+
+    function actLb(title, sortVal, dispVal, color) {
+      const eligible = rows.filter(r => sortVal(r) > 0).sort((a, b) => sortVal(b) - sortVal(a));
+      const inner = eligible.length
+        ? eligible.map((r, i) => {
+            const rankCls = ['r1','r2','r3'][i] || '';
+            const shortName = r.name.split(' ')[0];
+            return `<div class="act-lb-row">
+              <div class="act-lb-rank ${rankCls}">${i+1}</div>
+              <div class="act-lb-name">${shortName}</div>
+              <div class="act-lb-val">${dispVal(r)}</div>
+            </div>`;
+          }).join('')
+        : `<div class="act-no-data">No data yet — update KPI Tracking on the Pacing Board</div>`;
+      return `<div class="act-lb-card">
+        <div class="act-lb-title" style="color:${color}">${title}</div>
+        ${inner}
+      </div>`;
+    }
+
+    document.getElementById('act-lb-grid').innerHTML =
+      actLb('Most Calls / Week',
+        r => parseFloat(r.calls) || 0,
+        r => r.calls,
+        '#6366f1') +
+      actLb('Most STS / Week',
+        r => parseFloat(r.sts) || 0,
+        r => r.sts,
+        '#06b6d4') +
+      actLb('Best Call Quality %',
+        r => parseFloat(r.cq) || 0,
+        r => r.cq + '%',
+        '#f59e0b');
+  }
 </script>
 
 
