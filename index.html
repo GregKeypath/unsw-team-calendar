@@ -852,8 +852,9 @@
     /* Section card grid — 12-col */
     .pacing-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
     .section-card { grid-column: span 3; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05); }
-    .section-card.full { grid-column: span 12; }
-    .section-card.half { grid-column: span 6; }
+    .section-card.full         { grid-column: span 12; }
+    .section-card.half         { grid-column: span 6; }
+    .section-card.three-quarter{ grid-column: span 9; }
     .sc-hdr { padding: 9px 12px; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; }
     /* Section colours — applied to .sc-hdr only */
     .sc-hdr.s-incentive    { background: var(--sec-1-bg); color: var(--sec-1-txt); }
@@ -2673,13 +2674,23 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Enrolled',    f:'en',     edit:false },
         { h:'% Stretch',   f:'pctSt2', edit:false, type:'pct' },
       ]},
+    // ── Row 2: GC-M (3) + T1-T2 (9) ───────────────────────────────
     { cls:'s-gcm', label:'🎓 GC > M Tracker', span:'',
       cols:[
         { h:'GC-M Pool',     f:'gcmPool', edit:false },
         { h:'GC-M Enrolled', f:'gcm',     edit:false },
         { h:'Conv %',        f:'gcmC',    edit:false, type:'pct' },
       ]},
-    // ── Row 2: Drops (3) + 60 Day (6) + Cohort Contact (3) = 12 ───
+    { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'three-quarter',
+      cols:[
+        { h:'Total T1-T2 Pool',    f:'t1t2pool',         edit:true },
+        { h:'Census Target (80%)', f:'t1t2CensusTarget', edit:false, type:'num-calc' },
+        { h:'T1-T2 Enrollments',   f:'t1t2',             edit:true },
+        { h:'% to T1-T2',          f:'pctT1',            edit:false, type:'pct' },
+        { h:'Enrolments Needed',   f:'t1t2Needed',       edit:false, type:'num-calc' },
+        { h:'Remaining Opps',      f:'t1t2Remaining',    edit:false, type:'num-calc' },
+      ]},
+    // ── Row 3: Drops (3) + 60 Day (6) + Cohort Contact (3) = 12 ───
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'',
       cols:[
         { h:'Drops',      f:'drops', edit:true },
@@ -2698,16 +2709,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Cohort',              f:'cohort',           edit:false },
         { h:'Contacted (May–Jul)', f:'cohortContact',    edit:false },
         { h:'% Contacted',         f:'cohortContactPct', edit:false, type:'pct' },
-      ]},
-    // ── Row 3: T1-T2 full width ────────────────────────────────────
-    { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'full',
-      cols:[
-        { h:'Total T1-T2 Pool',    f:'t1t2pool',         edit:true },
-        { h:'Census Target (80%)', f:'t1t2CensusTarget', edit:false, type:'num-calc' },
-        { h:'T1-T2 Enrollments',   f:'t1t2',             edit:true },
-        { h:'% to T1-T2',          f:'pctT1',            edit:false, type:'pct' },
-        { h:'Enrolments Needed',   f:'t1t2Needed',       edit:false, type:'num-calc' },
-        { h:'Remaining Opps',      f:'t1t2Remaining',    edit:false, type:'num-calc' },
       ]},
     // ── Row 4: KPI + Weightage ─────────────────────────────────────
     { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
