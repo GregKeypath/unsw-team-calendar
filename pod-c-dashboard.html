@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pod C — Team Dashboard</title>
+<title>Activity Dashboard</title>
 <style>
 :root {
-  --bg: #0d1117; --surface: #161b27; --border: #1e2d45;
-  --text: #e2e8f0; --muted: #94a3b8;
-  --indigo: #6366f1; --cyan: #06b6d4; --amber: #f59e0b;
-  --emerald: #10b981; --rose: #f43f5e;
+  --bg: #f0f4f8; --surface: #ffffff; --border: #e5e7eb;
+  --text: #111827; --muted: #6b7280;
+  --indigo: #4f46e5; --cyan: #0891b2; --amber: #d97706;
+  --emerald: #059669; --rose: #e11d48;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; min-height: 100vh; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; min-height: 100vh; }
 
 .nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
 .nav-brand { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; }
@@ -52,8 +52,8 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .uni-card.mbs  { border-left: 4px solid var(--emerald); }
 .uni-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .uni-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
-.ub-unsw { background: rgba(99,102,241,0.2); color: #818cf8; }
-.ub-mbs  { background: rgba(16,185,129,0.2); color: #34d399; }
+.ub-unsw { background: #ede9fe; color: #4f46e5; }
+.ub-mbs  { background: #d1fae5; color: #065f46; }
 .uni-name { font-size: 13px; font-weight: 600; color: var(--text); }
 .uni-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .uni-m { text-align: center; }
@@ -74,8 +74,8 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .lb-rank.r3 { background: rgba(180,120,60,0.2); color: #cd7f32; }
 .lb-name { flex: 1; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .lb-uni { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; flex-shrink: 0; }
-.lu-unsw { background: rgba(99,102,241,0.2); color: #818cf8; }
-.lu-mbs  { background: rgba(16,185,129,0.2); color: #34d399; }
+.lu-unsw { background: #ede9fe; color: #4f46e5; }
+.lu-mbs  { background: #d1fae5; color: #065f46; }
 .lb-mini-bar { width: 50px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
 .lb-mini-fill { height: 100%; border-radius: 2px; }
 .lb-val { font-size: 13px; font-weight: 700; min-width: 48px; text-align: right; flex-shrink: 0; }
@@ -89,7 +89,7 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 
 .adv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
 .adv-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; border-left: 4px solid transparent; }
-.adv-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+.adv-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
 .adv-tile.unsw { border-left-color: var(--indigo); }
 .adv-tile.unsw:hover { border-color: var(--indigo); }
 .adv-tile.mbs  { border-left-color: var(--emerald); }
@@ -108,21 +108,21 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 
 .tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; min-width: 700px; }
-th { background: rgba(255,255,255,0.03); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
-td { padding: 10px 14px; border-bottom: 1px solid rgba(30,45,69,0.5); font-size: 13px; color: var(--text); }
+th { background: #f9fafb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: rgba(255,255,255,0.02); }
-tfoot td { font-weight: 700; background: rgba(255,255,255,0.03); border-top: 1px solid var(--border); border-bottom: none; }
+tr:hover td { background: #f9fafb; }
+tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--border); border-bottom: none; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 .pct-cell { display: flex; align-items: center; gap: 8px; }
 .mini-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; min-width: 50px; }
 .mini-fill { height: 100%; border-radius: 2px; }
 .pct-lbl { font-size: 12px; font-weight: 600; min-width: 42px; text-align: right; }
-.be { background: rgba(99,102,241,0.2); color: #818cf8; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
-.ba { background: rgba(245,158,11,0.15); color: var(--amber); padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
-.bi { background: rgba(16,185,129,0.15); color: #34d399; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+.be { background: #ede9fe; color: #4f46e5; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+.ba { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+.bi { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
 
-.note-bar { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #fbbf24; margin-bottom: 14px; }
+.note-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-bottom: 14px; }
 
 .adv-detail-hd { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 .adv-detail-name { font-size: 20px; font-weight: 700; color: var(--text); }
@@ -132,28 +132,15 @@ tfoot td { font-weight: 700; background: rgba(255,255,255,0.03); border-top: 1px
 .ads:first-child { border-left: none; }
 .ads-val   { font-size: 28px; font-weight: 700; }
 .ads-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 3px; }
-.back-btn  { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
-.back-btn:hover { background: rgba(255,255,255,0.1); }
+.back-btn  { background: #f3f4f6; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+.back-btn:hover { background: #e5e7eb; }
 .rag-pill  { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.rag-pill.g { background: rgba(16,185,129,0.2); color: #34d399; }
-.rag-pill.a { background: rgba(245,158,11,0.2); color: #fbbf24; }
-.rag-pill.r { background: rgba(244,63,94,0.2);  color: #fb7185; }
+.rag-pill.g { background: #d1fae5; color: #065f46; }
+.rag-pill.a { background: #fef3c7; color: #92400e; }
+.rag-pill.r { background: #fee2e2; color: #991b1b; }
 </style>
 </head>
 <body>
-
-<header class="nav">
-  <div class="nav-brand">Pod <span>C</span></div>
-  <span class="nav-sep">|</span>
-  <nav class="nav-crumb">
-    <span class="crumb active" id="crumb-team" onclick="showView('team')">Team Dashboard</span>
-    <span class="crumb" id="crumb-advisor">Advisor Detail</span>
-  </nav>
-  <div class="nav-right">
-    <div class="date-chip">Week ending 17 Jun 2026</div>
-    <button class="upload-btn">&#x2191; Upload new file</button>
-  </div>
-</header>
 
 <!-- TEAM VIEW -->
 <main class="view active" id="view-team">
