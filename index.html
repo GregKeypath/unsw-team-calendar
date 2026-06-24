@@ -1188,7 +1188,7 @@
     .plan-btn:hover { opacity: 0.8; }
     .plan-btn-clear { background: #374151; color: #d1d5db; }
     .plan-btn-copy { background: var(--accent); color: var(--accent-text); }
-    .plan-scroll { flex: 1; overflow-x: auto; overflow-y: hidden; display: flex; padding: 12px 20px 14px; gap: 10px; align-items: flex-start; min-height: 0; }
+    .plan-scroll { flex: 1; overflow-x: auto; overflow-y: auto; display: flex; padding: 12px 20px 14px; gap: 10px; align-items: flex-start; min-height: 0; }
     .plan-col { flex-shrink: 0; width: 180px; background: #fff; border-radius: 11px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; flex-direction: column; }
     .plan-col-hd { background: #1a1a1a; color: var(--accent); padding: 8px 10px; border-radius: 11px 11px 0 0; text-align: center; font-size: 0.86rem; font-weight: 800; flex-shrink: 0; }
     .plan-col-body { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; min-height: 80px; transition: background 0.15s, outline 0.1s; border-radius: 0 0 11px 11px; }
@@ -4412,7 +4412,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { label: 'Masters Core (4 courses)', type: 'coreA', items: {'H3 24':['ZZBU6401 HR Policies & Practices'],'H4 24':['ZZBU6410 HR Strategies'],'H5 24':['ZZBU6412 Managing People & Organisations'],'H6 24':['ZZBU6414 Introduction to Employment Law'],'H1 25':['ZZBU6401 HR Policies & Practices'],'H2 25':['ZZBU6410 HR Strategies'],'H3 25':['ZZBU6412 Managing People & Organisations'],'H4 25':['ZZBU6414 Introduction to Employment Law'],'H5 25':['ZZBU6401 HR Policies & Practices'],'H6 25':['ZZBU6410 HR Strategies'],'H1 26':['ZZBU6401 HR Policies & Practices'],'H2 26':['ZZBU6410 HR Strategies'],'H3 26':['ZZBU6412 Managing People & Organisations'],'H4 26':['ZZBU6401 HR Policies & Practices'],'H5 26':['ZZBU6410 HR Strategies'],'H6 26':['ZZBU6412 Managing People & Organisations'],'H1 27':['ZZBU6401 HR Policies & Practices'],'H2 27':['ZZBU6410 HR Strategies'],'H3 27':['ZZBU6412 Managing People & Organisations'],'H4 27':['ZZBU6401 HR Policies & Practices']} },
         { label: 'GCert HRA Core', type: 'spec1', items: {'H6 23':['ZZBU6501 Introductory Data Analysis'],'H2 24':['ZZBU6407 HR Information Systems'],'H4 24':['ZZBU6404 HR Analytics (IDA)'],'H5 24':['ZZBU6407 HR Information Systems'],'H3 25':['ZZBU6501 Introductory Data Analysis'],'H4 25':['ZZBU6404 HR Analytics'],'H5 25':['ZZBU6407 HR Information Systems'],'H1 26':['ZZBU6404 HR Analytics'],'H2 26':['ZZBU6407 HR Information Systems'],'H4 26':['ZZBU6501 Introductory Data Analysis'],'H5 26':['ZZBU6404 HR Analytics'],'H6 26':['ZZBU6407 HR Information Systems'],'H1 27':['ZZBU6404 HR Analytics'],'H2 27':['ZZBU6407 HR Information Systems'],'H3 27':['ZZBU6404 HR Analytics'],'H4 27':['ZZBU6407 HR Information Systems']} },
         { label: 'GCert DEI Core', type: 'spec2', items: {'H6 23':['ZZBU6402 Employee Wellbeing & Engagement'],'H2 24':['ZZBU6403 Sustainability & Human Resources'],'H3 24':['ZZBU6406 Diversity, Equity & Inclusion'],'H4 24':['ZZBU6402 Employee Wellbeing & Engagement'],'H5 24':['ZZBU6403 Sustainability & Human Resources'],'H1 25':['ZZBU6406 Diversity, Equity & Inclusion'],'H2 25':['ZZBU6402 Employee Wellbeing & Engagement'],'H3 25':['ZZBU6403 Sustainability & Human Resources'],'H5 25':['ZZBU6406 Diversity, Equity & Inclusion'],'H6 25':['ZZBU6402 Employee Wellbeing & Engagement'],'H1 26':['ZZBU6403 Sustainability & Human Resources'],'H3 26':['ZZBU6406 Diversity, Equity & Inclusion'],'H4 26':['ZZBU6402 Employee Wellbeing & Engagement'],'H5 26':['ZZBU6403 Sustainability & Human Resources'],'H6 26':['ZZBU6406 Diversity, Equity & Inclusion'],'H1 27':['ZZBU6402 Employee Wellbeing & Engagement'],'H2 27':['ZZBU6403 Sustainability & Human Resources'],'H3 27':['ZZBU6406 Diversity, Equity & Inclusion'],'H4 27':['ZZBU6402 Employee Wellbeing & Engagement']} },
-        { label: 'GCert LOD Core', type: 'spec3', items: {'H3 24':['ZZBU6411 Organisational Development'],'H4 24':['ZZBU6413 Leadership Development'],'H1 25':['ZZBU6411 Organisational Development'],'H2 25':['ZZBU6413 Leadership Development'],'H1 26':['ZZBU6411 Organisational Development'],'H2 26':['ZZBU6413 Leadership Development'],'H4 26':['ZZBU6411 Organisational Development'],'H6 26':['ZZBU6411 Organisational Development'],'H1 27':['ZZBU6413 Leadership Development'],'H3 27':['ZZBU6411 Organisational Development'],'H4 27':['ZZBU6411 Organisational Development']} },
+        { label: 'GCert LOD Core', type: 'spec3', items: {'H3 24':['ZZBU6411 Organisational Development'],'H4 24':['ZZBU6413 Leadership Development'],'H1 25':['ZZBU6411 Organisational Development'],'H2 25':['ZZBU6413 Leadership Development'],'H1 26':['ZZBU6413 Leadership Development'],'H2 26':['ZZBU6411 Organisational Development'],'H6 26':['ZZBU6411 Organisational Development'],'H1 27':['ZZBU6413 Leadership Development'],'H3 27':['ZZBU6411 Organisational Development'],'H4 27':['ZZBU6411 Organisational Development']} },
         { label: 'HRM Electives', type: 'elective', items: {'H5 23':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H6 23':['ZZBU6408 Managing Pay & Performance'],'H1 24':['ZZBU6409 Change Management'],'H2 24':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H5 24':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H6 24':['ZZBU6408 Strategic Rewards & Performance'],'H1 25':['ZZBU6409 Change Management'],'H2 25':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H3 25':['ZZBU6408 Strategic Rewards & Performance'],'H1 26':['ZZBU6409 Change Management'],'H3 26':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H4 26':['ZZBU6408 Strategic Rewards & Performance'],'H5 26':['ZZBU6409 Change Management'],'H1 27':['ZZBU6405 Attracting, Evaluating & Retaining Talent'],'H2 27':['ZZBU6408 Strategic Rewards & Performance'],'H3 27':['ZZBU6409 Change Management']} },
       ]
     },
@@ -5835,21 +5835,9 @@ ${cardsHTML}
         return;
       }
 
-      let allElectives = getElectives(progName, levelCode, filterSP).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
-      let spFallbackNote = '';
+      let allElectives = getElectives(progName, levelCode, null).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
 
-      // If SP filter returned nothing, fall back to full pool + note when units next run
-      if (allElectives.length === 0 && filterSP) {
-        const fallback = getElectives(progName, levelCode, null).filter(u => !completed.includes(u.code) && !planned.includes(u.code));
-        if (fallback.length) {
-          allElectives = fallback;
-          const spFmt = filterSP.split(' ')[0] + ' 20' + filterSP.split(' ')[1];
-          spFallbackNote = '⚠️ No electives run in ' + spFmt + ' — showing all available electives. Next scheduled offerings shown on each card.';
-        } else {
-          output.innerHTML = '<div class="tr-no-results">No elective units available — all have been completed or planned.</div>';
-          return;
-        }
-      } else if (allElectives.length === 0) {
+      if (allElectives.length === 0) {
         output.innerHTML = '<div class="tr-no-results">No elective units available — all have been completed or planned.</div>';
         return;
       }

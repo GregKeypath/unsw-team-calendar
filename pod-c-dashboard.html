@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -14,17 +14,11 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; min-height: 100vh; }
 
-.nav { position: sticky; top: 0; z-index: 100; background: var(--surface); border-bottom: 1px solid var(--border); height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
-.nav-brand { font-size: 15px; font-weight: 700; color: var(--text); white-space: nowrap; }
-.nav-brand span { color: var(--indigo); }
-.nav-sep { color: var(--border); }
-.nav-crumb { display: flex; gap: 2px; align-items: center; }
-.crumb { font-size: 12px; color: var(--muted); cursor: pointer; padding: 5px 11px; border-radius: 6px; transition: 0.2s; white-space: nowrap; }
-.crumb:hover { background: rgba(99,102,241,0.1); color: var(--indigo); }
-.crumb.active { background: rgba(99,102,241,0.15); color: var(--indigo); }
-.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-.date-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; }
-.upload-btn { background: var(--indigo); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+.period-bar { padding: 16px 20px 0; max-width: 1280px; margin: 0 auto; }
+.period-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px; width: fit-content; }
+.period-tab { padding: 6px 18px; border-radius: 6px; border: none; background: transparent; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.period-tab.active { background: var(--indigo); color: white; font-weight: 600; }
+.period-tab:hover:not(.active) { background: #f3f4f6; color: var(--text); }
 
 .view { display: none; padding: 20px; max-width: 1280px; margin: 0 auto; }
 .view.active { display: block; }
@@ -35,32 +29,16 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 
 .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
 .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top: 3px solid transparent; }
-.kpi-card.c-calls { border-top-color: var(--indigo); }
-.kpi-card.c-con   { border-top-color: var(--emerald); }
-.kpi-card.c-att   { border-top-color: var(--cyan); }
-.kpi-card.c-mbs   { border-top-color: #34d399; }
-.kpi-card.c-intent { border-top-color: var(--amber); }
+.kpi-card.c-calls   { border-top-color: var(--indigo); }
+.kpi-card.c-con     { border-top-color: var(--emerald); }
+.kpi-card.c-att     { border-top-color: var(--cyan); }
+.kpi-card.c-poolcon { border-top-color: #34d399; }
+.kpi-card.c-intent  { border-top-color: var(--amber); }
 .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .kpi-val { font-size: 36px; font-weight: 700; line-height: 1; color: var(--text); margin-bottom: 6px; }
 .kpi-sub { font-size: 11px; color: var(--muted); }
 .kpi-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 12px; overflow: hidden; }
 .kpi-bar-fill { height: 100%; border-radius: 2px; }
-
-.uni-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-.uni-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
-.uni-card.unsw { border-left: 4px solid var(--indigo); }
-.uni-card.mbs  { border-left: 4px solid var(--emerald); }
-.uni-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-.uni-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
-.ub-unsw { background: #ede9fe; color: #4f46e5; }
-.ub-mbs  { background: #d1fae5; color: #065f46; }
-.uni-name { font-size: 13px; font-weight: 600; color: var(--text); }
-.uni-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-.uni-m { text-align: center; }
-.um-val { font-size: 22px; font-weight: 700; color: var(--text); }
-.um-val.hi { color: var(--emerald); }
-.um-val.hi2 { color: var(--cyan); }
-.um-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-top: 3px; }
 
 .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
 .lb-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
@@ -73,9 +51,6 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .lb-rank.r2 { background: rgba(148,163,184,0.2); color: #94a3b8; }
 .lb-rank.r3 { background: rgba(180,120,60,0.2); color: #cd7f32; }
 .lb-name { flex: 1; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.lb-uni { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; flex-shrink: 0; }
-.lu-unsw { background: #ede9fe; color: #4f46e5; }
-.lu-mbs  { background: #d1fae5; color: #065f46; }
 .lb-mini-bar { width: 50px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
 .lb-mini-fill { height: 100%; border-radius: 2px; }
 .lb-val { font-size: 13px; font-weight: 700; min-width: 48px; text-align: right; flex-shrink: 0; }
@@ -88,12 +63,8 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .subj-bar-fill { height: 100%; border-radius: 2px; background: var(--indigo); }
 
 .adv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
-.adv-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; border-left: 4px solid transparent; }
-.adv-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-.adv-tile.unsw { border-left-color: var(--indigo); }
-.adv-tile.unsw:hover { border-color: var(--indigo); }
-.adv-tile.mbs  { border-left-color: var(--emerald); }
-.adv-tile.mbs:hover  { border-color: var(--emerald); }
+.adv-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; border-left: 4px solid var(--indigo); }
+.adv-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-color: var(--indigo); }
 .adv-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
 .adv-name { font-size: 14px; font-weight: 600; color: var(--text); }
 .adv-uni  { font-size: 10px; color: var(--muted); margin-top: 2px; }
@@ -123,6 +94,7 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
 .bi { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
 
 .note-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-bottom: 14px; }
+.no-data { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
 
 .adv-detail-hd { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 .adv-detail-name { font-size: 20px; font-weight: 700; color: var(--text); }
@@ -142,14 +114,20 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
 </head>
 <body>
 
+<!-- Period selector -->
+<div class="period-bar">
+  <div class="period-tabs">
+    <button class="period-tab active" data-period="thisWeek">This Week</button>
+    <button class="period-tab" data-period="lastWeek">Last Week</button>
+    <button class="period-tab" data-period="sinceCensus">Since Census</button>
+  </div>
+</div>
+
 <!-- TEAM VIEW -->
 <main class="view active" id="view-team">
 
-  <div class="section-hd"><h2>Pod C KPIs &mdash; Week ending 17 Jun 2026</h2></div>
+  <div class="section-hd"><h2 id="kpiHd">UNSW KPIs</h2></div>
   <div class="kpi-row" id="kpiRow"></div>
-
-  <div class="section-hd"><h2>University Split</h2></div>
-  <div class="uni-row" id="uniRow"></div>
 
   <div class="section-hd"><h2>Leaderboards</h2></div>
   <div class="three-col" id="lbSection"></div>
@@ -157,12 +135,12 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
   <div class="section-hd"><h2>Calls by Subject</h2></div>
   <div class="subjects-row" id="subjectsRow"></div>
 
-  <div class="section-hd"><h2>All Advisors &mdash; click for detail</h2></div>
+  <div class="section-hd"><h2>UNSW Advisors</h2></div>
   <div class="adv-grid" id="advGrid"></div>
 
   <div class="section-hd">
-    <h2>UNSW Eligible Pool &mdash; SSA Coverage</h2>
-    <span class="hd-note">424 students &middot; exported 17 Jun 2026</span>
+    <h2>UNSW Eligible Pool: SSA Coverage</h2>
+    <span class="hd-note" id="poolNote"></span>
   </div>
   <div class="note-bar">Pool att% and con% are derived from the Last Phone Attempt/Contact Date fields in the eligible pool export. These may lag same-day call activity by a few hours due to Salesforce sync timing.</div>
   <div class="tbl-wrap">
@@ -196,39 +174,58 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
 </div>
 
 <script>
-const D = {
-  overall: { calls: 286, spoke: 133, conPct: 46.5, leftMsg: 99, noAnswer: 40 },
-  unsw: { calls: 199, spoke: 86, conPct: 43.2, leftMsg: 65, noAnswer: 37,
-          pool: 424, attempted: 76, attPct: 17.9, contacted: 26, poolConPct: 34.2, yesIntent: 29 },
-  mbs:  { calls: 87,  spoke: 47, conPct: 54.0, leftMsg: 34, noAnswer: 3 },
-  advisors: [
-    { name: "Daljeet Sahota",       uni: "UNSW", calls: 48, spoke: 17, conPct: 35.4, leftMsg: 8,  noAns: 20 },
-    { name: "Amelia Churchill",     uni: "UNSW", calls: 40, spoke: 21, conPct: 52.5, leftMsg: 16, noAns: 2  },
-    { name: "Priscilla Samuel",     uni: "UNSW", calls: 37, spoke: 20, conPct: 54.1, leftMsg: 13, noAns: 2  },
-    { name: "Saravanan Rajamani",   uni: "UNSW", calls: 31, spoke: 14, conPct: 45.2, leftMsg: 13, noAns: 1  },
-    { name: "Kimberley Hornlimann", uni: "UNSW", calls: 26, spoke: 12, conPct: 46.2, leftMsg: 9,  noAns: 4  },
-    { name: "James Miller",         uni: "UNSW", calls: 17, spoke: 2,  conPct: 11.8, leftMsg: 6,  noAns: 8  },
-    { name: "Emma Arjoon",          uni: "MBS",  calls: 43, spoke: 20, conPct: 46.5, leftMsg: 21, noAns: 1  },
-    { name: "Ananya Rao",           uni: "MBS",  calls: 26, spoke: 17, conPct: 65.4, leftMsg: 6,  noAns: 1  },
-    { name: "Inuri Nethisinghe",    uni: "MBS",  calls: 18, spoke: 10, conPct: 55.6, leftMsg: 7,  noAns: 1  }
-  ],
-  pool: [
-    { name: "Kimberley Hornlimann", pool: 107, enrolled: 49, loa: 53, notActive: 5,  attempted: 20, attPct: 18.7, contacted: 10, conPct: 50.0, yesIntent: 0  },
-    { name: "Priscilla Samuel",     pool: 89,  enrolled: 58, loa: 28, notActive: 3,  attempted: 12, attPct: 13.5, contacted: 5,  conPct: 41.7, yesIntent: 8  },
-    { name: "Daljeet Sahota",       pool: 86,  enrolled: 51, loa: 31, notActive: 4,  attempted: 25, attPct: 29.1, contacted: 4,  conPct: 16.0, yesIntent: 17 },
-    { name: "Saravanan Rajamani",   pool: 82,  enrolled: 50, loa: 26, notActive: 6,  attempted: 18, attPct: 22.0, contacted: 6,  conPct: 33.3, yesIntent: 1  },
-    { name: "Amelia Churchill",     pool: 60,  enrolled: 28, loa: 29, notActive: 3,  attempted: 1,  attPct: 1.7,  contacted: 1,  conPct: 100.0, yesIntent: 3  }
-  ],
-  subjects: [
-    { name: "Registration",  count: 93 },
-    { name: "Reengagement",  count: 71 },
-    { name: "CS Engagement", count: 57 },
-    { name: "Risk Call",     count: 25 },
-    { name: "Welcome Call",  count: 22 },
-    { name: "Certs to Mstr", count: 14 },
-    { name: "T1 Call",       count: 4  }
-  ]
+const PERIODS = {
+  thisWeek: {
+    label: 'Week ending 17 Jun 2026',
+    poolNote: '424 students · exported 17 Jun 2026',
+    overall: { calls: 199, spoke: 86, conPct: 43.2, leftMsg: 65, noAnswer: 37,
+               pool: 424, attempted: 76, attPct: 17.9, contacted: 26, poolConPct: 34.2, yesIntent: 29 },
+    advisors: [
+      { name: 'Daljeet Sahota',       calls: 48, spoke: 17, conPct: 35.4, leftMsg: 8,  noAns: 20 },
+      { name: 'Amelia Churchill',     calls: 40, spoke: 21, conPct: 52.5, leftMsg: 16, noAns: 2  },
+      { name: 'Priscilla Samuel',     calls: 37, spoke: 20, conPct: 54.1, leftMsg: 13, noAns: 2  },
+      { name: 'Saravanan Rajamani',   calls: 31, spoke: 14, conPct: 45.2, leftMsg: 13, noAns: 1  },
+      { name: 'Kimberley Hornlimann', calls: 26, spoke: 12, conPct: 46.2, leftMsg: 9,  noAns: 4  },
+      { name: 'James Miller',         calls: 17, spoke: 2,  conPct: 11.8, leftMsg: 6,  noAns: 8  }
+    ],
+    pool: [
+      { name: 'Kimberley Hornlimann', pool: 107, enrolled: 49, loa: 53, notActive: 5,  attempted: 20, attPct: 18.7, contacted: 10, conPct: 50.0, yesIntent: 0  },
+      { name: 'Priscilla Samuel',     pool: 89,  enrolled: 58, loa: 28, notActive: 3,  attempted: 12, attPct: 13.5, contacted: 5,  conPct: 41.7, yesIntent: 8  },
+      { name: 'Daljeet Sahota',       pool: 86,  enrolled: 51, loa: 31, notActive: 4,  attempted: 25, attPct: 29.1, contacted: 4,  conPct: 16.0, yesIntent: 17 },
+      { name: 'Saravanan Rajamani',   pool: 82,  enrolled: 50, loa: 26, notActive: 6,  attempted: 18, attPct: 22.0, contacted: 6,  conPct: 33.3, yesIntent: 1  },
+      { name: 'Amelia Churchill',     pool: 60,  enrolled: 28, loa: 29, notActive: 3,  attempted: 1,  attPct: 1.7,  contacted: 1,  conPct: 100.0, yesIntent: 3  }
+    ],
+    subjects: [
+      { name: 'Registration',  count: 93 },
+      { name: 'Reengagement',  count: 71 },
+      { name: 'CS Engagement', count: 57 },
+      { name: 'Risk Call',     count: 25 },
+      { name: 'Welcome Call',  count: 22 },
+      { name: 'Certs to Mstr', count: 14 },
+      { name: 'T1 Call',       count: 4  }
+    ]
+  },
+  lastWeek: {
+    label: 'Week ending 10 Jun 2026',
+    poolNote: '',
+    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
+               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
+    advisors: [],
+    pool: [],
+    subjects: []
+  },
+  sinceCensus: {
+    label: 'Since Census (H2 2026)',
+    poolNote: '',
+    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
+               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
+    advisors: [],
+    pool: [],
+    subjects: []
+  }
 };
+
+var currentPeriodKey = 'thisWeek';
 
 function rag(v, hi, mid) { return v >= hi ? 'g' : v >= mid ? 'a' : 'r'; }
 function ragLabel(r) { return r === 'g' ? 'Strong' : r === 'a' ? 'Monitor' : 'Low'; }
@@ -242,145 +239,172 @@ function pctCell(v, max, color) {
 function conColor(v) { return v >= 50 ? '#10b981' : v >= 35 ? '#f59e0b' : '#f43f5e'; }
 function attColor(v) { return v >= 25 ? '#06b6d4' : v >= 15 ? '#f59e0b' : '#f43f5e'; }
 
-// KPI row
-var kpis = [
-  { label: 'Total Calls',   val: '286',  sub: 'UNSW 199 · MBS 87', cls: 'c-calls', bw: 100, bc: '#6366f1' },
-  { label: 'Pod C con%',    val: '46.5%',sub: '133 of 286 calls spoke',  cls: 'c-con',   bw: 46.5, bc: '#10b981' },
-  { label: 'MBS con%',      val: '54.0%',sub: '47 of 87 MBS calls spoke',cls: 'c-mbs',   bw: 54, bc: '#34d399' },
-  { label: 'UNSW Pool att%',val: '17.9%',sub: '76 of 424 students reached',cls:'c-att',  bw: 17.9, bc: '#06b6d4' },
-  { label: 'Intent = Yes',  val: '29',   sub: 'UNSW students to re-enrol', cls: 'c-intent', bw: (29/424*100), bc: '#f59e0b' }
-];
-document.getElementById('kpiRow').innerHTML = kpis.map(function(k) {
-  return '<div class="kpi-card ' + k.cls + '"><div class="kpi-label">' + k.label + '</div>' +
-    '<div class="kpi-val">' + k.val + '</div><div class="kpi-sub">' + k.sub + '</div>' +
-    '<div class="kpi-bar"><div class="kpi-bar-fill" style="width:' + Math.min(k.bw,100).toFixed(0) + '%;background:' + k.bc + ';"></div></div></div>';
-}).join('');
+function renderKPIs(p) {
+  var o = p.overall;
+  document.getElementById('kpiHd').textContent = 'UNSW KPIs: ' + p.label;
+  var kpis = [
+    { label: 'Calls Made',   val: o.calls || '—', sub: o.calls ? o.spoke + ' students reached' : 'No data yet',                                        cls: 'c-calls',   bw: 100,                                   bc: '#6366f1' },
+    { label: 'con%',         val: o.calls ? o.conPct.toFixed(1) + '%' : '—',         sub: o.calls ? o.spoke + ' of ' + o.calls + ' calls spoke' : '',   cls: 'c-con',     bw: o.conPct || 0,                         bc: '#10b981' },
+    { label: 'Pool att%',    val: o.pool  ? o.attPct.toFixed(1) + '%' : '—',         sub: o.pool ? o.attempted + ' of ' + o.pool + ' reached' : '',      cls: 'c-att',     bw: o.attPct || 0,                         bc: '#06b6d4' },
+    { label: 'Pool con%',    val: o.attempted ? o.poolConPct.toFixed(1) + '%' : '—', sub: o.attempted ? o.contacted + ' of ' + o.attempted + ' spoke' : '', cls: 'c-poolcon', bw: o.poolConPct || 0,                  bc: '#34d399' },
+    { label: 'Intent = Yes', val: o.yesIntent || '—',                                sub: o.pool ? 'students to re-enrol' : '',                           cls: 'c-intent',  bw: o.pool ? (o.yesIntent/o.pool*100) : 0, bc: '#f59e0b' }
+  ];
+  document.getElementById('kpiRow').innerHTML = kpis.map(function(k) {
+    return '<div class="kpi-card ' + k.cls + '"><div class="kpi-label">' + k.label + '</div>' +
+      '<div class="kpi-val">' + k.val + '</div><div class="kpi-sub">' + k.sub + '</div>' +
+      '<div class="kpi-bar"><div class="kpi-bar-fill" style="width:' + Math.min(k.bw || 0, 100).toFixed(0) + '%;background:' + k.bc + ';"></div></div></div>';
+  }).join('');
+}
 
-// University row
-document.getElementById('uniRow').innerHTML =
-  '<div class="uni-card unsw"><div class="uni-header"><span class="uni-badge ub-unsw">UNSW</span><span class="uni-name">University of New South Wales Online</span></div>' +
-  '<div class="uni-metrics">' +
-    '<div class="uni-m"><div class="um-val">' + D.unsw.calls + '</div><div class="um-label">Calls</div></div>' +
-    '<div class="uni-m"><div class="um-val">' + D.unsw.spoke + '</div><div class="um-label">Spoke</div></div>' +
-    '<div class="uni-m"><div class="um-val hi">' + D.unsw.conPct + '%</div><div class="um-label">con%</div></div>' +
-    '<div class="uni-m"><div class="um-val hi2">' + D.unsw.attPct + '%</div><div class="um-label">Pool att%</div></div>' +
-    '<div class="uni-m"><div class="um-val">' + D.unsw.leftMsg + '</div><div class="um-label">Left Msg</div></div>' +
-  '</div></div>' +
-  '<div class="uni-card mbs"><div class="uni-header"><span class="uni-badge ub-mbs">MBS</span><span class="uni-name">Melbourne Business School Online</span></div>' +
-  '<div class="uni-metrics">' +
-    '<div class="uni-m"><div class="um-val">' + D.mbs.calls + '</div><div class="um-label">Calls</div></div>' +
-    '<div class="uni-m"><div class="um-val">' + D.mbs.spoke + '</div><div class="um-label">Spoke</div></div>' +
-    '<div class="uni-m"><div class="um-val hi">' + D.mbs.conPct + '%</div><div class="um-label">con%</div></div>' +
-    '<div class="uni-m"><div class="um-val" style="color:var(--muted);">—</div><div class="um-label">Pool att%</div></div>' +
-    '<div class="uni-m"><div class="um-val">' + D.mbs.leftMsg + '</div><div class="um-label">Left Msg</div></div>' +
-  '</div></div>';
-
-// Leaderboards
 function lbRows(sorted, valFn, maxVal, colorFn) {
   return sorted.slice(0, 5).map(function(a, i) {
     var v = valFn(a);
     var rCls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : '';
-    var uCls = a.uni === 'UNSW' ? 'lu-unsw' : 'lu-mbs';
-    var color = colorFn(v, a);
+    var color = colorFn(v);
     var w = (v / maxVal * 100).toFixed(0);
     var disp = (typeof v === 'number' && String(v).indexOf('.') >= 0) ? v.toFixed(1) + '%' : v;
     return '<div class="lb-row"><div class="lb-rank ' + rCls + '">' + (i + 1) + '</div>' +
       '<div class="lb-name">' + a.name + '</div>' +
-      '<span class="lb-uni ' + uCls + '">' + a.uni + '</span>' +
       '<div class="lb-mini-bar"><div class="lb-mini-fill" style="width:' + w + '%;background:' + color + ';"></div></div>' +
       '<div class="lb-val">' + disp + '</div></div>';
   }).join('');
 }
-var byCon   = D.advisors.slice().sort(function(a,b){ return b.conPct - a.conPct; });
-var byCalls = D.advisors.slice().sort(function(a,b){ return b.calls - a.calls; });
-var bySpoke = D.advisors.slice().sort(function(a,b){ return b.spoke - a.spoke; });
 
-document.getElementById('lbSection').innerHTML =
-  '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#10b981"></div>Best con%</div>' +
-  lbRows(byCon, function(a){ return a.conPct; }, byCon[0].conPct, conColor) + '</div>' +
-  '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#6366f1"></div>Most Calls</div>' +
-  lbRows(byCalls, function(a){ return a.calls; }, byCalls[0].calls, function(){ return '#6366f1'; }) + '</div>' +
-  '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#06b6d4"></div>Most Spoke</div>' +
-  lbRows(bySpoke, function(a){ return a.spoke; }, bySpoke[0].spoke, function(){ return '#06b6d4'; }) + '</div>';
+function renderLeaderboards(p) {
+  var advs = p.advisors;
+  var empty = '<div class="no-data">No data for this period</div>';
+  if (!advs.length) {
+    document.getElementById('lbSection').innerHTML =
+      '<div class="lb-card">' + empty + '</div><div class="lb-card">' + empty + '</div><div class="lb-card">' + empty + '</div>';
+    return;
+  }
+  var byCon   = advs.slice().sort(function(a, b) { return b.conPct - a.conPct; });
+  var byCalls = advs.slice().sort(function(a, b) { return b.calls  - a.calls;  });
+  var bySpoke = advs.slice().sort(function(a, b) { return b.spoke  - a.spoke;  });
+  document.getElementById('lbSection').innerHTML =
+    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#10b981"></div>Best con%</div>' +
+    lbRows(byCon,   function(a) { return a.conPct; }, byCon[0].conPct,   conColor) + '</div>' +
+    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#6366f1"></div>Most Calls</div>' +
+    lbRows(byCalls, function(a) { return a.calls;  }, byCalls[0].calls,  function() { return '#6366f1'; }) + '</div>' +
+    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#06b6d4"></div>Most Spoke</div>' +
+    lbRows(bySpoke, function(a) { return a.spoke;  }, bySpoke[0].spoke,  function() { return '#06b6d4'; }) + '</div>';
+}
 
-// Subjects
-var maxSubj = Math.max.apply(null, D.subjects.map(function(s){ return s.count; }));
-document.getElementById('subjectsRow').innerHTML = D.subjects.map(function(s) {
-  return '<div class="subj-card"><div class="subj-count">' + s.count + '</div>' +
-    '<div class="subj-name">' + s.name + '</div>' +
-    '<div class="subj-bar"><div class="subj-bar-fill" style="width:' + (s.count/maxSubj*100).toFixed(0) + '%;"></div></div></div>';
-}).join('');
+function renderSubjects(p) {
+  if (!p.subjects.length) {
+    document.getElementById('subjectsRow').innerHTML = '<div class="no-data" style="grid-column:1/-1">No data for this period</div>';
+    return;
+  }
+  var maxSubj = Math.max.apply(null, p.subjects.map(function(s) { return s.count; }));
+  document.getElementById('subjectsRow').innerHTML = p.subjects.map(function(s) {
+    return '<div class="subj-card"><div class="subj-count">' + s.count + '</div>' +
+      '<div class="subj-name">' + s.name + '</div>' +
+      '<div class="subj-bar"><div class="subj-bar-fill" style="width:' + (s.count / maxSubj * 100).toFixed(0) + '%;"></div></div></div>';
+  }).join('');
+}
 
-// Advisor tiles
-document.getElementById('advGrid').innerHTML = D.advisors.map(function(a, i) {
-  var r = rag(a.conPct, 50, 35);
-  var uniCls = a.uni.toLowerCase();
-  var uniLabel = a.uni === 'UNSW' ? 'Univ. of New South Wales' : 'Melbourne Business School';
-  return '<div class="adv-tile ' + uniCls + '" onclick="showAdvisor(' + i + ')">' +
-    '<div class="adv-hd"><div><div class="adv-name">' + a.name + '</div><div class="adv-uni">' + uniLabel + '</div></div>' +
-    '<div class="rag-dot ' + r + '"></div></div>' +
-    '<div class="adv-metrics">' +
-      '<div class="adv-m"><div class="adv-mv">' + a.calls + '</div><div class="adv-ml">Calls</div></div>' +
-      '<div class="adv-m"><div class="adv-mv">' + a.spoke + '</div><div class="adv-ml">Spoke</div></div>' +
-      '<div class="adv-m"><div class="adv-mv" style="color:' + conColor(a.conPct) + '">' + a.conPct.toFixed(1) + '%</div><div class="adv-ml">con%</div></div>' +
-    '</div></div>';
-}).join('');
+function renderAdvisors(p) {
+  if (!p.advisors.length) {
+    document.getElementById('advGrid').innerHTML = '<div class="no-data" style="grid-column:1/-1">No data for this period</div>';
+    return;
+  }
+  document.getElementById('advGrid').innerHTML = p.advisors.map(function(a, i) {
+    var r = rag(a.conPct, 50, 35);
+    return '<div class="adv-tile" onclick="showAdvisor(' + i + ')">' +
+      '<div class="adv-hd"><div><div class="adv-name">' + a.name + '</div><div class="adv-uni">Univ. of New South Wales</div></div>' +
+      '<div class="rag-dot ' + r + '"></div></div>' +
+      '<div class="adv-metrics">' +
+        '<div class="adv-m"><div class="adv-mv">' + a.calls + '</div><div class="adv-ml">Calls</div></div>' +
+        '<div class="adv-m"><div class="adv-mv">' + a.spoke + '</div><div class="adv-ml">Spoke</div></div>' +
+        '<div class="adv-m"><div class="adv-mv" style="color:' + conColor(a.conPct) + '">' + a.conPct.toFixed(1) + '%</div><div class="adv-ml">con%</div></div>' +
+      '</div></div>';
+  }).join('');
+}
 
-// Pool table
-var tot = D.pool.reduce(function(acc, r) {
-  acc.pool += r.pool; acc.enrolled += r.enrolled; acc.loa += r.loa;
-  acc.notActive += r.notActive; acc.attempted += r.attempted;
-  acc.contacted += r.contacted; acc.yesIntent += r.yesIntent;
-  return acc;
-}, { pool:0, enrolled:0, loa:0, notActive:0, attempted:0, contacted:0, yesIntent:0 });
+function renderPool(p) {
+  document.getElementById('poolNote').textContent = p.poolNote;
+  if (!p.pool.length) {
+    document.getElementById('poolBody').innerHTML = '<tr><td colspan="10" class="no-data">No data for this period</td></tr>';
+    document.getElementById('poolFoot').innerHTML = '';
+    return;
+  }
+  var tot = p.pool.reduce(function(acc, r) {
+    acc.pool += r.pool; acc.enrolled += r.enrolled; acc.loa += r.loa;
+    acc.notActive += r.notActive; acc.attempted += r.attempted;
+    acc.contacted += r.contacted; acc.yesIntent += r.yesIntent;
+    return acc;
+  }, { pool: 0, enrolled: 0, loa: 0, notActive: 0, attempted: 0, contacted: 0, yesIntent: 0 });
 
-document.getElementById('poolBody').innerHTML = D.pool.map(function(r) {
-  var ac = attColor(r.attPct), cc = conColor(r.conPct);
-  return '<tr><td>' + r.name + '</td>' +
-    '<td class="num">' + r.pool + '</td>' +
-    '<td class="num"><span class="be">' + r.enrolled + '</span></td>' +
-    '<td class="num">' + r.loa + '</td>' +
-    '<td class="num">' + r.notActive + '</td>' +
-    '<td class="num">' + r.attempted + '</td>' +
-    '<td>' + pctCell(r.attPct, 40, ac) + '</td>' +
-    '<td class="num">' + r.contacted + '</td>' +
-    '<td>' + pctCell(r.conPct, 100, cc) + '</td>' +
-    '<td class="num">' + (r.yesIntent > 0 ? '<span class="ba">' + r.yesIntent + '</span>' : '—') + '</td></tr>';
-}).join('');
+  document.getElementById('poolBody').innerHTML = p.pool.map(function(r) {
+    var ac = attColor(r.attPct), cc = conColor(r.conPct);
+    return '<tr><td>' + r.name + '</td>' +
+      '<td class="num">' + r.pool + '</td>' +
+      '<td class="num"><span class="be">' + r.enrolled + '</span></td>' +
+      '<td class="num">' + r.loa + '</td>' +
+      '<td class="num">' + r.notActive + '</td>' +
+      '<td class="num">' + r.attempted + '</td>' +
+      '<td>' + pctCell(r.attPct, 40, ac) + '</td>' +
+      '<td class="num">' + r.contacted + '</td>' +
+      '<td>' + pctCell(r.conPct, 100, cc) + '</td>' +
+      '<td class="num">' + (r.yesIntent > 0 ? '<span class="ba">' + r.yesIntent + '</span>' : '—') + '</td></tr>';
+  }).join('');
 
-var attTot = tot.attempted / tot.pool * 100;
-var conTot = tot.attempted > 0 ? tot.contacted / tot.attempted * 100 : 0;
-document.getElementById('poolFoot').innerHTML = '<tr>' +
-  '<td>TOTAL</td><td class="num">' + tot.pool + '</td>' +
-  '<td class="num">' + tot.enrolled + '</td><td class="num">' + tot.loa + '</td><td class="num">' + tot.notActive + '</td>' +
-  '<td class="num">' + tot.attempted + '</td>' +
-  '<td>' + pctCell(attTot, 40, '#06b6d4') + '</td>' +
-  '<td class="num">' + tot.contacted + '</td>' +
-  '<td>' + pctCell(conTot, 100, '#10b981') + '</td>' +
-  '<td class="num"><span class="ba">' + tot.yesIntent + '</span></td></tr>';
+  var attTot = tot.attempted / tot.pool * 100;
+  var conTot = tot.attempted > 0 ? tot.contacted / tot.attempted * 100 : 0;
+  document.getElementById('poolFoot').innerHTML = '<tr>' +
+    '<td>TOTAL</td><td class="num">' + tot.pool + '</td>' +
+    '<td class="num">' + tot.enrolled + '</td><td class="num">' + tot.loa + '</td><td class="num">' + tot.notActive + '</td>' +
+    '<td class="num">' + tot.attempted + '</td>' +
+    '<td>' + pctCell(attTot, 40, '#06b6d4') + '</td>' +
+    '<td class="num">' + tot.contacted + '</td>' +
+    '<td>' + pctCell(conTot, 100, '#10b981') + '</td>' +
+    '<td class="num"><span class="ba">' + tot.yesIntent + '</span></td></tr>';
+}
 
-// Advisor detail
+function render(periodKey) {
+  var p = PERIODS[periodKey];
+  renderKPIs(p);
+  renderLeaderboards(p);
+  renderSubjects(p);
+  renderAdvisors(p);
+  renderPool(p);
+}
+
+document.querySelectorAll('.period-tab').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.period-tab').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentPeriodKey = btn.dataset.period;
+    showView('team');
+    render(currentPeriodKey);
+  });
+});
+
+render('thisWeek');
+
 function showAdvisor(idx) {
-  var a = D.advisors[idx];
+  var p = PERIODS[currentPeriodKey];
+  var a = p.advisors[idx];
   var r = rag(a.conPct, 50, 35);
-  var uniColor = a.uni === 'UNSW' ? '#818cf8' : '#34d399';
   var pool = null;
-  for (var i = 0; i < D.pool.length; i++) { if (D.pool[i].name === a.name) { pool = D.pool[i]; break; } }
+  for (var i = 0; i < p.pool.length; i++) { if (p.pool[i].name === a.name) { pool = p.pool[i]; break; } }
 
-  var statsHtml = '<div class="ads"><div class="ads-val" style="color:#6366f1">' + a.calls + '</div><div class="ads-label">Calls</div></div>' +
+  var statsHtml =
+    '<div class="ads"><div class="ads-val" style="color:#6366f1">' + a.calls + '</div><div class="ads-label">Calls</div></div>' +
     '<div class="ads"><div class="ads-val" style="color:#10b981">' + a.spoke + '</div><div class="ads-label">Spoke</div></div>' +
     '<div class="ads"><div class="ads-val" style="color:' + conColor(a.conPct) + '">' + a.conPct.toFixed(1) + '%</div><div class="ads-label">con%</div></div>' +
     '<div class="ads"><div class="ads-val" style="color:#94a3b8">' + a.leftMsg + '</div><div class="ads-label">Left Msg</div></div>' +
     '<div class="ads"><div class="ads-val" style="color:#94a3b8">' + a.noAns + '</div><div class="ads-label">No Ans</div></div>';
   if (pool) {
-    statsHtml += '<div class="ads"><div class="ads-val" style="color:#06b6d4">' + pool.pool + '</div><div class="ads-label">Pool</div></div>' +
+    statsHtml +=
+      '<div class="ads"><div class="ads-val" style="color:#06b6d4">' + pool.pool + '</div><div class="ads-label">Pool</div></div>' +
       '<div class="ads"><div class="ads-val" style="color:' + attColor(pool.attPct) + '">' + pool.attPct.toFixed(1) + '%</div><div class="ads-label">att%</div></div>';
   }
 
   document.getElementById('advDetailHd').innerHTML =
     '<button class="back-btn" onclick="showView(\'team\')">&#8592; Back</button>' +
     '<div><div class="adv-detail-name">' + a.name + '</div>' +
-    '<div class="adv-detail-uni"><span style="color:' + uniColor + ';font-weight:600;">' + a.uni + '</span> &middot; Pod C</div></div>' +
+    '<div class="adv-detail-uni" style="color:#818cf8;font-weight:600;">UNSW &middot; Pod C</div></div>' +
     '<div class="adv-detail-stats">' + statsHtml + '</div>' +
     '<span class="rag-pill ' + r + '">' + ragLabel(r) + '</span>';
 
@@ -394,22 +418,15 @@ function showAdvisor(idx) {
 
   document.getElementById('advCallBody').innerHTML = callData.map(function(c) {
     return '<tr><td>' + c.status + '</td><td class="num">' + c.count + '</td>' +
-      '<td><div class="pct-cell">' + mbar(c.count, a.calls, c.color) + '<span class="pct-lbl">' + (c.count/a.calls*100).toFixed(1) + '%</span></div></td></tr>';
+      '<td><div class="pct-cell">' + mbar(c.count, a.calls, c.color) + '<span class="pct-lbl">' + (c.count / a.calls * 100).toFixed(1) + '%</span></div></td></tr>';
   }).join('');
 
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-  document.getElementById('view-advisor').classList.add('active');
-  document.querySelectorAll('.crumb').forEach(function(c){ c.classList.remove('active'); });
-  document.getElementById('crumb-advisor').classList.add('active');
-  document.getElementById('crumb-advisor').textContent = a.name;
+  showView('advisor');
 }
 
 function showView(id) {
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
   document.getElementById('view-' + id).classList.add('active');
-  document.querySelectorAll('.crumb').forEach(function(c){ c.classList.remove('active'); });
-  document.getElementById('crumb-' + id).classList.add('active');
-  if (id === 'team') { document.getElementById('crumb-advisor').textContent = 'Advisor Detail'; }
 }
 </script>
 </body>
