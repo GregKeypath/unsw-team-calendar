@@ -2627,13 +2627,13 @@
     H4: {
       label: 'H4 · 2026',
       rows: [
-        { name:'Daljeet Sahota',    st:247, en:223, it:226, stt:225, gcm:4, gcmPool:26, gcmt:26, t1t2pool:40, t1t2:34, cohort:332, ctd:244, cohortContact:255, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
-        { name:'Priscilla Samuel',  st:239, en:221, it:219, stt:219, gcm:1, gcmPool:31, gcmt:31, t1t2pool:39, t1t2:29, cohort:338, ctd:204, cohortContact:237, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
-        { name:'Saravanan Rajamani',st:198, en:180, it:181, stt:196, gcm:5, gcmPool:18, gcmt:18, t1t2pool:41, t1t2:32, cohort:268, ctd:183, cohortContact:196, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
+        { name:'Daljeet Sahota',    st:247, en:228, it:226, stt:225, gcm:4, gcmPool:26, gcmt:26, t1t2pool:40, t1t2:35, cohort:332, ctd:244, cohortContact:255, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
+        { name:'Priscilla Samuel',  st:239, en:224, it:219, stt:219, gcm:1, gcmPool:31, gcmt:31, t1t2pool:39, t1t2:29, cohort:338, ctd:204, cohortContact:237, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
+        { name:'Saravanan Rajamani',st:198, en:181, it:181, stt:196, gcm:5, gcmPool:18, gcmt:18, t1t2pool:41, t1t2:32, cohort:268, ctd:183, cohortContact:196, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
         { name:'Amelia Mosley',     st:244, en:254, it:223, stt:224, gcm:4, gcmPool:37, gcmt:37, t1t2pool:48, t1t2:42, cohort:341, ctd:199, cohortContact:223, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
-        { name:'Kimmi',             st:223, en:183, it:204, stt:204, gcm:0, gcmPool:46, gcmt:46, t1t2pool:25, t1t2:20, cohort:334, ctd:169, cohortContact:191, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
+        { name:'Kimmi',             st:223, en:185, it:204, stt:204, gcm:0, gcmPool:46, gcmt:46, t1t2pool:25, t1t2:20, cohort:334, ctd:169, cohortContact:191, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null },
       ],
-      total: { name:'UNSW Total', st:1151, en:1061, it:1053, stt:1068, gcm:14, gcmPool:158, gcmt:158, t1t2pool:193, t1t2:157, cohort:1613, ctd:999, cohortContact:1102, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null }
+      total: { name:'UNSW Total', st:1151, en:1072, it:1053, stt:1068, gcm:14, gcmPool:158, gcmt:158, t1t2pool:193, t1t2:158, cohort:1613, ctd:999, cohortContact:1102, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null }
     }
   };
 
@@ -3085,6 +3085,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
             fbRow.st = srcRow.st; fbRow.dr = srcRow.dr;
             fbRow.en = srcRow.en; fbRow.cohort = srcRow.cohort;
             fbRow.ctd = srcRow.ctd; fbRow.cohortContact = srcRow.cohortContact;
+            fbRow.gcm = srcRow.gcm; fbRow.gcmPool = srcRow.gcmPool; fbRow.gcmt = srcRow.gcmt;
+            fbRow.t1t2pool = srcRow.t1t2pool; fbRow.t1t2 = srcRow.t1t2;
           }
           // Recalculate all derived fields (remaining, remainingPerDay, pcts, etc.)
           Object.assign(fbRow, calcDerived(fbRow));
