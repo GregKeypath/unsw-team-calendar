@@ -3049,12 +3049,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const locked = (PACING_DATA[hex]?.rows || []).find(hr => hr.name === r.name) || {};
         const merged = { ...prev, ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null,
           it: locked.it ?? prev.it ?? r.it ?? 0, stt: locked.stt ?? prev.stt ?? r.stt ?? 0 };
-        // Recalculate derived fields
+        // Recalculate derived fields — fall back to merged values when pctT1/gcmC not available (cohort upload)
         const t1t2t = (merged.pctT1 && merged.pctT1 !== '—' && merged.t1t2 > 0)
-          ? Math.round(merged.t1t2 / (parseFloat(merged.pctT1) / 100)) : 0;
+          ? Math.round(merged.t1t2 / (parseFloat(merged.pctT1) / 100)) : (merged.t1t2t || 0);
         const gcmt = (merged.gcmC && merged.gcmC !== '—' && merged.gcm > 0)
-          ? Math.round(merged.gcm / (parseFloat(merged.gcmC) / 100)) : 0;
-        const t1t2pool = t1t2t > 0 ? Math.round(t1t2t / 0.80) : 0;
+          ? Math.round(merged.gcm / (parseFloat(merged.gcmC) / 100)) : (merged.gcmt || 0);
+        const t1t2pool = t1t2t > 0 ? Math.round(t1t2t / 0.80) : (merged.t1t2pool || 0);
         return { ...merged, t1t2t, gcmt, t1t2pool };
       });
       activePacingData[hex].total = calcTotal(activePacingData[hex].rows);
