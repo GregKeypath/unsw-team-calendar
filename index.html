@@ -3047,7 +3047,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       activePacingData[hex].rows = puParsedRows.map(r => {
         const prev = existing.find(e => e.name === r.name) || {};
         const locked = (PACING_DATA[hex]?.rows || []).find(hr => hr.name === r.name) || {};
-        const merged = { ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null,
+        const merged = { ...prev, ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null,
           it: locked.it ?? prev.it ?? r.it ?? 0, stt: locked.stt ?? prev.stt ?? r.stt ?? 0 };
         // Recalculate derived fields
         const t1t2t = (merged.pctT1 && merged.pctT1 !== '—' && merged.t1t2 > 0)
