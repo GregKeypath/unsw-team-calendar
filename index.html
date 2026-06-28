@@ -850,6 +850,20 @@
     .ssa-btn:hover { border-color: #111; color: #111; }
     .ssa-btn.active { background: #111; border-color: #111; color: #fff; }
 
+    /* Pacing summary bar */
+    .pacing-summary { background:#fff; border-radius:12px; box-shadow:0 2px 14px rgba(0,0,0,0.09),0 1px 4px rgba(0,0,0,0.05); padding:18px 24px; margin-bottom:14px; }
+    .ps-title { font-size:11px; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:14px; }
+    .ps-row { display:flex; gap:0; align-items:stretch; }
+    .ps-stat { flex:1; padding:0 20px; }
+    .ps-stat:first-child { padding-left:0; }
+    .ps-stat:last-child { padding-right:0; }
+    .ps-divider { width:1px; background:#e5e7eb; flex-shrink:0; margin:0; }
+    .ps-label { font-size:10px; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+    .ps-val { font-size:26px; font-weight:700; line-height:1; margin-bottom:4px; }
+    .ps-sub { font-size:11px; color:#6b7280; margin-bottom:8px; }
+    .ps-bar-track { height:7px; background:#f3f4f6; border-radius:4px; overflow:hidden; }
+    .ps-bar-fill { height:100%; border-radius:4px; transition:width 0.4s; }
+
     /* Section card grid — 12-col */
     .pacing-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
     .section-card { grid-column: span 3; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05); }
@@ -3179,6 +3193,43 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     renderPacing();
   }
 
+  function buildSummaryBar(r, hexLabel) {
+    const en      = r.en  || 0;
+    const st      = r.st  || 0;
+    const it      = r.it  || 0;
+    const drops   = r.drops != null ? r.drops : '—';
+    const dr      = r.dr  || '—';
+    const needed  = (st > 0) ? Math.max(0, st - en) : '—';
+    const wdays   = workingDaysUntil(ENROL_CLOSE_DATE);
+    const perDay  = (typeof needed === 'number' && needed > 0 && wdays > 0)
+                    ? parseFloat((needed / wdays).toFixed(1)) : (typeof needed === 'number' && needed === 0 ? 0 : '—');
+    const pctSt   = st > 0 ? Math.min(100, en / st * 100) : 0;
+    const pctIt   = it > 0 ? Math.min(100, en / it * 100) : 0;
+    const barCol  = p => p >= 90 ? '#10b981' : p >= 70 ? '#f59e0b' : '#ef4444';
+
+    const statHTML = (label, val, sub, bar) =>
+      `<div class="ps-stat">
+        <div class="ps-label">${label}</div>
+        <div class="ps-val" style="color:${bar ? barCol(bar) : 'inherit'}">${val}</div>
+        <div class="ps-sub">${sub}</div>
+        ${bar != null ? `<div class="ps-bar-track"><div class="ps-bar-fill" style="width:${Math.min(bar,100).toFixed(1)}%;background:${barCol(bar)}"></div></div>` : ''}
+      </div>`;
+
+    const div = (label, val, sub, bar) =>
+      statHTML(label, val, sub, bar) + '<div class="ps-divider"></div>';
+
+    return `<div class="pacing-summary">
+      <div class="ps-title">${hexLabel}</div>
+      <div class="ps-row">
+        ${div('To Start Target', pctSt.toFixed(1) + '%', en.toLocaleString() + ' of ' + st.toLocaleString() + ' enrolled', pctSt)}
+        ${div('To Incentive Target', pctIt.toFixed(1) + '%', en.toLocaleString() + ' of ' + it.toLocaleString() + ' enrolled', pctIt)}
+        ${div('Drops', typeof drops === 'number' ? drops : drops, dr + ' drop rate', null)}
+        ${div('Enrollments Needed', typeof needed === 'number' ? needed.toLocaleString() : needed, 'to hit start target', null)}
+        ${statHTML('Needed Per Day', perDay, 'until Jul 6 deadline', null)}
+      </div>
+    </div>`;
+  }
+
   function renderPacing() {
     // ── Study Period nav ──────────────────────────────────────────
     const nav = document.getElementById('pacing-hex-nav');
@@ -3239,13 +3290,15 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       if (!hex) return;
       const rowIdx = hex.rows.findIndex(r => r.name === activePacingSSA);
       if (rowIdx === -1) { content.innerHTML = '<p style="padding:20px;color:#888">No data for this combination.</p>'; return; }
-      content.innerHTML = buildSectionCards([{
-        label:    `<span class="ssa-name">${hex.rows[rowIdx].name.split(' ')[0]}</span>`,
-        fullName: hex.rows[rowIdx].name,
-        r:        calcDerived(hex.rows[rowIdx]),
-        showKpi: true, isTotal: false, isHex: false,
-        hexKey: activePacingHex, rowIdx
-      }]);
+      const advRow = calcDerived(hex.rows[rowIdx]);
+      content.innerHTML = buildSummaryBar(advRow, hex.rows[rowIdx].name + ' · ' + hex.label) +
+        buildSectionCards([{
+          label:    `<span class="ssa-name">${hex.rows[rowIdx].name.split(' ')[0]}</span>`,
+          fullName: hex.rows[rowIdx].name,
+          r:        advRow,
+          showKpi: true, isTotal: false, isHex: false,
+          hexKey: activePacingHex, rowIdx
+        }]);
 
     } else {
       // Specific period (or default H3) + all advisors → all advisors for that period
@@ -3265,7 +3318,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           r: calcTotal(visibleRows), showKpi: false, isTotal: true, isHex: false,
           hexKey, rowIdx: 'total' }
       ];
-      content.innerHTML = buildSectionCards(rowItems);
+      const totRow = calcTotal(visibleRows);
+      content.innerHTML = buildSummaryBar(totRow, hex.label) + buildSectionCards(rowItems);
     }
   }
 
