@@ -119,7 +119,7 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
   <div class="period-tabs">
     <button class="period-tab active" data-period="thisWeek">This Week</button>
     <button class="period-tab" data-period="lastWeek">Last Week</button>
-    <button class="period-tab" data-period="lastMonth">Last Month</button>
+    <button class="period-tab" data-period="lastMonth">Last 4 Weeks</button>
     <button class="period-tab" data-period="sinceCensus">Since Census</button>
   </div>
 </div>
@@ -215,22 +215,69 @@ const PERIODS = {
     ]
   },
   lastMonth: {
-    label: 'Month of June 2026',
-    poolNote: '',
-    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
-               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
-    advisors: [],
-    pool: [],
-    subjects: []
+    label: 'Last 4 Weeks (Jun 2026)',
+    poolNote: '1,613 students · exported 28 Jun 2026',
+    overall: { calls: 609, spoke: 609, conPct: 51.8, leftMsg: 0, noAnswer: 0,
+               pool: 1613, attempted: 865, attPct: 53.6, contacted: 448, poolConPct: 51.8, yesIntent: 0 },
+    advisors: [
+      { name: 'Amelia Churchill',     calls: 149, spoke: 149, conPct: 69.7, leftMsg: 0, noAns: 0 },
+      { name: 'Daljeet Sahota',       calls: 129, spoke: 129, conPct: 42.0, leftMsg: 0, noAns: 0 },
+      { name: 'Kimberley Hornlimann', calls: 103, spoke: 103, conPct: 58.7, leftMsg: 0, noAns: 0 },
+      { name: 'Priscilla Samuel',     calls: 119, spoke: 119, conPct: 50.6, leftMsg: 0, noAns: 0 },
+      { name: 'Saravanan Rajamani',   calls: 84,  spoke: 84,  conPct: 42.4, leftMsg: 0, noAns: 0 },
+      { name: 'James Miller',         calls: 24,  spoke: 24,  conPct: 100,  leftMsg: 0, noAns: 0 }
+    ],
+    pool: [
+      { name: 'Daljeet Sahota',       pool: 332, enrolled: 256, loa: 55, notActive: 21, attempted: 224, attPct: 67.5, contacted: 94,  conPct: 42.0 },
+      { name: 'Priscilla Samuel',     pool: 338, enrolled: 270, loa: 48, notActive: 20, attempted: 180, attPct: 53.3, contacted: 91,  conPct: 50.6 },
+      { name: 'Saravanan Rajamani',   pool: 268, enrolled: 211, loa: 36, notActive: 21, attempted: 158, attPct: 59.0, contacted: 67,  conPct: 42.4 },
+      { name: 'Kimberley Hornlimann', pool: 334, enrolled: 220, loa: 77, notActive: 37, attempted: 138, attPct: 41.3, contacted: 81,  conPct: 58.7 },
+      { name: 'Amelia Churchill',     pool: 341, enrolled: 273, loa: 52, notActive: 16, attempted: 165, attPct: 48.4, contacted: 115, conPct: 69.7 }
+    ],
+    subjects: [
+      { name: 'CS Engagement', count: 167 },
+      { name: 'Registration',  count: 125 },
+      { name: 'Risk Call',     count: 74  },
+      { name: 'Welcome Call',  count: 72  },
+      { name: 'Reengagement',  count: 68  },
+      { name: 'Certs to Mstr', count: 49  },
+      { name: 'NS Course 1',   count: 29  },
+      { name: 'T1 Call',       count: 16  },
+      { name: 'At-Risk',       count: 9   }
+    ]
   },
   sinceCensus: {
-    label: 'Since Census (H2 2026)',
-    poolNote: '',
-    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
-               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
-    advisors: [],
-    pool: [],
-    subjects: []
+    label: 'Since Census · H4 2026',
+    poolNote: '1,613 students · exported 28 Jun 2026',
+    overall: { calls: 761, spoke: 761, conPct: 54.9, leftMsg: 0, noAnswer: 0,
+               pool: 1613, attempted: 1002, attPct: 62.1, contacted: 550, poolConPct: 54.9, yesIntent: 0 },
+    advisors: [
+      { name: 'Amelia Churchill',     calls: 198, spoke: 198, conPct: 75.0, leftMsg: 0, noAns: 0 },
+      { name: 'Daljeet Sahota',       calls: 156, spoke: 156, conPct: 44.1, leftMsg: 0, noAns: 0 },
+      { name: 'Kimberley Hornlimann', calls: 126, spoke: 126, conPct: 61.3, leftMsg: 0, noAns: 0 },
+      { name: 'Priscilla Samuel',     calls: 145, spoke: 145, conPct: 51.9, leftMsg: 0, noAns: 0 },
+      { name: 'Saravanan Rajamani',   calls: 111, spoke: 111, conPct: 44.5, leftMsg: 0, noAns: 0 },
+      { name: 'James Miller',         calls: 24,  spoke: 24,  conPct: 100,  leftMsg: 0, noAns: 0 }
+    ],
+    pool: [
+      { name: 'Daljeet Sahota',       pool: 332, enrolled: 256, loa: 55, notActive: 21, attempted: 236, attPct: 71.1, contacted: 104, conPct: 44.1 },
+      { name: 'Priscilla Samuel',     pool: 338, enrolled: 270, loa: 48, notActive: 20, attempted: 216, attPct: 63.9, contacted: 112, conPct: 51.9 },
+      { name: 'Saravanan Rajamani',   pool: 268, enrolled: 211, loa: 36, notActive: 21, attempted: 182, attPct: 67.9, contacted: 81,  conPct: 44.5 },
+      { name: 'Kimberley Hornlimann', pool: 334, enrolled: 220, loa: 77, notActive: 37, attempted: 168, attPct: 50.3, contacted: 103, conPct: 61.3 },
+      { name: 'Amelia Churchill',     pool: 341, enrolled: 273, loa: 52, notActive: 16, attempted: 200, attPct: 58.7, contacted: 150, conPct: 75.0 }
+    ],
+    subjects: [
+      { name: 'CS Engagement', count: 213 },
+      { name: 'Registration',  count: 127 },
+      { name: 'NS Course 1',   count: 101 },
+      { name: 'Welcome Call',  count: 74  },
+      { name: 'Reengagement',  count: 74  },
+      { name: 'Risk Call',     count: 74  },
+      { name: 'Certs to Mstr', count: 51  },
+      { name: 'At-Risk',       count: 29  },
+      { name: 'T1 Call',       count: 16  },
+      { name: 'NS Pre-Census', count: 2   }
+    ]
   }
 };
 
