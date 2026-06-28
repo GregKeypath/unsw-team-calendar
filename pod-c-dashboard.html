@@ -157,6 +157,23 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
     </table>
   </div>
 
+  <div class="section-hd" style="margin-top:28px">
+    <h2>60 Day Cohort Attempt · H4 2026</h2>
+    <span class="hd-note">Census 16 Jul 2026 · exported 28 Jun 2026</span>
+  </div>
+  <div class="note-bar">Tracks whether each student in the H4 cohort has been contacted at least once since 21 May 2026.</div>
+  <div class="tbl-wrap">
+    <table id="sixtyDayTable">
+      <thead><tr>
+        <th>SSA</th><th class="num">Cohort</th>
+        <th class="num">Contacted</th><th style="min-width:160px">% Contacted</th>
+        <th class="num">Remaining</th><th class="num">Per Day to Census</th>
+      </tr></thead>
+      <tbody id="sixtyDayBody"></tbody>
+      <tfoot id="sixtyDayFoot"></tfoot>
+    </table>
+  </div>
+
 </main>
 
 <!-- ADVISOR DETAIL VIEW -->
@@ -414,6 +431,41 @@ function renderPool(p) {
     '<td>' + pctCell(conTot, 100, '#10b981') + '</td></tr>';
 }
 
+const SIXTY_DAY = {
+  rows: [
+    { name:'Daljeet Sahota',       cohort:332, ctd:245, remaining:87,  perDay:6.2  },
+    { name:'Priscilla Samuel',     cohort:338, ctd:219, remaining:119, perDay:8.5  },
+    { name:'Kimberley Hornlimann', cohort:334, ctd:173, remaining:161, perDay:11.5 },
+    { name:'Amelia Churchill',     cohort:341, ctd:201, remaining:140, perDay:10.0 },
+    { name:'Saravanan Rajamani',   cohort:268, ctd:183, remaining:85,  perDay:null }
+  ],
+  total: { cohort:1613, ctd:1021, remaining:592, perDay:42.3 }
+};
+
+function renderSixtyDay() {
+  var rows = SIXTY_DAY.rows;
+  var tot  = SIXTY_DAY.total;
+  document.getElementById('sixtyDayBody').innerHTML = rows.map(function(r) {
+    var pct    = r.cohort ? (r.ctd / r.cohort * 100) : 0;
+    var pctCol = pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#ef4444';
+    var perDay = r.perDay !== null ? r.perDay : '<span style="color:#9ca3af">On leave</span>';
+    return '<tr><td>' + r.name + '</td>' +
+      '<td class="num">' + r.cohort + '</td>' +
+      '<td class="num">' + r.ctd + '</td>' +
+      '<td>' + pctCell(pct, 100, pctCol) + '</td>' +
+      '<td class="num">' + r.remaining + '</td>' +
+      '<td class="num">' + perDay + '</td></tr>';
+  }).join('');
+  var totPct = tot.cohort ? (tot.ctd / tot.cohort * 100) : 0;
+  document.getElementById('sixtyDayFoot').innerHTML =
+    '<tr><td>UNSW Total</td>' +
+    '<td class="num">' + tot.cohort + '</td>' +
+    '<td class="num">' + tot.ctd + '</td>' +
+    '<td>' + pctCell(totPct, 100, '#06b6d4') + '</td>' +
+    '<td class="num">' + tot.remaining + '</td>' +
+    '<td class="num">' + tot.perDay + '</td></tr>';
+}
+
 function render(periodKey) {
   var p = PERIODS[periodKey];
   renderKPIs(p);
@@ -421,6 +473,7 @@ function render(periodKey) {
   renderSubjects(p);
   renderAdvisors(p);
   renderPool(p);
+  renderSixtyDay();
 }
 
 document.querySelectorAll('.period-tab').forEach(function(btn) {
