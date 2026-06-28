@@ -119,6 +119,7 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
   <div class="period-tabs">
     <button class="period-tab active" data-period="thisWeek">This Week</button>
     <button class="period-tab" data-period="lastWeek">Last Week</button>
+    <button class="period-tab" data-period="lastMonth">Last Month</button>
     <button class="period-tab" data-period="sinceCensus">Since Census</button>
   </div>
 </div>
@@ -207,6 +208,15 @@ const PERIODS = {
   },
   lastWeek: {
     label: 'Week ending 10 Jun 2026',
+    poolNote: '',
+    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
+               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
+    advisors: [],
+    pool: [],
+    subjects: []
+  },
+  lastMonth: {
+    label: 'Month of June 2026',
     poolNote: '',
     overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
                pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
