@@ -143,7 +143,7 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
     <h2>UNSW Eligible Pool: SSA Coverage</h2>
     <span class="hd-note" id="poolNote"></span>
   </div>
-  <div class="note-bar">Pool att% and con% are derived from the Last Phone Attempt/Contact Date fields in the eligible pool export. These may lag same-day call activity by a few hours due to Salesforce sync timing.</div>
+  <div class="note-bar">Pool att% and con% are derived from the Last Phone Attempt/Contact Date fields in the eligible pool export. These may lag same-day call activity due to delays in data upload.</div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
@@ -177,8 +177,17 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
 <script>
 const PERIODS = {
   thisWeek: {
-    label: 'Week ending 17 Jun 2026',
-    poolNote: '424 students · exported 17 Jun 2026',
+    label: 'Week commencing 29 Jun 2026',
+    poolNote: '',
+    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
+               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
+    advisors: [],
+    pool: [],
+    subjects: []
+  },
+  lastWeek: {
+    label: 'Week ending 19 Jun 2026',
+    poolNote: '424 students · exported 19 Jun 2026',
     overall: { calls: 199, spoke: 86, conPct: 43.2, leftMsg: 65, noAnswer: 37,
                pool: 424, attempted: 76, attPct: 17.9, contacted: 26, poolConPct: 34.2, yesIntent: 29 },
     advisors: [
@@ -205,15 +214,6 @@ const PERIODS = {
       { name: 'Certs to Mstr', count: 14 },
       { name: 'T1 Call',       count: 4  }
     ]
-  },
-  lastWeek: {
-    label: 'Week ending 10 Jun 2026',
-    poolNote: '',
-    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
-               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
-    advisors: [],
-    pool: [],
-    subjects: []
   },
   lastMonth: {
     label: 'Month of June 2026',
