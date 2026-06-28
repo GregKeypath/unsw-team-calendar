@@ -27,7 +27,7 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .section-hd h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); font-weight: 600; }
 .section-hd .hd-note { font-size: 11px; color: var(--muted); }
 
-.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
 .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top: 3px solid transparent; }
 .kpi-card.c-calls   { border-top-color: var(--indigo); }
 .kpi-card.c-con     { border-top-color: var(--emerald); }
@@ -151,7 +151,6 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
         <th class="num">LOA</th><th class="num">Not Active</th>
         <th class="num">Attempted</th><th style="min-width:160px">att%</th>
         <th class="num">Contacted</th><th style="min-width:160px">con%</th>
-        <th class="num">Intent Yes</th>
       </tr></thead>
       <tbody id="poolBody"></tbody>
       <tfoot id="poolFoot"></tfoot>
@@ -186,34 +185,26 @@ const PERIODS = {
     subjects: []
   },
   lastWeek: {
-    label: 'Week ending 19 Jun 2026',
-    poolNote: '424 students · exported 19 Jun 2026',
-    overall: { calls: 199, spoke: 86, conPct: 43.2, leftMsg: 65, noAnswer: 37,
-               pool: 424, attempted: 76, attPct: 17.9, contacted: 26, poolConPct: 34.2, yesIntent: 29 },
+    label: 'Week ending 26 Jun 2026',
+    poolNote: '1,613 students · exported 28 Jun 2026',
+    overall: { calls: 152, spoke: 152, conPct: 100, leftMsg: 0, noAnswer: 0,
+               pool: 1613, attempted: 250, attPct: 15.5, contacted: 120, poolConPct: 48.0, yesIntent: 0 },
     advisors: [
-      { name: 'Daljeet Sahota',       calls: 48, spoke: 17, conPct: 35.4, leftMsg: 8,  noAns: 20 },
-      { name: 'Amelia Churchill',     calls: 40, spoke: 21, conPct: 52.5, leftMsg: 16, noAns: 2  },
-      { name: 'Priscilla Samuel',     calls: 37, spoke: 20, conPct: 54.1, leftMsg: 13, noAns: 2  },
-      { name: 'Saravanan Rajamani',   calls: 31, spoke: 14, conPct: 45.2, leftMsg: 13, noAns: 1  },
-      { name: 'Kimberley Hornlimann', calls: 26, spoke: 12, conPct: 46.2, leftMsg: 9,  noAns: 4  },
-      { name: 'James Miller',         calls: 17, spoke: 2,  conPct: 11.8, leftMsg: 6,  noAns: 8  }
+      { name: 'Daljeet Sahota',       calls: 41, spoke: 41, conPct: 100, leftMsg: 0, noAns: 0 },
+      { name: 'Priscilla Samuel',     calls: 40, spoke: 40, conPct: 100, leftMsg: 0, noAns: 0 },
+      { name: 'Kimberley Hornlimann', calls: 34, spoke: 34, conPct: 100, leftMsg: 0, noAns: 0 },
+      { name: 'Amelia Churchill',     calls: 23, spoke: 23, conPct: 100, leftMsg: 0, noAns: 0 },
+      { name: 'James Miller',         calls: 14, spoke: 14, conPct: 100, leftMsg: 0, noAns: 0 },
+      { name: 'Saravanan Rajamani',   calls: 0,  spoke: 0,  conPct: 0,   leftMsg: 0, noAns: 0 }
     ],
     pool: [
-      { name: 'Kimberley Hornlimann', pool: 107, enrolled: 49, loa: 53, notActive: 5,  attempted: 20, attPct: 18.7, contacted: 10, conPct: 50.0, yesIntent: 0  },
-      { name: 'Priscilla Samuel',     pool: 89,  enrolled: 58, loa: 28, notActive: 3,  attempted: 12, attPct: 13.5, contacted: 5,  conPct: 41.7, yesIntent: 8  },
-      { name: 'Daljeet Sahota',       pool: 86,  enrolled: 51, loa: 31, notActive: 4,  attempted: 25, attPct: 29.1, contacted: 4,  conPct: 16.0, yesIntent: 17 },
-      { name: 'Saravanan Rajamani',   pool: 82,  enrolled: 50, loa: 26, notActive: 6,  attempted: 18, attPct: 22.0, contacted: 6,  conPct: 33.3, yesIntent: 1  },
-      { name: 'Amelia Churchill',     pool: 60,  enrolled: 28, loa: 29, notActive: 3,  attempted: 1,  attPct: 1.7,  contacted: 1,  conPct: 100.0, yesIntent: 3  }
+      { name: 'Daljeet Sahota',       pool: 332, enrolled: 256, loa: 55, notActive: 21, attempted: 91, attPct: 27.4, contacted: 36, conPct: 39.6 },
+      { name: 'Priscilla Samuel',     pool: 338, enrolled: 270, loa: 48, notActive: 20, attempted: 63, attPct: 18.6, contacted: 29, conPct: 46.0 },
+      { name: 'Kimberley Hornlimann', pool: 334, enrolled: 220, loa: 77, notActive: 37, attempted: 46, attPct: 13.8, contacted: 27, conPct: 58.7 },
+      { name: 'Amelia Churchill',     pool: 341, enrolled: 273, loa: 52, notActive: 16, attempted: 32, attPct: 9.4,  contacted: 20, conPct: 62.5 },
+      { name: 'Saravanan Rajamani',   pool: 268, enrolled: 211, loa: 36, notActive: 21, attempted: 18, attPct: 6.7,  contacted: 8,  conPct: 44.4 }
     ],
-    subjects: [
-      { name: 'Registration',  count: 93 },
-      { name: 'Reengagement',  count: 71 },
-      { name: 'CS Engagement', count: 57 },
-      { name: 'Risk Call',     count: 25 },
-      { name: 'Welcome Call',  count: 22 },
-      { name: 'Certs to Mstr', count: 14 },
-      { name: 'T1 Call',       count: 4  }
-    ]
+    subjects: []
   },
   lastMonth: {
     label: 'Month of June 2026',
@@ -257,7 +248,6 @@ function renderKPIs(p) {
     { label: 'con%',         val: o.calls ? o.conPct.toFixed(1) + '%' : '—',         sub: o.calls ? o.spoke + ' of ' + o.calls + ' calls spoke' : '',   cls: 'c-con',     bw: o.conPct || 0,                         bc: '#10b981' },
     { label: 'Pool att%',    val: o.pool  ? o.attPct.toFixed(1) + '%' : '—',         sub: o.pool ? o.attempted + ' of ' + o.pool + ' reached' : '',      cls: 'c-att',     bw: o.attPct || 0,                         bc: '#06b6d4' },
     { label: 'Pool con%',    val: o.attempted ? o.poolConPct.toFixed(1) + '%' : '—', sub: o.attempted ? o.contacted + ' of ' + o.attempted + ' spoke' : '', cls: 'c-poolcon', bw: o.poolConPct || 0,                  bc: '#34d399' },
-    { label: 'Intent = Yes', val: o.yesIntent || '—',                                sub: o.pool ? 'students to re-enrol' : '',                           cls: 'c-intent',  bw: o.pool ? (o.yesIntent/o.pool*100) : 0, bc: '#f59e0b' }
   ];
   document.getElementById('kpiRow').innerHTML = kpis.map(function(k) {
     return '<div class="kpi-card ' + k.cls + '"><div class="kpi-label">' + k.label + '</div>' +
@@ -341,9 +331,9 @@ function renderPool(p) {
   var tot = p.pool.reduce(function(acc, r) {
     acc.pool += r.pool; acc.enrolled += r.enrolled; acc.loa += r.loa;
     acc.notActive += r.notActive; acc.attempted += r.attempted;
-    acc.contacted += r.contacted; acc.yesIntent += r.yesIntent;
+    acc.contacted += r.contacted;
     return acc;
-  }, { pool: 0, enrolled: 0, loa: 0, notActive: 0, attempted: 0, contacted: 0, yesIntent: 0 });
+  }, { pool: 0, enrolled: 0, loa: 0, notActive: 0, attempted: 0, contacted: 0 });
 
   document.getElementById('poolBody').innerHTML = p.pool.map(function(r) {
     var ac = attColor(r.attPct), cc = conColor(r.conPct);
@@ -355,8 +345,7 @@ function renderPool(p) {
       '<td class="num">' + r.attempted + '</td>' +
       '<td>' + pctCell(r.attPct, 40, ac) + '</td>' +
       '<td class="num">' + r.contacted + '</td>' +
-      '<td>' + pctCell(r.conPct, 100, cc) + '</td>' +
-      '<td class="num">' + (r.yesIntent > 0 ? '<span class="ba">' + r.yesIntent + '</span>' : '—') + '</td></tr>';
+      '<td>' + pctCell(r.conPct, 100, cc) + '</td></tr>';
   }).join('');
 
   var attTot = tot.attempted / tot.pool * 100;
@@ -367,8 +356,7 @@ function renderPool(p) {
     '<td class="num">' + tot.attempted + '</td>' +
     '<td>' + pctCell(attTot, 40, '#06b6d4') + '</td>' +
     '<td class="num">' + tot.contacted + '</td>' +
-    '<td>' + pctCell(conTot, 100, '#10b981') + '</td>' +
-    '<td class="num"><span class="ba">' + tot.yesIntent + '</span></td></tr>';
+    '<td>' + pctCell(conTot, 100, '#10b981') + '</td></tr>';
 }
 
 function render(periodKey) {
