@@ -95,6 +95,8 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
 .bi { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
 
 .note-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-bottom: 14px; }
+.sd-rem-inp { width: 62px; text-align: right; border: 1px solid #d1d5db; border-radius: 5px; padding: 2px 6px; font-size: 0.82rem; font-family: inherit; color: var(--text); background: #fff; }
+.sd-rem-inp:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
 .no-data { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
 
 .adv-detail-hd { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
@@ -369,13 +371,17 @@ function renderLeaderboards(p) {
     return;
   }
   var byCon      = advs.slice().sort(function(a, b) { return b.conPct    - a.conPct;    });
-  var byAttempted = pool.length ? pool.slice().sort(function(a, b) { return b.attempted - a.attempted; }) : [];
+  var byAttempted = pool.length
+    ? pool.slice().sort(function(a, b) { return b.attempted - a.attempted; })
+    : advs.slice().sort(function(a, b) { return b.calls - a.calls; });
+  var attemptVal = pool.length ? function(a) { return a.attempted; } : function(a) { return a.calls; };
+  var attemptMax = byAttempted.length ? attemptVal(byAttempted[0]) : 1;
   var bySpoke    = advs.slice().sort(function(a, b) { return b.spoke     - a.spoke;     });
   document.getElementById('lbSection').innerHTML =
     '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#10b981"></div>Best con%</div>' +
-    lbRows(byCon,       function(a) { return a.conPct;    }, byCon[0].conPct,                conColor) + '</div>' +
+    lbRows(byCon,       function(a) { return a.conPct; }, byCon[0].conPct, conColor) + '</div>' +
     '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#6366f1"></div>Most Attempted</div>' +
-    (byAttempted.length ? lbRows(byAttempted, function(a) { return a.attempted; }, byAttempted[0].attempted, function() { return '#6366f1'; }) : empty) + '</div>' +
+    (byAttempted.length ? lbRows(byAttempted, attemptVal, attemptMax, function() { return '#6366f1'; }) : empty) + '</div>' +
     '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#06b6d4"></div>Most Spoke</div>' +
     lbRows(bySpoke,     function(a) { return a.spoke;     }, bySpoke[0].spoke,               function() { return '#06b6d4'; }) + '</div>';
 }
@@ -475,28 +481,47 @@ const SIXTY_DAY = {
   total: { cohort:1613, ctd:1021, remaining:592, perDay:42.3 }
 };
 
-function renderSixtyDay() {
-  var rows = SIXTY_DAY.rows;
-  var tot  = SIXTY_DAY.total;
-  document.getElementById('sixtyDayBody').innerHTML = rows.map(function(r) {
-    var pct    = r.cohort ? (r.ctd / r.cohort * 100) : 0;
-    var pctCol = pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#ef4444';
-    var perDay = r.perDay !== null ? r.perDay : '<span style="color:#9ca3af">On leave</span>';
-    return '<tr><td>' + r.name + '</td>' +
-      '<td class="num">' + r.cohort + '</td>' +
-      '<td class="num">' + r.ctd + '</td>' +
-      '<td>' + pctCell(pct, 100, pctCol) + '</td>' +
-      '<td class="num">' + r.remaining + '</td>' +
-      '<td class="num">' + perDay + '</td></tr>';
-  }).join('');
+function sdPctCol(pct) { return pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#ef4444'; }
+
+function renderSixtyDayFoot() {
+  var tot = SIXTY_DAY.total;
+  tot.remaining = SIXTY_DAY.rows.reduce(function(s, r) { return s + r.remaining; }, 0);
+  tot.ctd       = SIXTY_DAY.rows.reduce(function(s, r) { return s + r.ctd; },       0);
   var totPct = tot.cohort ? (tot.ctd / tot.cohort * 100) : 0;
   document.getElementById('sixtyDayFoot').innerHTML =
     '<tr><td>UNSW Total</td>' +
     '<td class="num">' + tot.cohort + '</td>' +
-    '<td class="num">' + tot.ctd + '</td>' +
-    '<td>' + pctCell(totPct, 100, '#06b6d4') + '</td>' +
+    '<td class="num" id="sd-ctd-tot">' + tot.ctd + '</td>' +
+    '<td>' + pctCell(totPct, 100, sdPctCol(totPct)) + '</td>' +
     '<td class="num">' + tot.remaining + '</td>' +
     '<td class="num">' + tot.perDay + '</td></tr>';
+}
+
+function renderSixtyDay() {
+  var rows = SIXTY_DAY.rows;
+  document.getElementById('sixtyDayBody').innerHTML = rows.map(function(r, i) {
+    var pct    = r.cohort ? (r.ctd / r.cohort * 100) : 0;
+    var perDay = r.perDay !== null ? r.perDay : '<span style="color:#9ca3af">On leave</span>';
+    return '<tr><td>' + r.name + '</td>' +
+      '<td class="num">' + r.cohort + '</td>' +
+      '<td class="num" id="sd-ctd-' + i + '">' + r.ctd + '</td>' +
+      '<td id="sd-pct-' + i + '">' + pctCell(pct, 100, sdPctCol(pct)) + '</td>' +
+      '<td class="num"><input class="sd-rem-inp" type="number" min="0" value="' + r.remaining + '" data-idx="' + i + '"></td>' +
+      '<td class="num">' + perDay + '</td></tr>';
+  }).join('');
+  renderSixtyDayFoot();
+  document.querySelectorAll('.sd-rem-inp').forEach(function(inp) {
+    inp.addEventListener('input', function() {
+      var i = parseInt(this.dataset.idx);
+      var r = SIXTY_DAY.rows[i];
+      r.remaining = parseInt(this.value) || 0;
+      r.ctd = r.cohort - r.remaining;
+      var pct = r.cohort ? (r.ctd / r.cohort * 100) : 0;
+      document.getElementById('sd-ctd-' + i).textContent = r.ctd;
+      document.getElementById('sd-pct-' + i).innerHTML = pctCell(pct, 100, sdPctCol(pct));
+      renderSixtyDayFoot();
+    });
+  });
 }
 
 function render(periodKey) {
