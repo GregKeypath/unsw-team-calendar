@@ -344,22 +344,23 @@ function lbRows(sorted, valFn, maxVal, colorFn) {
 
 function renderLeaderboards(p) {
   var advs = p.advisors;
+  var pool = p.pool;
   var empty = '<div class="no-data">No data for this period</div>';
   if (!advs.length) {
     document.getElementById('lbSection').innerHTML =
       '<div class="lb-card">' + empty + '</div><div class="lb-card">' + empty + '</div><div class="lb-card">' + empty + '</div>';
     return;
   }
-  var byCon   = advs.slice().sort(function(a, b) { return b.conPct - a.conPct; });
-  var byCalls = advs.slice().sort(function(a, b) { return b.calls  - a.calls;  });
-  var bySpoke = advs.slice().sort(function(a, b) { return b.spoke  - a.spoke;  });
+  var byCon      = advs.slice().sort(function(a, b) { return b.conPct    - a.conPct;    });
+  var byAttempted = pool.length ? pool.slice().sort(function(a, b) { return b.attempted - a.attempted; }) : [];
+  var bySpoke    = advs.slice().sort(function(a, b) { return b.spoke     - a.spoke;     });
   document.getElementById('lbSection').innerHTML =
     '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#10b981"></div>Best con%</div>' +
-    lbRows(byCon,   function(a) { return a.conPct; }, byCon[0].conPct,   conColor) + '</div>' +
-    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#6366f1"></div>Most Calls</div>' +
-    lbRows(byCalls, function(a) { return a.calls;  }, byCalls[0].calls,  function() { return '#6366f1'; }) + '</div>' +
+    lbRows(byCon,       function(a) { return a.conPct;    }, byCon[0].conPct,                conColor) + '</div>' +
+    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#6366f1"></div>Most Attempted</div>' +
+    (byAttempted.length ? lbRows(byAttempted, function(a) { return a.attempted; }, byAttempted[0].attempted, function() { return '#6366f1'; }) : empty) + '</div>' +
     '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#06b6d4"></div>Most Spoke</div>' +
-    lbRows(bySpoke, function(a) { return a.spoke;  }, bySpoke[0].spoke,  function() { return '#06b6d4'; }) + '</div>';
+    lbRows(bySpoke,     function(a) { return a.spoke;     }, bySpoke[0].spoke,               function() { return '#06b6d4'; }) + '</div>';
 }
 
 function renderSubjects(p) {
