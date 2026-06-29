@@ -27,13 +27,14 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .section-hd h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); font-weight: 600; }
 .section-hd .hd-note { font-size: 11px; color: var(--muted); }
 
-.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
 .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top: 3px solid transparent; }
 .kpi-card.c-calls   { border-top-color: var(--indigo); }
 .kpi-card.c-con     { border-top-color: var(--emerald); }
 .kpi-card.c-att     { border-top-color: var(--cyan); }
 .kpi-card.c-poolcon { border-top-color: #34d399; }
 .kpi-card.c-intent  { border-top-color: var(--amber); }
+.kpi-card.c-vcita   { border-top-color: #f97316; }
 .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
 .kpi-val { font-size: 36px; font-weight: 700; line-height: 1; color: var(--text); margin-bottom: 6px; }
 .kpi-sub { font-size: 11px; color: var(--muted); }
@@ -195,11 +196,27 @@ const PERIODS = {
   thisWeek: {
     label: 'Week commencing 29 Jun 2026',
     poolNote: '',
-    overall: { calls: 0, spoke: 0, conPct: 0, leftMsg: 0, noAnswer: 0,
-               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0 },
-    advisors: [],
+    overall: { calls: 57, spoke: 57, conPct: 100, leftMsg: 0, noAnswer: 0,
+               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0,
+               vcita: 41, notVcita: 16 },
+    advisors: [
+      { name: 'Amelia Churchill',     calls: 15, spoke: 15, conPct: 100, leftMsg: 0, noAns: 0, vcita: 13, notVcita: 2  },
+      { name: 'Priscilla Samuel',     calls: 11, spoke: 11, conPct: 100, leftMsg: 0, noAns: 0, vcita: 3,  notVcita: 8  },
+      { name: 'Daljeet Sahota',       calls: 10, spoke: 10, conPct: 100, leftMsg: 0, noAns: 0, vcita: 10, notVcita: 0  },
+      { name: 'Ananya Rao',           calls: 10, spoke: 10, conPct: 100, leftMsg: 0, noAns: 0, vcita: 9,  notVcita: 1  },
+      { name: 'James Miller',         calls: 4,  spoke: 4,  conPct: 100, leftMsg: 0, noAns: 0, vcita: 2,  notVcita: 2  },
+      { name: 'Kimberley Hornlimann', calls: 4,  spoke: 4,  conPct: 100, leftMsg: 0, noAns: 0, vcita: 4,  notVcita: 0  },
+      { name: 'Emma Arjoon',          calls: 3,  spoke: 3,  conPct: 100, leftMsg: 0, noAns: 0, vcita: 0,  notVcita: 3  }
+    ],
     pool: [],
-    subjects: []
+    subjects: [
+      { name: 'CS Engagement', count: 24 },
+      { name: 'Reengagement',  count: 10 },
+      { name: 'Risk Call',     count: 10 },
+      { name: 'Registration',  count: 8  },
+      { name: 'Welcome Call',  count: 4  },
+      { name: 'Certs to Mstr', count: 1  }
+    ]
   },
   lastWeek: {
     label: 'Week ending 26 Jun 2026',
@@ -315,11 +332,13 @@ function attColor(v) { return v >= 25 ? '#06b6d4' : v >= 15 ? '#f59e0b' : '#f43f
 function renderKPIs(p) {
   var o = p.overall;
   document.getElementById('kpiHd').textContent = 'UNSW KPIs: ' + p.label;
+  var vcitaPct = (o.calls && o.vcita != null) ? (o.vcita / o.calls * 100) : 0;
   var kpis = [
-    { label: 'Calls Made',   val: o.calls || '—', sub: o.calls ? o.spoke + ' students reached' : 'No data yet',                                        cls: 'c-calls',   bw: 100,                                   bc: '#6366f1' },
-    { label: 'con%',         val: o.calls ? o.conPct.toFixed(1) + '%' : '—',         sub: o.calls ? o.spoke + ' of ' + o.calls + ' calls spoke' : '',   cls: 'c-con',     bw: o.conPct || 0,                         bc: '#10b981' },
-    { label: 'Pool att%',    val: o.pool  ? o.attPct.toFixed(1) + '%' : '—',         sub: o.pool ? o.attempted + ' of ' + o.pool + ' reached' : '',      cls: 'c-att',     bw: o.attPct || 0,                         bc: '#06b6d4' },
-    { label: 'Pool con%',    val: o.attempted ? o.poolConPct.toFixed(1) + '%' : '—', sub: o.attempted ? o.contacted + ' of ' + o.attempted + ' spoke' : '', cls: 'c-poolcon', bw: o.poolConPct || 0,                  bc: '#34d399' },
+    { label: 'Attempts',     val: o.calls || '—', sub: o.calls ? o.spoke + ' spoke to student' : 'No data yet',                                        cls: 'c-calls',   bw: 100,               bc: '#6366f1' },
+    { label: 'con%',         val: o.calls ? o.conPct.toFixed(1) + '%' : '—',         sub: o.calls ? o.spoke + ' of ' + o.calls + ' attempts spoke' : '', cls: 'c-con',     bw: o.conPct || 0,     bc: '#10b981' },
+    { label: 'Pool att%',    val: o.pool  ? o.attPct.toFixed(1) + '%' : '—',         sub: o.pool ? o.attempted + ' of ' + o.pool + ' reached' : '',       cls: 'c-att',     bw: o.attPct || 0,     bc: '#06b6d4' },
+    { label: 'Pool con%',    val: o.attempted ? o.poolConPct.toFixed(1) + '%' : '—', sub: o.attempted ? o.contacted + ' of ' + o.attempted + ' spoke' : '', cls: 'c-poolcon', bw: o.poolConPct || 0, bc: '#34d399' },
+    { label: 'vCita',        val: o.calls && o.vcita != null ? vcitaPct.toFixed(1) + '%' : '—', sub: o.calls && o.vcita != null ? o.vcita + ' vCita · ' + (o.notVcita||0) + ' non-vCita' : 'No data yet', cls: 'c-vcita', bw: vcitaPct, bc: '#f97316' },
   ];
   document.getElementById('kpiRow').innerHTML = kpis.map(function(k) {
     return '<div class="kpi-card ' + k.cls + '"><div class="kpi-label">' + k.label + '</div>' +
@@ -383,14 +402,29 @@ function renderAdvisors(p) {
   }
   document.getElementById('advGrid').innerHTML = p.advisors.map(function(a, i) {
     var r = rag(a.conPct, 50, 35);
+    var hasVcita = a.vcita != null;
+    var vcitaPct = hasVcita && a.calls > 0 ? (a.vcita / a.calls * 100).toFixed(0) : 0;
+    var vcitaBar = hasVcita
+      ? '<div style="margin-top:10px;border-top:1px solid #f3f4f6;padding-top:8px;">' +
+          '<div style="display:flex;justify-content:space-between;font-size:9px;color:#9ca3af;margin-bottom:3px;">' +
+            '<span>vCita</span>' +
+            '<span>' + a.vcita + ' vC · ' + (a.notVcita||0) + ' non</span>' +
+          '</div>' +
+          '<div style="background:#f3f4f6;height:4px;border-radius:2px;overflow:hidden;">' +
+            '<div style="width:' + vcitaPct + '%;height:100%;background:#f97316;border-radius:2px;"></div>' +
+          '</div>' +
+        '</div>'
+      : '';
     return '<div class="adv-tile" onclick="showAdvisor(' + i + ')">' +
       '<div class="adv-hd"><div><div class="adv-name">' + a.name + '</div><div class="adv-uni">Univ. of New South Wales</div></div>' +
       '<div class="rag-dot ' + r + '"></div></div>' +
       '<div class="adv-metrics">' +
-        '<div class="adv-m"><div class="adv-mv">' + a.calls + '</div><div class="adv-ml">Calls</div></div>' +
+        '<div class="adv-m"><div class="adv-mv">' + a.calls + '</div><div class="adv-ml">Attempts</div></div>' +
         '<div class="adv-m"><div class="adv-mv">' + a.spoke + '</div><div class="adv-ml">Spoke</div></div>' +
         '<div class="adv-m"><div class="adv-mv" style="color:' + conColor(a.conPct) + '">' + a.conPct.toFixed(1) + '%</div><div class="adv-ml">con%</div></div>' +
-      '</div></div>';
+      '</div>' +
+      vcitaBar +
+      '</div>';
   }).join('');
 }
 
