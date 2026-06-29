@@ -6285,6 +6285,34 @@ ${cardsHTML}
     return bestRate ? parseFloat(bestRate) || 0 : null;
   }
 
+  const DIGEST_INFO = {
+    'H4 26': {
+      'ZZLJ8212': { ld:'David Roker', convenor:'Kym Sheehan', convenorEmail:'kym.sheehan@unsw.edu.au', assessments:['Prescribed activity 1 (15%)','Scenario (30%)','Prescribed activity 2 (15%)','Assessment 3 (40%)'], hasTextbook:true, textbookNote:'Ch. 4 only — available in course' },
+      'ZZCA9205': { ld:'Thien Ho', convenor:'Travis Quinn', convenorEmail:'t.quinn@adfa.edu.au', assessments:['Laboratory exercises (30%)','Secure design (35%)','Discussion paper video briefing (35%)'], hasTextbook:false },
+      'ZZCA9204': { ld:'Thien Ho', convenor:'Kit Barrow', convenorEmail:'k.barrow@adfa.edu.au', assessments:['Learning logs (10%)','Scenario analysis (40%)','Ethics report (50%)'], hasTextbook:true, textbookNote:'Manjikian (2023) Cybersecurity Ethics — via reading list' },
+      'ZZBU6516': { ld:'Mark O\'Shea', convenor:'Wylie Breckenridge', convenorEmail:'wylie.breckenridge@unsw.edu.au', assessments:['Weekly tasks (40%)','Project (60%)'], hasTextbook:false },
+      'ZZEN9311': { ld:'Jizelle White', convenor:'Yanping Wu', convenorEmail:'yanping.wu1@unsw.edu.au', assessments:['5 online quizzes (20%)','Project: Relational database schema (15%)','Project: SQL queries and functions (15%)','Final exam (50%)'], hasTextbook:true, textbookNote:'Elmasri & Navathe, Fundamentals of Database Systems — via reading list' },
+      'ZZCA6510': { ld:'David Roker', convenor:'Jackson Yuen', convenorEmail:'jackson.yuen@unsw.edu.au', assessments:['Short problems (20%)','Quantitative decision analytics (40%)','Prescriptive analytics (40%)'], hasTextbook:false },
+      'ZZBU8707': { ld:'David Roker', convenor:'Warwick Schneller', convenorEmail:'warwick.schneller@unsw.edu.au', assessments:['Weekly quiz (30%)','Case study (30%)','Derivatives project (40%)'], hasTextbook:false },
+      'ZZCA9211': { ld:'Jizelle White', convenor:'Marwa Keshk', convenorEmail:'marwa.keshk@unsw.edu.au', assessments:['Weekly quizzes (25%)','Lab exercises (35%)','Report and presentation (40%)'], hasTextbook:false },
+      'ZZBU6402': { ld:'Liam Tyssen', convenor:'Wade Azmy', convenorEmail:'w.azmy@unsw.edu.au', assessments:['Wellbeing and job demands — presentation (40%)','Engagement opportunity identification — interview (20%)','Engagement intervention proposal — report (40%)'], hasTextbook:false },
+      'ZZBU6103': { ld:'Mark O\'Shea', convenor:'Priscilla Tan', convenorEmail:'priscilla.t@unsw.edu.au', assessments:['Weekly quizzes (10%)','Project A: Written report and reflection (25%)','Project B: Reflective peer feedback (15%)','Project C: Pitch presentation and final report (50%)'], hasTextbook:false },
+      'ZZBU6002': { ld:'Liam Tyssen', convenor:'Damian Bridge', convenorEmail:'damian.bridge@unsw.edu.au', assessments:['Online quiz 1 (10%)','Case study report (50%)','Online quiz 2 (40%)'], hasTextbook:false },
+      'ZZBU8501': { ld:'Mark O\'Shea', convenor:'Juraj Hric', convenorEmail:'j.hric@unsw.edu.au', assessments:['Weekly quizzes (20%)','FinTech proposal Part A (40%)','FinTech proposal Part B (40%)'], hasTextbook:false },
+      'ZZBU6401': { ld:'Liam Tyssen', convenor:'Burcin Hatipoglu', convenorEmail:'b.hatipoglu@unsw.edu.au', assessments:['Discussion posts (30%)','Project brief (30%)','Policy brief (40%)'], hasTextbook:false },
+      'ZZBU8510': { ld:'Mark O\'Shea', convenor:'Bernard Maughan', convenorEmail:'b.maughan@unsw.edu.au', assessments:['Discussion post (10%)','Product development (30%)','Research report (30%)','Presentation (30%)'], hasTextbook:false },
+      'ZZBU6501': { ld:'Jizelle White', convenor:'Fabio Franch', convenorEmail:'f.franch@unsw.edu.au', assessments:['Assessment tasks (30%)','Online quiz (30%)','New business analysis (40%)'], hasTextbook:true, textbookNote:'Berenson et al. Basic Business Statistics (5th ed.) — via reading list' },
+      'ZZBU8701': { ld:'Jizelle White', convenor:'Robert Bishop', convenorEmail:'robert.bishop@unsw.edu.au', assessments:['Weekly quiz (30%)','Final quiz (10%)','Project 1: Portfolio optimisation (30%)','Project 2: Active investing and multi-factor models (30%)'], hasTextbook:false },
+      'ZZCA9208': { ld:'Thien Ho', convenor:'Adam Henry', convenorEmail:'adam.henry@unsw.edu.au', assessments:['Recommendation assessment: Presentation (25%)','Implementation artefacts (25%)','Peer review (10%)','Reflection journal Part 1 (10%)','Reflection journal Part 2 (30%)'], hasTextbook:false, note:'Assessment weighting TBC in O-week' },
+      'ZZBU6408': { ld:'Liam Tyssen', convenor:'Greta Sharples', convenorEmail:'g.sharples@unsw.edu.au', assessments:['Weekly discussion (30%)','Organisational analysis report (30%)','Organisational design report (40%)'], hasTextbook:false },
+      'ZZEN9444': { ld:'Mark O\'Shea', convenor:'Jingying Gao', convenorEmail:'jingying.gao@unsw.edu.au', assessments:['Quizzes (40%)','Implementing and analysing neural networks (30%)','Image classification neural networks (30%)'], hasTextbook:true, textbookNote:'Deep Learning (Goodfellow et al.) — free at deeplearningbook.org' },
+      'ZZBU8704': { ld:'Jizelle White', convenor:'Jeffrey Tobias', convenorEmail:'j.tobias@unsw.edu.au', assessments:['Case study evaluation and money flow analysis (20%)','Term sheets, risk and company valuation (30%)','Strategic investment decisions: You are the VC (50%)'], hasTextbook:false },
+      'ZZSC5806': { ld:'Jizelle White', convenor:'Aishwarya Bhaskaran', convenorEmail:'aishwarya.bhaskaran@unsw.edu.au', assessments:['Quiz (10%)','Quiz (25%)','Quiz (25%)','Final exam (40%)'], hasTextbook:false },
+      'ZZEN9209': { ld:'David Roker', convenor:'Jackson Terrill', convenorEmail:'j.terrill@unsw.edu.au', assessments:['Project plan — group (10%)','Individual personal reflections (45%)','Group project (45%)'], hasTextbook:false },
+      'ZZBU6513': { ld:'Thien Ho', convenor:'Lidy Romijnders', convenorEmail:'l.romijnders@unsw.edu.au', assessments:['Discussion forums (40%)','Initial analysis of Google Merchandise Store (20%)','Social media and digital marketing plan (40%)'], hasTextbook:false },
+    }
+  };
+
   function buildDrCard(u, sp) {
     const info = COURSE_INFO[u.code] || {};
     const saved = unitNotes[u.code] || {};
@@ -6295,6 +6323,30 @@ ${cardsHTML}
 
     const effectiveRate = getEffectiveDropNum(sp, u.code);
     const isHighDrop = effectiveRate !== null && effectiveRate > 10;
+
+    const digest = (DIGEST_INFO[sp] || {})[u.code];
+    const digestHtml = digest ? `
+      <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:8px 10px;margin-bottom:8px;">
+        <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:7px;">
+          <span style="font-size:0.66rem;">
+            <div style="color:#9ca3af;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:1px;">Convenor</div>
+            <a href="mailto:${digest.convenorEmail}" style="color:#1e3a5f;font-weight:600;text-decoration:none;">${digest.convenor}</a>
+          </span>
+          <span style="font-size:0.66rem;">
+            <div style="color:#9ca3af;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:1px;">LD</div>
+            <span style="font-weight:600;">${digest.ld}</span>
+          </span>
+          <span style="font-size:0.66rem;">
+            <div style="color:#9ca3af;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:1px;">Textbook</div>
+            <span title="${digest.textbookNote || ''}" style="${digest.hasTextbook ? 'color:#059669;font-weight:600;cursor:default;' : 'color:#9ca3af;'}">${digest.hasTextbook ? '📖 Required' : 'None'}</span>
+          </span>
+        </div>
+        <div style="color:#9ca3af;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Assessments</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;">
+          ${digest.assessments.map(a => `<span style="background:#eff6ff;color:#1e40af;border-radius:4px;padding:2px 6px;font-size:0.6rem;white-space:nowrap;">${a}</span>`).join('')}
+        </div>
+        ${digest.note ? `<div style="margin-top:6px;color:#92400e;font-size:0.6rem;background:#fef3c7;border-radius:4px;padding:2px 6px;">⚠️ ${digest.note}</div>` : ''}
+      </div>` : '';
 
     const card = document.createElement('div');
     card.className = 'dr-card' + (isHighDrop ? ' high-drop' : '');
@@ -6317,6 +6369,7 @@ ${cardsHTML}
         </div>
       </div>
       ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;margin-bottom:6px;">${info.description.substring(0,160)}…</div>` : ''}
+      ${digestHtml}
       <div>
         <div class="dr-field-label" style="margin-bottom:4px;">Selling Points & Notes <span style="font-weight:400;font-size:0.6rem;color:#9ca3af;">• bullet per line</span></div>
         <textarea class="dr-notes-input" placeholder="• Add a selling point&#10;• Talk to specific outcomes&#10;• Flag any considerations" data-code="${u.code}">${currentNotes}</textarea>
