@@ -433,20 +433,29 @@ function renderAdvisors(p) {
 }
 
 function renderPool(p) {
-  document.getElementById('poolNote').textContent = p.poolNote;
+  var src = p;
   if (!p.pool.length) {
-    document.getElementById('poolBody').innerHTML = '<tr><td colspan="10" class="no-data">No data for this period</td></tr>';
+    var fallbackKeys = ['lastWeek', 'lastMonth', 'sinceCensus'];
+    for (var fi = 0; fi < fallbackKeys.length; fi++) {
+      if (PERIODS[fallbackKeys[fi]].pool.length) { src = PERIODS[fallbackKeys[fi]]; break; }
+    }
+  }
+  document.getElementById('poolNote').textContent = src === p
+    ? (p.poolNote || '')
+    : 'No pool export for this period — showing last available: ' + src.poolNote;
+  if (!src.pool.length) {
+    document.getElementById('poolBody').innerHTML = '<tr><td colspan="10" class="no-data">No pool data available</td></tr>';
     document.getElementById('poolFoot').innerHTML = '';
     return;
   }
-  var tot = p.pool.reduce(function(acc, r) {
+  var tot = src.pool.reduce(function(acc, r) {
     acc.pool += r.pool; acc.enrolled += r.enrolled; acc.loa += r.loa;
     acc.notActive += r.notActive; acc.attempted += r.attempted;
     acc.contacted += r.contacted;
     return acc;
   }, { pool: 0, enrolled: 0, loa: 0, notActive: 0, attempted: 0, contacted: 0 });
 
-  document.getElementById('poolBody').innerHTML = p.pool.map(function(r) {
+  document.getElementById('poolBody').innerHTML = src.pool.map(function(r) {
     var ac = attColor(r.attPct), cc = conColor(r.conPct);
     return '<tr><td>' + r.name + '</td>' +
       '<td class="num">' + r.pool + '</td>' +
