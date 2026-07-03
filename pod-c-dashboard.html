@@ -56,7 +56,7 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .lb-mini-fill { height: 100%; border-radius: 2px; }
 .lb-val { font-size: 13px; font-weight: 700; min-width: 48px; text-align: right; flex-shrink: 0; }
 
-.subjects-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 20px; }
+.subjects-row { display: grid; gap: 10px; margin-bottom: 20px; }
 .subj-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; text-align: center; }
 .subj-count { font-size: 24px; font-weight: 700; color: var(--text); }
 .subj-name { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
@@ -164,12 +164,13 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
     <h2>60 Day Cohort Attempt · H4 2026</h2>
     <span class="hd-note">Census 16 Jul 2026 · exported 28 Jun 2026</span>
   </div>
-  <div class="note-bar">Tracks whether each student in the H4 cohort has been contacted at least once since 21 May 2026.</div>
+  <div class="note-bar">Tracks whether each student in the H4 cohort has been attempted at least once since 21 May 2026.</div>
   <div class="tbl-wrap">
     <table id="sixtyDayTable">
       <thead><tr>
         <th>SSA</th><th class="num">Cohort</th>
-        <th class="num">Contacted</th><th style="min-width:160px">% Contacted</th>
+        <th class="num">Attempted</th><th style="min-width:160px">% Attempted</th>
+        <th style="min-width:130px">% to 80% Target</th>
         <th class="num">Remaining</th><th class="num">Per Day to Census</th>
       </tr></thead>
       <tbody id="sixtyDayBody"></tbody>
@@ -197,25 +198,26 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
 const PERIODS = {
   thisWeek: {
     label: 'Week commencing 29 Jun 2026',
-    poolNote: 'Attempts include all call outcomes · 29 Jun 2026',
-    overall: { calls: 71, spoke: 44, conPct: 62.0, leftMsg: 16, noAnswer: 11,
+    poolNote: 'Attempts include all call outcomes · 01 Jul 2026',
+    overall: { calls: 161, spoke: 91, conPct: 56.5, leftMsg: 41, noAnswer: 21,
                pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0,
-               vcita: 32, notVcita: 12 },
+               vcita: 70, notVcita: 21 },
     advisors: [
-      { name: 'Amelia Churchill',     calls: 20, spoke: 15, conPct: 75.0, leftMsg: 5, noAns: 0, vcita: 13, notVcita: 2 },
-      { name: 'Daljeet Sahota',       calls: 20, spoke: 10, conPct: 50.0, leftMsg: 2, noAns: 8, vcita: 10, notVcita: 0 },
-      { name: 'Priscilla Samuel',     calls: 18, spoke: 11, conPct: 61.1, leftMsg: 6, noAns: 1, vcita: 3,  notVcita: 8 },
-      { name: 'Kimberley Hornlimann', calls: 8,  spoke: 4,  conPct: 50.0, leftMsg: 2, noAns: 2, vcita: 4,  notVcita: 0 },
-      { name: 'James Miller',         calls: 5,  spoke: 4,  conPct: 80.0, leftMsg: 1, noAns: 0, vcita: 2,  notVcita: 2 }
+      { name: 'Amelia Churchill',     calls: 39, spoke: 30, conPct: 76.9, leftMsg: 8,  noAns: 0,  vcita: 25, notVcita: 5  },
+      { name: 'Daljeet Sahota',       calls: 50, spoke: 21, conPct: 42.0, leftMsg: 10, noAns: 14, vcita: 21, notVcita: 0  },
+      { name: 'James Miller',         calls: 12, spoke: 8,  conPct: 66.7, leftMsg: 4,  noAns: 0,  vcita: 6,  notVcita: 2  },
+      { name: 'Kimberley Hornlimann', calls: 26, spoke: 13, conPct: 50.0, leftMsg: 9,  noAns: 3,  vcita: 10, notVcita: 3  },
+      { name: 'Priscilla Samuel',     calls: 34, spoke: 19, conPct: 55.9, leftMsg: 10, noAns: 4,  vcita: 8,  notVcita: 11 }
     ],
     pool: [],
     subjects: [
-      { name: 'CS Engagement', count: 26 },
-      { name: 'Reengagement',  count: 16 },
-      { name: 'Registration',  count: 12 },
-      { name: 'Risk Call',     count: 11 },
-      { name: 'Welcome Call',  count: 4  },
-      { name: 'Certs to Mstr', count: 2  }
+      { name: 'CS Engagement', count: 60 },
+      { name: 'Reengagement',  count: 36 },
+      { name: 'Risk Call',     count: 27 },
+      { name: 'Welcome Call',  count: 19 },
+      { name: 'Registration',  count: 15 },
+      { name: 'Certs to Mstr', count: 3  },
+      { name: 'Graduation',    count: 1  }
     ]
   },
   lastWeek: {
@@ -387,12 +389,15 @@ function renderLeaderboards(p) {
 }
 
 function renderSubjects(p) {
+  var row = document.getElementById('subjectsRow');
   if (!p.subjects.length) {
-    document.getElementById('subjectsRow').innerHTML = '<div class="no-data" style="grid-column:1/-1">No data for this period</div>';
+    row.style.gridTemplateColumns = '';
+    row.innerHTML = '<div class="no-data" style="grid-column:1/-1">No data for this period</div>';
     return;
   }
+  row.style.gridTemplateColumns = 'repeat(' + p.subjects.length + ', 1fr)';
   var maxSubj = Math.max.apply(null, p.subjects.map(function(s) { return s.count; }));
-  document.getElementById('subjectsRow').innerHTML = p.subjects.map(function(s) {
+  row.innerHTML = p.subjects.map(function(s) {
     return '<div class="subj-card"><div class="subj-count">' + s.count + '</div>' +
       '<div class="subj-name">' + s.name + '</div>' +
       '<div class="subj-bar"><div class="subj-bar-fill" style="width:' + (s.count / maxSubj * 100).toFixed(0) + '%;"></div></div></div>';
@@ -491,6 +496,11 @@ const SIXTY_DAY = {
 };
 
 function sdPctCol(pct) { return pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#ef4444'; }
+function sdTgtCol(tgtPct) { return tgtPct >= 100 ? '#10b981' : tgtPct >= 75 ? '#f59e0b' : '#ef4444'; }
+function sdTgtCell(attPct) {
+  var tgtPct = Math.min(100, attPct / 80 * 100);
+  return pctCell(tgtPct, 100, sdTgtCol(tgtPct));
+}
 
 function renderSixtyDayFoot() {
   var tot = SIXTY_DAY.total;
@@ -502,6 +512,7 @@ function renderSixtyDayFoot() {
     '<td class="num">' + tot.cohort + '</td>' +
     '<td class="num" id="sd-ctd-tot">' + tot.ctd + '</td>' +
     '<td>' + pctCell(totPct, 100, sdPctCol(totPct)) + '</td>' +
+    '<td>' + sdTgtCell(totPct) + '</td>' +
     '<td class="num">' + tot.remaining + '</td>' +
     '<td class="num">' + tot.perDay + '</td></tr>';
 }
@@ -515,6 +526,7 @@ function renderSixtyDay() {
       '<td class="num">' + r.cohort + '</td>' +
       '<td class="num" id="sd-ctd-' + i + '">' + r.ctd + '</td>' +
       '<td id="sd-pct-' + i + '">' + pctCell(pct, 100, sdPctCol(pct)) + '</td>' +
+      '<td id="sd-tgt-' + i + '">' + sdTgtCell(pct) + '</td>' +
       '<td class="num"><input class="sd-rem-inp" type="number" min="0" value="' + r.remaining + '" data-idx="' + i + '"></td>' +
       '<td class="num">' + perDay + '</td></tr>';
   }).join('');
@@ -528,6 +540,7 @@ function renderSixtyDay() {
       var pct = r.cohort ? (r.ctd / r.cohort * 100) : 0;
       document.getElementById('sd-ctd-' + i).textContent = r.ctd;
       document.getElementById('sd-pct-' + i).innerHTML = pctCell(pct, 100, sdPctCol(pct));
+      document.getElementById('sd-tgt-' + i).innerHTML = sdTgtCell(pct);
       renderSixtyDayFoot();
     });
   });

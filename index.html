@@ -694,6 +694,7 @@
     .unsw-badge.results         { background:#DCFCE7; color:#14532D; border-left:3px solid #22C55E; }
     .unsw-badge.enrol-deadline  { background:#EDE9FE; color:#4C1D95; border-left:3px solid #7C3AED; }
     .unsw-badge.late-enrol      { background:#FFF7ED; color:#9A3412; border-left:3px solid #F97316; }
+    .unsw-badge.withdrawal      { background:#FFF1F2; color:#881337; border-left:3px solid #E11D48; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -1470,8 +1471,12 @@
     .auto-url-link:hover { text-decoration:underline; }
     .kanban-auto-form { background:#f9fafb; border:1px solid #e5e7eb; border-radius:6px; padding:10px; margin-bottom:8px; display:grid; grid-template-columns:1fr 1fr 2fr 1fr 1fr; gap:6px; align-items:center; }
     .kanban-auto-form input, .kanban-auto-form select { border:1px solid #d1d5db; border-radius:4px; padding:5px 7px; font-size:0.72rem; font-family:inherit; width:100%; box-sizing:border-box; }
+  .drops-xl-btn { background:rgba(255,255,255,0.18); border:1px solid rgba(255,255,255,0.35); color:#fecaca; border-radius:4px; padding:1px 7px; font-size:0.62rem; cursor:pointer; float:right; margin-top:1px; font-family:inherit; }
+  .drops-xl-btn:hover { background:rgba(255,255,255,0.32); }
+  .section-card.s-drops.drops-drag-over { outline:3px dashed #ef4444; outline-offset:2px; background:#fff5f5; }
   </style>
 </head>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <body>
 
 <!-- Yellow top bar -->
@@ -1885,12 +1890,12 @@
       <button class="pu-cancel" id="pu-close-btn" style="border:none;background:none;font-size:1rem;cursor:pointer;color:#9ca3af;">✕</button>
     </div>
     <div class="pacing-upload-modal-body">
-      <p>Upload a CSV file with one row per advisor. Download the template to see the required column format. KPI ratings (K-R, K-S, K-6) are preserved from the current board and not overwritten by upload.</p>
+      <p>Upload a CSV or Excel file with one row per advisor. Download the template to see the required column format. KPI ratings (K-R, K-S, K-6) are preserved from the current board and not overwritten by upload.</p>
       <div class="pacing-upload-drop" id="pu-drop-zone">
         <div style="font-size:1.8rem;">📄</div>
-        <div style="font-weight:700;font-size:0.82rem;margin-top:6px;">Drop CSV here or click to browse</div>
-        <p>Accepts .csv files</p>
-        <input type="file" id="pu-file-input" accept=".csv" style="display:none;">
+        <div style="font-weight:700;font-size:0.82rem;margin-top:6px;">Drop file here or click to browse</div>
+        <p>Accepts .csv and .xlsx files</p>
+        <input type="file" id="pu-file-input" accept=".csv,.xlsx,.xls" style="display:none;">
       </div>
       <div class="pacing-upload-preview" id="pu-preview" style="display:none;"></div>
     </div>
@@ -2001,7 +2006,7 @@
     '2026-01-15':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-16':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-19':[{type:'enrol-deadline', label:'Enrol Deadline H1'}],
-    '2026-01-20':[{type:'late-enrol', label:'Late Enrol H1 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
+    '2026-01-20':[{type:'late-enrol', label:'Late Enrol H1 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H1'}],
     '2026-01-29':[{type:'census', label:'Census H1'}],
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
@@ -2010,7 +2015,7 @@
     '2026-03-12':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-13':[{type:'results',label:'Results H1'},{type:'o-week',label:'O-Week H2'}],
     '2026-03-16':[{type:'enrol-deadline', label:'Enrol Deadline H2'}],
-    '2026-03-17':[{type:'late-enrol', label:'Late Enrol H2 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
+    '2026-03-17':[{type:'late-enrol', label:'Late Enrol H2 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H2'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
     '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
@@ -2019,7 +2024,7 @@
     '2026-05-07':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-08':[{type:'results',label:'Results H2'},{type:'o-week',label:'O-Week H3'}],
     '2026-05-11':[{type:'enrol-deadline', label:'Enrol Deadline H3'}],
-    '2026-05-12':[{type:'late-enrol', label:'Late Enrol H3 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
+    '2026-05-12':[{type:'late-enrol', label:'Late Enrol H3 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H3'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
     '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
@@ -2028,7 +2033,7 @@
     '2026-07-02':[{type:'o-week', label:'O-Week H4'}],
     '2026-07-03':[{type:'results',label:'Results H3'},{type:'o-week',label:'O-Week H4'}],
     '2026-07-06':[{type:'enrol-deadline', label:'Enrol Deadline H4'}],
-    '2026-07-07':[{type:'late-enrol', label:'Late Enrol H4 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
+    '2026-07-07':[{type:'late-enrol', label:'Late Enrol H4 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H4'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
     '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
@@ -2037,7 +2042,7 @@
     '2026-08-27':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-28':[{type:'results',label:'Results H4'},{type:'o-week',label:'O-Week H5'}],
     '2026-08-31':[{type:'enrol-deadline', label:'Enrol Deadline H5'}],
-    '2026-09-01':[{type:'late-enrol', label:'Late Enrol H5 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
+    '2026-09-01':[{type:'late-enrol', label:'Late Enrol H5 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H5'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
     '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
@@ -2046,7 +2051,7 @@
     '2026-10-22':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-23':[{type:'results',label:'Results H5'},{type:'o-week',label:'O-Week H6'}],
     '2026-10-26':[{type:'enrol-deadline', label:'Enrol Deadline H6'}],
-    '2026-10-27':[{type:'late-enrol', label:'Late Enrol H6 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'}],
+    '2026-10-27':[{type:'late-enrol', label:'Late Enrol H6 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H6'}],
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
   };
@@ -3008,13 +3013,21 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     });
 
     function processFile(file) {
-      if (!file || !file.name.endsWith('.csv')) { alert('Please select a .csv file.'); return; }
+      if (!file || !file.name.match(/\.(csv|xlsx|xls)$/i)) { alert('Please select a .csv or .xlsx file.'); return; }
+      const isExcel = file.name.match(/\.xlsx?$/i);
       const reader = new FileReader();
       reader.onload = e => {
-        const rows = parseCSV(e.target.result);
-        if (rows.length < 2) { alert('CSV appears empty or has no data rows.'); return; }
-        const headers  = rows[0];
-        const dataRows = rows.slice(1).filter(r => r.some(c => c.trim()));
+        let rows;
+        if (isExcel) {
+          const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        } else {
+          rows = parseCSV(e.target.result);
+        }
+        if (rows.length < 2) { alert('File appears empty or has no data rows.'); return; }
+        const headers  = rows[0].map(h => String(h));
+        const dataRows = rows.slice(1).filter(r => r.some(c => String(c).trim()));
 
         if (isCohortCSV(headers)) {
           // ── Cohort-level (student rows) ──
@@ -3045,7 +3058,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           importBtn.disabled = false;
         }
       };
-      reader.readAsText(file);
+      if (isExcel) reader.readAsArrayBuffer(file); else reader.readAsText(file);
     }
 
     dropZone.addEventListener('click', () => fileInput.click());
@@ -3078,6 +3091,81 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       renderPacing();
       closeUpload();
       alert('✅ Cohort data imported for ' + hex + ' — ' + puParsedRows.length + ' advisors updated.');
+    });
+  }
+
+  const SSA_ALIASES = {
+    'Kimberley Hornlimann': 'Kimmi',
+    'Kim Hornlimann': 'Kimmi',
+    'Amelia Churchill': 'Amelia Churchill',
+  };
+
+  function matchSSARow(crmName, rows) {
+    const mapped = SSA_ALIASES[crmName] || crmName;
+    const exact = rows.find(r => r.name === mapped);
+    if (exact) return exact;
+    const first = mapped.split(' ')[0].toLowerCase();
+    return rows.find(r => r.name.split(' ')[0].toLowerCase() === first) || null;
+  }
+
+  function applyDropsData(dropCounts, totalStudents) {
+    const hex = activePacingHex;
+    if (!activePacingData || !activePacingData[hex]) { alert('Select a study period first.'); return; }
+    const rows = activePacingData[hex].rows;
+    let matched = 0;
+    Object.entries(dropCounts).forEach(([ssaName, count]) => {
+      const row = matchSSARow(ssaName, rows);
+      if (!row) return;
+      row.drops = count;
+      row.dr = row.en > 0 ? parseFloat((count / row.en * 100).toFixed(1)) + '%' : '0%';
+      matched++;
+    });
+    activePacingData[hex].total = calcTotal(rows);
+    savePacingData();
+    renderPacing();
+    alert('✅ Drops imported for ' + hex + ': ' + totalStudents + ' student records → ' + matched + ' advisors updated');
+  }
+
+  function parseDropsFile(file) {
+    if (!file.name.match(/\.xlsx?$/i)) { alert('Please use an Excel file (.xlsx or .xls)'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        const headers = rows[0];
+        const ssaIdx = headers.findIndex(h => String(h).includes('SSA'));
+        if (ssaIdx < 0) { alert('SSA column not found — is this the right file?'); return; }
+        const dropCounts = {};
+        rows.slice(1).filter(r => r.some(c => c)).forEach(r => {
+          const ssa = String(r[ssaIdx]).trim();
+          if (ssa) dropCounts[ssa] = (dropCounts[ssa] || 0) + 1;
+        });
+        applyDropsData(dropCounts, rows.length - 1);
+      } catch (err) {
+        alert('Could not read file: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function initDropsUpload() {
+    const card = document.querySelector('.section-card.s-drops');
+    if (!card) return;
+    let fi = document.getElementById('drops-file-input');
+    if (!fi) {
+      fi = document.createElement('input');
+      fi.type = 'file'; fi.id = 'drops-file-input'; fi.accept = '.xlsx,.xls';
+      fi.style.display = 'none';
+      document.body.appendChild(fi);
+      fi.addEventListener('change', () => { if (fi.files[0]) parseDropsFile(fi.files[0]); fi.value = ''; });
+    }
+    card.addEventListener('dragover',  e => { e.preventDefault(); card.classList.add('drops-drag-over'); });
+    card.addEventListener('dragleave', ()  => card.classList.remove('drops-drag-over'));
+    card.addEventListener('drop', e => {
+      e.preventDefault(); card.classList.remove('drops-drag-over');
+      if (e.dataTransfer.files[0]) parseDropsFile(e.dataTransfer.files[0]);
     });
   }
 
@@ -3164,8 +3252,11 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
           return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
         }).join('');
+        const hdrInner = sec.cls === 's-drops'
+          ? `${sec.label} <button class="drops-xl-btn" onclick="document.getElementById('drops-file-input').click()" title="Import drops from Excel">📥 Import</button>`
+          : sec.label;
         return `<div class="${cardCls}">
-          <div class="sc-hdr ${sec.cls}">${sec.label}</div>
+          <div class="sc-hdr ${sec.cls}">${hdrInner}</div>
           <table class="sc-table">
             <thead><tr><th></th>${theadCols}</tr></thead>
             <tbody>${tbodyRows}</tbody>
@@ -3324,6 +3415,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const totRow = calcTotal(visibleRows);
       content.innerHTML = buildSummaryBar(totRow, hex.label) + buildSectionCards(rowItems);
     }
+    initDropsUpload();
   }
 
   // Tab switching
