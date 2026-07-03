@@ -1476,7 +1476,7 @@
   .section-card.s-drops.drops-drag-over { outline:3px dashed #ef4444; outline-offset:2px; background:#fff5f5; }
   </style>
 </head>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
 <body>
 
 <!-- Yellow top bar -->
@@ -3161,10 +3161,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       document.body.appendChild(fi);
       fi.addEventListener('change', () => { if (fi.files[0]) parseDropsFile(fi.files[0]); fi.value = ''; });
     }
-    card.addEventListener('dragover',  e => { e.preventDefault(); card.classList.add('drops-drag-over'); });
-    card.addEventListener('dragleave', ()  => card.classList.remove('drops-drag-over'));
+    let dragN = 0;
+    card.addEventListener('dragenter', e => { e.preventDefault(); if (++dragN === 1) card.classList.add('drops-drag-over'); });
+    card.addEventListener('dragover',  e => { e.preventDefault(); });
+    card.addEventListener('dragleave', ()  => { if (--dragN <= 0) { dragN = 0; card.classList.remove('drops-drag-over'); } });
     card.addEventListener('drop', e => {
-      e.preventDefault(); card.classList.remove('drops-drag-over');
+      e.preventDefault(); dragN = 0; card.classList.remove('drops-drag-over');
       if (e.dataTransfer.files[0]) parseDropsFile(e.dataTransfer.files[0]);
     });
   }
