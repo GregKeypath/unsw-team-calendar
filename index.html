@@ -787,8 +787,9 @@
     .kedit-prio-opt.prio-tue  { background:#ffedd5; color:#c2410c; }
     .kedit-prio-opt.prio-wed  { background:#d1fae5; color:#065f46; }
     .kedit-prio-opt.prio-thu  { background:#ede9fe; color:#5b21b6; }
-    .kedit-prio-opt.prio-fri  { background:#fce7f3; color:#9d174d; }
-    .kedit-prio-opt.selected  { border-color:#111; box-shadow:0 0 0 1px #111; }
+    .kedit-prio-opt.prio-fri    { background:#fce7f3; color:#9d174d; }
+    .kedit-prio-opt.prio-yellow { background:#fef9c3; color:#854d0e; }
+    .kedit-prio-opt.selected    { border-color:#111; box-shadow:0 0 0 1px #111; }
     /* Category row */
     .kedit-cat-row { display:flex; flex-wrap:wrap; gap:5px; }
     .kedit-cat-opt { padding:3px 10px; border-radius:12px; border:2px solid transparent; cursor:pointer; font-size:0.71rem; font-weight:600; user-select:none; transition:border-color .12s; }
@@ -1933,6 +1934,7 @@
           <label class="kedit-prio-opt prio-wed"><input type="radio" name="keprio" value="wed">Wednesday</label>
           <label class="kedit-prio-opt prio-thu"><input type="radio" name="keprio" value="thu">Thursday</label>
           <label class="kedit-prio-opt prio-fri"><input type="radio" name="keprio" value="fri">Friday</label>
+          <label class="kedit-prio-opt prio-yellow"><input type="radio" name="keprio" value="yellow">🟡 EOW</label>
         </div>
       </div>
       <div>
