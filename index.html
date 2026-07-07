@@ -2672,7 +2672,7 @@
   let activePacingHex = 'H4';
   let activePacingSSA = null;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
-const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Mosley','Tyler Bruns'];
+const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns'];
   const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards'];
 
   function pctClass(str) {
@@ -2943,6 +2943,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const iStart   = colIdx('actual start term','start term','actual term');
     const iPhone   = colIdx('last phone attempt','last phone');
     const iContact = colIdx('last contact');
+    const iIntent  = colIdx('intent to enroll','intent to enrol','intent');
 
     if (iAdvisor === -1) { alert('Cohort CSV: could not find Advisor/SSA column.'); return null; }
 
@@ -2951,7 +2952,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     const SSA_ALIASES = {
       'kimberley hornlimann': 'Kimmi', 'kimberley': 'Kimmi',
-      'amelia churchill': 'Amelia Mosley',
+      'amelia churchill': 'Amelia Churchill',
     };
 
     const ssaMap = {};
@@ -2971,6 +2972,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         startTerm:    iStart   >= 0 ? (cells[iStart]    || '').trim() : '',
         lastPhone:    parseD(iPhone   >= 0 ? cells[iPhone]   : ''),
         lastContact:  parseD(iContact >= 0 ? cells[iContact] : ''),
+        intent:       iIntent  >= 0 ? (cells[iIntent]   || '').trim() : '',
       });
     });
 
@@ -2982,7 +2984,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const enLow  = s => s.enrollStatus.toLowerCase();
         const subLow = s => s.substatus.toLowerCase();
         const cohort         = students.length;
-        const en             = students.filter(s => enLow(s) === 'enrolled').length;
         const gcm            = students.filter(s => subLow(s) === 'pending graduation' && enLow(s) === 'enrolled').length;
         const gcmPool        = students.filter(s => subLow(s) === 'pending graduation' || enLow(s) === 'graduated').length;
         const t3             = students.filter(s => s.startTerm.includes('2026 T3'));
@@ -2992,7 +2993,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const remaining      = Math.max(0, cohort - ctd);
         const remainingPerDay = (remaining > 0 && wdays > 0) ? parseFloat((remaining / wdays).toFixed(1)) : 0;
         const cohortContact  = students.filter(s => s.lastContact && s.lastContact >= COHORT_KPI_START && s.lastContact <= CENSUS_END).length;
-        return { name, cohort, en, gcm, gcmPool, gcmt: gcmPool, t1t2pool, t1t2, ctd, remaining, remainingPerDay, cohortContact };
+        const intentYes     = students.filter(s => s.intent === 'Yes').length;
+        const intentNo      = students.filter(s => s.intent === 'No').length;
+        const intentUndec   = students.filter(s => s.intent === 'Undecided').length;
+        const intentUnknown = students.filter(s => s.intent === 'Unknown').length;
+        const intentBlank   = students.filter(s => !s.intent || s.intent === 'Pending Withdrawn').length;
+        return { name, cohort, gcm, gcmPool, gcmt: gcmPool, t1t2pool, t1t2, ctd, remaining, remainingPerDay, cohortContact,
+                 intentYes, intentNo, intentUndec, intentUnknown, intentBlank };
       });
   }
 
@@ -3089,8 +3096,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       activePacingData[hex].rows = puParsedRows.map(r => {
         const prev = existing.find(e => e.name === r.name) || {};
         const locked = (PACING_DATA[hex]?.rows || []).find(hr => hr.name === r.name) || {};
-        const merged = { ...prev, ...r, kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null,
-          it: locked.it ?? prev.it ?? r.it ?? 0, stt: locked.stt ?? prev.stt ?? r.stt ?? 0 };
+        const merged = { ...prev, ...r,
+          st:  locked.st  ?? prev.st  ?? r.st  ?? 0,
+          en:  locked.en  ?? prev.en  ?? r.en  ?? 0,
+          it:  locked.it  ?? prev.it  ?? r.it  ?? 0,
+          stt: locked.stt ?? prev.stt ?? r.stt ?? 0,
+          kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null };
         // Recalculate derived fields — fall back to merged values when pctT1/gcmC not available (cohort upload)
         const t1t2t = (merged.pctT1 && merged.pctT1 !== '—' && merged.t1t2 > 0)
           ? Math.round(merged.t1t2 / (parseFloat(merged.pctT1) / 100)) : (merged.t1t2t || 0);
