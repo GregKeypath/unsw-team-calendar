@@ -3049,6 +3049,20 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const headers  = rows[0].map(h => String(h));
         const dataRows = rows.slice(1).filter(r => r.some(c => String(c).trim()));
 
+        // ── PII check — block files containing student personal details ──
+        const PII_PATTERNS = [
+          /\bemail\b/i, /\bphone\b/i, /\bmobile\b/i, /\bdate.of.birth\b/i, /\b\bdob\b/i,
+          /\baddress\b/i, /\bfirst.name\b/i, /\blast.name\b/i, /\bfull.name\b/i,
+          /\bstudent.name\b/i, /\bgiven.name\b/i, /\bsurname\b/i,
+        ];
+        const piiCols = headers.filter(h => PII_PATTERNS.some(p => p.test(h)));
+        if (piiCols.length) {
+          alert('⛔ Upload blocked — this file contains student personal information:\n\n' +
+            piiCols.map(c => '  • ' + c).join('\n') +
+            '\n\nPlease use an export that contains only enrolment status and activity data, with no student names or contact details.');
+          return;
+        }
+
         if (isCohortCSV(headers)) {
           // ── Cohort-level (student rows) ──
           const parsed = parseCohortLevel(headers, dataRows);
@@ -3198,27 +3212,22 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   function overlayLockedTargets(dataset) {
     for (const [hexKey, hexData] of Object.entries(PACING_DATA)) {
       if (!dataset[hexKey]) {
+        // No Firebase data for this hex — seed everything from PACING_DATA
         dataset[hexKey] = JSON.parse(JSON.stringify(hexData));
+        dataset[hexKey].rows = dataset[hexKey].rows.map(r => calcDerived(r));
       } else {
         hexData.rows.forEach(srcRow => {
           const fbRow = (dataset[hexKey].rows || []).find(r => r.name === srcRow.name);
-          if (!fbRow) return;
-          const keep = { kR: fbRow.kR, kS: fbRow.kS, k6: fbRow.k6,
-                         calls: fbRow.calls, sts: fbRow.sts, cq: fbRow.cq,
-                         drops: fbRow.drops, dr: fbRow.dr };
-          if (fbRow.it === 0 && fbRow.stt === 0) {
-            // Stale placeholder — full reset, preserve only user KPI fields
-            Object.assign(fbRow, srcRow, keep);
-          } else {
-            // Always apply locked targets and fresh cohort data
-            fbRow.it = srcRow.it; fbRow.stt = srcRow.stt;
-            fbRow.st = srcRow.st; fbRow.dr = srcRow.dr;
-            fbRow.en = srcRow.en; fbRow.cohort = srcRow.cohort;
-            fbRow.ctd = srcRow.ctd; fbRow.cohortContact = srcRow.cohortContact;
-            fbRow.gcm = srcRow.gcm; fbRow.gcmPool = srcRow.gcmPool; fbRow.gcmt = srcRow.gcmt;
-            fbRow.t1t2pool = srcRow.t1t2pool; fbRow.t1t2 = srcRow.t1t2;
+          if (!fbRow) {
+            // SSA missing from Firebase — add from PACING_DATA
+            dataset[hexKey].rows.push(calcDerived(JSON.parse(JSON.stringify(srcRow))));
+            return;
           }
-          // Recalculate all derived fields (remaining, remainingPerDay, pcts, etc.)
+          // Only overlay truly locked management targets — everything else is preserved from Firebase
+          // so team inline edits (st, en, kpi, drops, cohort data) are never wiped on page load
+          fbRow.it  = srcRow.it;
+          fbRow.stt = srcRow.stt;
+          // Recalculate derived fields with current Firebase values
           Object.assign(fbRow, calcDerived(fbRow));
         });
       }
