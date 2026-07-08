@@ -2659,13 +2659,13 @@
     H4: {
       label: 'H4 · 2026',
       rows: [
-        { name:'Daljeet Sahota',    st:246, en:244, it:226, stt:225, gcm:25, gcmPool:26, gcmt:26, t1t2pool:40, t1t2:40, cohort:335, ctd:268, cohortContact:126, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:147, intentNo:80, intentUndec:4,  intentUnknown:18, intentBlank:86  },
-        { name:'Priscilla Samuel',  st:241, en:237, it:219, stt:219, gcm:31, gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:229, cohortContact:130, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:22,  intentNo:22, intentUndec:7,  intentUnknown:15, intentBlank:273 },
-        { name:'Saravanan Rajamani',st:199, en:192, it:181, stt:196, gcm:18, gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:186, cohortContact:86,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:11,  intentNo:15, intentUndec:3,  intentUnknown:18, intentBlank:223 },
-        { name:'Amelia Churchill',  st:244, en:252, it:223, stt:224, gcm:36, gcmPool:36, gcmt:36, t1t2pool:48, t1t2:48, cohort:343, ctd:249, cohortContact:188, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:13,  intentNo:7,  intentUndec:2,  intentUnknown:10, intentBlank:311 },
-        { name:'Kimmi',             st:225, en:204, it:204, stt:204, gcm:43, gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:333, ctd:196, cohortContact:119, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:5,   intentNo:36, intentUndec:5,  intentUnknown:26, intentBlank:261 },
+        { name:'Daljeet Sahota',    st:246, en:244, it:226, stt:225, gcm:5,  gcmPool:26, gcmt:26, t1t2pool:40, t1t2:40, cohort:335, ctd:268, cohortContact:126, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:147, intentNo:80, intentUndec:4,  intentUnknown:18, intentBlank:86  },
+        { name:'Priscilla Samuel',  st:241, en:237, it:219, stt:219, gcm:1,  gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:229, cohortContact:130, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:22,  intentNo:22, intentUndec:7,  intentUnknown:15, intentBlank:273 },
+        { name:'Saravanan Rajamani',st:199, en:192, it:181, stt:196, gcm:6,  gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:186, cohortContact:86,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:11,  intentNo:15, intentUndec:3,  intentUnknown:18, intentBlank:223 },
+        { name:'Amelia Churchill',  st:244, en:252, it:223, stt:224, gcm:4,  gcmPool:36, gcmt:36, t1t2pool:48, t1t2:48, cohort:343, ctd:249, cohortContact:188, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:13,  intentNo:7,  intentUndec:2,  intentUnknown:10, intentBlank:311 },
+        { name:'Kimmi',             st:225, en:204, it:204, stt:204, gcm:3,  gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:333, ctd:196, cohortContact:119, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:5,   intentNo:36, intentUndec:5,  intentUnknown:26, intentBlank:261 },
       ],
-      total: { name:'UNSW Total', st:1155, en:1129, it:1053, stt:1068, gcm:153, gcmPool:154, gcmt:154, t1t2pool:193, t1t2:193, cohort:1620, ctd:1128, cohortContact:649, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:198, intentNo:160, intentUndec:21, intentUnknown:87, intentBlank:1154 }
+      total: { name:'UNSW Total', st:1155, en:1129, it:1053, stt:1068, gcm:19, gcmPool:154, gcmt:154, t1t2pool:193, t1t2:193, cohort:1620, ctd:1128, cohortContact:649, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:198, intentNo:160, intentUndec:21, intentUnknown:87, intentBlank:1154 }
     }
   };
 
@@ -2969,6 +2969,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ssaMap[key].push({
         enrollStatus: iEnrol   >= 0 ? (cells[iEnrol]   || '').trim() : '',
         substatus:    iSub     >= 0 ? (cells[iSub]      || '').trim() : '',
+        ntStatus:     (cells[hl.findIndex(h => h.includes('next term enrollment'))] || '').trim().toLowerCase(),
         startTerm:    iStart   >= 0 ? (cells[iStart]    || '').trim() : '',
         lastPhone:    parseD(iPhone   >= 0 ? cells[iPhone]   : ''),
         lastContact:  parseD(iContact >= 0 ? cells[iContact] : ''),
@@ -2984,7 +2985,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const enLow  = s => s.enrollStatus.toLowerCase();
         const subLow = s => s.substatus.toLowerCase();
         const cohort         = students.length;
-        const gcm            = students.filter(s => subLow(s) === 'pending graduation' && enLow(s) === 'enrolled').length;
+        const gcm            = students.filter(s => subLow(s) === 'pending graduation' && s.ntStatus === 'enrolled').length;
         const gcmPool        = students.filter(s => subLow(s) === 'pending graduation' || enLow(s) === 'graduated').length;
         const t3             = students.filter(s => s.startTerm.includes('2026 T3'));
         const t1t2pool       = t3.length;
