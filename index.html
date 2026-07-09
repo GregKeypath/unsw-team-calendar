@@ -3192,23 +3192,36 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   }
 
   function initDropsUpload() {
-    const card = document.querySelector('.section-card.s-drops');
-    if (!card) return;
-    let fi = document.getElementById('drops-file-input');
-    if (!fi) {
-      fi = document.createElement('input');
+    if (!document.getElementById('drops-file-input')) {
+      const fi = document.createElement('input');
       fi.type = 'file'; fi.id = 'drops-file-input'; fi.accept = '.xlsx,.xls';
       fi.style.display = 'none';
       document.body.appendChild(fi);
       fi.addEventListener('change', () => { if (fi.files[0]) parseDropsFile(fi.files[0]); fi.value = ''; });
     }
-    let dragN = 0;
-    card.addEventListener('dragenter', e => { e.preventDefault(); if (++dragN === 1) card.classList.add('drops-drag-over'); });
-    card.addEventListener('dragover',  e => { e.preventDefault(); });
-    card.addEventListener('dragleave', ()  => { if (--dragN <= 0) { dragN = 0; card.classList.remove('drops-drag-over'); } });
-    card.addEventListener('drop', e => {
-      e.preventDefault(); dragN = 0; card.classList.remove('drops-drag-over');
-      if (e.dataTransfer.files[0]) parseDropsFile(e.dataTransfer.files[0]);
+    if (document._dropsListenersInit) return;
+    document._dropsListenersInit = true;
+    document.addEventListener('dragover', e => {
+      if (e.target.closest && e.target.closest('.section-card.s-drops')) e.preventDefault();
+    });
+    document.addEventListener('dragenter', e => {
+      if (e.target.closest && e.target.closest('.section-card.s-drops')) {
+        e.preventDefault();
+        const c = document.querySelector('.section-card.s-drops');
+        if (c) c.classList.add('drops-drag-over');
+      }
+    });
+    document.addEventListener('dragleave', e => {
+      const c = document.querySelector('.section-card.s-drops');
+      if (c && !c.contains(e.relatedTarget)) c.classList.remove('drops-drag-over');
+    });
+    document.addEventListener('drop', e => {
+      const c = e.target.closest && e.target.closest('.section-card.s-drops');
+      if (c) {
+        e.preventDefault();
+        c.classList.remove('drops-drag-over');
+        if (e.dataTransfer.files[0]) parseDropsFile(e.dataTransfer.files[0]);
+      }
     });
   }
 
