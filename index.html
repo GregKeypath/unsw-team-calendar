@@ -3201,25 +3201,24 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     }
     if (document._dropsListenersInit) return;
     document._dropsListenersInit = true;
+
+    function dropsCard() { return document.querySelector('#tab-pacing.active .section-card.s-drops'); }
+    function overCard(e, card) {
+      if (!card) return false;
+      const r = card.getBoundingClientRect();
+      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    }
     document.addEventListener('dragover', e => {
-      if (e.target.closest && e.target.closest('.section-card.s-drops')) e.preventDefault();
-    });
-    document.addEventListener('dragenter', e => {
-      if (e.target.closest && e.target.closest('.section-card.s-drops')) {
-        e.preventDefault();
-        const c = document.querySelector('.section-card.s-drops');
-        if (c) c.classList.add('drops-drag-over');
-      }
-    });
-    document.addEventListener('dragleave', e => {
-      const c = document.querySelector('.section-card.s-drops');
-      if (c && !c.contains(e.relatedTarget)) c.classList.remove('drops-drag-over');
+      const card = dropsCard();
+      if (!card) return;
+      if (overCard(e, card)) { e.preventDefault(); card.classList.add('drops-drag-over'); }
+      else card.classList.remove('drops-drag-over');
     });
     document.addEventListener('drop', e => {
-      const c = e.target.closest && e.target.closest('.section-card.s-drops');
-      if (c) {
+      const card = dropsCard();
+      if (card && overCard(e, card)) {
         e.preventDefault();
-        c.classList.remove('drops-drag-over');
+        card.classList.remove('drops-drag-over');
         if (e.dataTransfer.files[0]) parseDropsFile(e.dataTransfer.files[0]);
       }
     });
