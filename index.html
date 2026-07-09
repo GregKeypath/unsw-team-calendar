@@ -1487,11 +1487,8 @@
   .section-card.s-drops.drops-drag-over { outline:3px dashed #ef4444; outline-offset:2px; background:#fff5f5; }
   </style>
 </head>
-<!-- Excel reader is bundled in the repo and served from the SAME GitHub Pages domain,
-     so a corporate network that blocks public CDNs (jsdelivr/unpkg/cdnjs) can't block it. -->
 <script src="xlsx.full.min.js"></script>
 <script>
-  // Last-resort fallback only — if the local copy somehow fails to load, try public CDNs.
   (function loadXlsxFallback(){
     if (typeof XLSX !== 'undefined') return;
     var cdns = [
@@ -2974,11 +2971,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     if (iAdvisor === -1) { alert('Cohort CSV: could not find Advisor/SSA column.'); return null; }
 
-    // .xlsx cells arrive as numbers/Dates, not strings — coerce safely so .trim() never throws.
     const S = v => (v == null ? '' : String(v)).trim();
     const EXCEL_EPOCH = Date.UTC(1899, 11, 30);
-    // Return a timezone-independent calendar date (local midnight) so date-cutoff
-    // comparisons give the same result on every machine.
     const parseD = v => {
       if (v == null || v === '') return null;
       if (v instanceof Date) return isNaN(v.getTime()) ? null : new Date(v.getFullYear(), v.getMonth(), v.getDate());
@@ -3027,8 +3021,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const enLow  = s => s.enrollStatus.toLowerCase();
         const subLow = s => s.substatus.toLowerCase();
         const cohort         = students.length;
-        // GC-M pool = Sub Status "Pending Graduation" (col K). Articulated = those whose
-        // Next Term Enrollment (col L) is "Enrolled". No "graduated" — it pulled in dropped students.
         const gcm            = students.filter(s => subLow(s) === 'pending graduation' && s.ntStatus === 'enrolled').length;
         const gcmPool        = students.filter(s => subLow(s) === 'pending graduation').length;
         const t3             = students.filter(s => s.startTerm.includes('2026 T3'));
@@ -3096,10 +3088,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const headers  = rows[0].map(h => String(h));
         const dataRows = rows.slice(1).filter(r => r.some(c => String(c).trim()));
 
-        // ── PII check — block files containing student personal details ──
-        // Patterns target actual contact-detail columns. "Last Phone Attempt Date"
-        // and similar activity/metadata columns are NOT PII, so we match "phone number",
-        // not a bare "phone" that also appears in date columns.
         const PII_PATTERNS = [
           /\bemail\b/i, /\bmobile\b/i, /phone\s*(number|no\.?|#)/i,
           /\bdate.of.birth\b/i, /\bdob\b/i, /\baddress\b/i,
