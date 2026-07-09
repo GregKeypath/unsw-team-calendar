@@ -1487,13 +1487,15 @@
   .section-card.s-drops.drops-drag-over { outline:3px dashed #ef4444; outline-offset:2px; background:#fff5f5; }
   </style>
 </head>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js"></script>
+<!-- Excel reader is bundled in the repo and served from the SAME GitHub Pages domain,
+     so a corporate network that blocks public CDNs (jsdelivr/unpkg/cdnjs) can't block it. -->
+<script src="xlsx.full.min.js"></script>
 <script>
-  // Fallback CDNs — if a corporate network blocks jsdelivr, try alternates so
-  // in-browser Excel parsing (drops import, cohort upload) still works.
+  // Last-resort fallback only — if the local copy somehow fails to load, try public CDNs.
   (function loadXlsxFallback(){
     if (typeof XLSX !== 'undefined') return;
     var cdns = [
+      'https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js',
       'https://unpkg.com/xlsx@0.20.3/dist/xlsx.full.min.js',
       'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.3/xlsx.full.min.js'
     ];
@@ -2684,13 +2686,13 @@
     H4: {
       label: 'H4 · 2026',
       rows: [
-        { name:'Daljeet Sahota',    st:246, en:244, it:226, stt:225, gcm:4,  gcmPool:26, gcmt:26, t1t2pool:40, t1t2:40, cohort:335, ctd:273, cohortContact:126, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:12, intentNo:75, intentUndec:1, intentUnknown:4,  intentBlank:9  },
-        { name:'Priscilla Samuel',  st:241, en:237, it:219, stt:219, gcm:1,  gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:246, cohortContact:130, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:2,  intentNo:22, intentUndec:5, intentUnknown:5,  intentBlank:78 },
-        { name:'Saravanan Rajamani',st:199, en:192, it:181, stt:196, gcm:6,  gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:189, cohortContact:86,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:1,  intentNo:15, intentUndec:2, intentUnknown:13, intentBlank:47 },
-        { name:'Amelia Churchill',  st:244, en:252, it:223, stt:224, gcm:4,  gcmPool:36, gcmt:36, t1t2pool:48, t1t2:48, cohort:344, ctd:266, cohortContact:188, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0,  intentNo:7,  intentUndec:2, intentUnknown:9,  intentBlank:82 },
-        { name:'Kimmi',             st:225, en:204, it:204, stt:204, gcm:3,  gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:336, ctd:199, cohortContact:119, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:3,  intentNo:36, intentUndec:4, intentUnknown:26, intentBlank:70 },
+        { name:'Daljeet Sahota',    st:246, en:244, it:226, stt:225, gcm:4,  gcmPool:27, gcmt:27, t1t2pool:40, t1t2:40, cohort:335, ctd:273, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:12, intentNo:75, intentUndec:1, intentUnknown:4,  intentBlank:9  },
+        { name:'Priscilla Samuel',  st:241, en:237, it:219, stt:219, gcm:1,  gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:246, cohortContact:276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:2,  intentNo:22, intentUndec:5, intentUnknown:5,  intentBlank:78 },
+        { name:'Saravanan Rajamani',st:199, en:192, it:181, stt:196, gcm:6,  gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:189, cohortContact:207,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:1,  intentNo:15, intentUndec:2, intentUnknown:13, intentBlank:47 },
+        { name:'Amelia Churchill',  st:244, en:252, it:223, stt:224, gcm:4,  gcmPool:37, gcmt:37, t1t2pool:48, t1t2:48, cohort:344, ctd:266, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0,  intentNo:7,  intentUndec:2, intentUnknown:9,  intentBlank:82 },
+        { name:'Kimmi',             st:225, en:204, it:204, stt:204, gcm:3,  gcmPool:46, gcmt:46, t1t2pool:25, t1t2:25, cohort:336, ctd:199, cohortContact:223, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:3,  intentNo:36, intentUndec:4, intentUnknown:26, intentBlank:70 },
       ],
-      total: { name:'UNSW Total', st:1155, en:1129, it:1053, stt:1068, gcm:18, gcmPool:154, gcmt:154, t1t2pool:193, t1t2:193, cohort:1624, ctd:1173, cohortContact:649, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:18, intentNo:155, intentUndec:14, intentUnknown:57, intentBlank:286 }
+      total: { name:'UNSW Total', st:1155, en:1129, it:1053, stt:1068, gcm:18, gcmPool:159, gcmt:159, t1t2pool:193, t1t2:193, cohort:1624, ctd:1173, cohortContact:1276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:18, intentNo:155, intentUndec:14, intentUnknown:57, intentBlank:286 }
     }
   };
 
@@ -2698,7 +2700,7 @@
   let activePacingSSA = null;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
 const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns'];
-  const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards'];
+  const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards', 'Carmela Gomez'];
 
   function pctClass(str) {
     if (!str || str === '—') return 'pct-grey';
@@ -2967,13 +2969,28 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const iSub     = colIdx('substatus','sub status','sub-status');
     const iStart   = colIdx('actual start term','start term','actual term');
     const iPhone   = colIdx('last phone attempt','last phone');
-    const iContact = colIdx('last contact');
+    const iContact = colIdx('last communication','last contact','last comm');
     const iIntent  = colIdx('intent to enroll','intent to enrol','intent');
 
     if (iAdvisor === -1) { alert('Cohort CSV: could not find Advisor/SSA column.'); return null; }
 
-    const parseD = s => { if (!s || !s.trim()) return null; const d = new Date(s.trim()); return isNaN(d.getTime()) ? null : d; };
+    // .xlsx cells arrive as numbers/Dates, not strings — coerce safely so .trim() never throws.
+    const S = v => (v == null ? '' : String(v)).trim();
+    const EXCEL_EPOCH = Date.UTC(1899, 11, 30);
+    // Return a timezone-independent calendar date (local midnight) so date-cutoff
+    // comparisons give the same result on every machine.
+    const parseD = v => {
+      if (v == null || v === '') return null;
+      if (v instanceof Date) return isNaN(v.getTime()) ? null : new Date(v.getFullYear(), v.getMonth(), v.getDate());
+      if (typeof v === 'number') {
+        const u = new Date(EXCEL_EPOCH + Math.floor(v) * 86400000);
+        return isNaN(u.getTime()) ? null : new Date(u.getUTCFullYear(), u.getUTCMonth(), u.getUTCDate());
+      }
+      const s = S(v); if (!s) return null;
+      const d = new Date(s); return isNaN(d.getTime()) ? null : new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    };
     const CENSUS_END = new Date('2026-07-16T23:59:59');
+    const ntIdx = hl.findIndex(h => h.includes('next term enrollment'));
 
     const SSA_ALIASES = {
       'kimberley hornlimann': 'Kimmi', 'kimberley': 'Kimmi',
@@ -2982,7 +2999,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     const ssaMap = {};
     dataRows.forEach(cells => {
-      const raw = (cells[iAdvisor] || '').trim();
+      const raw = S(cells[iAdvisor]);
       if (!raw) return;
       const alias = SSA_ALIASES[raw.toLowerCase()];
       const knownMatch = alias || ALL_SSA_NAMES.find(k => {
@@ -2992,13 +3009,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const key = knownMatch || raw;
       if (!ssaMap[key]) ssaMap[key] = [];
       ssaMap[key].push({
-        enrollStatus: iEnrol   >= 0 ? (cells[iEnrol]   || '').trim() : '',
-        substatus:    iSub     >= 0 ? (cells[iSub]      || '').trim() : '',
-        ntStatus:     (cells[hl.findIndex(h => h.includes('next term enrollment'))] || '').trim().toLowerCase(),
-        startTerm:    iStart   >= 0 ? (cells[iStart]    || '').trim() : '',
+        enrollStatus: iEnrol   >= 0 ? S(cells[iEnrol])  : '',
+        substatus:    iSub     >= 0 ? S(cells[iSub])    : '',
+        ntStatus:     (ntIdx >= 0 ? S(cells[ntIdx]) : '').toLowerCase(),
+        startTerm:    iStart   >= 0 ? S(cells[iStart])  : '',
         lastPhone:    parseD(iPhone   >= 0 ? cells[iPhone]   : ''),
         lastContact:  parseD(iContact >= 0 ? cells[iContact] : ''),
-        intent:       iIntent  >= 0 ? (cells[iIntent]   || '').trim() : '',
+        intent:       iIntent  >= 0 ? S(cells[iIntent]) : '',
       });
     });
 
@@ -3105,7 +3122,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           preview.innerHTML = `<strong>📋 Cohort upload detected — ${dataRows.length} students → ${parsed.length} advisors</strong>
             <span style="font-size:0.72rem;color:#64748b;margin-left:6px;">(${wdays} working days to census 16 Jul)</span><br>` +
             parsed.map(r =>
-              `• <b>${r.name}</b> — Cohort: ${r.cohort}, Enrolled: ${r.en}, ` +
+              `• <b>${r.name}</b> — Cohort: ${r.cohort}, ` +
               `GC-M Pool: ${r.gcmPool} / Enrolled: ${r.gcm}, ` +
               `T3 Pool: ${r.t1t2pool} / Enrolled: ${r.t1t2}, ` +
               `Contacted (60d): ${r.ctd}, Remaining: ${r.remaining} (${r.remainingPerDay}/day), ` +
