@@ -3078,9 +3078,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const dataRows = rows.slice(1).filter(r => r.some(c => String(c).trim()));
 
         // ── PII check — block files containing student personal details ──
+        // Patterns target actual contact-detail columns. "Last Phone Attempt Date"
+        // and similar activity/metadata columns are NOT PII, so we match "phone number",
+        // not a bare "phone" that also appears in date columns.
         const PII_PATTERNS = [
-          /\bemail\b/i, /\bphone\b/i, /\bmobile\b/i, /\bdate.of.birth\b/i, /\b\bdob\b/i,
-          /\baddress\b/i, /\bfirst.name\b/i, /\blast.name\b/i, /\bfull.name\b/i,
+          /\bemail\b/i, /\bmobile\b/i, /phone\s*(number|no\.?|#)/i,
+          /\bdate.of.birth\b/i, /\bdob\b/i, /\baddress\b/i,
+          /\bfirst.name\b/i, /\blast.name\b/i, /\bfull.name\b/i,
           /\bstudent.name\b/i, /\bgiven.name\b/i, /\bsurname\b/i,
         ];
         const piiCols = headers.filter(h => PII_PATTERNS.some(p => p.test(h)));
