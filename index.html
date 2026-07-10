@@ -2857,9 +2857,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   function calcTotal(rows) {
     const s = { name: 'UNSW Total', cq: null, kR: null, kS: null, k6: null };
-    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','remaining','cohortContact','intentYes','intentNo','intentUndec','intentUnknown','intentBlank'].forEach(f => {
+    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','remaining','cohortContact','drops','intentYes','intentNo','intentUndec','intentUnknown','intentBlank'].forEach(f => {
       s[f] = rows.reduce((acc, r) => acc + (Number(r[f]) || 0), 0);
     });
+    const anyDrops = rows.some(r => r.drops != null);
+    s.drops = anyDrops ? s.drops : null;
+    s.dr = (anyDrops && s.en > 0) ? parseFloat((s.drops / s.en * 100).toFixed(1)) + '%' : '—';
     const cs = rows.filter(r => r.calls).map(r => Number(r.calls));
     const ss = rows.filter(r => r.sts).map(r => Number(r.sts));
     s.calls = cs.length ? Math.round(cs.reduce((a,b)=>a+b,0)/cs.length) : null;
