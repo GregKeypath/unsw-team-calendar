@@ -2787,8 +2787,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'% Contacted',         f:'cohortContactPct', edit:false, type:'pct' },
       ]},
     // ── Row 4: KPI + Weightage ─────────────────────────────────────
-    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
+    { cls:'s-kpi', label:'📈 KPI Tracking', span:'three-quarter',
       cols:[
+        { h:'Student Contacts (FY)', f:'contactsFY', edit:false },
+        { h:'60 Day Contacted',      f:'ctd',        edit:false },
         { h:'Avg Calls/Week', f:'calls', edit:true },
         { h:'Avg STS/Week',   f:'sts',   edit:true },
         { h:'Call Quality %', f:'cq',    edit:true, type:'pct-input' },
@@ -2857,7 +2859,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   function calcTotal(rows) {
     const s = { name: 'UNSW Total', cq: null, kR: null, kS: null, k6: null };
-    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','remaining','cohortContact','drops','intentYes','intentNo','intentUndec','intentUnknown','intentBlank'].forEach(f => {
+    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','contactsFY','remaining','cohortContact','drops','intentYes','intentNo','intentUndec','intentUnknown','intentBlank'].forEach(f => {
       s[f] = rows.reduce((acc, r) => acc + (Number(r[f]) || 0), 0);
     });
     const anyDrops = rows.some(r => r.drops != null);
@@ -2969,6 +2971,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const iSub     = colIdx('substatus','sub status','sub-status');
     const iStart   = colIdx('actual start term','start term','actual term');
     const iPhone   = colIdx('last phone attempt','last phone');
+    const iPhoneContact = colIdx('last phone contact');
     const iContact = colIdx('last communication','last contact','last comm');
     const iIntent  = colIdx('intent to enroll','intent to enrol','intent');
 
@@ -3011,6 +3014,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         ntStatus:     (ntIdx >= 0 ? S(cells[ntIdx]) : '').toLowerCase(),
         startTerm:    iStart   >= 0 ? S(cells[iStart])  : '',
         lastPhone:    parseD(iPhone   >= 0 ? cells[iPhone]   : ''),
+        lastPhoneContact: parseD(iPhoneContact >= 0 ? cells[iPhoneContact] : ''),
         lastContact:  parseD(iContact >= 0 ? cells[iContact] : ''),
         intent:       iIntent  >= 0 ? S(cells[iIntent]) : '',
       });
@@ -3031,6 +3035,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const t1t2pool       = t3.length;
         const t1t2           = t3.filter(s => enLow(s) === 'enrolled').length;
         const ctd            = students.filter(s => s.lastPhone && s.lastPhone >= COHORT_KPI_START).length;
+        const FY_START = new Date(2025, 6, 1), FY_END = new Date(2026, 5, 30);
+        const contactsFY     = students.filter(s => s.lastPhoneContact && s.lastPhoneContact >= FY_START && s.lastPhoneContact <= FY_END).length;
         const remaining      = Math.max(0, cohort - ctd);
         const remainingPerDay = (remaining > 0 && wdays > 0) ? parseFloat((remaining / wdays).toFixed(1)) : 0;
         const cohortContact  = students.filter(s => s.lastContact && s.lastContact >= COHORT_KPI_START && s.lastContact <= CENSUS_END).length;
@@ -3040,7 +3046,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const intentUndec   = notNT.filter(s => s.intent === 'Undecided').length;
         const intentUnknown = notNT.filter(s => s.intent === 'Unknown').length;
         const intentBlank   = notNT.filter(s => !s.intent || s.intent === 'Pending Withdrawn').length;
-        return { name, cohort, en, gcm, gcmPool, gcmt: gcmPool, t1t2pool, t1t2, ctd, remaining, remainingPerDay, cohortContact,
+        return { name, cohort, en, gcm, gcmPool, gcmt: gcmPool, t1t2pool, t1t2, ctd, contactsFY, remaining, remainingPerDay, cohortContact,
                  intentYes, intentNo, intentUndec, intentUnknown, intentBlank };
       });
   }
