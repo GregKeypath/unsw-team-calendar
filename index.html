@@ -2683,13 +2683,13 @@
     H4: {
       label: 'H4 · 2026',
       rows: [
-        { name:'Daljeet Sahota',    st:246, en:244, it:226, stt:225, gcm:4,  gcmPool:26, gcmt:26, t1t2pool:40, t1t2:40, cohort:335, ctd:273, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:12, intentNo:75, intentUndec:1, intentUnknown:4,  intentBlank:9  },
-        { name:'Priscilla Samuel',  st:241, en:237, it:219, stt:219, gcm:1,  gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:246, cohortContact:276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:2,  intentNo:22, intentUndec:5, intentUnknown:5,  intentBlank:78 },
-        { name:'Saravanan Rajamani',st:199, en:192, it:181, stt:196, gcm:6,  gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:189, cohortContact:207,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:1,  intentNo:15, intentUndec:2, intentUnknown:13, intentBlank:47 },
-        { name:'Amelia Churchill',  st:244, en:252, it:223, stt:224, gcm:4,  gcmPool:36, gcmt:36, t1t2pool:48, t1t2:48, cohort:344, ctd:266, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0,  intentNo:7,  intentUndec:2, intentUnknown:9,  intentBlank:82 },
-        { name:'Kimmi',             st:225, en:204, it:204, stt:204, gcm:3,  gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:336, ctd:199, cohortContact:223, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:3,  intentNo:36, intentUndec:4, intentUnknown:26, intentBlank:70 },
+        { name:'Daljeet Sahota',    st:246, en:235, it:226, stt:225, gcm:4,  gcmPool:26, gcmt:26, t1t2pool:40, t1t2:40, cohort:335, ctd:273, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:12, intentNo:75, intentUndec:1, intentUnknown:4,  intentBlank:9  },
+        { name:'Priscilla Samuel',  st:241, en:229, it:219, stt:219, gcm:1,  gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:246, cohortContact:276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:2,  intentNo:22, intentUndec:5, intentUnknown:5,  intentBlank:78 },
+        { name:'Saravanan Rajamani',st:199, en:193, it:181, stt:196, gcm:6,  gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:189, cohortContact:207,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:1,  intentNo:15, intentUndec:2, intentUnknown:13, intentBlank:47 },
+        { name:'Amelia Churchill',  st:244, en:246, it:223, stt:224, gcm:4,  gcmPool:36, gcmt:36, t1t2pool:48, t1t2:48, cohort:344, ctd:266, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0,  intentNo:7,  intentUndec:2, intentUnknown:9,  intentBlank:82 },
+        { name:'Kimmi',             st:225, en:200, it:204, stt:204, gcm:3,  gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:336, ctd:199, cohortContact:223, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:3,  intentNo:36, intentUndec:4, intentUnknown:26, intentBlank:70 },
       ],
-      total: { name:'UNSW Total', st:1155, en:1129, it:1053, stt:1068, gcm:18, gcmPool:154, gcmt:154, t1t2pool:193, t1t2:193, cohort:1624, ctd:1173, cohortContact:1276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:18, intentNo:155, intentUndec:14, intentUnknown:57, intentBlank:286 }
+      total: { name:'UNSW Total', st:1155, en:1103, it:1053, stt:1068, gcm:18, gcmPool:154, gcmt:154, t1t2pool:193, t1t2:193, cohort:1624, ctd:1173, cohortContact:1276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:18, intentNo:155, intentUndec:14, intentUnknown:57, intentBlank:286 }
     }
   };
 
@@ -3154,7 +3154,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const locked = (PACING_DATA[hex]?.rows || []).find(hr => hr.name === r.name) || {};
         const merged = { ...prev, ...r,
           st:  locked.st  ?? prev.st  ?? r.st  ?? 0,
-          en:  r.en  ?? prev.en  ?? 0,
+          en:  prev.en  ?? r.en  ?? 0,
           it:  locked.it  ?? prev.it  ?? r.it  ?? 0,
           stt: locked.stt ?? prev.stt ?? r.stt ?? 0,
           kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null };
