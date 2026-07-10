@@ -3393,7 +3393,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const wdays   = workingDaysUntil(ENROL_CLOSE_DATE);
     const perDay  = (typeof needed === 'number' && needed > 0 && wdays > 0)
                     ? parseFloat((needed / wdays).toFixed(1)) : (typeof needed === 'number' && needed === 0 ? 0 : '—');
-    const pctSt      = st > 0 ? Math.min(100, en / st * 100) : 0;
+    const rawPctSt   = st > 0 ? en / st * 100 : 0;
+    const pctSt      = Math.min(100, rawPctSt);
     const rawPctIt   = it > 0 ? en / it * 100 : 0;
     const pctIt      = Math.min(100, rawPctIt);
     const barCol  = p => p >= 90 ? '#10b981' : p >= 70 ? '#f59e0b' : '#ef4444';
@@ -3412,7 +3413,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return `<div class="pacing-summary">
       <div class="ps-title">${hexLabel}</div>
       <div class="ps-row">
-        ${div('To Start Target', pctSt.toFixed(1) + '%', en.toLocaleString() + ' of ' + st.toLocaleString() + ' enrolled', pctSt)}
+        ${div('To Start Target', rawPctSt.toFixed(1) + '%', en.toLocaleString() + ' of ' + st.toLocaleString() + ' enrolled' + (rawPctSt > 100 ? ' ✓ Exceeded' : ''), pctSt)}
         ${div('To Incentive Target', rawPctIt.toFixed(1) + '%', en.toLocaleString() + ' of ' + it.toLocaleString() + ' enrolled' + (rawPctIt > 100 ? ' ✓ Exceeded' : ''), pctIt)}
         ${div('Drops', typeof drops === 'number' ? drops : drops, dr + ' drop rate', null)}
         ${div('Enrollments Needed', typeof needed === 'number' ? needed.toLocaleString() : needed, 'to hit start target', null)}
