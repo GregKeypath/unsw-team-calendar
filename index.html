@@ -2825,10 +2825,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const t1t2Remaining    = r.t1t2pool > 0 ? Math.max(0, r.t1t2pool - (r.t1t2 || 0)) : '—';
     const gcmDenom         = (r.gcmPool > 0) ? r.gcmPool : (r.gcmt || 0);
     const stRops           = (r.st > 0) ? Math.max(0, r.st - (r.en || 0)) : '—';
-    const enNeeded         = (r.st > 0) ? Math.max(0, r.st - (r.en || 0)) : '—';
+    const enNeeded         = (r.st > 0) ? (r.st - (r.en || 0)) : '—';
     const enWdays          = workingDaysUntil(ENROL_CLOSE_DATE);
     const enNeededPerDay   = (typeof enNeeded === 'number' && enNeeded > 0 && enWdays > 0)
-                             ? parseFloat((enNeeded / enWdays).toFixed(1)) : '—';
+                             ? parseFloat((enNeeded / enWdays).toFixed(1)) : (typeof enNeeded === 'number' ? 0 : '—');
     const remaining        = (r.remaining != null && r.remaining !== 0)
                              ? r.remaining
                              : (r.cohort > 0) ? Math.max(0, r.cohort - (r.ctd || 0)) : 0;
@@ -3389,10 +3389,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const it      = r.it  || 0;
     const drops   = r.drops != null ? r.drops : '—';
     const dr      = r.dr  || '—';
-    const needed  = (st > 0) ? Math.max(0, st - en) : '—';
+    const needed  = (st > 0) ? (st - en) : '—';
     const wdays   = workingDaysUntil(ENROL_CLOSE_DATE);
     const perDay  = (typeof needed === 'number' && needed > 0 && wdays > 0)
-                    ? parseFloat((needed / wdays).toFixed(1)) : (typeof needed === 'number' && needed === 0 ? 0 : '—');
+                    ? parseFloat((needed / wdays).toFixed(1)) : (typeof needed === 'number' ? 0 : '—');
     const rawPctSt   = st > 0 ? en / st * 100 : 0;
     const pctSt      = Math.min(100, rawPctSt);
     const rawPctIt   = it > 0 ? en / it * 100 : 0;
