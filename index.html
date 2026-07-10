@@ -2966,7 +2966,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     const iAdvisor = colIdx('advisor','ssa','student advisor','assigned advisor');
     const iEnrol   = colIdx('next term enrollment','enrollment status','enrolment status','next term enrolment');
-    const iCurEnrol = hl.findIndex(h => (h.includes('enrollment status') || h.includes('enrolment status')) && !h.includes('next term'));
     const iSub     = colIdx('substatus','sub status','sub-status');
     const iStart   = colIdx('actual start term','start term','actual term');
     const iPhone   = colIdx('last phone attempt','last phone');
@@ -3008,7 +3007,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       if (!ssaMap[key]) ssaMap[key] = [];
       ssaMap[key].push({
         enrollStatus: iEnrol   >= 0 ? S(cells[iEnrol])  : '',
-        curEnroll:    iCurEnrol >= 0 ? S(cells[iCurEnrol]) : '',
         substatus:    iSub     >= 0 ? S(cells[iSub])    : '',
         ntStatus:     (ntIdx >= 0 ? S(cells[ntIdx]) : '').toLowerCase(),
         startTerm:    iStart   >= 0 ? S(cells[iStart])  : '',
@@ -3026,7 +3024,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const enLow  = s => s.enrollStatus.toLowerCase();
         const subLow = s => s.substatus.toLowerCase();
         const cohort         = students.length;
-        const en             = students.filter(s => s.curEnroll.toLowerCase() === 'enrolled').length;
+        const en             = students.filter(s => s.ntStatus === 'enrolled').length;
         const gcm            = students.filter(s => subLow(s) === 'pending graduation' && s.ntStatus === 'enrolled').length;
         const gcmPool        = students.filter(s => subLow(s) === 'pending graduation').length;
         const t3             = students.filter(s => s.startTerm.includes('2026 T3'));
