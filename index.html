@@ -2766,10 +2766,11 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Remaining Opps',      f:'t1t2Remaining',    edit:false, type:'num-calc' },
       ]},
     // ── Row 3: Drops (3) + 60 Day (6) + Cohort Contact (3) = 12 ───
-    { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'',
+    { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'half',
       cols:[
-        { h:'Drops',      f:'drops', edit:true },
-        { h:'Drop Rate',  f:'dr',    edit:true,  type:'pct-input' },
+        { h:'Total Drops',    f:'drops',       edit:true },
+        { h:'Drop Rate',      f:'dr',          edit:true, type:'pct-input' },
+        { h:'Drops 7-16 Jul', f:'dropsCensus', edit:true },
       ]},
     { cls:'s-intent', label:'🎯 Intent to Enrol (Not Enrolled Next Term)', span:'half',
       cols:[
@@ -2859,7 +2860,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   function calcTotal(rows) {
     const s = { name: 'UNSW Total', cq: null, kR: null, kS: null, k6: null };
-    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','contactsFY','remaining','cohortContact','drops','intentYes','intentNo','intentUndec','intentUnknown','intentBlank'].forEach(f => {
+    ['st','en','it','stt','t1t2','t1t2pool','gcm','gcmt','gcmPool','cohort','ctd','contactsFY','remaining','cohortContact','drops','dropsCensus','intentYes','intentNo','intentUndec','intentUnknown','intentBlank'].forEach(f => {
       s[f] = rows.reduce((acc, r) => acc + (Number(r[f]) || 0), 0);
     });
     const anyDrops = rows.some(r => r.drops != null);
