@@ -3160,7 +3160,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const locked = (PACING_DATA[hex]?.rows || []).find(hr => hr.name === r.name) || {};
         const merged = { ...prev, ...r,
           st:  locked.st  ?? prev.st  ?? r.st  ?? 0,
-          en:  prev.en  ?? r.en  ?? 0,
+          en:  r.en  ?? prev.en  ?? 0,
           it:  locked.it  ?? prev.it  ?? r.it  ?? 0,
           stt: locked.stt ?? prev.stt ?? r.stt ?? 0,
           kR: prev.kR || r.kR || null, kS: prev.kS || r.kS || null, k6: prev.k6 || r.k6 || null };
