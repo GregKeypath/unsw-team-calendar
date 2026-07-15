@@ -171,6 +171,7 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
         <th>SSA</th><th class="num">Cohort</th>
         <th class="num">Attempted</th><th style="min-width:160px">% Attempted</th>
         <th style="min-width:130px">% to 80% Target</th>
+        <th class="num">Remaining to 80%</th>
         <th class="num">Remaining</th><th class="num">Per Day to Census</th>
       </tr></thead>
       <tbody id="sixtyDayBody"></tbody>
@@ -507,12 +508,14 @@ function renderSixtyDayFoot() {
   tot.remaining = SIXTY_DAY.rows.reduce(function(s, r) { return s + r.remaining; }, 0);
   tot.ctd       = SIXTY_DAY.rows.reduce(function(s, r) { return s + r.ctd; },       0);
   var totPct = tot.cohort ? (tot.ctd / tot.cohort * 100) : 0;
+  var totRem80 = SIXTY_DAY.rows.reduce(function(s, r) { return s + Math.max(0, Math.round(r.cohort * 0.8) - r.ctd); }, 0);
   document.getElementById('sixtyDayFoot').innerHTML =
     '<tr><td>UNSW Total</td>' +
     '<td class="num">' + tot.cohort + '</td>' +
     '<td class="num" id="sd-ctd-tot">' + tot.ctd + '</td>' +
     '<td>' + pctCell(totPct, 100, sdPctCol(totPct)) + '</td>' +
     '<td>' + sdTgtCell(totPct) + '</td>' +
+    '<td class="num">' + totRem80 + '</td>' +
     '<td class="num">' + tot.remaining + '</td>' +
     '<td class="num">' + tot.perDay + '</td></tr>';
 }
@@ -521,12 +524,14 @@ function renderSixtyDay() {
   var rows = SIXTY_DAY.rows;
   document.getElementById('sixtyDayBody').innerHTML = rows.map(function(r, i) {
     var pct    = r.cohort ? (r.ctd / r.cohort * 100) : 0;
+    var rem80  = Math.max(0, Math.round(r.cohort * 0.8) - r.ctd);
     var perDay = r.perDay !== null ? r.perDay : '<span style="color:#9ca3af">On leave</span>';
     return '<tr><td>' + r.name + '</td>' +
       '<td class="num">' + r.cohort + '</td>' +
       '<td class="num" id="sd-ctd-' + i + '">' + r.ctd + '</td>' +
       '<td id="sd-pct-' + i + '">' + pctCell(pct, 100, sdPctCol(pct)) + '</td>' +
       '<td id="sd-tgt-' + i + '">' + sdTgtCell(pct) + '</td>' +
+      '<td class="num" id="sd-r80-' + i + '">' + rem80 + '</td>' +
       '<td class="num"><input class="sd-rem-inp" type="number" min="0" value="' + r.remaining + '" data-idx="' + i + '"></td>' +
       '<td class="num">' + perDay + '</td></tr>';
   }).join('');
@@ -541,6 +546,7 @@ function renderSixtyDay() {
       document.getElementById('sd-ctd-' + i).textContent = r.ctd;
       document.getElementById('sd-pct-' + i).innerHTML = pctCell(pct, 100, sdPctCol(pct));
       document.getElementById('sd-tgt-' + i).innerHTML = sdTgtCell(pct);
+      document.getElementById('sd-r80-' + i).textContent = Math.max(0, Math.round(r.cohort * 0.8) - r.ctd);
       renderSixtyDayFoot();
     });
   });
