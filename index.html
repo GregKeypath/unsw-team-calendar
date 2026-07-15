@@ -2773,9 +2773,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ]},
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'half',
       cols:[
-        { h:'Total Drops',    f:'drops',       edit:true },
-        { h:'Drop Rate',      f:'dr',          edit:true, type:'pct-input' },
-        { h:'Drops 7-16 Jul', f:'dropsCensus', edit:true },
+        { h:'Total Drops',   f:'drops',       edit:true },
+        { h:'Drop Rate',     f:'dr',          edit:true, type:'pct-input' },
+        { h:'Census Drops',  f:'dropsCensus', edit:true },
+        { h:'Census Drop %', f:'drCensus',    edit:false, type:'pct' },
       ]},
     { cls:'s-intent', label:'🎯 Intent to Enrol (Not Enrolled Next Term)', span:'half',
       cols:[
@@ -2852,6 +2853,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       gcmC:            pct(r.gcm,               gcmDenom,        0),
       cPct:            pct(r.ctd,               r.cohort,        0),
       cohortContactPct:pct(r.cohortContact || 0, r.cohort,       0),
+      drCensus:        (r.dropsCensus != null && r.en > 0) ? pct(r.dropsCensus, r.en, 1) : '—',
       intentTotal: (r.intentYes||0) + (r.intentNo||0) + (r.intentUndec||0) + (r.intentUnknown||0) + (r.intentBlank||0),
     };
   }
