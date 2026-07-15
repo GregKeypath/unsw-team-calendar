@@ -2756,7 +2756,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'GC-M Enrolled', f:'gcm',     edit:false },
         { h:'Conv %',        f:'gcmC',    edit:false, type:'pct' },
       ]},
-    { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'three-quarter',
+    { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'half',
       cols:[
         { h:'Total T1-T2 Pool',    f:'t1t2pool',         edit:true },
         { h:'Census Target (80%)', f:'t1t2CensusTarget', edit:false, type:'num-calc' },
@@ -2765,7 +2765,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Enrolments Needed',   f:'t1t2Needed',       edit:false, type:'num-calc' },
         { h:'Remaining Opps',      f:'t1t2Remaining',    edit:false, type:'num-calc' },
       ]},
-    // ── Row 3: Drops (3) + 60 Day (6) + Cohort Contact (3) = 12 ───
+    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
+      cols:[
+        { h:'Cohort',              f:'cohort',           edit:false },
+        { h:'Contacted (May–Jul)', f:'cohortContact',    edit:false },
+        { h:'% Contacted',         f:'cohortContactPct', edit:false, type:'pct' },
+      ]},
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'half',
       cols:[
         { h:'Total Drops',    f:'drops',       edit:true },
@@ -2781,14 +2786,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { h:'Unknown',   f:'intentUnknown', edit:false },
         { h:'Blank',     f:'intentBlank',   edit:false },
       ]},
-    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
-      cols:[
-        { h:'Cohort',              f:'cohort',           edit:false },
-        { h:'Contacted (May–Jul)', f:'cohortContact',    edit:false },
-        { h:'% Contacted',         f:'cohortContactPct', edit:false, type:'pct' },
-      ]},
-    // ── Row 4: KPI + Weightage ─────────────────────────────────────
-    { cls:'s-kpi', label:'📈 KPI Tracking', span:'three-quarter',
+    { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
       cols:[
         { h:'Student Contacts (FY)', f:'contactsFY', edit:false },
         { h:'60 Day Contacted',      f:'ctd',        edit:false },
