@@ -1382,6 +1382,9 @@
     .triage-field { margin-bottom:16px; }
     .triage-field > label { display:block; font-size:0.68rem; font-weight:700; color:#374151; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
     .triage-hint { font-size:0.63rem; font-weight:400; color:#9ca3af; text-transform:none; letter-spacing:0; }
+    .tr-info-icon { display:inline-flex; align-items:center; justify-content:center; width:15px; height:15px; border-radius:50%; background:#1e3a5f; color:#fff; font-size:0.6rem; font-weight:700; cursor:pointer; margin-left:5px; vertical-align:middle; text-transform:none; }
+    .tr-info-icon:hover { background:#152d4d; }
+    .tr-info-pop { font-size:0.66rem; line-height:1.55; color:#374151; background:#eff6ff; border:1px solid #bfdbfe; border-radius:6px; padding:9px 11px; margin-bottom:8px; text-transform:none; letter-spacing:0; font-weight:400; }
     .triage-field select, .triage-field input[type=text], .triage-field textarea { width:100%; border:1px solid #d1d5db; border-radius:6px; padding:7px 10px; font-size:0.77rem; color:#111; background:#fff; outline:none; box-sizing:border-box; font-family:inherit; }
     .triage-field select:focus, .triage-field input[type=text]:focus, .triage-field textarea:focus { border-color:#1e3a5f; box-shadow:0 0 0 2px rgba(30,58,95,.08); }
     .triage-checks { display:flex; flex-wrap:wrap; gap:5px; }
@@ -1808,7 +1811,7 @@
       </div>
 
       <div class="triage-field" id="tr-sp-field" style="display:none;">
-        <label>Enrolling Study Period <span class="triage-hint">optional — filters to units running that SP</span></label>
+        <label>Enrolling HEX <span class="triage-hint">pick the HEX — recommends the best unit running in it</span></label>
         <select id="tr-sp"><option value="">— All study periods —</option></select>
       </div>
 
@@ -1849,21 +1852,20 @@
       </div>
 
       <div class="triage-field">
-        <label>Units Already Completed <span class="triage-hint">type code + Enter</span></label>
+        <label>Units Already Completed <span class="triage-hint">type code + Enter, or import what they've done from the planner</span></label>
         <input type="text" id="tr-completed-input" placeholder="e.g. ZZBU6001">
         <div class="triage-tags" id="tr-completed-tags"></div>
-      </div>
-
-      <div class="triage-field">
-        <label>Units Planning to Complete <span class="triage-hint">type code + Enter or import from planner</span></label>
-        <input type="text" id="tr-planned-input" placeholder="e.g. ZZBU6003">
-        <div class="triage-tags" id="tr-planned-tags"></div>
         <button type="button" id="tr-import-plan-btn" style="margin-top:6px;width:100%;padding:6px;background:#f0fdf4;color:#065f46;border:1px solid #6ee7b7;border-radius:5px;font-size:0.71rem;font-weight:600;cursor:pointer;">📚 Import from Course Planner</button>
       </div>
 
       <div class="triage-field">
-        <label>Goals &amp; Additional Context <span class="triage-hint">optional</span></label>
-        <textarea id="tr-comments" rows="3" placeholder="e.g. wants to move into a data analytics role, currently in banking compliance, interested in leadership track..."></textarea>
+        <label>Goals &amp; Additional Context <span class="triage-hint">optional</span>
+          <span class="tr-info-icon" id="tr-context-info-btn" role="button" tabindex="0" title="How this box works">ⓘ</span>
+        </label>
+        <div class="tr-info-pop" id="tr-context-info" style="display:none;">
+          <strong>How this box works:</strong> it matches the <strong>exact words</strong> you type (longer than 4 letters) against each unit's description and learning outcomes. It's simple keyword matching, <strong>not AI</strong> — so type <strong>specific keywords</strong> (e.g. <em>analytics, leadership, negotiation, finance, sustainability</em>) rather than full sentences. Words that don't appear in a unit's description won't change the results.
+        </div>
+        <textarea id="tr-comments" rows="3" placeholder="e.g. analytics, leadership, banking, compliance"></textarea>
       </div>
 
       <input type="hidden" id="tr-planner-empty-sps" value="">
@@ -5804,26 +5806,8 @@ ${cardsHTML}
     compInput.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(compInput.value); } });
     compInput.addEventListener('blur', () => { if (compInput.value.trim()) addTag(compInput.value); });
 
-    // Tag input for planned units
-    const plannedInput = document.getElementById('tr-planned-input');
-    const plannedTags  = document.getElementById('tr-planned-tags');
+    // Planned-units field removed — kept as an empty list so downstream recommendation logic stays intact
     const planned = [];
-    function addPlannedTag(raw) {
-      const code = raw.toUpperCase().trim().replace(/,/g,'');
-      if (!code || planned.includes(code)) return;
-      planned.push(code);
-      const tag = document.createElement('span');
-      tag.className = 'triage-tag';
-      tag.style.background = '#065f46';
-      const x = document.createElement('span');
-      x.className = 'triage-tag-x'; x.textContent = '×';
-      x.addEventListener('click', () => { planned.splice(planned.indexOf(code), 1); tag.remove(); });
-      tag.append(code + ' ', x);
-      plannedTags.appendChild(tag);
-      plannedInput.value = '';
-    }
-    plannedInput.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addPlannedTag(plannedInput.value); } });
-    plannedInput.addEventListener('blur', () => { if (plannedInput.value.trim()) addPlannedTag(plannedInput.value); });
 
     // Import from Course Planner — brings across program, units and triggers level/SP population
     document.getElementById('tr-import-plan-btn').addEventListener('click', () => {
@@ -5848,15 +5832,11 @@ ${cardsHTML}
         levelSel.dispatchEvent(new Event('change'));
       }
 
-      // 3. Route by status: completed → completed tags, planned → planned tags
+      // 3. Import completed units only (what they've done) → completed tags
       const allPlanUnits = Object.values(planData).flat();
       let addedC = 0, addedP = 0;
       allPlanUnits.forEach(u => {
-        if (u.status === 'completed') {
-          if (!completed.includes(u.code)) { addTag(u.code); addedC++; }
-        } else {
-          if (!planned.includes(u.code) && !completed.includes(u.code)) { addPlannedTag(u.code); addedP++; }
-        }
+        if (u.status === 'completed' && !completed.includes(u.code)) { addTag(u.code); addedC++; }
       });
 
       // 4. Store empty SPs from the planner window for triage gap section
@@ -5881,6 +5861,15 @@ ${cardsHTML}
       if (!plannerQual) msgs.push('select a qualification level to continue');
       if (msgs.length) alert('✅ ' + msgs.join(' · ') + '.');
     });
+
+    // Goals & Additional Context — help popup toggle
+    const ctxInfoBtn = document.getElementById('tr-context-info-btn');
+    const ctxInfoPop = document.getElementById('tr-context-info');
+    if (ctxInfoBtn && ctxInfoPop) {
+      const toggleCtxInfo = () => { ctxInfoPop.style.display = (ctxInfoPop.style.display === 'none' ? 'block' : 'none'); };
+      ctxInfoBtn.addEventListener('click', toggleCtxInfo);
+      ctxInfoBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCtxInfo(); } });
+    }
 
     // Extract unique elective/spec units from a program
     // electivePool on levelRules overrides the default coreA/coreB/capstone exclusion
@@ -6220,7 +6209,8 @@ ${cardsHTML}
       document.querySelectorAll('#tr-goals input').forEach(cb => cb.checked = false);
       document.querySelectorAll('#tr-goals .triage-check').forEach(l => l.classList.remove('is-checked'));
       completed.length = 0; compTags.innerHTML = '';
-      planned.length = 0; plannedTags.innerHTML = '';
+      planned.length = 0;
+      document.getElementById('tr-context-info').style.display = 'none';
       document.getElementById('tr-planner-empty-sps').value = '';
       document.getElementById('tr-output').innerHTML = '<div class="tr-empty"><div class="tr-empty-icon">🎯</div><p>Fill in the student details and click <strong>Find Best Electives</strong> to get personalised recommendations and advisor talking points.</p></div>';
     }
