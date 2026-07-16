@@ -3894,6 +3894,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   let kanbanBoard = null;
   let kDragInsert = null; // { colId, refId, before }
+  let kanbanUndo = null;
 
   function renderKanbanHexNav() {
     const nav = document.getElementById('kanban-hex-nav');
@@ -3904,7 +3905,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       KANBAN_HEXES.map(h =>
         `<button class="hex-btn${h === activeKanbanHex ? ' active' : ''}" data-khex="${h}">${h} 20${activeKanbanYear}</button>`
       ).join('') +
-      `<button class="hex-btn" id="knav-reset-template" style="margin-left:12px;font-size:0.65rem;">↺ Reset to Template</button>`;
+      `<button class="hex-btn" id="knav-reset-template" style="margin-left:12px;font-size:0.65rem;">↺ Reset to Template</button>` +
+      (kanbanUndo && kanbanUndo.hex === activeKanbanHex && kanbanUndo.year === activeKanbanYear
+        ? `<button class="hex-btn" id="knav-undo-reset" style="margin-left:6px;font-size:0.65rem;background:#fef3c7;color:#92400e;border-color:#fcd34d;">↩ Undo Reset</button>`
+        : '');
 
     nav.querySelectorAll('[data-khex]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -3914,9 +3918,18 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     });
     nav.querySelector('#knav-reset-template').addEventListener('click', () => {
       if (confirm(`Reset ${activeKanbanHex} 20${activeKanbanYear} to the master template? This will overwrite all current data for this hex.`)) {
+        kanbanUndo = { hex: activeKanbanHex, year: activeKanbanYear, board: JSON.parse(JSON.stringify(kanbanBoard)) };
         kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
         kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
-        saveKanban(); renderKanban();
+        saveKanban(); renderKanbanHexNav(); renderKanban();
+      }
+    });
+    const undoBtn = nav.querySelector('#knav-undo-reset');
+    if (undoBtn) undoBtn.addEventListener('click', () => {
+      if (kanbanUndo && kanbanUndo.board) {
+        kanbanBoard = JSON.parse(JSON.stringify(kanbanUndo.board));
+        kanbanUndo = null;
+        saveKanban(); renderKanbanHexNav(); renderKanban();
       }
     });
   }
