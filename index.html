@@ -698,6 +698,7 @@
     .unsw-badge.withdrawal      { background:#FFF1F2; color:#881337; border-left:3px solid #E11D48; }
     .unsw-badge.standing-report { background:#DBEAFE; color:#1E3A8A; border-left:3px solid #3B82F6; }
     .unsw-badge.suspension-appeal { background:#FEF3C7; color:#92400E; border-left:3px solid #F59E0B; }
+    .unsw-badge.ipt-open { background:#CCFBF1; color:#115E59; border-left:3px solid #14B8A6; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -2042,7 +2043,7 @@
     '2026-01-19':[{type:'enrol-deadline', label:'Enrol Deadline H1'}],
     '2026-01-20':[{type:'late-enrol', label:'Late Enrol H1 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H1'}],
     '2026-01-21':[{type:'standing-report', label:'First Academic Standing Report H1'}],
-    '2026-02-02':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1'}],
+    '2026-02-02':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1'},{type:'ipt-open', label:'IPT Opens H1'}],
     '2026-01-29':[{type:'census', label:'Census H1'}],
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
@@ -2053,7 +2054,7 @@
     '2026-03-16':[{type:'enrol-deadline', label:'Enrol Deadline H2'}],
     '2026-03-17':[{type:'late-enrol', label:'Late Enrol H2 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H2'}],
     '2026-03-18':[{type:'standing-report', label:'First Academic Standing Report H2'}],
-    '2026-03-30':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H2'}],
+    '2026-03-30':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H2'},{type:'ipt-open', label:'IPT Opens H2'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
     '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
@@ -2064,7 +2065,7 @@
     '2026-05-11':[{type:'enrol-deadline', label:'Enrol Deadline H3'}],
     '2026-05-12':[{type:'late-enrol', label:'Late Enrol H3 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H3'}],
     '2026-05-13':[{type:'standing-report', label:'First Academic Standing Report H3'}],
-    '2026-05-25':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H3'}],
+    '2026-05-25':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H3'},{type:'ipt-open', label:'IPT Opens H3'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
     '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
@@ -2075,7 +2076,7 @@
     '2026-07-06':[{type:'enrol-deadline', label:'Enrol Deadline H4'}],
     '2026-07-07':[{type:'late-enrol', label:'Late Enrol H4 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H4'}],
     '2026-07-08':[{type:'standing-report', label:'First Academic Standing Report H4'}],
-    '2026-07-20':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H4'}],
+    '2026-07-20':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H4'},{type:'ipt-open', label:'IPT Opens H4'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
     '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
@@ -2086,7 +2087,7 @@
     '2026-08-31':[{type:'enrol-deadline', label:'Enrol Deadline H5'}],
     '2026-09-01':[{type:'late-enrol', label:'Late Enrol H5 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H5'}],
     '2026-09-02':[{type:'standing-report', label:'First Academic Standing Report H5'}],
-    '2026-09-14':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H5'}],
+    '2026-09-14':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H5'},{type:'ipt-open', label:'IPT Opens H5'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
     '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
@@ -2097,7 +2098,7 @@
     '2026-10-26':[{type:'enrol-deadline', label:'Enrol Deadline H6'}],
     '2026-10-27':[{type:'late-enrol', label:'Late Enrol H6 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H6'}],
     '2026-10-28':[{type:'standing-report', label:'First Academic Standing Report H6'}],
-    '2026-11-09':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H6'}],
+    '2026-11-09':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H6'},{type:'ipt-open', label:'IPT Opens H6'}],
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
   };
@@ -2450,7 +2451,7 @@
             const badge = item.link ? document.createElement('a') : document.createElement('span');
             badge.className = `unsw-badge ${item.type}`;
             if (item.link) { badge.href = item.link; badge.target = '_blank'; badge.rel = 'noopener'; badge.style.textDecoration = 'none'; }
-            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : '✅';
+            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : item.type === 'ipt-open' ? '🔓' : '✅';
             badge.textContent = icon + ' ' + item.label;
             row.appendChild(badge);
           });
