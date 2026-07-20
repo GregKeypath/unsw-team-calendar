@@ -6684,8 +6684,9 @@ ${cardsHTML}
         spSel.appendChild(o);
       });
 
-    // Default to H4 2026
-    spSel.value = START_SP;
+    // Default to H5 2026 (current hex); fall back to H4 if H5 isn't an available SP
+    spSel.value = 'H5 26';
+    if (!spSel.value) spSel.value = START_SP;
     spSel.addEventListener('change', () => renderDropRateGrid(spSel.value));
 
     // Search — live filter cards and hide empty program headers
