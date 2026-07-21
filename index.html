@@ -3782,7 +3782,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   // ── Kanban Board ──────────────────────────────────────────────
   const KANBAN_BASE = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
-  let activeKanbanHex  = 'H4'; // default; auto-detected on load
+  let activeKanbanHex  = 'H5'; // default hex
   let activeKanbanYear = '26';
   function getKanbanDB() {
     return `${KANBAN_BASE}/kanban_${activeKanbanHex}_${activeKanbanYear}.json`;
@@ -3991,9 +3991,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const todayWk = UNSW_WEEKS[todayKey];
     if (todayWk && !kanbanBoard) {
-      const hex = todayWk.hex || 4;
-      // Clamp to available hexes (H4-H6); if H1-H3 default to H4
-      activeKanbanHex = KANBAN_HEXES.includes(`H${hex}`) ? `H${hex}` : 'H4';
       activeKanbanYear = String(now.getFullYear()).slice(2);
     }
     renderKanbanHexNav();
