@@ -1595,11 +1595,6 @@
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
       <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
-      <div class="pacing-upload-bar">
-        <button class="pacing-upload-btn" id="pacing-upload-btn">📤 Upload Cohort CSV</button>
-        <button class="pacing-upload-btn" id="pacing-template-btn">⬇ Download Template</button>
-        <span class="pacing-upload-note">Upload a CSV export to auto-update this hex's pacing data</span>
-      </div>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
   </div>
@@ -3065,6 +3060,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   let puParsedRows = null;
 
   function initPacingUpload() {
+    if (!document.getElementById('pacing-upload-btn')) return; // upload feature removed
     const overlay = document.getElementById('pacing-upload-overlay');
     const dropZone = document.getElementById('pu-drop-zone');
     const fileInput = document.getElementById('pu-file-input');
@@ -3251,6 +3247,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   }
 
   function initDropsUpload() {
+    return; // upload feature removed — data is updated directly, not via file upload
     if (!document.getElementById('drops-file-input')) {
       const fi = document.createElement('input');
       fi.type = 'file'; fi.id = 'drops-file-input'; fi.accept = '.xlsx,.xls';
@@ -3367,9 +3364,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
           return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
         }).join('');
-        const hdrInner = sec.cls === 's-drops'
-          ? `${sec.label} <button class="drops-xl-btn" onclick="document.getElementById('drops-file-input').click()" title="Import drops from Excel">📥 Import</button>`
-          : sec.label;
+        const hdrInner = sec.label;
         return `<div class="${cardCls}">
           <div class="sc-hdr ${sec.cls}">${hdrInner}</div>
           <table class="sc-table">
