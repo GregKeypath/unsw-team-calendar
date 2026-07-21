@@ -836,6 +836,9 @@
     .hex-btn:hover { border-color: var(--accent); color: #111; }
     .hex-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); box-shadow: 0 2px 8px rgba(var(--accent-rgb),0.4); }
     .pacing-upload-bar { display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap; }
+    .pacing-edit-btn { margin-left:auto; padding:6px 14px; border-radius:7px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .12s; font-family:inherit; }
+    .pacing-edit-btn:hover { border-color:#1e3a5f; color:#1e3a5f; }
+    .pacing-edit-btn.editing { background:#1e3a5f; border-color:#1e3a5f; color:#fff; }
     .pacing-upload-btn { padding:6px 14px; border-radius:7px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all .12s; }
     .pacing-upload-btn:hover { border-color:#1e3a5f; color:#1e3a5f; }
     .pacing-upload-note { font-size:0.67rem; color:#9ca3af; }
@@ -1607,6 +1610,7 @@
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
       <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
+      <button class="pacing-edit-btn" id="pacing-edit-btn">✎ Edit Numbers</button>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
   </div>
@@ -2722,8 +2726,9 @@
     }
   };
 
-  let activePacingHex = 'H4';
+  let activePacingHex = 'H5';
   let activePacingSSA = null;
+  let pacingEditMode = false;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
 const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns','James Miller'];
   const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards', 'Carmela Gomez'];
@@ -2763,16 +2768,30 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         { f:'it',  label:'Inc' },
         { f:'stt', label:'Str' },
       ]},
-      cols:[] },
+      cols:[
+        { h:'Start Target', f:'st',  edit:true },
+        { h:'Enrolled',     f:'en',  edit:true },
+        { h:'Inc Target',   f:'it',  edit:true },
+        { h:'Str Target',   f:'stt', edit:true },
+      ]},
     { cls:'s-gcm', label:'🎓 GC > M Conversion (Enrolled vs Pool)', span:'half',
       bar:{ value:'gcm', primaryIdx:0, markers:[ { f:'gcmPool', label:'Pool' } ] },
-      cols:[] },
+      cols:[
+        { h:'GC-M Pool',     f:'gcmPool', edit:true },
+        { h:'GC-M Enrolled', f:'gcm',     edit:true },
+      ]},
     { cls:'s-t1t2', label:'📋 T1-T2 Census (Enrolments vs 80% Target)', span:'half',
       bar:{ value:'t1t2', primaryIdx:0, markers:[ { f:'t1t2CensusTarget', label:'Target' } ] },
-      cols:[] },
+      cols:[
+        { h:'T1-T2 Pool',        f:'t1t2pool', edit:true },
+        { h:'T1-T2 Enrollments', f:'t1t2',     edit:true },
+      ]},
     { cls:'s-cohortContact', label:'🗓️ Cohort Contact (Contacted vs Cohort)', span:'half',
       bar:{ value:'cohortContact', primaryIdx:0, markers:[ { f:'cohort', label:'Cohort' } ] },
-      cols:[] },
+      cols:[
+        { h:'Cohort',    f:'cohort',        edit:true },
+        { h:'Contacted', f:'cohortContact', edit:true },
+      ]},
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'half',
       cols:[
         { h:'Total Drops',   f:'drops',       edit:true },
@@ -3376,7 +3395,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       PACING_SECTIONS.map(sec => {
         const cardCls = `section-card ${sec.cls}${sec.span ? ' ' + sec.span : ''}`;
         let body;
-        if (sec.bar) {
+        if (sec.bar && !pacingEditMode) {
           body = buildBarRows(rowItems, sec.bar);
         } else {
           const theadCols = sec.cols.map(c => `<th>${c.h}</th>`).join('');
@@ -3569,6 +3588,14 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   });
 
   // ── Pacing Inline Edit ────────────────────────────────────────
+
+  document.getElementById('pacing-edit-btn').addEventListener('click', () => {
+    pacingEditMode = !pacingEditMode;
+    const btn = document.getElementById('pacing-edit-btn');
+    btn.textContent = pacingEditMode ? '✓ Done Editing' : '✎ Edit Numbers';
+    btn.classList.toggle('editing', pacingEditMode);
+    renderPacing();
+  });
 
   document.getElementById('tab-pacing').addEventListener('click', e => {
     const cell = e.target.closest('td.pc-editable');
