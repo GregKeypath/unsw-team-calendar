@@ -836,9 +836,6 @@
     .hex-btn:hover { border-color: var(--accent); color: #111; }
     .hex-btn.active { background: var(--accent); border-color: var(--accent); color: var(--accent-text); box-shadow: 0 2px 8px rgba(var(--accent-rgb),0.4); }
     .pacing-upload-bar { display:flex; align-items:center; gap:10px; margin-top:8px; flex-wrap:wrap; }
-    .pacing-edit-btn { margin-left:auto; padding:6px 14px; border-radius:7px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.75rem; font-weight:700; cursor:pointer; transition:all .12s; font-family:inherit; }
-    .pacing-edit-btn:hover { border-color:#1e3a5f; color:#1e3a5f; }
-    .pacing-edit-btn.editing { background:#1e3a5f; border-color:#1e3a5f; color:#fff; }
     .pacing-upload-btn { padding:6px 14px; border-radius:7px; border:1.5px solid #d1d5db; background:#fff; color:#374151; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all .12s; }
     .pacing-upload-btn:hover { border-color:#1e3a5f; color:#1e3a5f; }
     .pacing-upload-note { font-size:0.67rem; color:#9ca3af; }
@@ -937,6 +934,9 @@
     .pc-bar-goal span { position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:0.52rem; font-weight:700; white-space:nowrap; color:#475569; }
     .pc-bar-val { width:58px; text-align:right; font-size:0.82rem; font-weight:800; color:#111; flex-shrink:0; }
     .pc-bar-val small { font-size:0.62rem; font-weight:600; color:#9ca3af; }
+    .pc-editable-num { cursor:pointer; border-bottom:1px dashed #cbd5e1; padding:0 1px; }
+    .pc-editable-num:hover { background:rgba(var(--accent-rgb),0.12); border-bottom-color:#1e3a5f; }
+    .pc-bar-val .pc-inline-input { width:52px; }
 
     .kpi-badge {
       display: inline-flex; align-items: center; gap: 4px;
@@ -1610,7 +1610,6 @@
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
       <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
-      <button class="pacing-edit-btn" id="pacing-edit-btn">✎ Edit Numbers</button>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
   </div>
@@ -2728,7 +2727,6 @@
 
   let activePacingHex = 'H5';
   let activePacingSSA = null;
-  let pacingEditMode = false;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
 const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns','James Miller'];
   const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards', 'Carmela Gomez'];
@@ -3382,10 +3380,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const col = attain >= 90 ? '#10b981' : attain >= 70 ? '#f59e0b' : '#ef4444';
       const goals = markers.map(m => `<div class="pc-bar-goal" style="left:${pos(m.v)}%"><span>${m.label} ${m.v}</span></div>`).join('');
       const rowCls = item.isTotal ? 'pc-bar-row total-bar' : 'pc-bar-row';
+      const valEl = item.isTotal
+        ? `${val}`
+        : `<span class="pc-editable-num" data-field="${bar.value}" data-hex="${item.hexKey}" data-idx="${item.rowIdx}" title="Click to edit">${val}</span>`;
       return `<div class="${rowCls}">
         <div class="pc-bar-name" title="${item.fullName||''}">${item.isTotal ? 'Total' : (item.fullName ? item.fullName.split(' ')[0] : '')}</div>
         <div class="pc-bar-track"><div class="pc-bar-fill" style="width:${pos(val)}%;background:${col}"></div>${goals}</div>
-        <div class="pc-bar-val">${val}${primary ? ` <small>/ ${Math.round(attain)}%</small>` : ''}</div>
+        <div class="pc-bar-val">${valEl}${primary ? ` <small>/ ${Math.round(attain)}%</small>` : ''}</div>
       </div>`;
     }).join('') + '</div>';
   }
@@ -3395,7 +3396,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       PACING_SECTIONS.map(sec => {
         const cardCls = `section-card ${sec.cls}${sec.span ? ' ' + sec.span : ''}`;
         let body;
-        if (sec.bar && !pacingEditMode) {
+        if (sec.bar) {
           body = buildBarRows(rowItems, sec.bar);
         } else {
           const theadCols = sec.cols.map(c => `<th>${c.h}</th>`).join('');
@@ -3589,15 +3590,26 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   // ── Pacing Inline Edit ────────────────────────────────────────
 
-  document.getElementById('pacing-edit-btn').addEventListener('click', () => {
-    pacingEditMode = !pacingEditMode;
-    const btn = document.getElementById('pacing-edit-btn');
-    btn.textContent = pacingEditMode ? '✓ Done Editing' : '✎ Edit Numbers';
-    btn.classList.toggle('editing', pacingEditMode);
-    renderPacing();
-  });
-
   document.getElementById('tab-pacing').addEventListener('click', e => {
+    // Inline-edit a progress-bar number (click the value on a bar)
+    const numEl = e.target.closest('.pc-editable-num');
+    if (numEl && !numEl.querySelector('input')) {
+      const hexKey = numEl.dataset.hex;
+      const rowIdx = parseInt(numEl.dataset.idx);
+      const field  = numEl.dataset.field;
+      const r = activePacingData[hexKey]?.rows[rowIdx];
+      if (!r) return;
+      const cur = r[field];
+      numEl.innerHTML = '';
+      const inp = document.createElement('input');
+      inp.type = 'number'; inp.min = 0; inp.className = 'pc-inline-input';
+      inp.value = (cur !== null && cur !== undefined) ? (parseFloat(cur) || 0) : 0;
+      numEl.appendChild(inp);
+      inp.select(); inp.focus();
+      inp.addEventListener('blur', () => saveInlineCell(hexKey, rowIdx, field, inp.value));
+      inp.addEventListener('keydown', ke => { if (ke.key === 'Enter') inp.blur(); if (ke.key === 'Escape') renderPacing(); });
+      return;
+    }
     const cell = e.target.closest('td.pc-editable');
     if (!cell || cell.querySelector('input, select')) return;
 
