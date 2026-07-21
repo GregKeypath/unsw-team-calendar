@@ -922,6 +922,18 @@
     .pct-orange { background: #ffedd5; color: #9a3412; }
     .pct-red    { background: #fee2e2; color: #991b1b; }
     .pct-grey   { background: #f1f5f9; color: #64748b; }
+    /* Per-advisor progress bars */
+    .pc-bars { padding: 16px 16px 6px; }
+    .pc-bar-row { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+    .pc-bar-row:last-child { margin-bottom:6px; }
+    .pc-bar-row.total-bar { border-top:1px solid #e5e7eb; padding-top:16px; }
+    .pc-bar-name { width:74px; font-size:0.76rem; font-weight:700; color:#111; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .pc-bar-track { position:relative; flex:1; height:15px; background:#f1f5f9; border-radius:8px; }
+    .pc-bar-fill { position:absolute; top:0; left:0; height:100%; border-radius:8px; transition:width .3s; }
+    .pc-bar-goal { position:absolute; top:-3px; height:21px; width:2px; background:#334155; }
+    .pc-bar-goal span { position:absolute; top:-13px; left:50%; transform:translateX(-50%); font-size:0.52rem; font-weight:700; white-space:nowrap; color:#475569; }
+    .pc-bar-val { width:58px; text-align:right; font-size:0.82rem; font-weight:800; color:#111; flex-shrink:0; }
+    .pc-bar-val small { font-size:0.62rem; font-weight:600; color:#9ca3af; }
 
     .kpi-badge {
       display: inline-flex; align-items: center; gap: 4px;
@@ -2745,49 +2757,22 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   // Section definitions — each becomes its own card tile
   const PACING_SECTIONS = [
-    // ── Row 1: 4 × span-3 ──────────────────────────────────────────
-    { cls:'s-start', label:'📋 Start Tracking', span:'half',
-      cols:[
-        { h:'Start Target', f:'st',             edit:true },
-        { h:'Enrolled',     f:'en',             edit:true },
-        { h:'% to Start',   f:'pctSt',          edit:false, type:'pct' },
-        { h:'Needed',       f:'enNeeded',       edit:false, type:'num-calc' },
-        { h:'Per Day',      f:'enNeededPerDay', edit:false, type:'num-calc' },
+    { cls:'s-start', label:'📋 Enrolment Progress (Enrolled vs Start · Incentive · Stretch)', span:'full',
+      bar:{ value:'en', primaryIdx:0, markers:[
+        { f:'st',  label:'Start' },
+        { f:'it',  label:'Inc' },
+        { f:'stt', label:'Str' },
       ]},
-    { cls:'s-incentive', label:'📊 Incentive Tracking', span:'',
-      cols:[
-        { h:'Inc Target',  f:'it',    edit:false },
-        { h:'Enrolled',    f:'en',    edit:false },
-        { h:'% Incentive', f:'pctIt', edit:false, type:'pct' },
-      ]},
-    { cls:'s-stretch', label:'🎯 Stretch Tracking', span:'',
-      cols:[
-        { h:'Str Target',  f:'stt',    edit:false },
-        { h:'Enrolled',    f:'en',     edit:false },
-        { h:'% Stretch',   f:'pctSt2', edit:false, type:'pct' },
-      ]},
-    // ── Row 2: GC-M (3) + T1-T2 (9) ───────────────────────────────
-    { cls:'s-gcm', label:'🎓 GC > M Tracker', span:'',
-      cols:[
-        { h:'GC-M Pool',     f:'gcmPool', edit:false },
-        { h:'GC-M Enrolled', f:'gcm',     edit:false },
-        { h:'Conv %',        f:'gcmC',    edit:false, type:'pct' },
-      ]},
-    { cls:'s-t1t2', label:'📋 T1-T2 Census', span:'half',
-      cols:[
-        { h:'Total T1-T2 Pool',    f:'t1t2pool',         edit:true },
-        { h:'Census Target (80%)', f:'t1t2CensusTarget', edit:false, type:'num-calc' },
-        { h:'T1-T2 Enrollments',   f:'t1t2',             edit:true },
-        { h:'% to T1-T2',          f:'pctT1',            edit:false, type:'pct' },
-        { h:'Enrolments Needed',   f:'t1t2Needed',       edit:false, type:'num-calc' },
-        { h:'Remaining Opps',      f:'t1t2Remaining',    edit:false, type:'num-calc' },
-      ]},
-    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (May–Jul)', span:'',
-      cols:[
-        { h:'Cohort',              f:'cohort',           edit:false },
-        { h:'Contacted (May–Jul)', f:'cohortContact',    edit:false },
-        { h:'% Contacted',         f:'cohortContactPct', edit:false, type:'pct' },
-      ]},
+      cols:[] },
+    { cls:'s-gcm', label:'🎓 GC > M Conversion (Enrolled vs Pool)', span:'half',
+      bar:{ value:'gcm', primaryIdx:0, markers:[ { f:'gcmPool', label:'Pool' } ] },
+      cols:[] },
+    { cls:'s-t1t2', label:'📋 T1-T2 Census (Enrolments vs 80% Target)', span:'half',
+      bar:{ value:'t1t2', primaryIdx:0, markers:[ { f:'t1t2CensusTarget', label:'Target' } ] },
+      cols:[] },
+    { cls:'s-cohortContact', label:'🗓️ Cohort Contact (Contacted vs Cohort)', span:'half',
+      bar:{ value:'cohortContact', primaryIdx:0, markers:[ { f:'cohort', label:'Cohort' } ] },
+      cols:[] },
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'half',
       cols:[
         { h:'Total Drops',   f:'drops',       edit:true },
@@ -3366,23 +3351,45 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return `<td class="pc-editable" data-field="${col.f}" data-hex="${item.hexKey}" data-idx="${item.rowIdx}" data-type="${col.type || 'number'}">${display}</td>`;
   }
 
+  function buildBarRows(rowItems, bar) {
+    return '<div class="pc-bars">' + rowItems.map(item => {
+      const r = item.r;
+      const val = Number(r[bar.value]) || 0;
+      const markers = (bar.markers || []).map(m => ({ label: m.label, v: Number(r[m.f]) || 0 }));
+      const scaleMax = Math.max(val, ...markers.map(m => m.v), 1) * 1.08;
+      const pos = v => Math.min(100, v / scaleMax * 100);
+      const primary = markers.length ? markers[bar.primaryIdx || 0].v : val;
+      const attain = primary > 0 ? val / primary * 100 : 0;
+      const col = attain >= 90 ? '#10b981' : attain >= 70 ? '#f59e0b' : '#ef4444';
+      const goals = markers.map(m => `<div class="pc-bar-goal" style="left:${pos(m.v)}%"><span>${m.label} ${m.v}</span></div>`).join('');
+      const rowCls = item.isTotal ? 'pc-bar-row total-bar' : 'pc-bar-row';
+      return `<div class="${rowCls}">
+        <div class="pc-bar-name" title="${item.fullName||''}">${item.isTotal ? 'Total' : (item.fullName ? item.fullName.split(' ')[0] : '')}</div>
+        <div class="pc-bar-track"><div class="pc-bar-fill" style="width:${pos(val)}%;background:${col}"></div>${goals}</div>
+        <div class="pc-bar-val">${val}${primary ? ` <small>/ ${Math.round(attain)}%</small>` : ''}</div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
   function buildSectionCards(rowItems) {
     return '<div class="pacing-grid">' +
       PACING_SECTIONS.map(sec => {
         const cardCls = `section-card ${sec.cls}${sec.span ? ' ' + sec.span : ''}`;
-        const theadCols = sec.cols.map(c => `<th>${c.h}</th>`).join('');
-        const tbodyRows = rowItems.map(item => {
-          const cells = sec.cols.map(col => cellHtml(col, item.r, item)).join('');
-          const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
-          return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
-        }).join('');
-        const hdrInner = sec.label;
+        let body;
+        if (sec.bar) {
+          body = buildBarRows(rowItems, sec.bar);
+        } else {
+          const theadCols = sec.cols.map(c => `<th>${c.h}</th>`).join('');
+          const tbodyRows = rowItems.map(item => {
+            const cells = sec.cols.map(col => cellHtml(col, item.r, item)).join('');
+            const rowCls = item.isTotal ? 'total-row' : (item.isHex ? 'hex-row' : '');
+            return `<tr class="${rowCls}"><td class="sc-name" title="${item.fullName||''}">${item.label}</td>${cells}</tr>`;
+          }).join('');
+          body = `<table class="sc-table"><thead><tr><th></th>${theadCols}</tr></thead><tbody>${tbodyRows}</tbody></table>`;
+        }
         return `<div class="${cardCls}">
-          <div class="sc-hdr ${sec.cls}">${hdrInner}</div>
-          <table class="sc-table">
-            <thead><tr><th></th>${theadCols}</tr></thead>
-            <tbody>${tbodyRows}</tbody>
-          </table>
+          <div class="sc-hdr ${sec.cls}">${sec.label}</div>
+          ${body}
         </div>`;
       }).join('') +
     '</div>';
