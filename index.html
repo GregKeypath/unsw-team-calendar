@@ -699,6 +699,7 @@
     .unsw-badge.standing-report { background:#DBEAFE; color:#1E3A8A; border-left:3px solid #3B82F6; }
     .unsw-badge.suspension-appeal { background:#FEF3C7; color:#92400E; border-left:3px solid #F59E0B; }
     .unsw-badge.ipt-open { background:#CCFBF1; color:#115E59; border-left:3px solid #14B8A6; }
+    .unsw-badge.wadm-drop { background:#FCE7F3; color:#9D174D; border-left:3px solid #DB2777; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -2055,6 +2056,7 @@
     '2026-01-21':[{type:'standing-report', label:'First Academic Standing Report H1'}],
     '2026-03-06':[{type:'ipt-open', label:'IPT Closes H1'}],
     '2026-02-03':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1'}],
+    '2026-02-10':[{type:'wadm-drop', label:'WADM Students Dropped H1'}],
     '2026-01-29':[{type:'census', label:'Census H1'}],
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
@@ -2067,6 +2069,7 @@
     '2026-03-18':[{type:'standing-report', label:'First Academic Standing Report H2'}],
     '2026-05-01':[{type:'ipt-open', label:'IPT Closes H2'}],
     '2026-03-31':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H2'}],
+    '2026-04-07':[{type:'wadm-drop', label:'WADM Students Dropped H2'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
     '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
@@ -2079,6 +2082,7 @@
     '2026-05-13':[{type:'standing-report', label:'First Academic Standing Report H3'}],
     '2026-06-26':[{type:'ipt-open', label:'IPT Closes H3'}],
     '2026-05-26':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H3'}],
+    '2026-06-02':[{type:'wadm-drop', label:'WADM Students Dropped H3'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
     '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
@@ -2091,6 +2095,7 @@
     '2026-07-08':[{type:'standing-report', label:'First Academic Standing Report H4'}],
     '2026-08-21':[{type:'ipt-open', label:'IPT Closes H4'}],
     '2026-07-21':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H4'}],
+    '2026-07-28':[{type:'wadm-drop', label:'WADM Students Dropped H4'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
     '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
@@ -2103,6 +2108,7 @@
     '2026-09-02':[{type:'standing-report', label:'First Academic Standing Report H5'}],
     '2026-10-16':[{type:'ipt-open', label:'IPT Closes H5'}],
     '2026-09-15':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H5'}],
+    '2026-09-22':[{type:'wadm-drop', label:'WADM Students Dropped H5'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
     '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
@@ -2467,7 +2473,7 @@
             const badge = item.link ? document.createElement('a') : document.createElement('span');
             badge.className = `unsw-badge ${item.type}`;
             if (item.link) { badge.href = item.link; badge.target = '_blank'; badge.rel = 'noopener'; badge.style.textDecoration = 'none'; }
-            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : item.type === 'ipt-open' ? '🔓' : '✅';
+            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : item.type === 'ipt-open' ? '🔓' : item.type === 'wadm-drop' ? '📉' : '✅';
             badge.textContent = icon + ' ' + item.label;
             row.appendChild(badge);
           });
