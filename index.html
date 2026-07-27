@@ -4760,6 +4760,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
     'Psychology': {
       sps: ['H6 25','H1 26','H2 26','H3 26','H4 26','H5 26','H6 26','H1 27','H2 27','H3 27','H4 27','H5 27','H6 27'],
+      sequential: true,
+      sequence: ['ZZPS5001','ZZPS5002','ZZPS5003','ZZPS5004','ZZPS5005','ZZPS5006','ZZPS5007','ZZPS5008','ZZPS5009','ZZPS5010'],
       cats: [
         { label: 'Introductory Courses', type: 'coreA', items: {'H6 25':['ZZPS5002 Introduction to Psychology 2'],'H1 26':['ZZPS5001 Introduction to Psychology 1'],'H2 26':['ZZPS5002 Introduction to Psychology 2'],'H3 26':['ZZPS5001 Introduction to Psychology 1'],'H4 26':['ZZPS5002 Introduction to Psychology 2'],'H5 26':['ZZPS5001 Introduction to Psychology 1'],'H6 26':['ZZPS5002 Introduction to Psychology 2'],'H1 27':['ZZPS5001 Introduction to Psychology 1'],'H2 27':['ZZPS5002 Introduction to Psychology 2'],'H3 27':['ZZPS5001 Introduction to Psychology 1'],'H4 27':['ZZPS5002 Introduction to Psychology 2'],'H5 27':['ZZPS5001 Introduction to Psychology 1'],'H6 27':['ZZPS5002 Introduction to Psychology 2']} },
         { label: 'Methods (pre-reqs: Intro 1+2)', type: 'coreB', items: {'H6 25':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H1 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H2 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H3 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H4 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H5 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H6 26':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H1 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H2 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H3 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H4 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H5 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry'],'H6 27':['ZZPS5003 Data Analysis & Methods of Psych Inquiry']} },
@@ -4986,6 +4988,66 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return parseInt(hA.slice(1)) - parseInt(hB.slice(1));
   }
 
+  // Build a single planner unit element (draggable, with valid drop-target SPs)
+  function buildPlannerUnitEl(prog, code, name, catType, catLabel) {
+    const inPlan = code !== '' && Object.values(planData).some(arr => arr.some(u => u.code === code));
+    const c = document.createElement('div');
+    c.className = `sp-unit cat-${catType}` + (inPlan ? ' in-plan' : '');
+    c.draggable = !inPlan;
+    c.dataset.code = code;
+    c.dataset.name = name;
+    c.dataset.cat = catType;
+    c.innerHTML = `<span class="sp-unit-cat">${catLabel}</span><span class="sp-unit-code">${code}</span> <span class="sp-unit-name">${name}</span>`;
+    if (!inPlan) {
+      c.addEventListener('dragstart', e => {
+        const validSPs = [];
+        prog.cats.forEach(c2 => {
+          Object.entries(c2.items).forEach(([isp, courses]) => {
+            if (courses.some(cs => cs === code || cs.startsWith(code + ' '))) {
+              if (!validSPs.includes(isp)) validSPs.push(isp);
+            }
+          });
+        });
+        currentDrag = { code, name, cat: catType, catLabel, validSPs };
+        e.dataTransfer.setData('planCode', code);
+        e.dataTransfer.setData('planName', name);
+        e.dataTransfer.setData('planCat', catType);
+        e.dataTransfer.setData('planCatLabel', catLabel);
+        e.dataTransfer.effectAllowed = 'copy';
+      });
+      c.addEventListener('dragend', () => { currentDrag = null; });
+    }
+    return c;
+  }
+
+  // For strictly-sequential (fully prescribed) programs: lay out exactly one unit per
+  // study period in prescribed order, only where the unit is actually offered.
+  function buildSequentialPlan(prog, sps) {
+    const placed = new Set();
+    const plan = {};
+    const offeredIn = sp => {
+      const codes = new Set();
+      prog.cats.forEach(cat => (cat.items[sp] || []).forEach(c => codes.add(c.split(' ')[0])));
+      return codes;
+    };
+    const infoFor = code => {
+      for (const cat of prog.cats) {
+        for (const isp in cat.items) {
+          const found = cat.items[isp].find(c => c === code || c.startsWith(code + ' '));
+          if (found) return { course: found, catType: cat.type, catLabel: cat.label };
+        }
+      }
+      return null;
+    };
+    sps.forEach(sp => {
+      const offered = offeredIn(sp);
+      const nextCode = prog.sequence.find(code => !placed.has(code) && offered.has(code));
+      if (nextCode) { placed.add(nextCode); plan[sp] = infoFor(nextCode); }
+      else plan[sp] = null;
+    });
+    return plan;
+  }
+
   function renderPlanner() {
     const progName = document.getElementById('planner-program').value;
     const startSP = document.getElementById('planner-sp').value;
@@ -5005,7 +5067,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     if (startIdx === -1) return;
 
     const endIdx = Math.min(startIdx + count, prog.sps.length);
-    const visibleSPs = prog.sps.slice(startIdx, endIdx);
+    let visibleSPs = prog.sps.slice(startIdx, endIdx);
 
     seq.innerHTML = '';
 
@@ -5030,6 +5092,15 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       rulesPanel.style.display = 'none';
     }
 
+    // Fully-prescribed programs: show exactly enough periods to lay out the whole path,
+    // one unit per period (overloading is not permitted for these programs).
+    let seqPlan = null;
+    if (prog.sequential && Array.isArray(prog.sequence)) {
+      const seqEnd = Math.min(startIdx + prog.sequence.length, prog.sps.length);
+      visibleSPs = prog.sps.slice(startIdx, seqEnd);
+      seqPlan = buildSequentialPlan(prog, visibleSPs);
+    }
+
     visibleSPs.forEach(sp => {
       const tile = document.createElement('div');
       tile.className = 'sp-tile';
@@ -5047,50 +5118,34 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const body = document.createElement('div');
       body.className = 'sp-tile-body';
 
-      prog.cats.forEach(cat => {
-        const courses = cat.items[sp];
-        if (!courses || courses.length === 0) return;
-        courses.forEach(course => {
-          const spaceIdx = course.indexOf(' ');
-          let code = '', name = course;
-          if (spaceIdx > 0 && course.match(/^[A-Z]{4}\d{4}/)) {
-            code = course.substring(0, spaceIdx);
-            name = course.substring(spaceIdx + 1);
-          }
-          const inPlan = code !== '' && Object.values(planData).some(arr => arr.some(u => u.code === code));
-          const c = document.createElement('div');
-          c.className = `sp-unit cat-${cat.type}` + (inPlan ? ' in-plan' : '');
-          c.draggable = !inPlan;
-          c.dataset.code = code;
-          c.dataset.name = name;
-          c.dataset.cat = cat.type;
-          c.innerHTML = `<span class="sp-unit-cat">${cat.label}</span><span class="sp-unit-code">${code}</span> <span class="sp-unit-name">${name}</span>`;
-          if (!inPlan) {
-            c.addEventListener('dragstart', e => {
-              // Collect every SP across all categories where this unit code appears
-              const validSPs = [];
-              prog.cats.forEach(c2 => {
-                Object.entries(c2.items).forEach(([isp, courses]) => {
-                  if (courses.some(cs => cs === code || cs.startsWith(code + ' '))) {
-                    if (!validSPs.includes(isp)) validSPs.push(isp);
-                  }
-                });
-              });
-              currentDrag = { code, name, cat: cat.type, catLabel: cat.label, validSPs };
-              e.dataTransfer.setData('planCode', code);
-              e.dataTransfer.setData('planName', name);
-              e.dataTransfer.setData('planCat', cat.type);
-              e.dataTransfer.setData('planCatLabel', cat.label);
-              e.dataTransfer.effectAllowed = 'copy';
-            });
-            c.addEventListener('dragend', () => { currentDrag = null; });
-          }
-          body.appendChild(c);
+      if (seqPlan) {
+        const item = seqPlan[sp];
+        if (item) {
+          const spaceIdx = item.course.indexOf(' ');
+          const code = item.course.substring(0, spaceIdx);
+          const name = item.course.substring(spaceIdx + 1);
+          body.appendChild(buildPlannerUnitEl(prog, code, name, item.catType, item.catLabel));
+        }
+      } else {
+        prog.cats.forEach(cat => {
+          const courses = cat.items[sp];
+          if (!courses || courses.length === 0) return;
+          courses.forEach(course => {
+            const spaceIdx = course.indexOf(' ');
+            let code = '', name = course;
+            if (spaceIdx > 0 && course.match(/^[A-Z]{4}\d{4}/)) {
+              code = course.substring(0, spaceIdx);
+              name = course.substring(spaceIdx + 1);
+            }
+            body.appendChild(buildPlannerUnitEl(prog, code, name, cat.type, cat.label));
+          });
         });
-      });
+      }
 
       if (body.children.length === 0) {
-        body.innerHTML = '<div class="sp-no-courses">No courses scheduled</div>';
+        body.innerHTML = seqPlan
+          ? '<div class="sp-no-courses">✓ Plan complete</div>'
+          : '<div class="sp-no-courses">No courses scheduled</div>';
       }
       tile.appendChild(body);
       seq.appendChild(tile);
