@@ -3,45 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Activity Dashboard</title>
+<title>Activity Dashboard — FY27 KPIs</title>
 <style>
 :root {
   --bg: #f0f4f8; --surface: #ffffff; --border: #e5e7eb;
   --text: #111827; --muted: #6b7280;
-  --indigo: #4f46e5; --cyan: #0891b2; --amber: #d97706;
-  --emerald: #059669; --rose: #e11d48;
+  --indigo: #4f46e5;
+  --sn: #e11d48; --sn-lt: #fee2e2; --sn-tx: #991b1b;
+  --ae: #2563eb; --ae-lt: #dbeafe; --ae-tx: #1e40af;
+  --ep: #059669; --ep-lt: #d1fae5; --ep-tx: #065f46;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; font-size: 14px; min-height: 100vh; }
 
-.period-bar { padding: 16px 20px 0; max-width: 1280px; margin: 0 auto; }
+.period-bar { padding: 16px 20px 0; max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .period-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px; width: fit-content; }
 .period-tab { padding: 6px 18px; border-radius: 6px; border: none; background: transparent; color: var(--muted); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
 .period-tab.active { background: var(--indigo); color: white; font-weight: 600; }
 .period-tab:hover:not(.active) { background: #f3f4f6; color: var(--text); }
+.custom-range { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.custom-range label { display: flex; align-items: center; gap: 5px; }
+.custom-range input[type=date] { border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 12px; font-family: inherit; color: var(--text); background: var(--surface); }
+.custom-range input[type=date]:focus { outline: none; border-color: var(--indigo); }
 
 .view { display: none; padding: 20px; max-width: 1280px; margin: 0 auto; }
 .view.active { display: block; }
 
-.section-hd { display: flex; align-items: center; justify-content: space-between; margin: 0 0 12px 0; }
+.period-label { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.period-label strong { color: var(--text); font-weight: 600; }
+
+.section-hd { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 12px 0; }
+.section-hd:first-of-type { margin-top: 0; }
 .section-hd h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; color: var(--muted); font-weight: 600; }
 .section-hd .hd-note { font-size: 11px; color: var(--muted); }
 
-.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 20px; }
-.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top: 3px solid transparent; }
-.kpi-card.c-calls   { border-top-color: var(--indigo); }
-.kpi-card.c-con     { border-top-color: var(--emerald); }
-.kpi-card.c-att     { border-top-color: var(--cyan); }
-.kpi-card.c-poolcon { border-top-color: #34d399; }
-.kpi-card.c-intent  { border-top-color: var(--amber); }
-.kpi-card.c-vcita   { border-top-color: #f97316; }
-.kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-.kpi-val { font-size: 36px; font-weight: 700; line-height: 1; color: var(--text); margin-bottom: 6px; }
-.kpi-sub { font-size: 11px; color: var(--muted); }
-.kpi-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 12px; overflow: hidden; }
-.kpi-bar-fill { height: 100%; border-radius: 2px; }
+/* KPI cards */
+.kpi-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 8px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; border-top: 4px solid var(--indigo); }
+.kpi-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.kpi-cat { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); font-weight: 700; }
+.kpi-label { font-size: 15px; color: var(--text); font-weight: 700; margin: 2px 0 10px; }
+.kpi-val { font-size: 42px; font-weight: 800; line-height: 1; color: var(--text); }
+.kpi-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.tier-badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.tier-badge.sn { background: var(--sn-lt); color: var(--sn-tx); }
+.tier-badge.ae { background: var(--ae-lt); color: var(--ae-tx); }
+.tier-badge.ep { background: var(--ep-lt); color: var(--ep-tx); }
+.tier-badge.sm { padding: 2px 8px; font-size: 10px; }
 
-.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+/* Tier scale bar inside a KPI card */
+.tscale { position: relative; height: 10px; border-radius: 5px; overflow: hidden; margin-top: 16px; background: var(--border); }
+.tseg { position: absolute; top: 0; height: 100%; }
+.tscale-mark { position: absolute; top: -4px; width: 3px; height: 18px; background: var(--text); border-radius: 2px; transform: translateX(-50%); box-shadow: 0 0 0 2px var(--surface); }
+.tscale-ticks { position: relative; height: 16px; margin-top: 3px; font-size: 10px; color: var(--muted); }
+.tscale-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+
+/* Tier legend */
+.tier-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.tl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; border-left: 4px solid var(--border); }
+.tl-card.sn { border-left-color: var(--sn); }
+.tl-card.ae { border-left-color: var(--ae); }
+.tl-card.ep { border-left-color: var(--ep); }
+.tl-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.tl-name.sn { color: var(--sn-tx); } .tl-name.ae { color: var(--ae-tx); } .tl-name.ep { color: var(--ep-tx); }
+.tl-desc { font-size: 11px; color: var(--muted); line-height: 1.45; margin-bottom: 10px; }
+.tl-band { font-size: 11px; color: var(--text); display: flex; justify-content: space-between; padding: 3px 0; border-top: 1px solid var(--border); }
+.tl-band span:last-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* Leaderboards */
+.two-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .lb-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
 .lb-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text); }
 .lb-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -52,67 +82,26 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .lb-rank.r2 { background: rgba(148,163,184,0.2); color: #94a3b8; }
 .lb-rank.r3 { background: rgba(180,120,60,0.2); color: #cd7f32; }
 .lb-name { flex: 1; font-size: 13px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.lb-mini-bar { width: 50px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+.lb-mini-bar { width: 60px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
 .lb-mini-fill { height: 100%; border-radius: 2px; }
-.lb-val { font-size: 13px; font-weight: 700; min-width: 48px; text-align: right; flex-shrink: 0; }
+.lb-val { font-size: 13px; font-weight: 700; min-width: 52px; text-align: right; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 
-.subjects-row { display: grid; gap: 10px; margin-bottom: 20px; }
-.subj-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; text-align: center; }
-.subj-count { font-size: 24px; font-weight: 700; color: var(--text); }
-.subj-name { font-size: 10px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
-.subj-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
-.subj-bar-fill { height: 100%; border-radius: 2px; background: var(--indigo); }
-
-.adv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px; }
-.adv-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s; border-left: 4px solid var(--indigo); }
-.adv-tile:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1); border-color: var(--indigo); }
-.adv-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
-.adv-name { font-size: 14px; font-weight: 600; color: var(--text); }
-.adv-uni  { font-size: 10px; color: var(--muted); margin-top: 2px; }
-.rag-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
-.rag-dot.g { background: var(--emerald); }
-.rag-dot.a { background: var(--amber); }
-.rag-dot.r { background: var(--rose); }
-.adv-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.adv-m  { text-align: center; }
-.adv-mv { font-size: 18px; font-weight: 700; color: var(--text); }
-.adv-ml { font-size: 9px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-top: 2px; }
-
-.tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+/* Table */
+.tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 720px; }
 th { background: #f9fafb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
 td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text); }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #f9fafb; }
-tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--border); border-bottom: none; }
+tfoot td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--border); border-bottom: none; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
-.pct-cell { display: flex; align-items: center; gap: 8px; }
-.mini-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; min-width: 50px; }
-.mini-fill { height: 100%; border-radius: 2px; }
-.pct-lbl { font-size: 12px; font-weight: 600; min-width: 42px; text-align: right; }
-.be { background: #ede9fe; color: #4f46e5; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
-.ba { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
-.bi { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+.rate-cell { display: flex; align-items: center; gap: 8px; }
+.mini-bar { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; min-width: 46px; }
+.mini-fill { height: 100%; border-radius: 3px; }
+.rate-lbl { font-size: 13px; font-weight: 700; min-width: 46px; text-align: right; font-variant-numeric: tabular-nums; }
 
-.note-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-bottom: 14px; }
-.sd-rem-inp { width: 62px; text-align: right; border: 1px solid #d1d5db; border-radius: 5px; padding: 2px 6px; font-size: 0.82rem; font-family: inherit; color: var(--text); background: #fff; }
-.sd-rem-inp:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.15); }
+.note-bar { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; margin-bottom: 16px; }
 .no-data { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
-
-.adv-detail-hd { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.adv-detail-name { font-size: 20px; font-weight: 700; color: var(--text); }
-.adv-detail-uni  { font-size: 13px; color: var(--muted); margin-top: 3px; }
-.adv-detail-stats { display: flex; gap: 0; margin-left: auto; }
-.ads { text-align: center; padding: 0 18px; border-left: 1px solid var(--border); }
-.ads:first-child { border-left: none; }
-.ads-val   { font-size: 28px; font-weight: 700; }
-.ads-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 3px; }
-.back-btn  { background: #f3f4f6; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
-.back-btn:hover { background: #e5e7eb; }
-.rag-pill  { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-.rag-pill.g { background: #d1fae5; color: #065f46; }
-.rag-pill.a { background: #fef3c7; color: #92400e; }
-.rag-pill.r { background: #fee2e2; color: #991b1b; }
 </style>
 </head>
 <body>
@@ -122,444 +111,246 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 1px solid var(--bo
   <div class="period-tabs">
     <button class="period-tab active" data-period="thisWeek">This Week</button>
     <button class="period-tab" data-period="lastWeek">Last Week</button>
-    <button class="period-tab" data-period="lastMonth">Last 4 Weeks</button>
-    <button class="period-tab" data-period="sinceCensus">Since Census</button>
+    <button class="period-tab" data-period="custom">Custom Range</button>
+  </div>
+  <div class="custom-range" id="customRange" style="display:none;">
+    <label>From <input type="date" id="cr-start"></label>
+    <label>To <input type="date" id="cr-end"></label>
   </div>
 </div>
 
-<!-- TEAM VIEW -->
 <main class="view active" id="view-team">
 
-  <div class="section-hd"><h2 id="kpiHd">UNSW KPIs</h2></div>
+  <div class="period-label" id="periodLabel"></div>
+  <div class="note-bar" id="dataNote"></div>
+
+  <div class="section-hd"><h2 id="kpiHd">FY27 Productivity KPIs</h2><span class="hd-note">Cohort = enrolled students · rolling 60-day window</span></div>
   <div class="kpi-row" id="kpiRow"></div>
 
+  <div class="section-hd"><h2>How Performance Tiers Work</h2></div>
+  <div class="tier-legend" id="tierLegend"></div>
+
   <div class="section-hd"><h2>Leaderboards</h2></div>
-  <div class="three-col" id="lbSection"></div>
+  <div class="two-col" id="lbSection"></div>
 
-  <div class="section-hd"><h2>Calls by Subject</h2></div>
-  <div class="subjects-row" id="subjectsRow"></div>
-
-  <div class="section-hd"><h2>UNSW Advisors</h2></div>
-  <div class="adv-grid" id="advGrid"></div>
-
-  <div class="section-hd">
-    <h2>UNSW Eligible Pool: SSA Coverage</h2>
-    <span class="hd-note" id="poolNote"></span>
-  </div>
-  <div class="note-bar">Pool att% and con% are derived from the Last Phone Attempt/Contact Date fields in the eligible pool export. These may lag same-day call activity due to delays in data upload.</div>
+  <div class="section-hd"><h2>SSA 60-Day Coverage</h2></div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>SSA</th><th class="num">Pool</th><th class="num">Enrolled</th>
-        <th class="num">LOA</th><th class="num">Not Active</th>
-        <th class="num">Attempted</th><th style="min-width:160px">att%</th>
-        <th class="num">Contacted</th><th style="min-width:160px">con%</th>
+        <th>SSA</th>
+        <th class="num">Cohort</th>
+        <th class="num">Attempted</th>
+        <th style="min-width:190px">60-Day Attempted Rate</th>
+        <th class="num">Contacted</th>
+        <th style="min-width:190px">60-Day Contacted Rate</th>
       </tr></thead>
-      <tbody id="poolBody"></tbody>
-      <tfoot id="poolFoot"></tfoot>
-    </table>
-  </div>
-
-  <div class="section-hd" style="margin-top:28px">
-    <h2>60 Day Cohort Attempt · H4 2026</h2>
-    <span class="hd-note">Census 16 Jul 2026 · exported 15 Jul 2026</span>
-  </div>
-  <div class="note-bar">Tracks whether each student in the H4 cohort has been attempted at least once since 21 May 2026.</div>
-  <div class="tbl-wrap">
-    <table id="sixtyDayTable">
-      <thead><tr>
-        <th>SSA</th><th class="num">Cohort</th>
-        <th class="num">Attempted</th><th style="min-width:160px">% Attempted</th>
-        <th style="min-width:130px">% to 80% Target</th>
-        <th class="num">Remaining to 80%</th>
-        <th class="num">Remaining</th><th class="num">Per Day to Census</th>
-      </tr></thead>
-      <tbody id="sixtyDayBody"></tbody>
-      <tfoot id="sixtyDayFoot"></tfoot>
+      <tbody id="covBody"></tbody>
+      <tfoot id="covFoot"></tfoot>
     </table>
   </div>
 
 </main>
 
-<!-- ADVISOR DETAIL VIEW -->
-<div class="view" id="view-advisor">
-  <div class="adv-detail-hd" id="advDetailHd"></div>
-  <div class="section-hd"><h2>Call Breakdown</h2></div>
-  <div class="tbl-wrap" style="max-width:560px;">
-    <table style="min-width:400px;">
-      <thead><tr>
-        <th>Call Status</th><th class="num">Count</th><th style="min-width:200px">Share</th>
-      </tr></thead>
-      <tbody id="advCallBody"></tbody>
-    </table>
-  </div>
-</div>
-
 <script>
-const PERIODS = {
+// ── FY27 KPI definitions (Productivity) ─────────────────────────
+// Tiers: Support Needed (< floor) · Achieved Expectations (floor–ceiling) · Exceptional (> ceiling)
+var KPIS = [
+  { key: 'att', metric: 'attempted', label: '60-Day Attempted Rate', cat: 'Productivity',
+    floor: 80, ceiling: 90, sub: 'Unique students with ≥1 attempt ÷ cohort' },
+  { key: 'con', metric: 'contacted', label: '60-Day Contacted Rate', cat: 'Productivity',
+    floor: 45, ceiling: 55, sub: 'Unique students reached by phone ÷ cohort' }
+];
+
+var TIER = {
+  sn: { cls: 'sn', label: 'Support Needed',         color: '#e11d48' },
+  ae: { cls: 'ae', label: 'Achieved Expectations',  color: '#2563eb' },
+  ep: { cls: 'ep', label: 'Exceptional Performance', color: '#059669' }
+};
+
+function tierOf(v, kpi) { return v < kpi.floor ? 'sn' : (v <= kpi.ceiling ? 'ae' : 'ep'); }
+function fmtPct(v) { return (Math.round(v * 10) / 10).toFixed(1) + '%'; }
+
+// ── Data (SAMPLE — replace with current figures) ────────────────
+// Each advisor: cohort (enrolled), attempted (unique), contacted (unique).
+var PERIODS = {
   thisWeek: {
-    label: 'Week commencing 29 Jun 2026',
-    poolNote: 'Attempts include all call outcomes · 01 Jul 2026',
-    overall: { calls: 161, spoke: 91, conPct: 56.5, leftMsg: 41, noAnswer: 21,
-               pool: 0, attempted: 0, attPct: 0, contacted: 0, poolConPct: 0, yesIntent: 0,
-               vcita: 70, notVcita: 21 },
+    label: 'This Week', sample: true,
     advisors: [
-      { name: 'Amelia Churchill',     calls: 39, spoke: 30, conPct: 76.9, leftMsg: 8,  noAns: 0,  vcita: 25, notVcita: 5  },
-      { name: 'Daljeet Sahota',       calls: 50, spoke: 21, conPct: 42.0, leftMsg: 10, noAns: 14, vcita: 21, notVcita: 0  },
-      { name: 'James Miller',         calls: 12, spoke: 8,  conPct: 66.7, leftMsg: 4,  noAns: 0,  vcita: 6,  notVcita: 2  },
-      { name: 'Kimberley Hornlimann', calls: 26, spoke: 13, conPct: 50.0, leftMsg: 9,  noAns: 3,  vcita: 10, notVcita: 3  },
-      { name: 'Priscilla Samuel',     calls: 34, spoke: 19, conPct: 55.9, leftMsg: 10, noAns: 4,  vcita: 8,  notVcita: 11 }
-    ],
-    pool: [],
-    subjects: [
-      { name: 'CS Engagement', count: 60 },
-      { name: 'Reengagement',  count: 36 },
-      { name: 'Risk Call',     count: 27 },
-      { name: 'Welcome Call',  count: 19 },
-      { name: 'Registration',  count: 15 },
-      { name: 'Certs to Mstr', count: 3  },
-      { name: 'Graduation',    count: 1  }
+      { name: 'Amelia Churchill',     cohort: 344, attempted: 322, contacted: 199 },
+      { name: 'Kimberley Hornlimann', cohort: 336, attempted: 316, contacted: 186 },
+      { name: 'Priscilla Samuel',     cohort: 339, attempted: 301, contacted: 171 },
+      { name: 'Daljeet Sahota',       cohort: 335, attempted: 284, contacted: 149 },
+      { name: 'James Miller',         cohort: 120, attempted: 100, contacted: 55  },
+      { name: 'Saravanan Rajamani',   cohort: 270, attempted: 203, contacted: 118 }
     ]
   },
   lastWeek: {
-    label: 'Week ending 26 Jun 2026',
-    poolNote: '1,613 students · exported 28 Jun 2026',
-    overall: { calls: 152, spoke: 152, conPct: 48.0, leftMsg: 0, noAnswer: 0,
-               pool: 1613, attempted: 250, attPct: 15.5, contacted: 120, poolConPct: 48.0, yesIntent: 0 },
+    label: 'Last Week', sample: true,
     advisors: [
-      { name: 'Daljeet Sahota',       calls: 41, spoke: 41, conPct: 39.6, leftMsg: 0, noAns: 0 },
-      { name: 'Priscilla Samuel',     calls: 40, spoke: 40, conPct: 46.0, leftMsg: 0, noAns: 0 },
-      { name: 'Kimberley Hornlimann', calls: 34, spoke: 34, conPct: 58.7, leftMsg: 0, noAns: 0 },
-      { name: 'Amelia Churchill',     calls: 23, spoke: 23, conPct: 62.5, leftMsg: 0, noAns: 0 },
-      { name: 'James Miller',         calls: 14, spoke: 14, conPct: 100,  leftMsg: 0, noAns: 0 },
-      { name: 'Saravanan Rajamani',   calls: 0,  spoke: 0,  conPct: 0,    leftMsg: 0, noAns: 0 }
-    ],
-    pool: [
-      { name: 'Daljeet Sahota',       pool: 332, enrolled: 256, loa: 55, notActive: 21, attempted: 91, attPct: 27.4, contacted: 36, conPct: 39.6 },
-      { name: 'Priscilla Samuel',     pool: 338, enrolled: 270, loa: 48, notActive: 20, attempted: 63, attPct: 18.6, contacted: 29, conPct: 46.0 },
-      { name: 'Kimberley Hornlimann', pool: 334, enrolled: 220, loa: 77, notActive: 37, attempted: 46, attPct: 13.8, contacted: 27, conPct: 58.7 },
-      { name: 'Amelia Churchill',     pool: 341, enrolled: 273, loa: 52, notActive: 16, attempted: 32, attPct: 9.4,  contacted: 20, conPct: 62.5 },
-      { name: 'Saravanan Rajamani',   pool: 268, enrolled: 211, loa: 36, notActive: 21, attempted: 18, attPct: 6.7,  contacted: 8,  conPct: 44.4 }
-    ],
-    subjects: [
-      { name: 'CS Engagement', count: 70 },
-      { name: 'Registration',  count: 56 },
-      { name: 'Risk Call',     count: 42 },
-      { name: 'Welcome Call',  count: 31 },
-      { name: 'Reengagement',  count: 24 },
-      { name: 'Certs to Mstr', count: 13 },
-      { name: 'T1 Call',       count: 2  }
+      { name: 'Amelia Churchill',     cohort: 344, attempted: 300, contacted: 180 },
+      { name: 'Kimberley Hornlimann', cohort: 336, attempted: 305, contacted: 175 },
+      { name: 'Priscilla Samuel',     cohort: 339, attempted: 285, contacted: 160 },
+      { name: 'Daljeet Sahota',       cohort: 335, attempted: 270, contacted: 140 },
+      { name: 'James Miller',         cohort: 120, attempted: 92,  contacted: 48  },
+      { name: 'Saravanan Rajamani',   cohort: 270, attempted: 190, contacted: 105 }
     ]
   },
-  lastMonth: {
-    label: 'Last 4 Weeks (Jun 2026)',
-    poolNote: '1,613 students · exported 28 Jun 2026',
-    overall: { calls: 609, spoke: 609, conPct: 51.8, leftMsg: 0, noAnswer: 0,
-               pool: 1613, attempted: 865, attPct: 53.6, contacted: 448, poolConPct: 51.8, yesIntent: 0 },
-    advisors: [
-      { name: 'Amelia Churchill',     calls: 149, spoke: 149, conPct: 69.7, leftMsg: 0, noAns: 0 },
-      { name: 'Daljeet Sahota',       calls: 129, spoke: 129, conPct: 42.0, leftMsg: 0, noAns: 0 },
-      { name: 'Kimberley Hornlimann', calls: 103, spoke: 103, conPct: 58.7, leftMsg: 0, noAns: 0 },
-      { name: 'Priscilla Samuel',     calls: 119, spoke: 119, conPct: 50.6, leftMsg: 0, noAns: 0 },
-      { name: 'Saravanan Rajamani',   calls: 84,  spoke: 84,  conPct: 42.4, leftMsg: 0, noAns: 0 },
-      { name: 'James Miller',         calls: 24,  spoke: 24,  conPct: 100,  leftMsg: 0, noAns: 0 }
-    ],
-    pool: [
-      { name: 'Daljeet Sahota',       pool: 332, enrolled: 256, loa: 55, notActive: 21, attempted: 224, attPct: 67.5, contacted: 94,  conPct: 42.0 },
-      { name: 'Priscilla Samuel',     pool: 338, enrolled: 270, loa: 48, notActive: 20, attempted: 180, attPct: 53.3, contacted: 91,  conPct: 50.6 },
-      { name: 'Saravanan Rajamani',   pool: 268, enrolled: 211, loa: 36, notActive: 21, attempted: 158, attPct: 59.0, contacted: 67,  conPct: 42.4 },
-      { name: 'Kimberley Hornlimann', pool: 334, enrolled: 220, loa: 77, notActive: 37, attempted: 138, attPct: 41.3, contacted: 81,  conPct: 58.7 },
-      { name: 'Amelia Churchill',     pool: 341, enrolled: 273, loa: 52, notActive: 16, attempted: 165, attPct: 48.4, contacted: 115, conPct: 69.7 }
-    ],
-    subjects: [
-      { name: 'CS Engagement', count: 167 },
-      { name: 'Registration',  count: 125 },
-      { name: 'Risk Call',     count: 74  },
-      { name: 'Welcome Call',  count: 72  },
-      { name: 'Reengagement',  count: 68  },
-      { name: 'Certs to Mstr', count: 49  },
-      { name: 'NS Course 1',   count: 29  },
-      { name: 'T1 Call',       count: 16  },
-      { name: 'At-Risk',       count: 9   }
-    ]
-  },
-  sinceCensus: {
-    label: 'Since Census · H4 2026',
-    poolNote: '1,613 students · exported 28 Jun 2026',
-    overall: { calls: 761, spoke: 761, conPct: 54.9, leftMsg: 0, noAnswer: 0,
-               pool: 1613, attempted: 1002, attPct: 62.1, contacted: 550, poolConPct: 54.9, yesIntent: 0 },
-    advisors: [
-      { name: 'Amelia Churchill',     calls: 198, spoke: 198, conPct: 75.0, leftMsg: 0, noAns: 0 },
-      { name: 'Daljeet Sahota',       calls: 156, spoke: 156, conPct: 44.1, leftMsg: 0, noAns: 0 },
-      { name: 'Kimberley Hornlimann', calls: 126, spoke: 126, conPct: 61.3, leftMsg: 0, noAns: 0 },
-      { name: 'Priscilla Samuel',     calls: 145, spoke: 145, conPct: 51.9, leftMsg: 0, noAns: 0 },
-      { name: 'Saravanan Rajamani',   calls: 111, spoke: 111, conPct: 44.5, leftMsg: 0, noAns: 0 },
-      { name: 'James Miller',         calls: 24,  spoke: 24,  conPct: 100,  leftMsg: 0, noAns: 0 }
-    ],
-    pool: [
-      { name: 'Daljeet Sahota',       pool: 332, enrolled: 256, loa: 55, notActive: 21, attempted: 236, attPct: 71.1, contacted: 104, conPct: 44.1 },
-      { name: 'Priscilla Samuel',     pool: 338, enrolled: 270, loa: 48, notActive: 20, attempted: 216, attPct: 63.9, contacted: 112, conPct: 51.9 },
-      { name: 'Saravanan Rajamani',   pool: 268, enrolled: 211, loa: 36, notActive: 21, attempted: 182, attPct: 67.9, contacted: 81,  conPct: 44.5 },
-      { name: 'Kimberley Hornlimann', pool: 334, enrolled: 220, loa: 77, notActive: 37, attempted: 168, attPct: 50.3, contacted: 103, conPct: 61.3 },
-      { name: 'Amelia Churchill',     pool: 341, enrolled: 273, loa: 52, notActive: 16, attempted: 200, attPct: 58.7, contacted: 150, conPct: 75.0 }
-    ],
-    subjects: [
-      { name: 'CS Engagement', count: 213 },
-      { name: 'Registration',  count: 127 },
-      { name: 'NS Course 1',   count: 101 },
-      { name: 'Welcome Call',  count: 74  },
-      { name: 'Reengagement',  count: 74  },
-      { name: 'Risk Call',     count: 74  },
-      { name: 'Certs to Mstr', count: 51  },
-      { name: 'At-Risk',       count: 29  },
-      { name: 'T1 Call',       count: 16  },
-      { name: 'NS Pre-Census', count: 2   }
-    ]
+  custom: {
+    label: 'Custom Range', start: '', end: '',
+    advisors: []
   }
 };
 
 var currentPeriodKey = 'thisWeek';
 
-function rag(v, hi, mid) { return v >= hi ? 'g' : v >= mid ? 'a' : 'r'; }
-function ragLabel(r) { return r === 'g' ? 'Strong' : r === 'a' ? 'Monitor' : 'Low'; }
-function mbar(v, max, color) {
-  var w = Math.min((v / max) * 100, 100).toFixed(0);
-  return '<div class="mini-bar"><div class="mini-fill" style="width:' + w + '%;background:' + color + ';"></div></div>';
+// ── Render helpers ──────────────────────────────────────────────
+function rate(a, metric, cohort) { return cohort ? (a / cohort * 100) : 0; }
+
+function tierScale(value, kpi) {
+  var f = kpi.floor, c = kpi.ceiling;
+  var mark = Math.max(0, Math.min(100, value));
+  return '<div class="tscale">' +
+      '<div class="tseg" style="left:0;width:' + f + '%;background:' + TIER.sn.color + '33"></div>' +
+      '<div class="tseg" style="left:' + f + '%;width:' + (c - f) + '%;background:' + TIER.ae.color + '33"></div>' +
+      '<div class="tseg" style="left:' + c + '%;width:' + (100 - c) + '%;background:' + TIER.ep.color + '33"></div>' +
+      '<div class="tscale-mark" style="left:' + mark + '%"></div>' +
+    '</div>' +
+    '<div class="tscale-ticks"><span style="left:' + f + '%">' + f + '%</span><span style="left:' + c + '%">' + c + '%</span></div>';
 }
-function pctCell(v, max, color) {
-  return '<div class="pct-cell">' + mbar(v, max, color) + '<span class="pct-lbl">' + v.toFixed(1) + '%</span></div>';
-}
-function conColor(v) { return v >= 50 ? '#10b981' : v >= 35 ? '#f59e0b' : '#f43f5e'; }
-function attColor(v) { return v >= 25 ? '#06b6d4' : v >= 15 ? '#f59e0b' : '#f43f5e'; }
 
 function renderKPIs(p) {
-  var o = p.overall;
-  document.getElementById('kpiHd').textContent = 'UNSW KPIs: ' + p.label;
-  var vcitaPct = (o.calls && o.vcita != null) ? (o.vcita / o.calls * 100) : 0;
-  var kpis = [
-    { label: 'Attempts',     val: o.calls || '—', sub: o.calls ? o.spoke + ' spoke to student' : 'No data yet',                                        cls: 'c-calls',   bw: 100,               bc: '#6366f1' },
-    { label: 'con%',         val: o.calls ? o.conPct.toFixed(1) + '%' : '—',         sub: o.calls ? o.spoke + ' of ' + o.calls + ' attempts spoke' : '', cls: 'c-con',     bw: o.conPct || 0,     bc: '#10b981' },
-    { label: 'Pool att%',    val: o.pool  ? o.attPct.toFixed(1) + '%' : '—',         sub: o.pool ? o.attempted + ' of ' + o.pool + ' reached' : '',       cls: 'c-att',     bw: o.attPct || 0,     bc: '#06b6d4' },
-    { label: 'Pool con%',    val: o.attempted ? o.poolConPct.toFixed(1) + '%' : '—', sub: o.attempted ? o.contacted + ' of ' + o.attempted + ' spoke' : '', cls: 'c-poolcon', bw: o.poolConPct || 0, bc: '#34d399' },
-    { label: 'vCita',        val: o.calls && o.vcita != null ? vcitaPct.toFixed(1) + '%' : '—', sub: o.calls && o.vcita != null ? o.vcita + ' vCita · ' + (o.notVcita||0) + ' non-vCita' : 'No data yet', cls: 'c-vcita', bw: vcitaPct, bc: '#f97316' },
-  ];
-  document.getElementById('kpiRow').innerHTML = kpis.map(function(k) {
-    return '<div class="kpi-card ' + k.cls + '"><div class="kpi-label">' + k.label + '</div>' +
-      '<div class="kpi-val">' + k.val + '</div><div class="kpi-sub">' + k.sub + '</div>' +
-      '<div class="kpi-bar"><div class="kpi-bar-fill" style="width:' + Math.min(k.bw || 0, 100).toFixed(0) + '%;background:' + k.bc + ';"></div></div></div>';
+  var advs = p.advisors;
+  document.getElementById('kpiHd').textContent = 'FY27 Productivity KPIs: ' + p.label;
+  var totCohort = advs.reduce(function(s, a) { return s + a.cohort; }, 0);
+  document.getElementById('kpiRow').innerHTML = KPIS.map(function(kpi) {
+    var totMetric = advs.reduce(function(s, a) { return s + a[kpi.metric]; }, 0);
+    var v = totCohort ? (totMetric / totCohort * 100) : 0;
+    var t = tierOf(v, kpi);
+    var valDisp = advs.length ? fmtPct(v) : '—';
+    var subDisp = advs.length ? (totMetric + ' of ' + totCohort + ' students') : 'No data for this period';
+    return '<div class="kpi-card" style="border-top-color:' + TIER[t].color + '">' +
+      '<div class="kpi-top"><div><div class="kpi-cat">' + kpi.cat + '</div>' +
+        '<div class="kpi-label">' + kpi.label + '</div></div>' +
+        (advs.length ? '<span class="tier-badge ' + t + '">' + TIER[t].label + '</span>' : '') + '</div>' +
+      '<div class="kpi-val">' + valDisp + '</div>' +
+      '<div class="kpi-sub">' + subDisp + '</div>' +
+      (advs.length ? tierScale(v, kpi) : '') +
+    '</div>';
   }).join('');
 }
 
-function lbRows(sorted, valFn, maxVal, colorFn) {
-  return sorted.slice(0, 5).map(function(a, i) {
-    var v = valFn(a);
+function renderTierLegend() {
+  var cards = [
+    { cls: 'sn', name: 'Support Needed',        desc: 'Below the floor of Achieved Expectations. Triggers a structured coaching conversation to identify barriers and build an improvement plan.' },
+    { cls: 'ae', name: 'Achieved Expectations', desc: 'Meeting the agreed standard. A strong result — doing the right things consistently for your students.' },
+    { cls: 'ep', name: 'Exceptional Performance', desc: 'Above the ceiling. Recognised across the team — your approach becomes a coaching reference for others.' }
+  ];
+  document.getElementById('tierLegend').innerHTML = cards.map(function(card) {
+    var bands = KPIS.map(function(kpi) {
+      var range = card.cls === 'sn' ? '< ' + kpi.floor + '%'
+                : card.cls === 'ae' ? kpi.floor + '% – ' + kpi.ceiling + '%'
+                : '> ' + kpi.ceiling + '%';
+      return '<div class="tl-band"><span>' + kpi.label.replace('60-Day ', '') + '</span><span>' + range + '</span></div>';
+    }).join('');
+    return '<div class="tl-card ' + card.cls + '">' +
+      '<div class="tl-name ' + card.cls + '">' + card.name + '</div>' +
+      '<div class="tl-desc">' + card.desc + '</div>' + bands + '</div>';
+  }).join('');
+}
+
+function lbRows(sorted, kpi) {
+  return sorted.slice(0, 6).map(function(a, i) {
+    var v = rate(a[kpi.metric], kpi.metric, a.cohort);
+    var t = tierOf(v, kpi);
     var rCls = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : '';
-    var color = colorFn(v);
-    var w = (v / maxVal * 100).toFixed(0);
-    var disp = (typeof v === 'number' && String(v).indexOf('.') >= 0) ? v.toFixed(1) + '%' : v;
+    var w = Math.min(100, v).toFixed(0);
     return '<div class="lb-row"><div class="lb-rank ' + rCls + '">' + (i + 1) + '</div>' +
       '<div class="lb-name">' + a.name + '</div>' +
-      '<div class="lb-mini-bar"><div class="lb-mini-fill" style="width:' + w + '%;background:' + color + ';"></div></div>' +
-      '<div class="lb-val">' + disp + '</div></div>';
+      '<div class="lb-mini-bar"><div class="lb-mini-fill" style="width:' + w + '%;background:' + TIER[t].color + ';"></div></div>' +
+      '<div class="lb-val" style="color:' + TIER[t].color + '">' + fmtPct(v) + '</div></div>';
   }).join('');
 }
 
 function renderLeaderboards(p) {
   var advs = p.advisors;
-  var pool = p.pool;
   var empty = '<div class="no-data">No data for this period</div>';
-  if (!advs.length) {
-    document.getElementById('lbSection').innerHTML =
-      '<div class="lb-card">' + empty + '</div><div class="lb-card">' + empty + '</div><div class="lb-card">' + empty + '</div>';
-    return;
-  }
-  var byCon      = advs.slice().sort(function(a, b) { return b.conPct    - a.conPct;    });
-  var byAttempted = pool.length
-    ? pool.slice().sort(function(a, b) { return b.attempted - a.attempted; })
-    : advs.slice().sort(function(a, b) { return b.calls - a.calls; });
-  var attemptVal = pool.length ? function(a) { return a.attempted; } : function(a) { return a.calls; };
-  var attemptMax = byAttempted.length ? attemptVal(byAttempted[0]) : 1;
-  var bySpoke    = advs.slice().sort(function(a, b) { return b.spoke     - a.spoke;     });
-  document.getElementById('lbSection').innerHTML =
-    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#10b981"></div>Best con%</div>' +
-    lbRows(byCon,       function(a) { return a.conPct; }, byCon[0].conPct, conColor) + '</div>' +
-    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#6366f1"></div>Most Attempted</div>' +
-    (byAttempted.length ? lbRows(byAttempted, attemptVal, attemptMax, function() { return '#6366f1'; }) : empty) + '</div>' +
-    '<div class="lb-card"><div class="lb-title"><div class="lb-dot" style="background:#06b6d4"></div>Most Spoke</div>' +
-    lbRows(bySpoke,     function(a) { return a.spoke;     }, bySpoke[0].spoke,               function() { return '#06b6d4'; }) + '</div>';
-}
-
-function renderSubjects(p) {
-  var row = document.getElementById('subjectsRow');
-  if (!p.subjects.length) {
-    row.style.gridTemplateColumns = '';
-    row.innerHTML = '<div class="no-data" style="grid-column:1/-1">No data for this period</div>';
-    return;
-  }
-  row.style.gridTemplateColumns = 'repeat(' + p.subjects.length + ', 1fr)';
-  var maxSubj = Math.max.apply(null, p.subjects.map(function(s) { return s.count; }));
-  row.innerHTML = p.subjects.map(function(s) {
-    return '<div class="subj-card"><div class="subj-count">' + s.count + '</div>' +
-      '<div class="subj-name">' + s.name + '</div>' +
-      '<div class="subj-bar"><div class="subj-bar-fill" style="width:' + (s.count / maxSubj * 100).toFixed(0) + '%;"></div></div></div>';
-  }).join('');
-}
-
-function renderAdvisors(p) {
-  if (!p.advisors.length) {
-    document.getElementById('advGrid').innerHTML = '<div class="no-data" style="grid-column:1/-1">No data for this period</div>';
-    return;
-  }
-  document.getElementById('advGrid').innerHTML = p.advisors.map(function(a, i) {
-    var r = rag(a.conPct, 50, 35);
-    var hasVcita = a.vcita != null;
-    var vcitaPct = hasVcita && a.calls > 0 ? (a.vcita / a.calls * 100).toFixed(0) : 0;
-    var vcitaBar = hasVcita
-      ? '<div style="margin-top:10px;border-top:1px solid #f3f4f6;padding-top:8px;">' +
-          '<div style="display:flex;justify-content:space-between;font-size:9px;color:#9ca3af;margin-bottom:3px;">' +
-            '<span>vCita</span>' +
-            '<span>' + a.vcita + ' vC · ' + (a.notVcita||0) + ' non</span>' +
-          '</div>' +
-          '<div style="background:#f3f4f6;height:4px;border-radius:2px;overflow:hidden;">' +
-            '<div style="width:' + vcitaPct + '%;height:100%;background:#f97316;border-radius:2px;"></div>' +
-          '</div>' +
-        '</div>'
-      : '';
-    return '<div class="adv-tile" onclick="showAdvisor(' + i + ')">' +
-      '<div class="adv-hd"><div><div class="adv-name">' + a.name + '</div><div class="adv-uni">Univ. of New South Wales</div></div>' +
-      '<div class="rag-dot ' + r + '"></div></div>' +
-      '<div class="adv-metrics">' +
-        '<div class="adv-m"><div class="adv-mv">' + a.calls + '</div><div class="adv-ml">Attempts</div></div>' +
-        '<div class="adv-m"><div class="adv-mv">' + a.spoke + '</div><div class="adv-ml">Spoke</div></div>' +
-        '<div class="adv-m"><div class="adv-mv" style="color:' + conColor(a.conPct) + '">' + a.conPct.toFixed(1) + '%</div><div class="adv-ml">con%</div></div>' +
-      '</div>' +
-      vcitaBar +
-      '</div>';
-  }).join('');
-}
-
-function renderPool(p) {
-  var src = p;
-  if (!p.pool.length) {
-    var fallbackKeys = ['lastWeek', 'lastMonth', 'sinceCensus'];
-    for (var fi = 0; fi < fallbackKeys.length; fi++) {
-      if (PERIODS[fallbackKeys[fi]].pool.length) { src = PERIODS[fallbackKeys[fi]]; break; }
-    }
-  }
-  document.getElementById('poolNote').textContent = src === p
-    ? (p.poolNote || '')
-    : 'No pool export for this period — showing last available: ' + src.poolNote;
-  if (!src.pool.length) {
-    document.getElementById('poolBody').innerHTML = '<tr><td colspan="10" class="no-data">No pool data available</td></tr>';
-    document.getElementById('poolFoot').innerHTML = '';
-    return;
-  }
-  var tot = src.pool.reduce(function(acc, r) {
-    acc.pool += r.pool; acc.enrolled += r.enrolled; acc.loa += r.loa;
-    acc.notActive += r.notActive; acc.attempted += r.attempted;
-    acc.contacted += r.contacted;
-    return acc;
-  }, { pool: 0, enrolled: 0, loa: 0, notActive: 0, attempted: 0, contacted: 0 });
-
-  document.getElementById('poolBody').innerHTML = src.pool.map(function(r) {
-    var ac = attColor(r.attPct), cc = conColor(r.conPct);
-    return '<tr><td>' + r.name + '</td>' +
-      '<td class="num">' + r.pool + '</td>' +
-      '<td class="num"><span class="be">' + r.enrolled + '</span></td>' +
-      '<td class="num">' + r.loa + '</td>' +
-      '<td class="num">' + r.notActive + '</td>' +
-      '<td class="num">' + r.attempted + '</td>' +
-      '<td>' + pctCell(r.attPct, 40, ac) + '</td>' +
-      '<td class="num">' + r.contacted + '</td>' +
-      '<td>' + pctCell(r.conPct, 100, cc) + '</td></tr>';
-  }).join('');
-
-  var attTot = tot.attempted / tot.pool * 100;
-  var conTot = tot.attempted > 0 ? tot.contacted / tot.attempted * 100 : 0;
-  document.getElementById('poolFoot').innerHTML = '<tr>' +
-    '<td>TOTAL</td><td class="num">' + tot.pool + '</td>' +
-    '<td class="num">' + tot.enrolled + '</td><td class="num">' + tot.loa + '</td><td class="num">' + tot.notActive + '</td>' +
-    '<td class="num">' + tot.attempted + '</td>' +
-    '<td>' + pctCell(attTot, 40, '#06b6d4') + '</td>' +
-    '<td class="num">' + tot.contacted + '</td>' +
-    '<td>' + pctCell(conTot, 100, '#10b981') + '</td></tr>';
-}
-
-const SIXTY_DAY = {
-  rows: [
-    { name:'Daljeet Sahota',       cohort:335, ctd:293, remaining:42, perDay:21.0 },
-    { name:'Priscilla Samuel',     cohort:339, ctd:278, remaining:61, perDay:30.5 },
-    { name:'Kimberley Hornlimann', cohort:336, ctd:267, remaining:69, perDay:34.5 },
-    { name:'Amelia Churchill',     cohort:344, ctd:291, remaining:53, perDay:26.5 },
-    { name:'Saravanan Rajamani',   cohort:270, ctd:200, remaining:70, perDay:null }
-  ],
-  total: { cohort:1624, ctd:1329, remaining:295, perDay:147.5 }
-};
-
-function sdPctCol(pct) { return pct >= 80 ? '#10b981' : pct >= 60 ? '#f59e0b' : '#ef4444'; }
-function sdTgtCol(tgtPct) { return tgtPct >= 100 ? '#10b981' : tgtPct >= 75 ? '#f59e0b' : '#ef4444'; }
-function sdTgtCell(attPct) {
-  var tgtPct = Math.min(100, attPct / 80 * 100);
-  return pctCell(tgtPct, 100, sdTgtCol(tgtPct));
-}
-
-function renderSixtyDayFoot() {
-  var tot = SIXTY_DAY.total;
-  tot.remaining = SIXTY_DAY.rows.reduce(function(s, r) { return s + r.remaining; }, 0);
-  tot.ctd       = SIXTY_DAY.rows.reduce(function(s, r) { return s + r.ctd; },       0);
-  var totPct = tot.cohort ? (tot.ctd / tot.cohort * 100) : 0;
-  var totRem80 = SIXTY_DAY.rows.reduce(function(s, r) { return s + Math.max(0, Math.round(r.cohort * 0.8) - r.ctd); }, 0);
-  document.getElementById('sixtyDayFoot').innerHTML =
-    '<tr><td>UNSW Total</td>' +
-    '<td class="num">' + tot.cohort + '</td>' +
-    '<td class="num" id="sd-ctd-tot">' + tot.ctd + '</td>' +
-    '<td>' + pctCell(totPct, 100, sdPctCol(totPct)) + '</td>' +
-    '<td>' + sdTgtCell(totPct) + '</td>' +
-    '<td class="num">' + totRem80 + '</td>' +
-    '<td class="num">' + tot.remaining + '</td>' +
-    '<td class="num">' + tot.perDay + '</td></tr>';
-}
-
-function renderSixtyDay() {
-  var rows = SIXTY_DAY.rows;
-  document.getElementById('sixtyDayBody').innerHTML = rows.map(function(r, i) {
-    var pct    = r.cohort ? (r.ctd / r.cohort * 100) : 0;
-    var rem80  = Math.max(0, Math.round(r.cohort * 0.8) - r.ctd);
-    var perDay = r.perDay !== null ? r.perDay : '<span style="color:#9ca3af">On leave</span>';
-    return '<tr><td>' + r.name + '</td>' +
-      '<td class="num">' + r.cohort + '</td>' +
-      '<td class="num" id="sd-ctd-' + i + '">' + r.ctd + '</td>' +
-      '<td id="sd-pct-' + i + '">' + pctCell(pct, 100, sdPctCol(pct)) + '</td>' +
-      '<td id="sd-tgt-' + i + '">' + sdTgtCell(pct) + '</td>' +
-      '<td class="num" id="sd-r80-' + i + '">' + rem80 + '</td>' +
-      '<td class="num"><input class="sd-rem-inp" type="number" min="0" value="' + r.remaining + '" data-idx="' + i + '"></td>' +
-      '<td class="num">' + perDay + '</td></tr>';
-  }).join('');
-  renderSixtyDayFoot();
-  document.querySelectorAll('.sd-rem-inp').forEach(function(inp) {
-    inp.addEventListener('input', function() {
-      var i = parseInt(this.dataset.idx);
-      var r = SIXTY_DAY.rows[i];
-      r.remaining = parseInt(this.value) || 0;
-      r.ctd = r.cohort - r.remaining;
-      var pct = r.cohort ? (r.ctd / r.cohort * 100) : 0;
-      document.getElementById('sd-ctd-' + i).textContent = r.ctd;
-      document.getElementById('sd-pct-' + i).innerHTML = pctCell(pct, 100, sdPctCol(pct));
-      document.getElementById('sd-tgt-' + i).innerHTML = sdTgtCell(pct);
-      document.getElementById('sd-r80-' + i).textContent = Math.max(0, Math.round(r.cohort * 0.8) - r.ctd);
-      renderSixtyDayFoot();
+  document.getElementById('lbSection').innerHTML = KPIS.map(function(kpi) {
+    var sorted = advs.slice().sort(function(a, b) {
+      return rate(b[kpi.metric], kpi.metric, b.cohort) - rate(a[kpi.metric], kpi.metric, a.cohort);
     });
-  });
+    return '<div class="lb-card"><div class="lb-title">' +
+      '<div class="lb-dot" style="background:' + (kpi.key === 'att' ? '#6366f1' : '#059669') + '"></div>Best ' + kpi.label + '</div>' +
+      (advs.length ? lbRows(sorted, kpi) : empty) + '</div>';
+  }).join('');
+}
+
+function rateCell(v, kpi) {
+  var t = tierOf(v, kpi);
+  var w = Math.min(100, v).toFixed(0);
+  return '<div class="rate-cell">' +
+    '<div class="mini-bar"><div class="mini-fill" style="width:' + w + '%;background:' + TIER[t].color + ';"></div></div>' +
+    '<span class="rate-lbl" style="color:' + TIER[t].color + '">' + fmtPct(v) + '</span>' +
+    '<span class="tier-badge sm ' + t + '">' + TIER[t].label.split(' ')[0] + '</span></div>';
+}
+
+function renderCoverage(p) {
+  var advs = p.advisors;
+  var body = document.getElementById('covBody');
+  var foot = document.getElementById('covFoot');
+  if (!advs.length) {
+    body.innerHTML = '<tr><td colspan="6" class="no-data">No data for this period — provide current figures to populate.</td></tr>';
+    foot.innerHTML = '';
+    return;
+  }
+  body.innerHTML = advs.map(function(a) {
+    var attR = rate(a.attempted, 'attempted', a.cohort);
+    var conR = rate(a.contacted, 'contacted', a.cohort);
+    return '<tr><td>' + a.name + '</td>' +
+      '<td class="num">' + a.cohort + '</td>' +
+      '<td class="num">' + a.attempted + '</td>' +
+      '<td>' + rateCell(attR, KPIS[0]) + '</td>' +
+      '<td class="num">' + a.contacted + '</td>' +
+      '<td>' + rateCell(conR, KPIS[1]) + '</td></tr>';
+  }).join('');
+
+  var tC = advs.reduce(function(s, a) { return s + a.cohort; }, 0);
+  var tA = advs.reduce(function(s, a) { return s + a.attempted; }, 0);
+  var tK = advs.reduce(function(s, a) { return s + a.contacted; }, 0);
+  var attR = tC ? (tA / tC * 100) : 0;
+  var conR = tC ? (tK / tC * 100) : 0;
+  foot.innerHTML = '<tr><td>UNSW Total</td>' +
+    '<td class="num">' + tC + '</td>' +
+    '<td class="num">' + tA + '</td>' +
+    '<td>' + rateCell(attR, KPIS[0]) + '</td>' +
+    '<td class="num">' + tK + '</td>' +
+    '<td>' + rateCell(conR, KPIS[1]) + '</td></tr>';
+}
+
+function renderPeriodLabel(p) {
+  var lbl = document.getElementById('periodLabel');
+  var note = document.getElementById('dataNote');
+  if (currentPeriodKey === 'custom') {
+    lbl.innerHTML = (p.start && p.end)
+      ? 'Showing <strong>' + p.start + '</strong> to <strong>' + p.end + '</strong>'
+      : 'Pick a <strong>From</strong> and <strong>To</strong> date, then load the figures for that range.';
+  } else {
+    lbl.innerHTML = '<strong>' + p.label + '</strong> · rolling 60-day cohort coverage';
+  }
+  if (p.sample) {
+    note.style.display = 'block';
+    note.textContent = '⚠️ Sample figures shown to preview the layout — send current data and I will replace them.';
+  } else {
+    note.style.display = 'none';
+  }
 }
 
 function render(periodKey) {
   var p = PERIODS[periodKey];
+  renderPeriodLabel(p);
   renderKPIs(p);
+  renderTierLegend();
   renderLeaderboards(p);
-  renderSubjects(p);
-  renderAdvisors(p);
-  renderPool(p);
-  renderSixtyDay();
+  renderCoverage(p);
 }
 
 document.querySelectorAll('.period-tab').forEach(function(btn) {
@@ -567,59 +358,15 @@ document.querySelectorAll('.period-tab').forEach(function(btn) {
     document.querySelectorAll('.period-tab').forEach(function(b) { b.classList.remove('active'); });
     btn.classList.add('active');
     currentPeriodKey = btn.dataset.period;
-    showView('team');
+    document.getElementById('customRange').style.display = (currentPeriodKey === 'custom') ? 'flex' : 'none';
     render(currentPeriodKey);
   });
 });
 
+document.getElementById('cr-start').addEventListener('change', function() { PERIODS.custom.start = this.value; render('custom'); });
+document.getElementById('cr-end').addEventListener('change', function() { PERIODS.custom.end = this.value; render('custom'); });
+
 render('thisWeek');
-
-function showAdvisor(idx) {
-  var p = PERIODS[currentPeriodKey];
-  var a = p.advisors[idx];
-  var r = rag(a.conPct, 50, 35);
-  var pool = null;
-  for (var i = 0; i < p.pool.length; i++) { if (p.pool[i].name === a.name) { pool = p.pool[i]; break; } }
-
-  var statsHtml =
-    '<div class="ads"><div class="ads-val" style="color:#6366f1">' + a.calls + '</div><div class="ads-label">Calls</div></div>' +
-    '<div class="ads"><div class="ads-val" style="color:#10b981">' + a.spoke + '</div><div class="ads-label">Spoke</div></div>' +
-    '<div class="ads"><div class="ads-val" style="color:' + conColor(a.conPct) + '">' + a.conPct.toFixed(1) + '%</div><div class="ads-label">con%</div></div>' +
-    '<div class="ads"><div class="ads-val" style="color:#94a3b8">' + a.leftMsg + '</div><div class="ads-label">Left Msg</div></div>' +
-    '<div class="ads"><div class="ads-val" style="color:#94a3b8">' + a.noAns + '</div><div class="ads-label">No Ans</div></div>';
-  if (pool) {
-    statsHtml +=
-      '<div class="ads"><div class="ads-val" style="color:#06b6d4">' + pool.pool + '</div><div class="ads-label">Pool</div></div>' +
-      '<div class="ads"><div class="ads-val" style="color:' + attColor(pool.attPct) + '">' + pool.attPct.toFixed(1) + '%</div><div class="ads-label">att%</div></div>';
-  }
-
-  document.getElementById('advDetailHd').innerHTML =
-    '<button class="back-btn" onclick="showView(\'team\')">&#8592; Back</button>' +
-    '<div><div class="adv-detail-name">' + a.name + '</div>' +
-    '<div class="adv-detail-uni" style="color:#818cf8;font-weight:600;">UNSW &middot; Pod C</div></div>' +
-    '<div class="adv-detail-stats">' + statsHtml + '</div>' +
-    '<span class="rag-pill ' + r + '">' + ragLabel(r) + '</span>';
-
-  var other = a.calls - a.spoke - a.leftMsg - a.noAns;
-  var callData = [
-    { status: 'Spoke to Student', count: a.spoke,   color: '#10b981' },
-    { status: 'Left Message',     count: a.leftMsg, color: '#6366f1' },
-    { status: 'No Answer',        count: a.noAns,   color: '#94a3b8' }
-  ];
-  if (other > 0) callData.push({ status: 'Other', count: other, color: '#475569' });
-
-  document.getElementById('advCallBody').innerHTML = callData.map(function(c) {
-    return '<tr><td>' + c.status + '</td><td class="num">' + c.count + '</td>' +
-      '<td><div class="pct-cell">' + mbar(c.count, a.calls, c.color) + '<span class="pct-lbl">' + (c.count / a.calls * 100).toFixed(1) + '%</span></div></td></tr>';
-  }).join('');
-
-  showView('advisor');
-}
-
-function showView(id) {
-  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
-  document.getElementById('view-' + id).classList.add('active');
-}
 </script>
 </body>
 </html>
