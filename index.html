@@ -6652,25 +6652,31 @@ ${cardsHTML}
   }
 
   function buildCanvasPanel(sp) {
-    const list = CANVAS_COURSES[sp];
-    if (!list || !list.length) return '';
-    const spLabel = sp.split(' ')[0] + ' 20' + sp.split(' ')[1];
-    const chips = list.map(c => {
-      const statusStyle = c.status === 'New'
-        ? 'background:#dcfce7;color:#166534;'
-        : 'background:#e0e7ff;color:#3730a3;';
-      return `<div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f6c9bd;border-radius:7px;padding:7px 10px;">
-        <span style="font-weight:800;font-size:0.7rem;color:#b91c1c;white-space:nowrap;">${c.code}</span>
-        <span style="font-size:0.72rem;color:#374151;flex:1;min-width:0;">${c.name}</span>
-        <span style="${statusStyle}border-radius:20px;padding:1px 8px;font-size:0.6rem;font-weight:700;white-space:nowrap;">${c.status}</span>
+    const terms = Object.keys(CANVAS_COURSES);
+    const total = terms.reduce((s, t) => s + CANVAS_COURSES[t].length, 0);
+    if (!total) return '';
+    const groups = terms.map(t => {
+      const list = CANVAS_COURSES[t];
+      if (!list.length) return '';
+      const tLabel = t.split(' ')[0] + ' 20' + t.split(' ')[1];
+      const isCurrent = t === sp;
+      const chips = list.map(c => {
+        return `<div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f6c9bd;border-radius:7px;padding:7px 10px;">
+          <span style="font-weight:800;font-size:0.7rem;color:#b91c1c;white-space:nowrap;">${c.code}</span>
+          <span style="font-size:0.72rem;color:#374151;flex:1;min-width:0;">${c.name}</span>
+        </div>`;
+      }).join('');
+      return `<div style="margin-bottom:10px;">
+        <div style="font-size:0.64rem;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;color:${isCurrent ? '#b91c1c' : '#9ca3af'};">${tLabel} · ${list.length} course${list.length!==1?'s':''}${isCurrent ? ' · viewing' : ''}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;">${chips}</div>
       </div>`;
     }).join('');
     return `<div style="grid-column:1/-1;background:#fff7f5;border:1px solid #f6c9bd;border-left:4px solid #e4060f;border-radius:10px;padding:14px 16px;margin-bottom:6px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
         <span style="font-size:0.8rem;font-weight:800;color:#b91c1c;">🎨 Offered in Canvas (LMS)</span>
-        <span style="font-size:0.66rem;color:#9ca3af;">${spLabel} · ${list.length} course${list.length!==1?'s':''}</span>
+        <span style="font-size:0.66rem;color:#9ca3af;">${total} courses across H4–H6 2026</span>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;">${chips}</div>
+      ${groups}
     </div>`;
   }
 
