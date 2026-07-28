@@ -350,11 +350,13 @@ function onCellInput(inp) {
 function renderPeriodLabel(p) {
   var lbl = document.getElementById('periodLabel');
   if (currentPeriodKey === 'custom') {
+    lbl.style.display = '';
     lbl.innerHTML = (p.start && p.end)
       ? 'Showing <strong>' + p.start + '</strong> to <strong>' + p.end + '</strong>'
       : 'Pick a <strong>From</strong> and <strong>To</strong> date, then enter the figures below.';
   } else {
-    lbl.innerHTML = '<strong>' + p.label + '</strong> · rolling 60-day cohort coverage';
+    lbl.style.display = 'none';
+    lbl.innerHTML = '';
   }
 }
 
