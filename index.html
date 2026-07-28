@@ -6625,6 +6625,55 @@ ${cardsHTML}
     }
   };
 
+  // Courses running in Canvas (our LMS), by study period
+  const CANVAS_COURSES = {
+    'H4 26': [
+      { code:'ZZBU6502', name:'Analytics and Business',                status:'Rollover' },
+      { code:'ZZCA8310', name:'Project Schedule and Budget Control',   status:'New' },
+      { code:'ZZLJ8212', name:'Commercial Contract Law',               status:'Rollover' }
+    ],
+    'H5 26': [
+      { code:'ZZBU0031', name:'AI Fluency',                            status:'New' },
+      { code:'ZZCA8147', name:'The Business of Managing Projects',      status:'New' },
+      { code:'ZZCA8303', name:'Project Management Body of Knowledge',   status:'Rollover' },
+      { code:'ZZLJ8100', name:'Law, Regulations and Ethics',           status:'Rollover' }
+    ],
+    'H6 26': [
+      { code:'ZZBU0032', name:'Responsible AI for Business and Society', status:'New' },
+      { code:'ZZCA8203', name:'Project Change Management',               status:'New' },
+      { code:'ZZCA8302', name:'Project Administration',                  status:'Rollover' },
+      { code:'ZZCO5001', name:'Foundational Counselling Skills',         status:'New' },
+      { code:'ZZSC5113', name:'Behavioural Science and Decision Making', status:'New' }
+    ]
+  };
+
+  function isCanvasCourse(sp, code) {
+    return (CANVAS_COURSES[sp] || []).some(c => c.code === code);
+  }
+
+  function buildCanvasPanel(sp) {
+    const list = CANVAS_COURSES[sp];
+    if (!list || !list.length) return '';
+    const spLabel = sp.split(' ')[0] + ' 20' + sp.split(' ')[1];
+    const chips = list.map(c => {
+      const statusStyle = c.status === 'New'
+        ? 'background:#dcfce7;color:#166534;'
+        : 'background:#e0e7ff;color:#3730a3;';
+      return `<div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #f6c9bd;border-radius:7px;padding:7px 10px;">
+        <span style="font-weight:800;font-size:0.7rem;color:#b91c1c;white-space:nowrap;">${c.code}</span>
+        <span style="font-size:0.72rem;color:#374151;flex:1;min-width:0;">${c.name}</span>
+        <span style="${statusStyle}border-radius:20px;padding:1px 8px;font-size:0.6rem;font-weight:700;white-space:nowrap;">${c.status}</span>
+      </div>`;
+    }).join('');
+    return `<div style="grid-column:1/-1;background:#fff7f5;border:1px solid #f6c9bd;border-left:4px solid #e4060f;border-radius:10px;padding:14px 16px;margin-bottom:6px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:0.8rem;font-weight:800;color:#b91c1c;">🎨 Offered in Canvas (LMS)</span>
+        <span style="font-size:0.66rem;color:#9ca3af;">${spLabel} · ${list.length} course${list.length!==1?'s':''}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;">${chips}</div>
+    </div>`;
+  }
+
   function buildDrCard(u, sp) {
     const info = COURSE_INFO[u.code] || {};
     const saved = unitNotes[u.code] || {};
@@ -6674,6 +6723,7 @@ ${cardsHTML}
             <div class="dr-name">${u.name}</div>
           </div>
           ${isHighDrop ? `<span class="dr-high-badge">⚠️ High Drop Risk</span>` : ''}
+          ${isCanvasCourse(sp, u.code) ? `<span style="display:inline-block;margin-top:4px;background:#fff1ee;color:#b91c1c;border:1px solid #f6c9bd;border-radius:4px;padding:1px 7px;font-size:0.58rem;font-weight:700;white-space:nowrap;">🎨 In Canvas</span>` : ''}
         </div>
         <div style="flex-shrink:0;text-align:right;min-width:95px;">
           <div class="dr-field-label" style="margin-bottom:4px;white-space:nowrap;">${spLabel}</div>
@@ -6726,7 +6776,8 @@ ${cardsHTML}
     if (srch) srch.value = '';
     if (!sp) { grid.innerHTML = '<div class="dr-empty">Select a study period to see units running that hex.</div>'; return; }
     const units = getUnitsForSP(sp);
-    if (!units.length) { grid.innerHTML = '<div class="dr-empty">No units found for ' + sp.split(' ')[0] + ' 20' + sp.split(' ')[1] + '.</div>'; return; }
+    const canvasHtml = buildCanvasPanel(sp);
+    if (!units.length) { grid.innerHTML = canvasHtml + '<div class="dr-empty">No units found for ' + sp.split(' ')[0] + ' 20' + sp.split(' ')[1] + '.</div>'; return; }
 
     // Filter out units with a known drop rate of 5% or lower
     const filteredUnits = units.filter(u => {
@@ -6734,7 +6785,7 @@ ${cardsHTML}
       return rate === null || rate > 5; // keep unknowns and anything above 5%
     });
 
-    if (!filteredUnits.length) { grid.innerHTML = '<div class="dr-empty">No units with a drop rate above 5% for this period.</div>'; return; }
+    if (!filteredUnits.length) { grid.innerHTML = canvasHtml + '<div class="dr-empty">No units with a drop rate above 5% for this period.</div>'; return; }
 
     // Group by primary program
     const byProgram = {};
@@ -6765,6 +6816,8 @@ ${cardsHTML}
       grid.appendChild(hd);
       progUnits.forEach(u => grid.appendChild(buildDrCard(u, sp)));
     });
+
+    grid.insertAdjacentHTML('afterbegin', canvasHtml);
   }
 
   function initDropRate() {
