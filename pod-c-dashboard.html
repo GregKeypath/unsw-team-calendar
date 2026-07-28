@@ -124,12 +124,11 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--bo
 <main class="view active" id="view-team">
 
   <div class="period-label" id="periodLabel"></div>
-  <div class="note-bar" id="dataNote"></div>
 
   <div class="section-hd"><h2 id="kpiHd">FY27 Productivity KPIs</h2><span class="hd-note">Cohort = enrolled students · rolling 60-day window</span></div>
   <div class="kpi-row" id="kpiRow"></div>
 
-  <div class="section-hd"><h2>How Performance Tiers Work</h2></div>
+  <div class="section-hd"><h2>Breakdown of the KPI Tiers</h2></div>
   <div class="tier-legend" id="tierLegend"></div>
 
   <div class="section-hd"><h2>Leaderboards</h2></div>
@@ -357,7 +356,6 @@ function renderPeriodLabel(p) {
   } else {
     lbl.innerHTML = '<strong>' + p.label + '</strong> · rolling 60-day cohort coverage';
   }
-  document.getElementById('dataNote').textContent = '✏️ Enter Cohort / Attempted / Contacted per advisor below — saves automatically and is shared with the team.';
 }
 
 function render(periodKey) {
