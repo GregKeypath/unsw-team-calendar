@@ -58,17 +58,18 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, Bl
 .tscale-ticks { position: relative; height: 16px; margin-top: 3px; font-size: 10px; color: var(--muted); }
 .tscale-ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 
-/* Tier legend */
-.tier-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.tl-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; border-left: 4px solid var(--border); }
-.tl-card.sn { border-left-color: var(--sn); }
-.tl-card.ae { border-left-color: var(--ae); }
-.tl-card.ep { border-left-color: var(--ep); }
-.tl-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-.tl-name.sn { color: var(--sn-tx); } .tl-name.ae { color: var(--ae-tx); } .tl-name.ep { color: var(--ep-tx); }
-.tl-desc { font-size: 11px; color: var(--muted); line-height: 1.45; margin-bottom: 10px; }
-.tl-band { font-size: 11px; color: var(--text); display: flex; justify-content: space-between; padding: 3px 0; border-top: 1px solid var(--border); }
-.tl-band span:last-child { font-weight: 700; font-variant-numeric: tabular-nums; }
+/* Tier legend — one block per KPI, tiers listed going down */
+.tier-legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.tl-kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.tl-kpi-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+.tl-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: 7px; margin-bottom: 6px; border-left: 4px solid var(--border); }
+.tl-row:last-child { margin-bottom: 0; }
+.tl-row.sn { background: var(--sn-lt); border-left-color: var(--sn); }
+.tl-row.ae { background: var(--ae-lt); border-left-color: var(--ae); }
+.tl-row.ep { background: var(--ep-lt); border-left-color: var(--ep); }
+.tl-tier { font-size: 12px; font-weight: 700; }
+.tl-tier.sn { color: var(--sn-tx); } .tl-tier.ae { color: var(--ae-tx); } .tl-tier.ep { color: var(--ep-tx); }
+.tl-range { font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
 
 /* Leaderboards */
 .two-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -274,21 +275,20 @@ function renderKPIs(p) {
 }
 
 function renderTierLegend() {
-  var cards = [
-    { cls: 'sn', name: 'Support Needed',           desc: 'Below the floor of Achieved Expectations. Triggers a structured coaching conversation to identify barriers and build an improvement plan.' },
-    { cls: 'ae', name: 'Achieved Expectations',    desc: 'Meeting the agreed standard. A strong result — doing the right things consistently for your students.' },
-    { cls: 'ep', name: 'Exceptional Performance',  desc: 'Above the ceiling. Recognised across the team — your approach becomes a coaching reference for others.' }
+  var tiers = [
+    { cls: 'sn', name: 'Support Needed' },
+    { cls: 'ae', name: 'Achieved Expectations' },
+    { cls: 'ep', name: 'Exceptional Performance' }
   ];
-  document.getElementById('tierLegend').innerHTML = cards.map(function(card) {
-    var bands = KPIS.map(function(kpi) {
-      var range = card.cls === 'sn' ? '< ' + kpi.floor + '%'
-                : card.cls === 'ae' ? kpi.floor + '% – ' + kpi.ceiling + '%'
+  document.getElementById('tierLegend').innerHTML = KPIS.map(function(kpi) {
+    var rows = tiers.map(function(t) {
+      var range = t.cls === 'sn' ? '< ' + kpi.floor + '%'
+                : t.cls === 'ae' ? kpi.floor + '% – ' + kpi.ceiling + '%'
                 : '> ' + kpi.ceiling + '%';
-      return '<div class="tl-band"><span>' + kpi.label.replace('60-Day ', '') + '</span><span>' + range + '</span></div>';
+      return '<div class="tl-row ' + t.cls + '"><span class="tl-tier ' + t.cls + '">' + t.name + '</span>' +
+        '<span class="tl-range">' + range + '</span></div>';
     }).join('');
-    return '<div class="tl-card ' + card.cls + '">' +
-      '<div class="tl-name ' + card.cls + '">' + card.name + '</div>' +
-      '<div class="tl-desc">' + card.desc + '</div>' + bands + '</div>';
+    return '<div class="tl-kpi"><div class="tl-kpi-title">' + kpi.label + '</div>' + rows + '</div>';
   }).join('');
 }
 
