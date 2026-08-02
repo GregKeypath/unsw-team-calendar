@@ -102,6 +102,9 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--bo
 .rate-lbl { font-size: 13px; font-weight: 700; min-width: 46px; text-align: right; font-variant-numeric: tabular-nums; }
 .kpi-inp { width: 68px; text-align: right; border: 1px solid #d1d5db; border-radius: 5px; padding: 3px 6px; font-size: 0.82rem; font-family: inherit; color: var(--text); background: #fff; }
 .kpi-inp:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 2px rgba(79,70,229,0.15); }
+.kpi-inp.locked { background: #f3f4f6; color: #9ca3af; border-color: #e5e7eb; cursor: not-allowed; }
+.lock-btn { border: 1px solid var(--border); background: var(--surface); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer; color: var(--muted); white-space: nowrap; }
+.lock-btn.locked { background: #fef3c7; border-color: #fde68a; color: #92400e; }
 
 .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 8px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top: 3px solid var(--indigo); }
@@ -140,7 +143,12 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--bo
   <div class="section-hd"><h2>Leaderboards</h2></div>
   <div class="two-col" id="lbSection"></div>
 
-  <div class="section-hd"><h2>SSA 60-Day Coverage</h2><span class="hd-note">Enter counts — rates and tiers calculate automatically</span></div>
+  <div class="section-hd"><h2>SSA 60-Day Coverage</h2>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="hd-note">Cohort locks; Attempted/Contacted stay editable</span>
+      <button id="cohortLockBtn" class="lock-btn"></button>
+    </div>
+  </div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
@@ -203,6 +211,7 @@ var PERIODS = {
   custom:   { label: 'Custom Range', start: '', end: '', advisors: blankAdvisors() }
 };
 var currentPeriodKey = 'thisWeek';
+var cohortLocked = false;
 
 // ── Load / save (Firebase REST) ─────────────────────────────────
 function loadData() {
@@ -211,6 +220,7 @@ function loadData() {
     ['thisWeek', 'lastWeek', 'month', 'custom'].forEach(function(pk) {
       var pd = data[pk]; if (!pd) return;
       if (pk === 'custom' && pd.range) { PERIODS.custom.start = pd.range.start || ''; PERIODS.custom.end = pd.range.end || ''; }
+      cohortLocked = !!data.cohortLocked;
       var adv = pd.advisors || {};
       PERIODS[pk].advisors.forEach(function(a) {
         var s = adv[a.name];
@@ -326,8 +336,9 @@ function rateCell(v, kpi) {
     '<span class="tier-badge sm ' + t + '">' + TIER[t].label.split(' ')[0] + '</span></div>';
 }
 
-function numInput(idx, field, val) {
-  return '<input class="kpi-inp" type="number" min="0" step="1" data-idx="' + idx + '" data-field="' + field + '" value="' + (val || 0) + '">';
+function numInput(idx, field, val, readonly) {
+  return '<input class="kpi-inp' + (readonly ? ' locked' : '') + '" type="number" min="0" step="1"' +
+    (readonly ? ' readonly' : '') + ' data-idx="' + idx + '" data-field="' + field + '" value="' + (val || 0) + '">';
 }
 
 function renderCoverage(p) {
@@ -335,7 +346,7 @@ function renderCoverage(p) {
   body.innerHTML = p.advisors.map(function(a, i) {
     var has = a.cohort > 0;
     return '<tr><td>' + a.name + '</td>' +
-      '<td class="num">' + numInput(i, 'cohort', a.cohort) + '</td>' +
+      '<td class="num">' + numInput(i, 'cohort', a.cohort, cohortLocked) + '</td>' +
       '<td class="num">' + numInput(i, 'attempted', a.attempted) + '</td>' +
       '<td id="att-rate-' + i + '">' + (has ? rateCell(rate(a.attempted, a.cohort), KPIS[0]) : dash()) + '</td>' +
       '<td class="num">' + numInput(i, 'contacted', a.contacted) + '</td>' +
@@ -360,6 +371,7 @@ function renderCoverageFoot(p) {
 function onCellInput(inp) {
   var p = PERIODS[currentPeriodKey];
   var i = +inp.dataset.idx, field = inp.dataset.field;
+  if (field === 'cohort' && cohortLocked) return;
   var val = Math.max(0, parseInt(inp.value) || 0);
   var a = p.advisors[i];
   a[field] = val;
@@ -434,6 +446,18 @@ function renderPeriodLabel(p) {
   }
 }
 
+function updateLockBtn() {
+  var b = document.getElementById('cohortLockBtn');
+  b.className = 'lock-btn' + (cohortLocked ? ' locked' : '');
+  b.textContent = cohortLocked ? '🔒 Cohort locked' : '🔓 Cohort unlocked';
+}
+function setCohortLock(v) {
+  cohortLocked = v;
+  fetch(FB + '.json', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cohortLocked: v }) }).catch(function() {});
+  updateLockBtn();
+  renderCoverage(PERIODS[currentPeriodKey]);
+}
+
 function render(periodKey) {
   var p = PERIODS[periodKey];
   renderPeriodLabel(p);
@@ -442,6 +466,7 @@ function render(periodKey) {
   renderLeaderboards(p);
   renderCoverage(p);
   renderActivity(p);
+  updateLockBtn();
 }
 
 // ── Wiring ──────────────────────────────────────────────────────
@@ -454,6 +479,7 @@ document.querySelectorAll('.period-tab').forEach(function(btn) {
     render(currentPeriodKey);
   });
 });
+document.getElementById('cohortLockBtn').addEventListener('click', function() { setCohortLock(!cohortLocked); });
 document.getElementById('cr-start').addEventListener('change', function() { PERIODS.custom.start = this.value; saveRange(); render('custom'); });
 document.getElementById('cr-end').addEventListener('change', function() { PERIODS.custom.end = this.value; saveRange(); render('custom'); });
 
