@@ -103,7 +103,7 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--bo
 .kpi-inp { width: 68px; text-align: right; border: 1px solid #d1d5db; border-radius: 5px; padding: 3px 6px; font-size: 0.82rem; font-family: inherit; color: var(--text); background: #fff; }
 .kpi-inp:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 2px rgba(79,70,229,0.15); }
 
-.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 8px; }
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 8px; }
 .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; border-top: 3px solid var(--indigo); }
 .stat-val { font-size: 30px; font-weight: 800; line-height: 1; color: var(--text); margin: 6px 0 4px; }
 
@@ -159,12 +159,13 @@ tfoot td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--bo
   <div class="section-hd"><h2>Phone Activity</h2><span class="hd-note">This period · editable</span></div>
   <div class="stat-row" id="statRow"></div>
   <div class="tbl-wrap">
-    <table style="min-width:540px">
+    <table style="min-width:640px">
       <thead><tr>
         <th>SSA</th>
         <th class="num">Phone Activity</th>
         <th class="num">STS</th>
         <th class="num">Unique STS</th>
+        <th class="num">Emails</th>
       </tr></thead>
       <tbody id="actBody"></tbody>
       <tfoot id="actFoot"></tfoot>
@@ -193,7 +194,7 @@ function fmtPct(v) { return (Math.round(v * 10) / 10).toFixed(1) + '%'; }
 function rate(v, cohort) { return cohort ? (v / cohort * 100) : 0; }
 function dash() { return '<span class="rate-lbl" style="color:#9ca3af">—</span>'; }
 
-function blankAdvisors() { return ROSTER.map(function(n) { return { name: n, cohort: 0, attempted: 0, contacted: 0, phone: 0, sts: 0, uniqueSts: 0 }; }); }
+function blankAdvisors() { return ROSTER.map(function(n) { return { name: n, cohort: 0, attempted: 0, contacted: 0, phone: 0, sts: 0, uniqueSts: 0, emails: 0 }; }); }
 
 var PERIODS = {
   thisWeek: { label: 'This Week',    advisors: blankAdvisors() },
@@ -215,7 +216,7 @@ function loadData() {
         var s = adv[a.name];
         if (s) {
           a.cohort = +s.cohort || 0; a.attempted = +s.attempted || 0; a.contacted = +s.contacted || 0;
-          a.phone = +s.phone || 0; a.sts = +s.sts || 0; a.uniqueSts = +s.uniqueSts || 0;
+          a.phone = +s.phone || 0; a.sts = +s.sts || 0; a.uniqueSts = +s.uniqueSts || 0; a.emails = +s.emails || 0;
         }
       });
     });
@@ -375,7 +376,8 @@ function renderActivityStats(p) {
   var cards = [
     { label: 'Phone Activity', val: teamSum(p, 'phone'),     sub: 'total call attempts',       color: '#6366f1' },
     { label: 'STS',            val: teamSum(p, 'sts'),       sub: 'spoke-to-student',          color: '#0891b2' },
-    { label: 'Unique STS',     val: teamSum(p, 'uniqueSts'), sub: 'unique students spoken to', color: '#059669' }
+    { label: 'Unique STS',     val: teamSum(p, 'uniqueSts'), sub: 'unique students spoken to', color: '#059669' },
+    { label: 'Emails',         val: teamSum(p, 'emails'),    sub: 'emails created',            color: '#7c3aed' }
   ];
   document.getElementById('statRow').innerHTML = cards.map(function(s) {
     return '<div class="stat-card" style="border-top-color:' + s.color + '">' +
@@ -389,7 +391,8 @@ function renderActivityFoot(p) {
   document.getElementById('actFoot').innerHTML = '<tr><td>UNSW Total</td>' +
     '<td class="num">' + teamSum(p, 'phone') + '</td>' +
     '<td class="num">' + teamSum(p, 'sts') + '</td>' +
-    '<td class="num">' + teamSum(p, 'uniqueSts') + '</td></tr>';
+    '<td class="num">' + teamSum(p, 'uniqueSts') + '</td>' +
+    '<td class="num">' + teamSum(p, 'emails') + '</td></tr>';
 }
 
 function renderActivity(p) {
@@ -399,7 +402,8 @@ function renderActivity(p) {
     return '<tr><td>' + a.name + '</td>' +
       '<td class="num">' + numInput(i, 'phone', a.phone) + '</td>' +
       '<td class="num">' + numInput(i, 'sts', a.sts) + '</td>' +
-      '<td class="num">' + numInput(i, 'uniqueSts', a.uniqueSts) + '</td></tr>';
+      '<td class="num">' + numInput(i, 'uniqueSts', a.uniqueSts) + '</td>' +
+      '<td class="num">' + numInput(i, 'emails', a.emails) + '</td></tr>';
   }).join('');
   renderActivityFoot(p);
   body.querySelectorAll('.kpi-inp').forEach(function(inp) {
