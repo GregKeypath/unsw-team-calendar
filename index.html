@@ -700,6 +700,7 @@
     .unsw-badge.suspension-appeal { background:#FEF3C7; color:#92400E; border-left:3px solid #F59E0B; }
     .unsw-badge.ipt-open { background:#CCFBF1; color:#115E59; border-left:3px solid #14B8A6; }
     .unsw-badge.wadm-drop { background:#FCE7F3; color:#9D174D; border-left:3px solid #DB2777; }
+    .unsw-badge.sem-block { background:#E2E8F0; color:#334155; border-left:3px solid #64748B; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -1593,7 +1594,6 @@
 <div class="tab-panel" id="tab-kanban">
   <div class="kanban-wrap">
     <div class="pacing-hex-nav" id="kanban-hex-nav" style="margin-bottom:16px;"></div>
-    <button class="pacing-upload-btn" id="kanban-sync-cal-btn" style="margin-bottom:8px;">📅 Sync Engagement Tasks to Calendar</button>
     <div class="kanban-board" id="kanban-board"></div>
     <div class="kanban-strip" id="kanban-other-strip"></div>
     <div class="kanban-strip" id="kanban-auto-strip"></div>
@@ -1913,18 +1913,6 @@
   </div>
 </div>
 
-<div class="sync-modal-overlay hidden" id="sync-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9000;display:flex;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:12px;width:480px;max-width:96vw;box-shadow:0 8px 40px rgba(0,0,0,0.22);overflow:hidden;max-height:90vh;display:flex;flex-direction:column;">
-    <div style="padding:14px 18px;border-bottom:1px solid #f3f4f6;"><h3 style="margin:0;font-size:0.9rem;font-weight:800;">📅 Sync Engagement Tasks to Calendar</h3>
-    <p style="margin:6px 0 0;font-size:0.72rem;color:#6b7280;">Select which day-specific tasks to add to the calendar across all hexamesters. Already-existing events won't be duplicated.</p></div>
-    <div id="sync-task-list" style="padding:12px 18px;overflow-y:auto;flex:1;"></div>
-    <div style="padding:12px 18px;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end;gap:8px;">
-      <button id="sync-cancel-btn" style="padding:7px 16px;border-radius:7px;border:1px solid #e5e7eb;background:none;font-size:0.78rem;cursor:pointer;color:#6b7280;">Cancel</button>
-      <button id="sync-confirm-btn" style="padding:7px 18px;border-radius:7px;border:none;background:#1e3a5f;color:#fff;font-size:0.78rem;font-weight:700;cursor:pointer;">Add to Calendar</button>
-    </div>
-  </div>
-</div>
-
 <!-- Pacing upload modal -->
 <div class="pacing-upload-overlay hidden" id="pacing-upload-overlay">
   <div class="pacing-upload-modal">
@@ -2057,6 +2045,13 @@
     '2026-03-06':[{type:'ipt-open', label:'IPT Closes H1'}],
     '2026-02-03':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1'}],
     '2026-02-10':[{type:'wadm-drop', label:'WADM Students Dropped H1'}],
+    // SEM block applied to students — Monday of Week 5
+    '2026-02-16':[{type:'sem-block', label:'SEM Block Applied H1'}],
+    '2026-04-13':[{type:'sem-block', label:'SEM Block Applied H2'}],
+    '2026-06-08':[{type:'sem-block', label:'SEM Block Applied H3'}],
+    '2026-08-03':[{type:'sem-block', label:'SEM Block Applied H4'}],
+    '2026-09-28':[{type:'sem-block', label:'SEM Block Applied H5'}],
+    '2026-11-23':[{type:'sem-block', label:'SEM Block Applied H6'}],
     '2026-01-29':[{type:'census', label:'Census H1'}],
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
@@ -2473,7 +2468,7 @@
             const badge = item.link ? document.createElement('a') : document.createElement('span');
             badge.className = `unsw-badge ${item.type}`;
             if (item.link) { badge.href = item.link; badge.target = '_blank'; badge.rel = 'noopener'; badge.style.textDecoration = 'none'; }
-            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : item.type === 'ipt-open' ? '🔓' : item.type === 'wadm-drop' ? '📉' : '✅';
+            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : item.type === 'ipt-open' ? '🔓' : item.type === 'wadm-drop' ? '📉' : item.type === 'sem-block' ? '🚧' : '✅';
             badge.textContent = icon + ' ' + item.label;
             row.appendChild(badge);
           });
@@ -6406,10 +6401,6 @@ ${cardsHTML}
     alert('✅ Added ' + added + ' calendar entries from ' + checked.length + ' engagement tasks.');
   }
 
-  document.getElementById('kanban-sync-cal-btn').addEventListener('click', openSyncModal);
-  document.getElementById('sync-confirm-btn').addEventListener('click', runSyncToCalendar);
-  document.getElementById('sync-cancel-btn').addEventListener('click', () => document.getElementById('sync-modal-overlay').classList.add('hidden'));
-  document.getElementById('sync-modal-overlay').addEventListener('click', e => { if (e.target.id === 'sync-modal-overlay') document.getElementById('sync-modal-overlay').classList.add('hidden'); });
 
   // ── Historical Drop Rate ──────────────────────────────────────
   // Locked historical data from official drop analysis reports
