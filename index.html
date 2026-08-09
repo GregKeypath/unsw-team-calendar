@@ -825,6 +825,8 @@
     /* ── Pacing Board ── */
     .pacing-wrap { padding: 20px 32px 40px; max-width: 1600px; margin: 0 auto; }
     .pacing-controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .pacing-lock-btn { align-self: flex-start; border: 1px solid #d1d5db; background: #fff; border-radius: 7px; padding: 5px 12px; font-size: 0.72rem; font-weight: 700; cursor: pointer; color: #6b7280; font-family: inherit; }
+    .pacing-lock-btn.locked { background: #fef3c7; border-color: #fde68a; color: #92400e; }
     .pacing-hex-nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .pacing-ssa-nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
     .pacing-filter-label { font-size: 0.68rem; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; min-width: 90px; }
@@ -1611,6 +1613,7 @@
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
       <div class="pacing-ssa-nav" id="pacing-ssa-nav"></div>
+      <button id="pacing-lock-btn" class="pacing-lock-btn"></button>
     </div>
     <div class="pacing-content" id="pacing-content"></div>
   </div>
@@ -2319,6 +2322,7 @@
 
   const DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/events.json';
   const PACING_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing.json';
+  const PACING_LOCK_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing_targetlock.json';
 
   let events = {};
   let startDate;   // Monday of the first visible week
@@ -2723,7 +2727,6 @@
       rows: [
         { name:'Daljeet Sahota',    st:0, en:0, it:0, stt:0, gcm:0, gcmPool:0, gcmt:0, t1t2pool:0, t1t2:0, cohort:0, ctd:0, cohortContact:0, calls:null, sts:null, cr:'—', cq:null, dr:'0%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'Priscilla Samuel',  st:0, en:0, it:0, stt:0, gcm:0, gcmPool:0, gcmt:0, t1t2pool:0, t1t2:0, cohort:0, ctd:0, cohortContact:0, calls:null, sts:null, cr:'—', cq:null, dr:'0%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
-        { name:'Saravanan Rajamani',st:0, en:0, it:0, stt:0, gcm:0, gcmPool:0, gcmt:0, t1t2pool:0, t1t2:0, cohort:0, ctd:0, cohortContact:0, calls:null, sts:null, cr:'—', cq:null, dr:'0%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'Amelia Churchill',  st:0, en:0, it:0, stt:0, gcm:0, gcmPool:0, gcmt:0, t1t2pool:0, t1t2:0, cohort:0, ctd:0, cohortContact:0, calls:null, sts:null, cr:'—', cq:null, dr:'0%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'Kimmi',             st:0, en:0, it:0, stt:0, gcm:0, gcmPool:0, gcmt:0, t1t2pool:0, t1t2:0, cohort:0, ctd:0, cohortContact:0, calls:null, sts:null, cr:'—', cq:null, dr:'0%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'James Miller',      st:0, en:0, it:0, stt:0, gcm:0, gcmPool:0, gcmt:0, t1t2pool:0, t1t2:0, cohort:0, ctd:0, cohortContact:0, calls:null, sts:null, cr:'—', cq:null, dr:'0%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
@@ -2735,6 +2738,7 @@
   let activePacingHex = 'H5';
   let activePacingSSA = null;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
+  let pacingLocked = true;      // Start Target read-only until unlocked (shared via Firebase)
 const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns','James Miller'];
   const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards', 'Carmela Gomez'];
 
@@ -3331,6 +3335,11 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       activePacingData = initPacingData();
     }
     overlayLockedTargets(activePacingData);
+    try {
+      const lr = await fetch(PACING_LOCK_DB);
+      const lv = await lr.json();
+      pacingLocked = lv !== false; // default locked
+    } catch(e) { pacingLocked = true; }
   }
 
   async function savePacingData() {
@@ -3364,13 +3373,19 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     return '<div class="pc-bars">' + rowItems.map(item => {
       const r = item.r;
       const val = Number(r[bar.value]) || 0;
-      const markers = (bar.markers || []).map(m => ({ label: m.label, v: Number(r[m.f]) || 0 }));
+      const markers = (bar.markers || []).map(m => ({ label: m.label, v: Number(r[m.f]) || 0, f: m.f }));
       const scaleMax = Math.max(val, ...markers.map(m => m.v), 1) * 1.08;
       const pos = v => Math.min(100, v / scaleMax * 100);
       const primary = markers.length ? markers[bar.primaryIdx || 0].v : val;
       const attain = primary > 0 ? val / primary * 100 : 0;
       const col = attain >= 90 ? '#10b981' : attain >= 70 ? '#f59e0b' : '#ef4444';
-      const goals = markers.map(m => `<div class="pc-bar-goal" style="left:${pos(m.v)}%"><span>${m.label} ${m.v}</span></div>`).join('');
+      const goals = markers.map(m => {
+        const editable = !pacingLocked && !item.isTotal && bar.value === 'en' && m.f === 'st';
+        const vHtml = editable
+          ? `<span class="pc-editable-num" data-field="${m.f}" data-hex="${item.hexKey}" data-idx="${item.rowIdx}" title="Click to edit target">${m.v}</span>`
+          : `${m.v}`;
+        return `<div class="pc-bar-goal" style="left:${pos(m.v)}%"><span>${m.label} ${vHtml}</span></div>`;
+      }).join('');
       const rowCls = item.isTotal ? 'pc-bar-row total-bar' : 'pc-bar-row';
       const valEl = item.isTotal
         ? `${val}`
@@ -3467,6 +3482,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   }
 
   function renderPacing() {
+    updatePacingLockBtn();
     // ── Study Period nav ──────────────────────────────────────────
     const nav = document.getElementById('pacing-hex-nav');
     if (nav) {
@@ -3579,6 +3595,21 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       }
     });
   });
+
+  // ── Pacing Target Lock ────────────────────────────────────────
+  function updatePacingLockBtn() {
+    const b = document.getElementById('pacing-lock-btn');
+    if (!b) return;
+    b.className = 'pacing-lock-btn' + (pacingLocked ? ' locked' : '');
+    b.textContent = pacingLocked ? '🔒 Targets locked' : '🔓 Targets unlocked';
+  }
+  function setPacingLock(v) {
+    pacingLocked = v;
+    fetch(PACING_LOCK_DB, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(v) }).catch(() => {});
+    updatePacingLockBtn();
+    renderPacing();
+  }
+  document.getElementById('pacing-lock-btn').addEventListener('click', () => setPacingLock(!pacingLocked));
 
   // ── Pacing Inline Edit ────────────────────────────────────────
 
