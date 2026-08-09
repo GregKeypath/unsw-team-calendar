@@ -2820,6 +2820,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 
   const COHORT_CENSUS_DATE  = '2026-07-16';
   const ENROL_CLOSE_DATE    = '2026-07-06';
+  const ENROL_CLOSE_DATES   = { H1:'2026-01-19', H2:'2026-03-16', H3:'2026-05-11', H4:'2026-07-06', H5:'2026-08-31', H6:'2026-10-26' };
   const COHORT_KPI_START   = new Date('2026-05-21T00:00:00');
 
   function workingDaysUntil(dateStr) {
@@ -3442,16 +3443,23 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     renderPacing();
   }
 
-  function buildSummaryBar(r, hexLabel) {
+  function buildSummaryBar(r, hexLabel, hexKey) {
     const en      = r.en  || 0;
     const st      = r.st  || 0;
     const it      = r.it  || 0;
     const drops   = r.drops != null ? r.drops : '—';
     const dr      = r.dr  || '—';
     const needed  = (st > 0) ? (st - en) : '—';
-    const wdays   = workingDaysUntil(ENROL_CLOSE_DATE);
-    const perDay  = (typeof needed === 'number' && needed > 0 && wdays > 0)
-                    ? parseFloat((needed / wdays).toFixed(1)) : (typeof needed === 'number' ? 0 : '—');
+    const closeDate = ENROL_CLOSE_DATES[hexKey] || ENROL_CLOSE_DATE;
+    const wdays   = workingDaysUntil(closeDate);
+    let perDay;
+    if (typeof needed !== 'number') perDay = '—';
+    else if (needed <= 0) perDay = 0;
+    else if (wdays > 0) perDay = parseFloat((needed / wdays).toFixed(1));
+    else perDay = '—';
+    const _cp = closeDate.split('-').map(Number);
+    const closeLabel = _cp[2] + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][_cp[1]-1];
+    const perDaySub = wdays > 0 ? `until ${closeLabel} deadline` : `${closeLabel} deadline passed`;
     const rawPctSt   = st > 0 ? en / st * 100 : 0;
     const pctSt      = Math.min(100, rawPctSt);
     const rawPctIt   = it > 0 ? en / it * 100 : 0;
@@ -3476,7 +3484,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         ${div('To Incentive Target', rawPctIt.toFixed(1) + '%', en.toLocaleString() + ' of ' + it.toLocaleString() + ' enrolled' + (rawPctIt > 100 ? ' ✓ Exceeded' : ''), pctIt)}
         ${div('Drops', typeof drops === 'number' ? drops : drops, dr + ' drop rate', null)}
         ${div('Enrollments Needed', typeof needed === 'number' ? needed.toLocaleString() : needed, 'to hit start target', null)}
-        ${statHTML('Needed Per Day', perDay, 'until Jul 6 deadline', null)}
+        ${statHTML('Needed Per Day', perDay, perDaySub, null)}
       </div>
     </div>`;
   }
@@ -3543,7 +3551,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       const rowIdx = hex.rows.findIndex(r => r.name === activePacingSSA);
       if (rowIdx === -1) { content.innerHTML = '<p style="padding:20px;color:#888">No data for this combination.</p>'; return; }
       const advRow = calcDerived(hex.rows[rowIdx]);
-      content.innerHTML = buildSummaryBar(advRow, hex.rows[rowIdx].name + ' · ' + hex.label) +
+      content.innerHTML = buildSummaryBar(advRow, hex.rows[rowIdx].name + ' · ' + hex.label, activePacingHex) +
         buildSectionCards([{
           label:    `<span class="ssa-name">${hex.rows[rowIdx].name.split(' ')[0]}</span>`,
           fullName: hex.rows[rowIdx].name,
@@ -3571,7 +3579,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           hexKey, rowIdx: 'total' }
       ];
       const totRow = calcTotal(visibleRows);
-      content.innerHTML = buildSummaryBar(totRow, hex.label) + buildSectionCards(rowItems);
+      content.innerHTML = buildSummaryBar(totRow, hex.label, hexKey) + buildSectionCards(rowItems);
     }
     initDropsUpload();
   }
