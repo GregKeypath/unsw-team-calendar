@@ -6835,12 +6835,12 @@ ${cardsHTML}
     Object.entries(byProgram).sort((a,b) => a[0].localeCompare(b[0])).forEach(([prog, progUnits]) => {
       // Sort: high-drop (>10%) first, then alphabetical by name
       progUnits.sort((a, b) => {
-        const ra = getEffectiveDropNum(sp, a.code) || 0;
-        const rb = getEffectiveDropNum(sp, b.code) || 0;
-        const aHigh = ra > 10, bHigh = rb > 10;
-        if (aHigh !== bHigh) return bHigh - aHigh; // high-drop first
-        if (aHigh && bHigh) return rb - ra; // within high-drop: highest rate first
-        return a.name.localeCompare(b.name);
+        const ra = getEffectiveDropNum(sp, a.code);
+        const rb = getEffectiveDropNum(sp, b.code);
+        const va = ra === null ? -1 : ra; // unknown drop rate sorts last
+        const vb = rb === null ? -1 : rb;
+        if (vb !== va) return vb - va; // highest drop rate first
+        return a.name.localeCompare(b.name); // tie-break by name
       });
       const color = DR_CAT_COLORS[prog] || '#374151';
       // Program header
