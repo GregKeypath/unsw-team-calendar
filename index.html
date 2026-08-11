@@ -1404,7 +1404,7 @@
     .di-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
     .di-card-hd { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#6b7280; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
     /* Snapshot */
-    .di-snap { display:grid; grid-template-columns:repeat(4,1fr); gap:0; }
+    .di-snap { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:0; }
     @media (max-width:760px){ .di-snap { grid-template-columns:repeat(2,1fr); } }
     .di-snap-cell { padding:4px 16px; border-left:1px solid #eef2f7; }
     .di-snap-cell:first-child { border-left:none; padding-left:0; }
@@ -3651,9 +3651,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       label: '2026 T4',
       snapshot: {
         rate: '7.8%', rateSub: '89 drops of 1,144 commencements',
-        when: 'Weeks 1–2', whenSub: '100% of drops · Wk1 53 · Wk2 36',
-        diseng: '~half', disengSub: 'never truly started or went silent',
-        bottom: 'A first-two-weeks engagement problem — not a content problem.'
+        unreached: '~half', unreachedSub: '≈44 drops were students nobody reached — never logged in or went silent',
+        stated: 'Work Commitments', statedSub: 'the #1 reason students actually give — offer a lighter load or LOA',
+        bottom: 'An engagement problem, not a content problem — we lose the students we don\'t reach in time. Those unreached drops are exactly what a high Attempted / Contacted rate protects.'
       },
       reasons: [
         { r:'Roster File Dropped', c:25, p:28, tag:'disengagement' },
@@ -3665,7 +3665,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       ],
       reasonsNote: 'Reasons 1–2 are disengagement (nobody reached them in time). Work Commitments is the top reason students actually give.',
       talkingPoints: [
-        'Drops don\'t happen late — they happen in Weeks 1–2. Front-load your outreach.',
+        'Contact rate IS drop-prevention rate: ≈44 of the 89 drops (about half) were students nobody reached — Roster Dropped or Unresponsive. Every point of Attempted / Contacted rate is a student we keep.',
         'A "Roster Dropped / Unresponsive" student is one nobody reached in time. A Week 1 "are you actually here?" check is the single biggest lever we have.',
         'Work Commitments is the #1 stated reason — offer a lighter load or Leave of Absence before a student withdraws completely.',
         'Priority units to defend in H5: Introductory Data Analysis, Analytics and Business, Cyber Operations, Strategic Rewards and Performance, Portfolio Management.',
@@ -3732,10 +3732,10 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const snap = `<div class="di-card"><div class="di-card-hd">📊 Snapshot — ${d.label}</div>
       <div class="di-snap">
         <div class="di-snap-cell"><div class="di-snap-val">${s.rate}</div><div class="di-snap-lbl">Overall drop rate</div><div class="di-snap-sub">${s.rateSub}</div></div>
-        <div class="di-snap-cell"><div class="di-snap-val">${s.when}</div><div class="di-snap-lbl">When drops happen</div><div class="di-snap-sub">${s.whenSub}</div></div>
-        <div class="di-snap-cell"><div class="di-snap-val">${s.diseng}</div><div class="di-snap-lbl">Disengagement</div><div class="di-snap-sub">${s.disengSub}</div></div>
-        <div class="di-snap-cell"><div class="di-snap-lbl">Bottom line</div><div style="font-size:0.82rem;color:#1e3a5f;font-weight:700;margin-top:6px;line-height:1.35;">${s.bottom}</div></div>
-      </div></div>`;
+        <div class="di-snap-cell"><div class="di-snap-val">${s.unreached}</div><div class="di-snap-lbl">Went unreached</div><div class="di-snap-sub">${s.unreachedSub}</div></div>
+        <div class="di-snap-cell"><div class="di-snap-val" style="font-size:1.05rem;line-height:1.2;padding-top:5px;">${s.stated}</div><div class="di-snap-lbl">Top stated reason</div><div class="di-snap-sub">${s.statedSub}</div></div>
+      </div>
+      <div class="di-bottom">💡 ${s.bottom}</div></div>`;
     const maxC = Math.max(...d.reasons.map(r => r.c), 1);
     const rzRows = d.reasons.map((r, i) => `<div class="di-reason">
       <div class="di-reason-rank">${i+1}</div>
