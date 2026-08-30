@@ -1395,6 +1395,54 @@
     .dr-empty { text-align:center; padding:60px; color:#9ca3af; font-size:0.82rem; }
 
     /* ── Drop Rate Insight Tab ─────────────────────────── */
+
+    /* ── Email Assistant Tab ───────────────────────────── */
+    .ea-wrap { padding:24px 32px; max-width:1500px; margin:0 auto; }
+    .ea-header { display:flex; align-items:center; gap:14px; margin-bottom:6px; flex-wrap:wrap; }
+    .ea-header h2 { font-size:1.1rem; font-weight:800; color:#111; margin:0; }
+    .ea-sub { font-size:0.74rem; color:#9ca3af; margin-bottom:18px; }
+    .ea-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+    @media (max-width:1000px){ .ea-grid { grid-template-columns:1fr; } }
+    .ea-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+    .ea-card-hd { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#6b7280; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
+    .ea-label { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:#6b7280; margin:12px 0 5px; display:block; }
+    .ea-label:first-child { margin-top:0; }
+    .ea-input, .ea-textarea, .ea-select { width:100%; border:1.5px solid #e5e7eb; border-radius:8px; padding:9px 11px; font-size:0.82rem; font-family:inherit; color:#111; background:#fff; }
+    .ea-textarea { min-height:230px; resize:vertical; line-height:1.55; }
+    .ea-input:focus, .ea-textarea:focus, .ea-select:focus { outline:none; border-color:#1e3a5f; box-shadow:0 0 0 3px rgba(30,58,95,0.09); }
+    .ea-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .ea-row > div { flex:1; min-width:150px; }
+    .ea-tones { display:flex; gap:6px; flex-wrap:wrap; }
+    .ea-tone { padding:6px 14px; border-radius:20px; border:1.5px solid #e5e7eb; background:#fff; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit; color:#6b7280; transition:all .12s; }
+    .ea-tone.active { border-color:#1e3a5f; background:#1e3a5f; color:#fff; }
+    .ea-tone-hint { font-size:0.66rem; color:#9ca3af; margin-top:5px; line-height:1.4; }
+    .ea-btn { width:100%; margin-top:14px; padding:11px 18px; border-radius:9px; border:none; background:#1e3a5f; color:#fff; font-size:0.85rem; font-weight:800; cursor:pointer; font-family:inherit; transition:background .12s; }
+    .ea-btn:hover:not(:disabled) { background:#15293f; }
+    .ea-btn:disabled { background:#cbd5e1; cursor:not-allowed; }
+    .ea-btn-sm { padding:5px 12px; border-radius:7px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .ea-btn-sm:hover { border-color:#1e3a5f; color:#1e3a5f; }
+    .ea-out-empty { text-align:center; padding:56px 20px; color:#9ca3af; font-size:0.82rem; line-height:1.6; }
+    .ea-mail { background:#f8fafc; border:1px solid #e5e7eb; border-radius:9px; padding:14px 16px; }
+    .ea-mail-subj { font-size:0.85rem; font-weight:800; color:#111; padding-bottom:9px; margin-bottom:10px; border-bottom:1px solid #e5e7eb; }
+    .ea-mail-subj span { font-size:0.6rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:3px; }
+    .ea-mail-body { font-size:0.82rem; color:#1f2937; line-height:1.65; white-space:pre-wrap; }
+    .ea-chg { display:flex; gap:9px; padding:8px 0; border-bottom:1px solid #f3f4f6; }
+    .ea-chg:last-child { border-bottom:none; }
+    .ea-chg-i { flex-shrink:0; width:17px; height:17px; border-radius:50%; background:#dcfce7; color:#166534; font-size:0.62rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+    .ea-chg-t { font-size:0.76rem; color:#374151; line-height:1.5; }
+    .ea-chg-t b { color:#111; }
+    .ea-flag { display:flex; gap:9px; padding:9px 11px; border-radius:8px; margin-bottom:7px; background:#fef2f2; border-left:3px solid #dc2626; }
+    .ea-flag.warn { background:#fffbeb; border-left-color:#f59e0b; }
+    .ea-flag.ok { background:#f0fdf4; border-left-color:#16a34a; }
+    .ea-flag-t { font-size:0.76rem; color:#374151; line-height:1.5; }
+    .ea-q { font-size:0.78rem; color:#475569; line-height:1.5; padding:5px 0 5px 14px; position:relative; }
+    .ea-q:before { content:'?'; position:absolute; left:0; color:#1e3a5f; font-weight:800; }
+    .ea-note { font-size:0.66rem; color:#92400e; background:#fffbeb; border:1px solid #fde68a; border-radius:7px; padding:8px 11px; margin-top:12px; line-height:1.45; }
+    .ea-key-note { font-size:0.66rem; color:#6b7280; margin-top:10px; line-height:1.45; }
+    .ea-key-note a { color:#1e3a5f; }
+    .ea-spin { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,0.35); border-top-color:#fff; border-radius:50%; animation:easpin .7s linear infinite; margin-right:7px; vertical-align:-2px; }
+    @keyframes easpin { to { transform:rotate(360deg); } }
+
     .di-wrap { padding:24px 32px; max-width:1400px; margin:0 auto; }
     .di-header { display:flex; align-items:center; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
     .di-header h2 { font-size:1.1rem; font-weight:800; color:#111; margin:0; }
@@ -1610,6 +1658,7 @@
   <button class="tab-btn" data-tab="triage">Student Triage</button>
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="dropinsight">Drop Rate Insight</button>
+  <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="wishlist">Wishlist</button>
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
@@ -1865,6 +1914,64 @@
       <span class="di-note">Quick reference from last hex — where we lost students, why, and how to protect retention this hex.</span>
     </div>
     <div id="di-content"></div>
+  </div>
+</div>
+
+
+<!-- Email Assistant Tab -->
+<div class="tab-panel" id="tab-email">
+  <div class="ea-wrap">
+    <div class="ea-header">
+      <h2>Email Assistant</h2>
+      <button class="ea-btn-sm" id="ea-key-btn" title="Change the Gemini API key stored in this browser">🔑 API key</button>
+    </div>
+    <div class="ea-sub">Paste a draft. It gets rewritten in the UNSW advisor voice, checked against our key dates and unit names, and you get told what changed and why.</div>
+
+    <div class="ea-grid">
+      <!-- INPUT -->
+      <div class="ea-card">
+        <div class="ea-card-hd">✍️ Your draft</div>
+
+        <div class="ea-row">
+          <div>
+            <label class="ea-label" for="ea-student">Student first name <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional)</span></label>
+            <input class="ea-input" id="ea-student" type="text" placeholder="e.g. Sarah" maxlength="40">
+          </div>
+          <div>
+            <label class="ea-label" for="ea-advisor">Sign off as <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional)</span></label>
+            <input class="ea-input" id="ea-advisor" type="text" placeholder="e.g. Priscilla" maxlength="40">
+          </div>
+        </div>
+
+        <label class="ea-label">Tone</label>
+        <div class="ea-tones" id="ea-tones">
+          <button class="ea-tone active" data-tone="Warm">Warm</button>
+          <button class="ea-tone" data-tone="Direct">Direct</button>
+          <button class="ea-tone" data-tone="Firm">Firm</button>
+        </div>
+        <div class="ea-tone-hint" id="ea-tone-hint">First time raising a problem, anyone gone quiet, anyone struggling. Assumes good faith out loud.</div>
+
+        <label class="ea-label" for="ea-context">What is this about? <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional, helps accuracy)</span></label>
+        <input class="ea-input" id="ea-context" type="text" placeholder="e.g. hasn't submitted Week 4 assessment, census is Thursday" maxlength="200">
+
+        <label class="ea-label" for="ea-draft">Draft email</label>
+        <textarea class="ea-textarea" id="ea-draft" placeholder="Paste your email here, subject line and all. Rough is fine, that's the point."></textarea>
+
+        <button class="ea-btn" id="ea-go">Rewrite this email</button>
+        <div class="ea-key-note" id="ea-key-note"></div>
+      </div>
+
+      <!-- OUTPUT -->
+      <div class="ea-card">
+        <div class="ea-card-hd">
+          <span>✨ Rewritten</span>
+          <button class="ea-btn-sm" id="ea-copy" style="margin-left:auto;display:none;">📋 Copy email</button>
+        </div>
+        <div id="ea-output">
+          <div class="ea-out-empty">Your rewritten email will appear here,<br>along with what changed and why.</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3764,6 +3871,264 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     document.getElementById('di-hex-select').addEventListener('change', function() { renderDropInsight(this.value); });
   }
 
+
+  // ── Email Assistant ───────────────────────────────────────────
+  // Key is injected at deploy time by GitHub Actions (same pattern as the GROW portal).
+  // If no key was injected, each advisor supplies their own and it stays in their browser.
+  const EA_GEMINI_KEY = 'GEMINI_KEY_PLACEHOLDER';
+  const EA_PLACEHOLDER = 'GEMINI_KEY_' + 'PLACEHOLDER';
+  let eaTone = 'Warm';
+  let eaResult = null;
+
+  const EA_TONE_HINTS = {
+    'Warm':   'First time raising a problem, anyone gone quiet, anyone struggling. Assumes good faith out loud.',
+    'Direct': 'Routine business. Deadlines, confirmations, anything factual. Friendly but quick. Your default for most of the day.',
+    'Firm':   'A real consequence is close and a warm approach has already been tried. Say the consequence plainly, once, and still leave a way out.'
+  };
+
+  function eaGetKey(force) {
+    let k = (EA_GEMINI_KEY && EA_GEMINI_KEY !== EA_PLACEHOLDER) ? EA_GEMINI_KEY : null;
+    if (!k) k = localStorage.getItem('unsw-gemini-key');
+    if (!k || force) {
+      const entered = prompt('Enter your Gemini API key.\n\nGet a free one at aistudio.google.com/apikey\nIt is stored only in this browser.', k || '');
+      if (!entered) return null;
+      k = entered.trim();
+      localStorage.setItem('unsw-gemini-key', k);
+    }
+    return k;
+  }
+
+  function eaKeyNote() {
+    const el = document.getElementById('ea-key-note');
+    if (!el) return;
+    const injected = EA_GEMINI_KEY && EA_GEMINI_KEY !== EA_PLACEHOLDER;
+    const stored = localStorage.getItem('unsw-gemini-key');
+    el.innerHTML = injected
+      ? 'Connected using the shared team key.'
+      : (stored
+          ? 'Using your own key, saved in this browser only.'
+          : 'You will be asked for a free Gemini API key the first time. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and it stays in your browser.');
+  }
+
+  // Assemble the UNSW facts the model should check the email against
+  function eaBuildFacts() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const todayKey = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
+    const wk = (typeof UNSW_WEEKS !== 'undefined') ? UNSW_WEEKS[todayKey] : null;
+    const lines = [];
+
+    lines.push('Today: ' + now.toDateString() + (wk ? ' — Hexamester ' + wk.hex + ', ' + wk.label : ''));
+
+    try {
+      const soon = [];
+      const limit = new Date(now.getTime() + 120*24*60*60*1000);
+      Object.entries(UNSW_DATES).forEach(function(entry) {
+        const d = entry[0], items = entry[1];
+        const p = d.split('-').map(Number);
+        const dt = new Date(p[0], p[1]-1, p[2]);
+        if (dt >= now && dt <= limit) items.forEach(function(it) { soon.push(d + ': ' + it.label); });
+      });
+      soon.sort();
+      if (soon.length) lines.push('\nUPCOMING UNSW KEY DATES (authoritative, correct the email if it contradicts these):\n' + soon.join('\n'));
+    } catch(e) {}
+
+    try {
+      const sps = [];
+      if (wk) {
+        sps.push('H' + wk.hex + ' ' + String(now.getFullYear()).slice(2));
+        const nh = wk.hex === 6 ? 1 : wk.hex + 1;
+        const ny = wk.hex === 6 ? now.getFullYear()+1 : now.getFullYear();
+        sps.push('H' + nh + ' ' + String(ny).slice(2));
+      }
+      const seen = {};
+      sps.forEach(function(sp) {
+        const us = (typeof getUnitsForSP === 'function') ? getUnitsForSP(sp) : [];
+        if (us.length) {
+          lines.push('\nUNITS RUNNING ' + sp + ' (correct any wrong code or unit name):');
+          us.forEach(function(u) { if (!seen[u.code]) { seen[u.code] = 1; lines.push(u.code + ' ' + u.name); } });
+        }
+      });
+    } catch(e) {}
+
+    try {
+      if (typeof CANVAS_COURSES !== 'undefined') {
+        Object.entries(CANVAS_COURSES).forEach(function(entry) {
+          lines.push('\nRUNNING IN CANVAS (our LMS) ' + entry[0] + ': ' +
+            entry[1].map(function(c) { return c.code + ' ' + c.name; }).join('; '));
+        });
+      }
+    } catch(e) {}
+
+    try {
+      if (typeof PROGRAM_RULES !== 'undefined') {
+        const pr = [];
+        Object.entries(PROGRAM_RULES).forEach(function(entry) {
+          (entry[1].levels || []).forEach(function(lv) { pr.push(entry[0] + ': ' + lv.label); });
+        });
+        if (pr.length) lines.push('\nPROGRAM STRUCTURES:\n' + pr.join('\n'));
+      }
+    } catch(e) {}
+
+    return lines.join('\n');
+  }
+
+  const EA_RULES = [
+'HOW UNSW ADVISOR EMAILS ARE WRITTEN (follow exactly):',
+'',
+'THE READER: on a phone, tired, study is the fourth thing in their day. They cannot hear your tone, so neutral reads as cold and you must add warmth on purpose. Going quiet is shame, not rudeness. The further behind someone is, the harder replying gets, so make the reply cheap.',
+'',
+'FIVE PARTS, IN ORDER, each with one job:',
+'1. Subject line: make the promise. Name the actual thing plus the action or date. The first 40 characters must carry it because the rest is cut off on a phone. Never "Following up", "Checking in", "Quick question", "Important information".',
+'2. First line: get to the point. The reason you wrote goes in sentence one. Not a greeting, not history, not context.',
+'3. The middle: only what they need in order to do the right thing. Every extra sentence is a tax on the ask.',
+'4. The ask: ONE ask, on its own line, specific, with a date, and small enough that someone who has done nothing can still answer today. Two asks gets you the easy one, three gets you nothing.',
+'5. The close: two lines. One that treats them like a person, one that makes replying feel safe.',
+'',
+'THREE CHECKS: the ask must be visible at a glance; it must still read as warm in a flat, impatient voice; count the decisions being asked for and remove one. "Tuesday 10am or Thursday 2pm?" beats "let me know what suits".',
+'',
+'WORDS TO DROP (rewrite every one): "Just checking in", "As per my previous email", "Please advise", "Unfortunately we are unable to", "I hope this email finds you well", "You failed to submit", "Kindly note that", "At your earliest convenience", "Do not hesitate to reach out", "It has come to our attention", "As previously advised".',
+'',
+'SIX FAILURE PATTERNS TO FIX: The Wall (one block, no breaks). The Buried Ask (ask hidden mid paragraph). The Bundle (multiple requests, the word "also" is the tell). The Over-Apology (so softened the message vanishes). The Robot (nothing in it could only have been written to this student). The Leak (frustration leaking out as formality).',
+'',
+'KEYPATH POLICY (must not be broken):',
+'- Do NOT offer a lighter study load. We cannot do it.',
+'- Do NOT suggest Leave of Absence as the opening option. We are steering away from LOA.',
+'- For work commitments, map the key dates and weekly schedule of the unit around their work, and ask what has actually changed at work.',
+'- Australian English. No em dashes. Never invent policy, dates, fees or outcomes.'
+  ].join('\n');
+
+  async function eaRewrite() {
+    const draft = document.getElementById('ea-draft').value.trim();
+    if (!draft) { alert('Paste a draft email first.'); return; }
+    const key = eaGetKey(false);
+    if (!key) return;
+
+    const student = document.getElementById('ea-student').value.trim();
+    const advisor = document.getElementById('ea-advisor').value.trim();
+    const context = document.getElementById('ea-context').value.trim();
+
+    const btn = document.getElementById('ea-go');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="ea-spin"></span>Rewriting...';
+
+    const prompt = [
+'You are an expert editor for Student Success Advisors at Keypath Education who write to UNSW Online students. Rewrite the draft below so it follows the house style exactly.',
+'',
+EA_RULES,
+'',
+'TONE FOR THIS EMAIL: ' + eaTone + '. ' + EA_TONE_HINTS[eaTone],
+'',
+'UNSW REFERENCE DATA. This is authoritative. If the draft contradicts it (wrong date, wrong unit code, wrong unit name) then correct it and raise a flag. Use your knowledge of UNSW Online for anything else, but if you are not certain a fact is right, flag it for the advisor to verify rather than asserting it.',
+eaBuildFacts(),
+'',
+student ? ('Student first name: ' + student) : 'Student name not supplied, use a neutral greeting.',
+advisor ? ('Sign off as: ' + advisor) : 'Sign off: leave a [Your name] placeholder.',
+context ? ('What this is about: ' + context) : '',
+'',
+'ADVISOR DRAFT:',
+'"""',
+draft.slice(0, 6000),
+'"""',
+'',
+'Respond ONLY with valid JSON, no markdown fences, no commentary:',
+'{',
+'  "subject": "the rewritten subject line",',
+'  "body": "the full rewritten email body as plain text with real line breaks between paragraphs, including the greeting and the sign off",',
+'  "changes": [{"what": "short label of what you changed", "why": "one sentence on why, naming the rule it fixes"}],',
+'  "flags": [{"level": "error or warn or ok", "text": "a factual problem you found and corrected, or something the advisor must verify before sending"}],',
+'  "questions": ["a question the advisor should answer or consider before sending this"]',
+'}',
+'Give 3 to 6 changes, 0 to 4 flags, and 2 to 4 questions. If the draft had no factual problems, return one flag with level "ok" saying the facts checked out against the reference data.'
+    ].join('\n');
+
+    try {
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.35, maxOutputTokens: 2600 } })
+      });
+      if (res.status === 400 || res.status === 401 || res.status === 403) {
+        localStorage.removeItem('unsw-gemini-key');
+        throw new Error('That API key was rejected. Click the API key button to enter a new one.');
+      }
+      const data = await res.json();
+      let raw = (data.candidates && data.candidates[0] && data.candidates[0].content &&
+                 data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
+      raw = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      eaResult = JSON.parse(raw);
+      eaRenderResult(eaResult);
+    } catch (e) {
+      document.getElementById('ea-output').innerHTML =
+        '<div class="ea-flag"><div class="ea-flag-t"><b>Could not rewrite.</b><br>' + eaEsc(e.message || e) + '</div></div>';
+      document.getElementById('ea-copy').style.display = 'none';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Rewrite this email';
+      eaKeyNote();
+    }
+  }
+
+  function eaEsc(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function eaRenderResult(r) {
+    const changes = (r.changes || []).map(function(c, i) {
+      return '<div class="ea-chg"><div class="ea-chg-i">' + (i+1) + '</div><div class="ea-chg-t"><b>' +
+             eaEsc(c.what) + '</b> — ' + eaEsc(c.why) + '</div></div>';
+    }).join('');
+    const flags = (r.flags || []).map(function(f) {
+      const lvl = String(f.level || 'warn').toLowerCase();
+      const cls = lvl === 'ok' ? 'ok' : (lvl === 'error' ? '' : 'warn');
+      const icon = lvl === 'ok' ? '✅' : (lvl === 'error' ? '⚠️' : '🔎');
+      return '<div class="ea-flag ' + cls + '"><div class="ea-flag-t">' + icon + ' ' + eaEsc(f.text) + '</div></div>';
+    }).join('');
+    const qs = (r.questions || []).map(function(q) {
+      return '<div class="ea-q">' + eaEsc(q) + '</div>';
+    }).join('');
+
+    document.getElementById('ea-output').innerHTML =
+      '<div class="ea-mail">' +
+        '<div class="ea-mail-subj"><span>Subject</span>' + eaEsc(r.subject) + '</div>' +
+        '<div class="ea-mail-body">' + eaEsc(r.body) + '</div>' +
+      '</div>' +
+      (flags   ? '<div class="ea-card-hd" style="margin-top:18px;">🔎 Fact check</div>' + flags : '') +
+      (changes ? '<div class="ea-card-hd" style="margin-top:18px;">✏️ What changed and why</div>' + changes : '') +
+      (qs      ? '<div class="ea-card-hd" style="margin-top:18px;">❓ Before you send</div>' + qs : '') +
+      '<div class="ea-note">AI drafted. Read it before sending and check any date, policy or fee against the source. It can be confidently wrong.</div>';
+    document.getElementById('ea-copy').style.display = '';
+  }
+
+  function initEmailAssistant() {
+    if (initEmailAssistant._done) return;
+    initEmailAssistant._done = true;
+
+    document.getElementById('ea-tones').addEventListener('click', function(e) {
+      const b = e.target.closest('.ea-tone');
+      if (!b) return;
+      document.querySelectorAll('.ea-tone').forEach(function(x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      eaTone = b.dataset.tone;
+      document.getElementById('ea-tone-hint').textContent = EA_TONE_HINTS[eaTone] || '';
+    });
+
+    document.getElementById('ea-go').addEventListener('click', eaRewrite);
+    document.getElementById('ea-key-btn').addEventListener('click', function() { eaGetKey(true); eaKeyNote(); });
+
+    document.getElementById('ea-copy').addEventListener('click', function() {
+      if (!eaResult) return;
+      const txt = 'Subject: ' + eaResult.subject + '\n\n' + eaResult.body;
+      navigator.clipboard.writeText(txt).then(function() {
+        const b = document.getElementById('ea-copy');
+        b.textContent = '✓ Copied';
+        setTimeout(function() { b.textContent = '📋 Copy email'; }, 1600);
+      });
+    });
+
+    eaKeyNote();
+  }
+
   // Tab switching
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -3781,6 +4146,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         if (!activePacingData) loadPacingData().then(() => { renderPacing(); initPacingUpload(); });
         else { renderPacing(); initPacingUpload(); }
       }
+      if (btn.dataset.tab === 'email') initEmailAssistant();
       if (btn.dataset.tab === 'dropinsight') {
         if (!diLoaded) { diLoaded = true; initDropInsight(); } else renderDropInsight();
       }
