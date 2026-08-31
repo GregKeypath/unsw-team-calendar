@@ -4043,16 +4043,19 @@ draft.slice(0, 6000),
     ].join('\n');
 
     try {
-      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + key, {
+      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + key, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.35, maxOutputTokens: 2600 } })
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.35, maxOutputTokens: 8000 } })
       });
       if (res.status === 400 || res.status === 401 || res.status === 403) {
         localStorage.removeItem('unsw-gemini-key');
         throw new Error('That API key was rejected. Click the API key button to enter a new one.');
       }
       const data = await res.json();
+      if (data.candidates && data.candidates[0] && data.candidates[0].finishReason === 'MAX_TOKENS') {
+        throw new Error('The reply was cut off before it finished. Try a shorter draft.');
+      }
       let raw = (data.candidates && data.candidates[0] && data.candidates[0].content &&
                  data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
       raw = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
