@@ -1923,7 +1923,6 @@
   <div class="ea-wrap">
     <div class="ea-header">
       <h2>Email Assistant</h2>
-      <button class="ea-btn-sm" id="ea-key-btn" title="Change the Gemini API key stored in this browser">🔑 API key</button>
     </div>
     <div class="ea-sub">Paste a draft. It gets rewritten in the UNSW advisor voice, checked against our key dates and unit names, and you get told what changed and why.</div>
 
@@ -4050,7 +4049,7 @@ draft.slice(0, 6000),
       });
       if (res.status === 400 || res.status === 401 || res.status === 403) {
         localStorage.removeItem('unsw-gemini-key');
-        throw new Error('That API key was rejected. Click the API key button to enter a new one.');
+        throw new Error('That API key was rejected. Refresh and you will be asked for a new one.');
       }
       const data = await res.json();
       if (data.candidates && data.candidates[0] && data.candidates[0].finishReason === 'MAX_TOKENS') {
@@ -4117,7 +4116,6 @@ draft.slice(0, 6000),
     });
 
     document.getElementById('ea-go').addEventListener('click', eaRewrite);
-    document.getElementById('ea-key-btn').addEventListener('click', function() { eaGetKey(true); eaKeyNote(); });
 
     document.getElementById('ea-copy').addEventListener('click', function() {
       if (!eaResult) return;
