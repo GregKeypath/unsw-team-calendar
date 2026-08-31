@@ -1931,24 +1931,14 @@
       <div class="ea-card">
         <div class="ea-card-hd">✍️ Your draft</div>
 
-        <div class="ea-row">
-          <div>
-            <label class="ea-label" for="ea-student">Student first name <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional)</span></label>
-            <input class="ea-input" id="ea-student" type="text" placeholder="e.g. Sarah" maxlength="40">
-          </div>
-          <div>
-            <label class="ea-label" for="ea-advisor">Sign off as <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional)</span></label>
-            <input class="ea-input" id="ea-advisor" type="text" placeholder="e.g. Priscilla" maxlength="40">
-          </div>
-        </div>
-
-        <label class="ea-label">Tone</label>
+        <label class="ea-label">Email type</label>
         <div class="ea-tones" id="ea-tones">
-          <button class="ea-tone active" data-tone="Warm">Warm</button>
-          <button class="ea-tone" data-tone="Direct">Direct</button>
-          <button class="ea-tone" data-tone="Firm">Firm</button>
+          <button class="ea-tone active" data-tone="Re-enrolment">Re-enrolment</button>
+          <button class="ea-tone" data-tone="At-risk student">At-risk student</button>
+          <button class="ea-tone" data-tone="General check-in">General check-in</button>
+          <button class="ea-tone" data-tone="Internal / stakeholder">Internal / stakeholder</button>
         </div>
-        <div class="ea-tone-hint" id="ea-tone-hint">First time raising a problem, anyone gone quiet, anyone struggling. Assumes good faith out loud.</div>
+        <div class="ea-tone-hint" id="ea-tone-hint"></div>
 
         <label class="ea-label" for="ea-context">What is this about? <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional, helps accuracy)</span></label>
         <input class="ea-input" id="ea-context" type="text" placeholder="e.g. hasn't submitted Week 4 assessment, census is Thursday" maxlength="200">
@@ -3876,13 +3866,30 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   // If no key was injected, each advisor supplies their own and it stays in their browser.
   const EA_GEMINI_KEY = 'GEMINI_KEY_PLACEHOLDER';
   const EA_PLACEHOLDER = 'GEMINI_KEY_' + 'PLACEHOLDER';
-  let eaTone = 'Warm';
+  let eaType = 'Re-enrolment';
   let eaResult = null;
 
-  const EA_TONE_HINTS = {
-    'Warm':   'First time raising a problem, anyone gone quiet, anyone struggling. Assumes good faith out loud.',
-    'Direct': 'Routine business. Deadlines, confirmations, anything factual. Friendly but quick. Your default for most of the day.',
-    'Firm':   'A real consequence is close and a warm approach has already been tried. Say the consequence plainly, once, and still leave a way out.'
+  const EA_TYPES = {
+    'Re-enrolment': {
+      tone: 'Warm and direct',
+      hint: 'Getting them into next term. Name the real date, make the next step tiny.',
+      guide: 'The goal is one small step toward re-enrolling, not the whole decision. Use the actual enrolment or IPT date from the reference data. Give two concrete options rather than asking them to propose something, because every open choice is somewhere to give up. Leave them in control: state the deadline, then make clear that if it will not work they should say so and you will look at options together.'
+    },
+    'At-risk student': {
+      tone: 'Warm, never firm',
+      hint: 'Behind, disengaged or gone quiet. The reply has to feel cheap and safe.',
+      guide: 'This student is in the avoidance spiral: the further behind they are, the more expensive replying feels, so every chase raises a price they already cannot pay. Bring the price down. Make a bad answer an acceptable one, for example that even "haven\u2019t started" is useful. Take the explaining off them entirely. Normalise it in one sentence, for example that this is where a lot of people hit a wall. Do NOT lead with consequences such as progression or eligibility, because that triggers avoidance in exactly the student who most needs to reply. Shrink the next step until it is smaller than the dread.'
+    },
+    'General check-in': {
+      tone: 'Warm and light',
+      hint: 'Routine proactive contact. Short, human, easy to answer.',
+      guide: 'Nothing is wrong, so do not manufacture a problem. Keep it genuinely short, because length signals effort and effort gets deferred. Warmth has to be deliberate: written text strips it out, so a neutral check-in is received as cool. Include one specific detail that could only have been written to this student, otherwise it reads automated and gets treated as automated. Keep the ask small and easy to answer in one line.'
+    },
+    'Internal / stakeholder': {
+      tone: 'Direct and professional',
+      hint: 'To a colleague or stakeholder, not a student. Clear and information dense.',
+      guide: 'This is NOT a student email. Do not use student retention psychology, do not soften consequences, and do not shrink the ask for emotional reasons. Keep the five part structure: the subject names the thing and the action, the reason is in sentence one, there is one clear ask with a date, and the close is brief. Be precise and information dense. Plain Australian English, no corporate filler and no management jargon. If you are asking a colleague to do something, say exactly what and by when.'
+    }
   };
 
   function eaGetKey(force) {
@@ -4003,8 +4010,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const key = eaGetKey(false);
     if (!key) return;
 
-    const student = document.getElementById('ea-student').value.trim();
-    const advisor = document.getElementById('ea-advisor').value.trim();
     const context = document.getElementById('ea-context').value.trim();
 
     const btn = document.getElementById('ea-go');
@@ -4016,13 +4021,14 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 '',
 EA_RULES,
 '',
-'TONE FOR THIS EMAIL: ' + eaTone + '. ' + EA_TONE_HINTS[eaTone],
+'EMAIL TYPE: ' + eaType + '. Tone: ' + EA_TYPES[eaType].tone + '.',
+'HOW TO HANDLE THIS TYPE: ' + EA_TYPES[eaType].guide,
 '',
 'UNSW REFERENCE DATA. This is authoritative. If the draft contradicts it (wrong date, wrong unit code, wrong unit name) then correct it and raise a flag. Use your knowledge of UNSW Online for anything else, but if you are not certain a fact is right, flag it for the advisor to verify rather than asserting it.',
 eaBuildFacts(),
 '',
-student ? ('Student first name: ' + student) : 'Student name not supplied, use a neutral greeting.',
-advisor ? ('Sign off as: ' + advisor) : 'Sign off: leave a [Your name] placeholder.',
+'The student name is already in the advisor draft if it is needed. Keep whatever greeting the draft uses, or use a neutral one if there is none.',
+'Do NOT add a signature block, job title or contact details. Outlook adds the signature automatically. End after the closing line.',
 context ? ('What this is about: ' + context) : '',
 '',
 'ADVISOR DRAFT:',
@@ -4111,8 +4117,8 @@ draft.slice(0, 6000),
       if (!b) return;
       document.querySelectorAll('.ea-tone').forEach(function(x) { x.classList.remove('active'); });
       b.classList.add('active');
-      eaTone = b.dataset.tone;
-      document.getElementById('ea-tone-hint').textContent = EA_TONE_HINTS[eaTone] || '';
+      eaType = b.dataset.tone;
+      document.getElementById('ea-tone-hint').textContent = (EA_TYPES[eaType] || {}).hint || '';
     });
 
     document.getElementById('ea-go').addEventListener('click', eaRewrite);
@@ -4127,6 +4133,7 @@ draft.slice(0, 6000),
       });
     });
 
+    document.getElementById('ea-tone-hint').textContent = (EA_TYPES[eaType] || {}).hint || '';
     eaKeyNote();
   }
 
