@@ -7248,11 +7248,6 @@ ${cardsHTML}
 
   // Courses running in Canvas (our LMS), by study period
   const CANVAS_COURSES = {
-    'H4 26': [
-      { code:'ZZBU6502', name:'Analytics and Business',                status:'Rollover' },
-      { code:'ZZCA8310', name:'Project Schedule and Budget Control',   status:'New' },
-      { code:'ZZLJ8212', name:'Commercial Contract Law',               status:'Rollover' }
-    ],
     'H5 26': [
       { code:'ZZCA8147', name:'Business of Managing Projects' },
       { code:'ZZCA8303', name:'Project Management Body of Knowledge' },
@@ -7295,7 +7290,7 @@ ${cardsHTML}
     return `<div style="grid-column:1/-1;background:#fff7f5;border:1px solid #f6c9bd;border-left:4px solid #e4060f;border-radius:10px;padding:14px 16px;margin-bottom:6px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
         <span style="font-size:0.8rem;font-weight:800;color:#b91c1c;">🎨 Offered in Canvas (LMS)</span>
-        <span style="font-size:0.66rem;color:#9ca3af;">${total} courses across H4–H6 2026</span>
+        <span style="font-size:0.66rem;color:#9ca3af;">${total} courses across ${terms[0].split(' ')[0]}–${terms[terms.length-1].split(' ')[0]} 20${terms[0].split(' ')[1]}</span>
       </div>
       ${groups}
     </div>`;
