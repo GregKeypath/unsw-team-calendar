@@ -3957,6 +3957,27 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       });
     } catch(e) {}
 
+    // Course digest: convenor, assessments and any significant change, for the current hex
+    try {
+      if (typeof DIGEST_INFO !== 'undefined' && wk) {
+        var dsp = 'H' + wk.hex + ' ' + String(now.getFullYear()).slice(2);
+        var dg = DIGEST_INFO[dsp];
+        if (dg) {
+          var dl = [];
+          Object.keys(dg).forEach(function(code) {
+            var u = dg[code];
+            var s = code;
+            if (u.convenor) s += ' | convenor ' + u.convenor + (u.convenorEmail ? ' (' + u.convenorEmail + ')' : '');
+            if (u.assessments && u.assessments.length) s += ' | assessments: ' + u.assessments.join('; ');
+            if (u.textbookNote) s += ' | textbook: ' + u.textbookNote;
+            if (u.note) s += ' | NOTE: ' + u.note;
+            dl.push(s);
+          });
+          if (dl.length) lines.push('\nCOURSE DIGEST ' + dsp + ' (authoritative for assessments, weightings and convenors):\n' + dl.join('\n'));
+        }
+      }
+    } catch(e) {}
+
     try {
       if (typeof CANVAS_COURSES !== 'undefined') {
         Object.entries(CANVAS_COURSES).forEach(function(entry) {
@@ -7235,6 +7256,34 @@ ${cardsHTML}
   }
 
   const DIGEST_INFO = {
+    'H5 26': {
+      // Source: UNSW Hexamester 5 2026 Course digest.pdf
+      'ZZBU6404': { ld:'David Roker', convenor:'Graeme Taylor', assessments:['A1: Data cleaning (20%)','A2: Findings report (30%)','A3: Business report and presentation (50%)'], hasTextbook:false, note:'SIGNIFICANT UPDATE. Stats, logistic regression and R code removed. Data work is now done in Excel. New assessments.' },
+      'ZZEN9213': { ld:'Mark O\'Shea', convenor:'Jackson Terrill', assessments:['A1: Quiz (15%)','A2: Pen testing analysis and validation (45%)','A3: Pentest engagement, report and client debrief (40%)'], hasTextbook:false, note:'SIGNIFICANT UPDATE. New week 2 and 3 content, AI guidance added. Assessment changes pending approval as at 18 Aug.' },
+      'ZZBU6505': { ld:'Liam Tyssen', convenor:'Tracy Wilcox and Nidal Danoun', assessments:['Interactive oral assessment added as A2c: Project report Part B (10%)'], hasTextbook:false, note:'ASSESSMENT UPDATE. Live online oral with an assessor on the ethics of their data scenario. Students must book a time on a new platform. Covered in the week 3 webinar.' },
+      'ZZBU6508': { convenor:'Vinesh Karan', convenorEmail:'vp.karan@unsw.edu.au', assessments:['A1: Case study analysis 1 (25%)','A2: Case study analysis 2 (25%)','A3: Business analytics consulting project (50%)'], hasTextbook:false },
+      'ZZBU6507': { convenor:'Khimji Vaghjiani and Chessman Wekwete', convenorEmail:'k.vaghjiani@unsw.edu.au', assessments:['A1: Class discussion forum posts (25%)','A2a: Visualisation portfolio proposal (5%)','A2b: Critical analysis (25%)','A2c: Final submission (45%)'], hasTextbook:false },
+      'ZZBU6512': { convenor:'Karen Tian', convenorEmail:'fenglin.tian@unsw.edu.au', assessments:['A1a/b/c: Online quizzes (5% + 5% + 10%)','A2a: Discussion forum (15%)','A2b: Discussion forum (15%)','A3: Project (50%)'], hasTextbook:false },
+      'ZZBU6601': { convenor:'Wenjie Huang', convenorEmail:'wenjie.huang1@unsw.edu.au', assessments:['A1: Literature review report (25%)','A2: Project report (50%)','A3: Voiceover presentation and self-reflection (25%)'], hasTextbook:false },
+      'ZZBU6503': { convenor:'Suzanna Mahinder', convenorEmail:'s.mahinder@unsw.edu.au', assessments:['A1: Six 250-word discussion posts (35%)','A2a: 750-word project brief (25%)','A2b: 1500-word change implementation plan (40%)'], hasTextbook:false },
+      'ZZBU8702': { convenor:'Robert Bishop', convenorEmail:'robert.bishop@unsw.edu.au', assessments:['A1: Weekly quizzes (30%)','A2: Final quiz (10%)','Executive memo, investment (30%)','Executive memo, capital structure and payout (30%)'], hasTextbook:true, textbookNote:'Brealey, Myers, Allen & Edmans, Principles of Corporate Finance 14th ed. Available via the reading list.' },
+      'ZZBU8705': { convenor:'Warwick Schneller', convenorEmail:'warwick.schneller@unsw.edu.au', assessments:['A1: Weekly quiz (6 x 5% = 30%)','A2: Case study (20%)','A3: Valuation project (50%)'], hasTextbook:false },
+      'ZZBU8703': { convenor:'Zonghe Guo', convenorEmail:'zonghe.guo@unsw.edu.au', assessments:['A1: Quizzes (3 x 10% = 30%)','A2: Data exercise (25%)','A3: Major case study Part A (10%) and Part B (35%)'], hasTextbook:true, textbookNote:'Shapiro & Hanouna, Multinational Financial Management 11th ANZ ed. Wiley.' },
+      'ZZCA9206': { convenor:'Marwa Keshk', convenorEmail:'marwa.keshk@unsw.edu.au', assessments:['A1: Weekly quizzes (25%)','A2: Case study and presentation (25%)','A3: Reflective essay (10%)','A4: Risk assessment consulting report (40%)'], hasTextbook:false },
+      'ZZEN9203': { assessments:['A1: Logbook (30%)','A2a: Weekly project update (10%)','A2b: Security engineering project report (25%)','A3: Capstone test, open book (35%)'], hasTextbook:false },
+      'ZZEN9215': { assessments:['A1: Weekly tasks (60%)','A2: Project (40%)'], hasTextbook:false },
+      'ZZSC9020': { assessments:['A1a: Group project plan (20%)','A1b: Individual implementation checklist (5%)','A2: Individual reflection portfolio (5%)','A3: Group project report (50%)','A4: Group video presentation (20%)'], hasTextbook:false },
+      'ZZSC5836': { convenor:'Umar Farooq', convenorEmail:'umar.farooq@unsw.edu.au', assessments:['A1: Online quiz (5%)','A2: Modelling and reporting (20%)','A3: Project (20%)','A4: Exam (55%)'], hasTextbook:true, textbookNote:'Geron, Hands-on Machine Learning with Scikit-Learn, Keras and TensorFlow, 2nd ed. Via the reading list.' },
+      'ZZSC9001': { convenor:'Atefeh Samani', convenorEmail:'atefeh.samani@unsw.edu.au', assessments:['A1a: Statistics quiz (5%)','A1b: Statistics quiz (10%)','A2: Economics report (15%)','A3: Computer science short answer (15%)','A4: Online final exam (55%)'], hasTextbook:false },
+      'ZZBU8509': { assessments:['A1: Peer discussions (30%)','A2: Weekly quizzes (30%)','A3: Evaluating a funding market proposal (40%)'], hasTextbook:false },
+      'ZZBU8508': { assessments:['A1: Weekly quizzes (20%)','A2: Case study report (35%)','A3: Creating your own FinTech (45%)'], hasTextbook:false },
+      'ZZBU6409': { convenor:'James Anderson', convenorEmail:'j.anderson@unsw.edu.au', assessments:['A1: Case analysis (20%)','A2: Professional/personal change plan (40%)','A3: Reflective journal (40%)'], hasTextbook:false },
+      'ZZBU6410': { convenor:'Greta Sharples', convenorEmail:'g.sharples@unsw.edu.au', assessments:['A1: Weekly journal reflections (30%)','A2: Written report (30%)','A3: Video (40%)'], hasTextbook:true, textbookNote:'Storey, Strategic Human Resource Management: a research overview. Routledge. Via the reading list.' },
+      'ZZBU6403': { convenor:'Burcin Hatipoglu', convenorEmail:'b.hatipoglu@unsw.edu.au', assessments:['A1: Discussion posts (25%)','A2a: Report on organisation and HRM practices (30%)','A2b: Report on sustainability recommendations (45%)'], hasTextbook:false },
+      'ZZBU6003': { convenor:'William Degotardi', convenorEmail:'w.degotardi@unsw.edu.au', assessments:['A1: Multiple-choice questions (20%)','A2: Short-answer questions (50%)','A3: Playconomics activities (30%)'], hasTextbook:false, note:'All course resources are in Playconomics. There is a course Quick Guide for students.' },
+      'ZZBU6008': { convenor:'Adrianne Harris', convenorEmail:'a.harris@unsw.edu.au', assessments:['A1: Strategic consulting development plan (10%)','A2: Strategic consulting portfolio (40%)','A3: Work-based project (50%)'], hasTextbook:false },
+      'ZZBU6006': { convenor:'Mohammad Rezvan', convenorEmail:'m.rezvan@unsw.edu.au', assessments:['A1: Analysis report (10%)','A2: Presentation (40%)','A3: Report (50%)'], hasTextbook:false },
+    },
     'H4 26': {
       'ZZLJ8212': { ld:'David Roker', convenor:'Kym Sheehan', convenorEmail:'kym.sheehan@unsw.edu.au', assessments:['Prescribed activity 1 (15%)','Scenario (30%)','Prescribed activity 2 (15%)','Assessment 3 (40%)'], hasTextbook:true, textbookNote:'Ch. 4 only — available in course' },
       'ZZCA9205': { ld:'Thien Ho', convenor:'Travis Quinn', convenorEmail:'t.quinn@adfa.edu.au', assessments:['Laboratory exercises (30%)','Secure design (35%)','Discussion paper video briefing (35%)'], hasTextbook:false },
