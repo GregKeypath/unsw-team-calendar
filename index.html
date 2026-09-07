@@ -701,6 +701,16 @@
     .unsw-badge.ipt-open { background:#CCFBF1; color:#115E59; border-left:3px solid #14B8A6; }
     .unsw-badge.wadm-drop { background:#FCE7F3; color:#9D174D; border-left:3px solid #DB2777; }
     .unsw-badge.sem-block { background:#E2E8F0; color:#334155; border-left:3px solid #64748B; }
+    .unsw-badge.huddle { background:#EEF2FF; color:#3730A3; border-left:3px solid #6366F1; }
+    .unsw-badge.kd-moved { box-shadow:inset 0 0 0 1px #94A3B8; }
+    .unsw-badge .kd-btn { display:none; background:none; border:none; cursor:pointer; font-size:0.6rem; padding:0 1px; opacity:0.6; line-height:1; color:inherit; }
+    .unsw-badge:hover .kd-btn { display:inline; }
+    .unsw-badge .kd-btn:hover { opacity:1; }
+    .kd-bar { display:flex; align-items:center; gap:10px; margin:0 0 8px; font-size:0.72rem; color:#6b7280; }
+    .kd-bar.hidden { display:none; }
+    .kd-bar button { background:none; border:1px solid #e5e7eb; border-radius:5px; padding:3px 10px; font-size:0.7rem; cursor:pointer; color:#374151; }
+    .kd-bar button:hover { background:#f3f4f6; }
+    .kd-note { font-size:0.72rem; color:#6b7280; margin-top:10px; line-height:1.45; }
 
     /* Card layout */
     .kanban-card { position: relative; display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -1686,6 +1696,11 @@
   </div>
 </div>
 
+<div class="kd-bar hidden" id="kd-bar">
+  <span id="kd-bar-text"></span>
+  <button id="kd-reset-btn">Restore all key dates</button>
+</div>
+
 <div class="calendar-grid" id="calendar-grid"></div>
 
 </div><!-- end tab-calendar -->
@@ -1847,6 +1862,24 @@
 </div>
 
 <!-- Modal -->
+<div class="modal-overlay" id="kd-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="kd-title">Key Date</h2>
+    </div>
+    <div class="modal-body">
+      <div class="tag-label">Date</div>
+      <input type="date" id="kd-date" />
+      <div class="kd-note" id="kd-note"></div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="kd-restore-btn">Restore built-in date</button>
+        <button class="btn-cancel" id="kd-close-btn">Cancel</button>
+        <button class="btn-save" id="kd-save-btn">Move</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal">
     <div class="modal-header">
@@ -2192,7 +2225,7 @@
   })();
 
   // UNSW 2026 Academic Calendar – key dates
-  const UNSW_DATES = {
+  const UNSW_DATES_BASE = {
     // ── Hexa 1 ──
     '2026-01-12':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-13':[{type:'o-week', label:'O-Week H1'}],
@@ -2279,6 +2312,98 @@
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
   };
+
+  // Weekly team huddle, every Thursday
+  (function () {
+    const pad = n => String(n).padStart(2, '0');
+    const d = new Date(2026, 0, 1);
+    while (d.getDay() !== 4) d.setDate(d.getDate() + 1);
+    const end = new Date(2027, 11, 31);
+    while (d <= end) {
+      const k = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+      if (!UNSW_DATES_BASE[k]) UNSW_DATES_BASE[k] = [];
+      UNSW_DATES_BASE[k].push({ type:'huddle', label:'UNSW Huddle' });
+      d.setDate(d.getDate() + 7);
+    }
+  })();
+
+  const KD_ICONS = {
+    'o-week':'🎓', 'census':'📋', 'enrol-deadline':'📝', 'late-enrol':'⏰',
+    'standing-report':'📊', 'suspension-appeal':'⚖️', 'ipt-open':'🔓',
+    'wadm-drop':'📉', 'sem-block':'🚧', 'huddle':'🤝'
+  };
+
+  // Coded key dates are seeds. The team can move or cancel any of them, and those
+  // changes live in Firebase so everyone sees the same calendar.
+  const KEYDATE_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/keydate_overrides.json';
+  let keyDateOverrides = {};
+  const UNSW_DATES = {};
+
+  function kdId(baseDate, item) {
+    return (baseDate + '|' + item.type + '|' + item.label).replace(/[.#$/\[\]]/g, '_');
+  }
+
+  function rebuildUnswDates() {
+    Object.keys(UNSW_DATES).forEach(k => delete UNSW_DATES[k]);
+    Object.keys(UNSW_DATES_BASE).forEach(baseDate => {
+      UNSW_DATES_BASE[baseDate].forEach(item => {
+        const id = kdId(baseDate, item);
+        const ov = keyDateOverrides[id];
+        if (ov && ov.hidden) return;
+        const shown = (ov && ov.date) ? ov.date : baseDate;
+        const copy = Object.assign({}, item, { kdId:id, kdBase:baseDate });
+        if (ov && ov.date && ov.date !== baseDate) copy.kdMoved = true;
+        if (!UNSW_DATES[shown]) UNSW_DATES[shown] = [];
+        UNSW_DATES[shown].push(copy);
+      });
+    });
+    updateKdBar();
+  }
+
+  function updateKdBar() {
+    const bar = document.getElementById('kd-bar');
+    if (!bar) return;
+    let moved = 0, gone = 0;
+    Object.keys(keyDateOverrides).forEach(k => {
+      const o = keyDateOverrides[k];
+      if (o && o.hidden) gone++; else if (o && o.date) moved++;
+    });
+    if (!moved && !gone) { bar.classList.add('hidden'); return; }
+    const parts = [];
+    if (moved) parts.push(moved + (moved === 1 ? ' key date moved' : ' key dates moved'));
+    if (gone) parts.push(gone + ' cancelled');
+    document.getElementById('kd-bar-text').textContent = '📌 ' + parts.join(' · ');
+    bar.classList.remove('hidden');
+  }
+
+  async function saveKeyDateOverrides() {
+    try {
+      const res = await fetch(KEYDATE_DB, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(keyDateOverrides)
+      });
+      if (!res.ok) console.error('Key date save failed', res.status);
+    } catch(e) { console.error('Failed to save key date changes', e); }
+  }
+
+  async function loadKeyDateOverrides() {
+    try {
+      const res = await fetch(KEYDATE_DB);
+      const data = await res.json();
+      keyDateOverrides = (data && typeof data === 'object') ? data : {};
+    } catch(e) { console.error('Failed to load key date changes', e); }
+    rebuildUnswDates();
+  }
+
+  function setKeyDateOverride(id, val) {
+    if (val === null) delete keyDateOverrides[id]; else keyDateOverrides[id] = val;
+    saveKeyDateOverrides();
+    rebuildUnswDates();
+    render();
+  }
+
+  rebuildUnswDates();
 
   // Get the Monday of the week containing a given date
   function getMonday(d) {
@@ -2530,6 +2655,12 @@
         const res = await fetch(DB);
         const data = await res.json();
         events = normalise(data);
+        try {
+          const kres = await fetch(KEYDATE_DB);
+          const kdata = await kres.json();
+          keyDateOverrides = (kdata && typeof kdata === 'object') ? kdata : {};
+          rebuildUnswDates();
+        } catch(e) {}
         render();
       } catch(e) {}
     }, 10000);
@@ -2626,11 +2757,32 @@
           const row = document.createElement('div');
           row.className = 'unsw-dates-row';
           unswItems.forEach(item => {
-            const badge = item.link ? document.createElement('a') : document.createElement('span');
-            badge.className = `unsw-badge ${item.type}`;
-            if (item.link) { badge.href = item.link; badge.target = '_blank'; badge.rel = 'noopener'; badge.style.textDecoration = 'none'; }
-            const icon = item.type === 'o-week' ? '🎓' : item.type === 'census' ? '📋' : item.type === 'enrol-deadline' ? '📝' : item.type === 'late-enrol' ? '⏰' : item.type === 'standing-report' ? '📊' : item.type === 'suspension-appeal' ? '⚖️' : item.type === 'ipt-open' ? '🔓' : item.type === 'wadm-drop' ? '📉' : item.type === 'sem-block' ? '🚧' : '✅';
-            badge.textContent = icon + ' ' + item.label;
+            const badge = document.createElement('span');
+            badge.className = 'unsw-badge ' + item.type + (item.kdMoved ? ' kd-moved' : '');
+            const icon = KD_ICONS[item.type] || '✅';
+
+            const txt = item.link ? document.createElement('a') : document.createElement('span');
+            if (item.link) {
+              txt.href = item.link; txt.target = '_blank'; txt.rel = 'noopener';
+              txt.style.textDecoration = 'none'; txt.style.color = 'inherit';
+            }
+            txt.textContent = icon + ' ' + item.label;
+            badge.appendChild(txt);
+
+            const mv = document.createElement('button');
+            mv.className = 'kd-btn';
+            mv.textContent = '✎';
+            mv.title = item.kdMoved ? 'Moved from ' + item.kdBase + ' — change or restore' : 'Move this key date';
+            mv.addEventListener('click', e => { e.stopPropagation(); openKeyDate(item, key); });
+            badge.appendChild(mv);
+
+            const cx = document.createElement('button');
+            cx.className = 'kd-btn';
+            cx.textContent = '✕';
+            cx.title = 'Cancel this key date';
+            cx.addEventListener('click', e => { e.stopPropagation(); setKeyDateOverride(item.kdId, { hidden:true }); });
+            badge.appendChild(cx);
+
             row.appendChild(badge);
           });
           cell.appendChild(row);
@@ -2803,6 +2955,56 @@
   document.getElementById('detail-cancel-btn').addEventListener('click', closeDetail);
   detailOverlay.addEventListener('click', (e) => { if (e.target === detailOverlay) closeDetail(); });
 
+  // Key date move / cancel modal
+  let kdCurrent = null;
+  const kdOverlay = document.getElementById('kd-overlay');
+
+  function openKeyDate(item, shownDate) {
+    kdCurrent = { kdId: item.kdId, kdBase: item.kdBase };
+    document.getElementById('kd-title').textContent = item.label;
+    document.getElementById('kd-date').value = shownDate;
+    const atBase = item.kdBase === shownDate;
+    document.getElementById('kd-note').textContent = atBase
+      ? 'This is a built-in key date. Pick a new date to move it for the whole team.'
+      : 'Moved from its built-in date of ' + item.kdBase + '.';
+    document.getElementById('kd-restore-btn').style.display = atBase ? 'none' : '';
+    kdOverlay.classList.add('open');
+  }
+
+  function closeKeyDate() { kdOverlay.classList.remove('open'); kdCurrent = null; }
+
+  document.getElementById('kd-save-btn').addEventListener('click', () => {
+    if (!kdCurrent) return;
+    const v = document.getElementById('kd-date').value;
+    if (!v) return;
+    const p = v.split('-').map(Number);
+    const dow = new Date(p[0], p[1]-1, p[2]).getDay();
+    if (dow === 0 || dow === 6) {
+      document.getElementById('kd-note').textContent = 'The calendar only shows Monday to Friday, so pick a weekday.';
+      return;
+    }
+    const id = kdCurrent.kdId, base = kdCurrent.kdBase;
+    closeKeyDate();
+    setKeyDateOverride(id, v === base ? null : { date: v });
+  });
+
+  document.getElementById('kd-restore-btn').addEventListener('click', () => {
+    if (!kdCurrent) return;
+    const id = kdCurrent.kdId;
+    closeKeyDate();
+    setKeyDateOverride(id, null);
+  });
+
+  document.getElementById('kd-close-btn').addEventListener('click', closeKeyDate);
+  kdOverlay.addEventListener('click', e => { if (e.target === kdOverlay) closeKeyDate(); });
+
+  document.getElementById('kd-reset-btn').addEventListener('click', () => {
+    keyDateOverrides = {};
+    saveKeyDateOverrides();
+    rebuildUnswDates();
+    render();
+  });
+
   document.getElementById('prev-btn').addEventListener('click', () => {
     startDate.setDate(startDate.getDate() - 7);
     render();
@@ -2827,6 +3029,7 @@
   });
 
   startDate = getMonday(new Date());
+  loadKeyDateOverrides().then(render);
   loadEvents();
   startPolling();
 
@@ -3933,7 +4136,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         const d = entry[0], items = entry[1];
         const p = d.split('-').map(Number);
         const dt = new Date(p[0], p[1]-1, p[2]);
-        if (dt >= now && dt <= limit) items.forEach(function(it) { soon.push(d + ': ' + it.label); });
+        if (dt >= now && dt <= limit) items.forEach(function(it) { if (it.type !== 'huddle') soon.push(d + ': ' + it.label); });
       });
       soon.sort();
       if (soon.length) lines.push('\nUPCOMING UNSW KEY DATES (authoritative, correct the email if it contradicts these):\n' + soon.join('\n'));
