@@ -7921,79 +7921,79 @@ ${cardsHTML}
   };
 
   const DS_DAYS = [
-    { k:'mon', label:'Monday', dow:1, note:'10 booked. Huddle at 10:00.',
+    { k:'mon', label:'Monday', dow:1, note:'10 booked. Morning is booked calls. Huddle at 11:30.',
       blocks:[
-        { type:'admin', t:'08:30', title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
-        { type:'cold', t:'09:00', end:'10:00', title:'Cold outreach', target:6, carry:'Start with Friday’s carry-over' },
-        { type:'huddle', t:'10:00', mins:30, title:'Team huddle', sub:'Bring one blocker' },
-        { type:'break', t:'10:30', mins:15, title:'Break' },
-        { type:'booked', t:'10:45', count:6, from:1, tag:'booked last Friday' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'booked', t:'09:20', count:6, from:1, tag:'booked last Friday' },
+        { type:'break', t:'11:15', mins:15, title:'Break' },
+        { type:'huddle', t:'11:30', mins:30, title:'Team huddle', sub:'Bring one blocker' },
+        { type:'cold', t:'12:00', end:'12:45', title:'Cold outreach', target:6, carry:'Start with Friday\u2019s carry-over' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:4, from:7 },
-        { type:'cold', t:'14:30', mins:30, title:'Cold outreach', target:3 },
+        { type:'cold', t:'14:30', end:'15:00', title:'Cold outreach', target:3 },
         { type:'break', t:'15:00', mins:15, title:'Break' },
         { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:8, sub:'Best reach window of the day' },
-        { type:'admin', t:'16:30', title:'Admin and wrap', sub:'Log any shortfall, it carries to Tuesday' }
+        { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Log any shortfall, it carries to Tuesday' }
       ],
-      todo:['Text your 10 booked students before 9:00','Clear Friday’s carry-over first','Huddle at 10:00, bring one blocker','Log each call in its own 5 minute gap'] },
+      todo:['Text your 10 booked students before 9:20','Morning is booked calls, protect it','Huddle at 11:30, bring one blocker','Clear Friday\u2019s carry-over in the 12:00 block'] },
 
     { k:'tue', label:'Tuesday', dow:2, note:'10 booked. Book ahead for Thu and Fri.',
       blocks:[
-        { type:'admin', t:'08:30', title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
-        { type:'booked', t:'09:00', count:5, from:1, tag:'booked last Friday' },
-        { type:'catchup', t:'10:35', mins:10, title:'Catch-up' },
-        { type:'break', t:'10:45', mins:15, title:'Break' },
-        { type:'bookahead', t:'11:00', end:'12:45', title:'Book ahead', pill:'Fill Thursday and Friday', target:11,
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'booked', t:'09:20', count:5, from:1, tag:'booked last Friday' },
+        { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
+        { type:'break', t:'11:00', mins:15, title:'Break' },
+        { type:'bookahead', t:'11:15', end:'12:45', title:'Book ahead', pill:'Fill Thursday and Friday', target:11,
           sub:'20 slots need filling across those two days. Book as you go.', carry:'Carry-over goes here first' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:5, from:6 },
         { type:'catchup', t:'14:50', mins:10, title:'Catch-up' },
         { type:'break', t:'15:00', mins:15, title:'Break' },
         { type:'bookahead', t:'15:15', end:'16:30', title:'Book ahead', target:8, sub:'Best reach window. Keep filling Thursday and Friday.' },
-        { type:'admin', t:'16:30', title:'Admin and wrap', sub:'Count Thursday and Friday. Both at 10?' }
+        { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Count Thursday and Friday. Both at 10?' }
       ],
-      todo:['Text your 10 booked students before 9:00','Book ahead: Thursday and Friday, 20 slots','Do not stop until both days show 10','Rebook every no-show before you leave'] },
+      todo:['Text your 10 booked students before 9:20','Book ahead: Thursday and Friday, 20 slots','Do not stop until both days show 10','Rebook every no-show before you leave'] },
 
     { k:'wed', label:'Wednesday', dow:3, note:'10 booked. No meetings, longest run.',
       blocks:[
-        { type:'admin', t:'08:30', title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
-        { type:'booked', t:'09:00', count:5, from:1, tag:'booked last Friday' },
-        { type:'catchup', t:'10:35', mins:10, title:'Catch-up' },
-        { type:'break', t:'10:45', mins:15, title:'Break' },
-        { type:'cold', t:'11:00', end:'12:45', title:'Cold outreach', target:11,
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'booked', t:'09:20', count:5, from:1, tag:'booked last Friday' },
+        { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
+        { type:'break', t:'11:00', mins:15, title:'Break' },
+        { type:'cold', t:'11:15', end:'12:45', title:'Cold outreach', target:11,
           sub:'Chase anyone who missed their Monday or Tuesday appointment. Second attempts at a new hour.', carry:'Carry-over goes here first' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:5, from:6 },
         { type:'catchup', t:'14:50', mins:10, title:'Catch-up' },
         { type:'break', t:'15:00', mins:15, title:'Break' },
         { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:8, sub:'Best reach window of the day' },
-        { type:'admin', t:'16:30', title:'Admin and wrap', sub:'Check Thursday and Friday are full' }
+        { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Check Thursday and Friday are full' }
       ],
-      todo:['Text your 10 booked students before 9:00','No meetings today. Longest clear run.','Chase Monday and Tuesday no-shows','Check Thursday and Friday are filling'] },
+      todo:['Text your 10 booked students before 9:20','No meetings today. Longest clear run.','Chase Monday and Tuesday no-shows','Check Thursday and Friday are filling'] },
 
     { k:'thu', label:'Thursday', dow:4, note:'10 booked. Huddle at 11:00.',
       blocks:[
-        { type:'admin', t:'08:30', title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
-        { type:'booked', t:'09:00', count:5, from:1, tag:'booked Tuesday' },
-        { type:'catchup', t:'10:35', mins:10, title:'Catch-up' },
-        { type:'break', t:'10:45', mins:15, title:'Break' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'booked', t:'09:20', count:5, from:1, tag:'booked Tuesday' },
+        { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'huddle', t:'11:00', mins:30, title:'Team huddle', sub:'Bring one blocker' },
-        { type:'cold', t:'11:30', end:'12:45', title:'Cold outreach', target:8, sub:'Second attempts at a new hour', carry:'Carry-over goes here first' },
+        { type:'break', t:'11:30', mins:15, title:'Break' },
+        { type:'cold', t:'11:45', end:'12:45', title:'Cold outreach', target:8, sub:'Second attempts at a new hour', carry:'Carry-over goes here first' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:5, from:6 },
         { type:'catchup', t:'14:50', mins:10, title:'Catch-up' },
         { type:'break', t:'15:00', mins:15, title:'Break' },
         { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:8, sub:'Best reach window of the day' },
-        { type:'admin', t:'16:30', title:'Admin and wrap', sub:'Friday must be at 10. Check it.' }
+        { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Friday must be at 10. Check it.' }
       ],
-      todo:['Text your 10 booked students before 9:00','Huddle at 11:00, bring one blocker','Second attempts at a different hour','Friday must show 10 before you leave'] },
+      todo:['Text your 10 booked students before 9:20','Huddle at 11:00, bring one blocker','Second attempts at a different hour','Friday must show 10 before you leave'] },
 
     { k:'fri', label:'Friday', dow:5, note:'10 booked. Book ahead for next Mon to Wed.', tight:true,
       blocks:[
-        { type:'admin', t:'08:30', title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
-        { type:'booked', t:'09:00', count:6, from:1, tag:'booked Tuesday' },
-        { type:'break', t:'11:00', mins:15, title:'Break' },
-        { type:'bookahead', t:'11:15', end:'12:45', title:'Book ahead', pill:'Fill next Mon, Tue and Wed', target:10,
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'booked', t:'09:20', count:6, from:1, tag:'booked Tuesday' },
+        { type:'break', t:'11:15', mins:15, title:'Break' },
+        { type:'bookahead', t:'11:30', end:'12:45', title:'Book ahead', pill:'Fill next Mon, Tue and Wed', target:10,
           sub:'30 slots to fill. The biggest booking job of the week.' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:4, from:7 },
@@ -8002,7 +8002,7 @@ ${cardsHTML}
         { type:'huddle', t:'15:00', mins:60, title:'Wind-down huddle', sub:'Week in review, escalations, wins' },
         { type:'prep', t:'16:00', mins:60, title:'Prep for next week', sub:'Build the lists, log the carry-over' }
       ],
-      todo:['Text your 10 booked students before 9:00','Book ahead: next Mon, Tue, Wed, 30 slots','Tightest day. Shortfall carries to Monday.','Prep: build lists, log what carried over'] }
+      todo:['Text your 10 booked students before 9:20','Book ahead: next Mon, Tue, Wed, 30 slots','Tightest day. Shortfall carries to Monday.','Prep: build lists, log what carried over'] }
   ];
 
   const DS_LEGEND = [
