@@ -714,6 +714,76 @@
     .kd-bar button:hover { background:#f3f4f6; }
     .kd-note { font-size:0.72rem; color:#6b7280; margin-top:10px; line-height:1.45; }
 
+    .nb-wrap { padding:18px 22px 50px; }
+    .nb-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+    .nb-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
+    .nb-sub { font-size:0.76rem; color:#6b7a8c; margin:0 0 16px; }
+    .nb-add { margin-left:auto; background:#1E9E73; color:#fff; border:none; border-radius:7px; padding:8px 16px; font-size:0.76rem; font-weight:700; cursor:pointer; }
+    .nb-add:hover { background:#1a8b65; }
+    .nb-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+    .nb-fbtn { border:1px solid #dfe5ec; background:#fff; border-radius:20px; padding:5px 14px; font-size:0.72rem; font-weight:700; cursor:pointer; color:#546678; }
+    .nb-fbtn:hover { background:#f4f7fa; }
+    .nb-fbtn.active { background:#1b2b3d; border-color:#1b2b3d; color:#fff; }
+
+    .nb-board { column-count:3; column-gap:16px; }
+    @media (max-width:1100px) { .nb-board { column-count:2; } }
+    @media (max-width:700px)  { .nb-board { column-count:1; } }
+
+    .nb-note { break-inside:avoid; margin:0 0 16px; border-radius:3px; padding:16px 18px 14px; position:relative;
+               box-shadow:0 2px 5px rgba(0,0,0,0.13), 0 10px 22px -12px rgba(0,0,0,0.3);
+               font-size:0.78rem; line-height:1.5; color:#3a3326; display:inline-block; width:100%; }
+    .nb-note:nth-child(4n+1) { transform:rotate(-0.7deg); }
+    .nb-note:nth-child(4n+2) { transform:rotate(0.5deg); }
+    .nb-note:nth-child(4n+3) { transform:rotate(-0.3deg); }
+    .nb-note:nth-child(4n)   { transform:rotate(0.8deg); }
+    .nb-note:hover { transform:rotate(0deg) translateY(-2px); box-shadow:0 4px 9px rgba(0,0,0,0.16), 0 16px 30px -14px rgba(0,0,0,0.36); z-index:2; }
+    .nb-note { transition:transform 0.16s ease, box-shadow 0.16s ease; }
+
+    .nb-c-yellow { background:#FFF3B0; }
+    .nb-c-blue   { background:#CFE8FB; color:#23374a; }
+    .nb-c-green  { background:#CFF0DC; color:#23402f; }
+    .nb-c-pink   { background:#FBD5E2; color:#4a2431; }
+    .nb-c-orange { background:#FFDFC2; color:#4a3220; }
+    .nb-c-purple { background:#E2D8F8; color:#33264a; }
+
+    .nb-pin { position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:1.1rem; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); }
+    .nb-tag { display:inline-block; background:rgba(0,0,0,0.11); border-radius:11px; padding:2px 9px; font-size:0.6rem; font-weight:800;
+              text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+    .nb-note h4 { margin:0 0 7px; font-size:0.92rem; font-weight:800; line-height:1.3; }
+    .nb-body { white-space:pre-wrap; word-break:break-word; }
+    .nb-body.nb-clip { max-height:190px; overflow:hidden; -webkit-mask-image:linear-gradient(#000 70%, transparent); mask-image:linear-gradient(#000 70%, transparent); }
+    .nb-more { background:none; border:none; padding:4px 0 0; font-size:0.72rem; font-weight:800; cursor:pointer; color:inherit; text-decoration:underline; opacity:0.75; }
+    .nb-more:hover { opacity:1; }
+    .nb-meta { margin-top:10px; padding-top:8px; border-top:1px dashed rgba(0,0,0,0.18); font-size:0.66rem; opacity:0.72; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .nb-acts { margin-left:auto; display:flex; gap:5px; opacity:0; transition:opacity 0.15s; }
+    .nb-note:hover .nb-acts { opacity:1; }
+    .nb-acts button { background:rgba(255,255,255,0.6); border:1px solid rgba(0,0,0,0.12); border-radius:5px; font-size:0.62rem; padding:2px 7px; cursor:pointer; color:inherit; font-weight:700; }
+    .nb-acts button:hover { background:#fff; }
+    .nb-note.nb-unread::after { content:'NEW'; position:absolute; top:10px; right:10px; background:#E5484D; color:#fff;
+                                font-size:0.55rem; font-weight:800; padding:2px 6px; border-radius:9px; letter-spacing:0.5px; }
+    .nb-note.nb-pinned .nb-pin { font-size:1.35rem; }
+
+    .nb-empty { text-align:center; padding:60px 20px; color:#8b98a6; font-size:0.85rem; }
+    .nb-tbl { width:100%; border-collapse:collapse; margin:8px 0; font-size:0.72rem; background:rgba(255,255,255,0.45); border-radius:4px; overflow:hidden; }
+    .nb-tbl th { text-align:left; padding:5px 8px; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.4px; background:rgba(0,0,0,0.07); font-weight:800; }
+    .nb-tbl td { padding:5px 8px; border-top:1px solid rgba(0,0,0,0.07); vertical-align:top; }
+    .nb-body a { color:inherit; font-weight:700; }
+
+    .nb-modal { background:#fff; border-radius:11px; width:min(660px,94vw); max-height:88vh; overflow:auto; padding:22px 24px; }
+    .nb-modal h3 { margin:0 0 16px; font-size:1.05rem; font-weight:800; color:#1b2b3d; }
+    .nb-lbl { font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:#6b7a8c; margin:12px 0 5px; }
+    .nb-modal input[type=text], .nb-modal textarea, .nb-modal select {
+      width:100%; border:1px solid #dfe5ec; border-radius:7px; padding:9px 11px; font-size:0.82rem; font-family:inherit; box-sizing:border-box; }
+    .nb-modal textarea { min-height:190px; resize:vertical; line-height:1.55; }
+    .nb-swatches { display:flex; gap:7px; flex-wrap:wrap; }
+    .nb-sw { width:30px; height:30px; border-radius:6px; cursor:pointer; border:2px solid transparent; }
+    .nb-sw.sel { border-color:#1b2b3d; }
+    .nb-modal-acts { display:flex; gap:9px; justify-content:flex-end; margin-top:20px; }
+    .nb-btn-save { background:#1E9E73; color:#fff; border:none; border-radius:7px; padding:9px 20px; font-size:0.79rem; font-weight:700; cursor:pointer; }
+    .nb-btn-cancel { background:#f2f5f8; border:1px solid #dfe5ec; border-radius:7px; padding:9px 16px; font-size:0.79rem; cursor:pointer; color:#546678; }
+    .nb-pin-toggle { display:flex; align-items:center; gap:7px; font-size:0.76rem; color:#546678; margin-top:14px; cursor:pointer; }
+
+
     .ds-wrap { padding:14px 18px 40px; max-width:100%; }
     .ds-hero { background:linear-gradient(135deg,#123A5E 0%,#1B4E77 100%); color:#fff; border-radius:10px; padding:18px 22px; margin-bottom:14px; }
     .ds-hero h2 { margin:0 0 6px; font-size:1.5rem; font-weight:800; letter-spacing:-0.3px; }
@@ -1730,6 +1800,7 @@
 <!-- Tab navigation -->
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">Calendar</button>
+  <button class="tab-btn" data-tab="notices">Important Updates</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">Pacing Board</button>
   <button class="tab-btn" data-tab="podc">Activity Dashboard</button>
@@ -2084,6 +2155,40 @@
         <span class="ds-bookdst">THU</span><span class="ds-bookdst">FRI</span>
         <span class="ds-booknote">20 slots to fill</span>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Important Updates tab -->
+<div class="tab-panel" id="tab-notices">
+  <div class="nb-wrap">
+    <div class="nb-head">
+      <h2>📌 Important Updates</h2>
+      <button class="nb-add" id="nb-add">+ Pin an update</button>
+    </div>
+    <p class="nb-sub">The team noticeboard. Leave, process changes, policy, wins. Anything everyone needs to see. Click a note to mark it read.</p>
+    <div class="nb-filters" id="nb-filters"></div>
+    <div class="nb-board" id="nb-board"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="nb-overlay">
+  <div class="nb-modal">
+    <h3 id="nb-modal-title">New update</h3>
+    <div class="nb-lbl">Title</div>
+    <input type="text" id="nb-f-title" placeholder="Short and clear" maxlength="120">
+    <div class="nb-lbl">The update</div>
+    <textarea id="nb-f-body" placeholder="Paste the full message here. Email addresses and links become clickable."></textarea>
+    <div class="nb-lbl">Label</div>
+    <select id="nb-f-tag"></select>
+    <div class="nb-lbl">From</div>
+    <input type="text" id="nb-f-author" placeholder="Who is posting this" maxlength="60">
+    <div class="nb-lbl">Colour</div>
+    <div class="nb-swatches" id="nb-swatches"></div>
+    <label class="nb-pin-toggle"><input type="checkbox" id="nb-f-pinned"> Keep this at the top of the board</label>
+    <div class="nb-modal-acts">
+      <button class="nb-btn-cancel" id="nb-cancel">Cancel</button>
+      <button class="nb-btn-save" id="nb-save">Save to the board</button>
     </div>
   </div>
 </div>
@@ -3182,14 +3287,27 @@
         { name:'James Miller', st:226, en:215, it:205, stt:208, gcm:7, gcmPool:17, gcmt:17, t1t2pool:28, t1t2:19, cohort:323, ctd:237, cohortContact:117, drops:28, dropsCensus:8, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
       ],
       total: { name:'UNSW Total', st:1155, en:1095, it:1048, stt:1068, gcm:39, gcmPool:88, gcmt:88, t1t2pool:197, t1t2:166, cohort:1625, ctd:1399, cohortContact:736, drops:161, dropsCensus:53, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 }
+    },
+    H6: {
+      label: 'H6 · 2026',
+      rows: [
+        { name:'Daljeet Sahota', st:235, en:163, it:213, stt:217, gcm:0, gcmPool:0, gcmt:0, t1t2pool:85, t1t2:61, cohort:265, ctd:242, cohortContact:162, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:'63%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+        { name:'Priscilla Samuel', st:238, en:156, it:216, stt:221, gcm:0, gcmPool:0, gcmt:0, t1t2pool:83, t1t2:50, cohort:279, ctd:234, cohortContact:150, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:'75%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+        { name:'Amelia Churchill', st:240, en:161, it:218, stt:222, gcm:0, gcmPool:0, gcmt:0, t1t2pool:76, t1t2:51, cohort:278, ctd:269, cohortContact:202, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:'78%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+        { name:'Kimmi', st:216, en:139, it:196, stt:200, gcm:0, gcmPool:0, gcmt:0, t1t2pool:72, t1t2:47, cohort:267, ctd:232, cohortContact:151, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:'75%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+        { name:'James Miller', st:226, en:102, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:59, t1t2:24, cohort:224, ctd:188, cohortContact:144, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+        { name:'Andrew', st:226, en:103, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:30, t1t2:19, cohort:221, ctd:154, cohortContact:1, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+        { name:'Steph', st:226, en:89, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:22, t1t2:14, cohort:164, ctd:141, cohortContact:1, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
+      ],
+      total: { name:'UNSW Total', st:1607, en:913, it:1458, stt:1484, gcm:0, gcmPool:0, gcmt:0, t1t2pool:427, t1t2:266, cohort:1698, ctd:1460, cohortContact:811, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 }
     }
   };
 
-  let activePacingHex = 'H5';
+  let activePacingHex = 'H6';
   let activePacingSSA = null;
   let activePacingData = null;  // loaded from Firebase, falls back to PACING_DATA
   let pacingLocked = true;      // Start Target read-only until unlocked (shared via Firebase)
-const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns','James Miller'];
+const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani','Melanie Richards','Kimmi','Amelia Churchill','Tyler Bruns','James Miller','Andrew','Steph'];
   const HIDDEN_SSA = ['Tyler Bruns', 'Melanie Richards', 'Carmela Gomez', 'Saravanan Rajamani'];
 
   function pctClass(str) {
@@ -4364,6 +4482,7 @@ draft.slice(0, 6000),
       }
       if (btn.dataset.tab === 'email') initEmailAssistant();
       if (btn.dataset.tab === 'schedule') initSchedule();
+      if (btn.dataset.tab === 'notices') initNotices();
     });
   });
 
@@ -8120,8 +8239,232 @@ ${cardsHTML}
   }
 
 
+  const NB_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/notices.json';
+  const NB_COLOURS = ['yellow','blue','green','pink','orange','purple'];
+  const NB_TAGS = ['Leave','Process','Policy','Heads up','Win','Event'];
+  const NB_PINS = { Leave:'📌', Process:'⚙️', Policy:'📋', 'Heads up':'📣', Win:'🎉', Event:'📅' };
+
+  let nbNotices = {};
+  let nbFilter = 'all';
+  let nbEditId = null;
+  let nbColour = 'yellow';
+  let nbWired = false;
+
+  function nbEsc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function nbLinkify(s) {
+    return nbEsc(s)
+      .replace(/\b([\w.+-]+@[\w-]+\.[\w.]+)\b/g, '<a href="mailto:$1">$1</a>')
+      .replace(/\b(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  }
+
+  function nbSeen() {
+    try { return JSON.parse(localStorage.getItem('unsw-nb-seen') || '{}'); } catch(e) { return {}; }
+  }
+  function nbMarkSeen(id) {
+    try { const s = nbSeen(); s[id] = 1; localStorage.setItem('unsw-nb-seen', JSON.stringify(s)); } catch(e) {}
+  }
+
+  async function nbLoad() {
+    try {
+      const res = await fetch(NB_DB);
+      const d = await res.json();
+      nbNotices = (d && typeof d === 'object') ? d : {};
+    } catch(e) { console.error('Failed to load notices', e); }
+    nbRender();
+  }
+
+  async function nbSave() {
+    try {
+      const res = await fetch(NB_DB, {
+        method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(nbNotices)
+      });
+      if (!res.ok) console.error('Notice save failed', res.status);
+    } catch(e) { console.error('Failed to save notices', e); }
+  }
+
+  function nbUnreadCount() {
+    const seen = nbSeen();
+    return Object.keys(nbNotices).filter(k => !seen[k]).length;
+  }
+
+  function nbBadge() {
+    const btn = document.querySelector('[data-tab="notices"]');
+    if (!btn) return;
+    const n = nbUnreadCount();
+    let dot = btn.querySelector('.nb-dot');
+    if (n > 0) {
+      if (!dot) { dot = document.createElement('span'); dot.className = 'nb-dot'; btn.appendChild(dot); }
+      dot.textContent = n;
+      dot.style.cssText = 'display:inline-block;background:#E5484D;color:#fff;border-radius:9px;font-size:0.58rem;font-weight:800;padding:1px 6px;margin-left:6px;vertical-align:middle;';
+    } else if (dot) dot.remove();
+  }
+
+  function nbRender() {
+    const board = document.getElementById('nb-board');
+    if (!board) return;
+
+    const fl = document.getElementById('nb-filters');
+    const tags = ['all'].concat(NB_TAGS);
+    fl.innerHTML = tags.map(t =>
+      '<button class="nb-fbtn' + (nbFilter === t ? ' active' : '') + '" data-nbf="' + nbEsc(t) + '">' +
+      (t === 'all' ? 'All' : (NB_PINS[t] || '') + ' ' + nbEsc(t)) + '</button>'
+    ).join('');
+
+    const seen = nbSeen();
+    let items = Object.keys(nbNotices).map(k => Object.assign({ id:k }, nbNotices[k]));
+    if (nbFilter !== 'all') items = items.filter(n => n.tag === nbFilter);
+    items.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.ts || 0) - (a.ts || 0));
+
+    if (!items.length) {
+      board.innerHTML = '<div class="nb-empty">Nothing on the board' +
+        (nbFilter === 'all' ? ' yet. Add the first update.' : ' under that label.') + '</div>';
+      nbBadge();
+      return;
+    }
+
+    board.innerHTML = items.map(n => {
+      const body = nbLinkify(n.body || '');
+      const long = (n.body || '').length > 420;
+      const d = n.ts ? new Date(n.ts) : null;
+      const when = d ? d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }) : '';
+      return '<div class="nb-note nb-c-' + (n.colour || 'yellow') +
+        (n.pinned ? ' nb-pinned' : '') + (seen[n.id] ? '' : ' nb-unread') + '" data-nbid="' + n.id + '">' +
+        '<span class="nb-pin">' + (NB_PINS[n.tag] || '📌') + '</span>' +
+        (n.tag ? '<span class="nb-tag">' + nbEsc(n.tag) + '</span>' : '') +
+        '<h4>' + nbEsc(n.title || 'Untitled') + '</h4>' +
+        '<div class="nb-body' + (long ? ' nb-clip' : '') + '" data-nbbody="' + n.id + '">' + body + '</div>' +
+        (long ? '<button class="nb-more" data-nbmore="' + n.id + '">Read more</button>' : '') +
+        '<div class="nb-meta"><span>' + nbEsc(n.author || 'Team') + '</span>' +
+        (when ? '<span>· ' + when + '</span>' : '') +
+        '<span class="nb-acts">' +
+        '<button data-nbpin="' + n.id + '">' + (n.pinned ? 'Unpin' : 'Pin') + '</button>' +
+        '<button data-nbedit="' + n.id + '">Edit</button>' +
+        '<button data-nbdel="' + n.id + '">Delete</button>' +
+        '</span></div></div>';
+    }).join('');
+
+    nbBadge();
+  }
+
+  function nbOpen(id) {
+    nbEditId = id;
+    const n = id ? nbNotices[id] : null;
+    document.getElementById('nb-modal-title').textContent = n ? 'Edit update' : 'New update';
+    document.getElementById('nb-f-title').value = n ? (n.title || '') : '';
+    document.getElementById('nb-f-body').value = n ? (n.body || '') : '';
+    document.getElementById('nb-f-author').value = n ? (n.author || '') : '';
+    document.getElementById('nb-f-pinned').checked = n ? !!n.pinned : false;
+    const sel = document.getElementById('nb-f-tag');
+    sel.innerHTML = NB_TAGS.map(t => '<option value="' + t + '">' + t + '</option>').join('');
+    sel.value = n ? (n.tag || 'Heads up') : 'Heads up';
+    nbColour = n ? (n.colour || 'yellow') : 'yellow';
+    nbSwatches();
+    document.getElementById('nb-overlay').classList.add('open');
+  }
+
+  function nbSwatches() {
+    document.getElementById('nb-swatches').innerHTML = NB_COLOURS.map(c =>
+      '<span class="nb-sw nb-c-' + c + (c === nbColour ? ' sel' : '') + '" data-nbc="' + c + '"></span>'
+    ).join('');
+  }
+
+  function nbClose() {
+    document.getElementById('nb-overlay').classList.remove('open');
+    nbEditId = null;
+  }
+
+  function initNotices() {
+    if (!nbWired) {
+      nbWired = true;
+
+      document.getElementById('nb-filters').addEventListener('click', e => {
+        const b = e.target.closest('[data-nbf]');
+        if (!b) return;
+        nbFilter = b.dataset.nbf;
+        nbRender();
+      });
+
+      document.getElementById('nb-board').addEventListener('click', e => {
+        const more = e.target.closest('[data-nbmore]');
+        if (more) {
+          const el = document.querySelector('[data-nbbody="' + more.dataset.nbmore + '"]');
+          const open = el.classList.toggle('nb-clip');
+          more.textContent = open ? 'Read more' : 'Show less';
+          return;
+        }
+        const pin = e.target.closest('[data-nbpin]');
+        if (pin) {
+          const id = pin.dataset.nbpin;
+          nbNotices[id].pinned = !nbNotices[id].pinned;
+          nbSave(); nbRender(); return;
+        }
+        const ed = e.target.closest('[data-nbedit]');
+        if (ed) { nbOpen(ed.dataset.nbedit); return; }
+        const del = e.target.closest('[data-nbdel]');
+        if (del) {
+          const id = del.dataset.nbdel;
+          if (confirm('Delete "' + (nbNotices[id].title || 'this update') + '"? This removes it for the whole team.')) {
+            delete nbNotices[id];
+            nbSave(); nbRender();
+          }
+          return;
+        }
+        const card = e.target.closest('[data-nbid]');
+        if (card && card.classList.contains('nb-unread')) {
+          nbMarkSeen(card.dataset.nbid);
+          card.classList.remove('nb-unread');
+          nbBadge();
+        }
+      });
+
+      document.getElementById('nb-add').addEventListener('click', () => nbOpen(null));
+      document.getElementById('nb-cancel').addEventListener('click', nbClose);
+      document.getElementById('nb-overlay').addEventListener('click', e => {
+        if (e.target === document.getElementById('nb-overlay')) nbClose();
+      });
+      document.getElementById('nb-swatches').addEventListener('click', e => {
+        const s = e.target.closest('[data-nbc]');
+        if (!s) return;
+        nbColour = s.dataset.nbc;
+        nbSwatches();
+      });
+
+      document.getElementById('nb-save').addEventListener('click', () => {
+        const title = document.getElementById('nb-f-title').value.trim();
+        const body  = document.getElementById('nb-f-body').value.trim();
+        if (!title && !body) { alert('Give it a title or some words.'); return; }
+        const id = nbEditId || ('n' + Date.now());
+        const prev = nbNotices[id] || {};
+        nbNotices[id] = {
+          title, body,
+          tag: document.getElementById('nb-f-tag').value,
+          author: document.getElementById('nb-f-author').value.trim() || 'Team',
+          colour: nbColour,
+          pinned: document.getElementById('nb-f-pinned').checked,
+          ts: prev.ts || Date.now()
+        };
+        if (nbEditId) nbMarkSeen(id);
+        nbSave(); nbClose(); nbRender();
+      });
+
+      setInterval(() => {
+        fetch(NB_DB).then(r => r.json()).then(d => {
+          const next = (d && typeof d === 'object') ? d : {};
+          if (JSON.stringify(next) !== JSON.stringify(nbNotices)) { nbNotices = next; nbRender(); }
+        }).catch(() => {});
+      }, 20000);
+    }
+    nbLoad();
+  }
+
+
   initPlanner();
   initTriage();
+  nbLoad();
 
 </script>
 
