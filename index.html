@@ -750,7 +750,15 @@
     .nb-tag { display:inline-block; background:rgba(0,0,0,0.11); border-radius:11px; padding:2px 9px; font-size:0.6rem; font-weight:800;
               text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
     .nb-note h4 { margin:0 0 7px; font-size:0.92rem; font-weight:800; line-height:1.3; }
-    .nb-body { white-space:pre-wrap; word-break:break-word; }
+    .nb-body { word-break:break-word; }
+    .nb-body p { margin:0 0 9px; }
+    .nb-body p:last-child { margin-bottom:0; }
+    .nb-h { margin:13px 0 6px; font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; opacity:0.62; }
+    .nb-h:first-child { margin-top:0; }
+    .nb-ul { margin:0 0 9px; padding:0; list-style:none; }
+    .nb-ul li { position:relative; padding:0 0 0 14px; margin-bottom:5px; }
+    .nb-ul li::before { content:''; position:absolute; left:2px; top:0.55em; width:5px; height:5px; border-radius:50%; background:currentColor; opacity:0.4; }
+    .nb-body strong { font-weight:800; }
     .nb-body.nb-clip { max-height:190px; overflow:hidden; -webkit-mask-image:linear-gradient(#000 70%, transparent); mask-image:linear-gradient(#000 70%, transparent); }
     .nb-more { background:none; border:none; padding:4px 0 0; font-size:0.72rem; font-weight:800; cursor:pointer; color:inherit; text-decoration:underline; opacity:0.75; }
     .nb-more:hover { opacity:1; }
@@ -1803,7 +1811,9 @@
   <button class="tab-btn" data-tab="notices">Important Updates</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">Pacing Board</button>
+  <!-- HIDDEN: Activity Dashboard. Uncomment the line below to bring the tab back. The panel and pod-c-dashboard.html are untouched.
   <button class="tab-btn" data-tab="podc">Activity Dashboard</button>
+  -->
   <button class="tab-btn" data-tab="planner">Course Planner</button>
   <button class="tab-btn" data-tab="triage">Student Triage</button>
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
@@ -2178,7 +2188,7 @@
     <div class="nb-lbl">Title</div>
     <input type="text" id="nb-f-title" placeholder="Short and clear" maxlength="120">
     <div class="nb-lbl">The update</div>
-    <textarea id="nb-f-body" placeholder="Paste the full message here. Email addresses and links become clickable."></textarea>
+    <textarea id="nb-f-body" placeholder="Write the update here.&#10;&#10;## Makes a heading&#10;- Makes a bullet&#10;**Bold** for names and labels&#10;&#10;Emails and links become clickable on their own."></textarea>
     <div class="nb-lbl">Label</div>
     <select id="nb-f-tag"></select>
     <div class="nb-lbl">From</div>
@@ -8255,10 +8265,31 @@ ${cardsHTML}
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  function nbLinkify(s) {
+  function nbInline(s) {
     return nbEsc(s)
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
       .replace(/\b([\w.+-]+@[\w-]+\.[\w.]+)\b/g, '<a href="mailto:$1">$1</a>')
       .replace(/\b(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+  }
+
+  function nbFormat(s) {
+    const lines = String(s == null ? '' : s).split(/\r?\n/);
+    const out = [];
+    let list = null, para = [];
+    const flushPara = () => { if (para.length) { out.push('<p>' + para.join('<br>') + '</p>'); para = []; } };
+    const flushList = () => { if (list) { out.push('<ul class="nb-ul">' + list.join('') + '</ul>'); list = null; } };
+    lines.forEach(raw => {
+      const t = raw.trim();
+      if (!t) { flushPara(); flushList(); return; }
+      const head = t.match(/^##\s+(.*)$/);
+      if (head) { flushPara(); flushList(); out.push('<h5 class="nb-h">' + nbInline(head[1]) + '</h5>'); return; }
+      const item = t.match(/^[-\u2022]\s+(.*)$/);
+      if (item) { flushPara(); if (!list) list = []; list.push('<li>' + nbInline(item[1]) + '</li>'); return; }
+      flushList();
+      para.push(nbInline(t));
+    });
+    flushPara(); flushList();
+    return out.join('');
   }
 
   function nbSeen() {
@@ -8327,7 +8358,7 @@ ${cardsHTML}
     }
 
     board.innerHTML = items.map(n => {
-      const body = nbLinkify(n.body || '');
+      const body = nbFormat(n.body || '');
       const long = (n.body || '').length > 420;
       const d = n.ts ? new Date(n.ts) : null;
       const when = d ? d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }) : '';
