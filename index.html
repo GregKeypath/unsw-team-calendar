@@ -759,9 +759,6 @@
     .nb-ul li { position:relative; padding:0 0 0 14px; margin-bottom:5px; }
     .nb-ul li::before { content:''; position:absolute; left:2px; top:0.55em; width:5px; height:5px; border-radius:50%; background:currentColor; opacity:0.4; }
     .nb-body strong { font-weight:800; }
-    .nb-body.nb-clip { max-height:190px; overflow:hidden; -webkit-mask-image:linear-gradient(#000 70%, transparent); mask-image:linear-gradient(#000 70%, transparent); }
-    .nb-more { background:none; border:none; padding:4px 0 0; font-size:0.72rem; font-weight:800; cursor:pointer; color:inherit; text-decoration:underline; opacity:0.75; }
-    .nb-more:hover { opacity:1; }
     .nb-meta { margin-top:10px; padding-top:8px; border-top:1px dashed rgba(0,0,0,0.18); font-size:0.66rem; opacity:0.72; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
     .nb-acts { margin-left:auto; display:flex; gap:5px; opacity:0; transition:opacity 0.15s; }
     .nb-note:hover .nb-acts { opacity:1; }
@@ -8359,7 +8356,6 @@ ${cardsHTML}
 
     board.innerHTML = items.map(n => {
       const body = nbFormat(n.body || '');
-      const long = (n.body || '').length > 420;
       const d = n.ts ? new Date(n.ts) : null;
       const when = d ? d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }) : '';
       return '<div class="nb-note nb-c-' + (n.colour || 'yellow') +
@@ -8367,8 +8363,7 @@ ${cardsHTML}
         '<span class="nb-pin">' + (NB_PINS[n.tag] || '📌') + '</span>' +
         (n.tag ? '<span class="nb-tag">' + nbEsc(n.tag) + '</span>' : '') +
         '<h4>' + nbEsc(n.title || 'Untitled') + '</h4>' +
-        '<div class="nb-body' + (long ? ' nb-clip' : '') + '" data-nbbody="' + n.id + '">' + body + '</div>' +
-        (long ? '<button class="nb-more" data-nbmore="' + n.id + '">Read more</button>' : '') +
+        '<div class="nb-body">' + body + '</div>' +
         '<div class="nb-meta"><span>' + nbEsc(n.author || 'Team') + '</span>' +
         (when ? '<span>· ' + when + '</span>' : '') +
         '<span class="nb-acts">' +
@@ -8420,13 +8415,6 @@ ${cardsHTML}
       });
 
       document.getElementById('nb-board').addEventListener('click', e => {
-        const more = e.target.closest('[data-nbmore]');
-        if (more) {
-          const el = document.querySelector('[data-nbbody="' + more.dataset.nbmore + '"]');
-          const open = el.classList.toggle('nb-clip');
-          more.textContent = open ? 'Read more' : 'Show less';
-          return;
-        }
         const pin = e.target.closest('[data-nbpin]');
         if (pin) {
           const id = pin.dataset.nbpin;
