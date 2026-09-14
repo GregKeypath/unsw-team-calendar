@@ -1569,53 +1569,6 @@
     .ea-spin { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,0.35); border-top-color:#fff; border-radius:50%; animation:easpin .7s linear infinite; margin-right:7px; vertical-align:-2px; }
     @keyframes easpin { to { transform:rotate(360deg); } }
 
-    .di-wrap { padding:24px 32px; max-width:1400px; margin:0 auto; }
-    .di-header { display:flex; align-items:center; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
-    .di-header h2 { font-size:1.1rem; font-weight:800; color:#111; margin:0; }
-    .di-note { font-size:0.72rem; color:#9ca3af; flex:1; min-width:200px; }
-    .di-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; margin-bottom:14px; align-items:start; }
-    @media (max-width:900px){ .di-grid { grid-template-columns:1fr; } }
-    .di-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 18px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
-    .di-card-hd { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#6b7280; margin-bottom:12px; display:flex; align-items:center; gap:7px; }
-    /* Snapshot */
-    .di-snap { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:0; }
-    @media (max-width:760px){ .di-snap { grid-template-columns:repeat(2,1fr); } }
-    .di-snap-cell { padding:4px 16px; border-left:1px solid #eef2f7; }
-    .di-snap-cell:first-child { border-left:none; padding-left:0; }
-    .di-snap-val { font-size:1.5rem; font-weight:800; color:#111; line-height:1.1; }
-    .di-snap-lbl { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; font-weight:700; margin-top:4px; }
-    .di-snap-sub { font-size:0.68rem; color:#6b7280; margin-top:3px; }
-    .di-bottom { margin-top:12px; background:#eff6ff; border-left:3px solid #3b82f6; border-radius:0 6px 6px 0; padding:8px 12px; font-size:0.78rem; color:#1e3a5f; font-weight:600; }
-    /* Reasons */
-    .di-reason { display:flex; align-items:center; gap:8px; padding:5px 0; }
-    .di-reason-rank { width:18px; font-size:0.72rem; font-weight:800; color:#9ca3af; flex-shrink:0; }
-    .di-reason-name { font-size:0.75rem; color:#374151; width:150px; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .di-reason-bar { flex:1; height:8px; background:#f1f5f9; border-radius:4px; overflow:hidden; }
-    .di-reason-fill { height:100%; border-radius:4px; }
-    .di-reason-val { font-size:0.72rem; font-weight:700; color:#111; width:64px; text-align:right; flex-shrink:0; }
-    .di-reason-note { font-size:0.68rem; color:#92400e; background:#fef3c7; border-radius:5px; padding:6px 9px; margin-top:10px; line-height:1.4; }
-    /* Talking points / questions */
-    .di-tp { font-size:0.78rem; color:#334155; line-height:1.5; padding:6px 0 6px 4px; border-bottom:1px solid #f3f4f6; }
-    .di-tp:last-child { border-bottom:none; }
-    .di-q-group { margin-bottom:11px; }
-    .di-q-scenario { font-size:0.7rem; font-weight:800; color:#1e3a5f; margin-bottom:4px; }
-    .di-q { font-size:0.75rem; color:#475569; line-height:1.45; padding:2px 0 2px 12px; position:relative; }
-    .di-q:before { content:'“'; position:absolute; left:0; color:#cbd5e1; font-weight:700; }
-    /* Unit table */
-    .di-tbl-wrap { background:#fff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; overflow-x:auto; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
-    .di-tbl { width:100%; border-collapse:collapse; min-width:900px; }
-    .di-tbl th { background:#f9fafb; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.4px; color:#6b7280; font-weight:700; padding:9px 12px; text-align:left; border-bottom:1px solid #e5e7eb; white-space:nowrap; }
-    .di-tbl td { padding:9px 12px; border-bottom:1px solid #f3f4f6; font-size:0.75rem; color:#374151; vertical-align:top; }
-    .di-tbl tr:last-child td { border-bottom:none; }
-    .di-tbl tr:hover td { background:#fafbfc; }
-    .di-tbl .num { text-align:right; font-variant-numeric:tabular-nums; }
-    .di-code { font-weight:800; color:#1e3a5f; white-space:nowrap; }
-    .di-risk { display:inline-block; font-size:0.6rem; font-weight:800; padding:2px 8px; border-radius:20px; white-space:nowrap; }
-    .di-risk.High { background:#fee2e2; color:#991b1b; } .di-risk.Watch { background:#ffedd5; color:#9a3412; }
-    .di-risk.Monitor { background:#fef9c3; color:#854d0e; } .di-risk.Low { background:#dcfce7; color:#166534; }
-    .di-vs-up { color:#dc2626; font-weight:700; } .di-vs-down { color:#059669; font-weight:700; } .di-vs-flat { color:#9ca3af; }
-    .di-sec-title { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#6b7280; margin:18px 0 10px; }
-
     /* ── Student Triage Tab ─────────────────────────────── */
     .triage-layout { display:grid; grid-template-columns:340px 1fr; min-height:600px; }
     .triage-form { padding:24px 20px; border-right:1px solid #e5e7eb; background:#fafafa; overflow-y:auto; }
@@ -1783,7 +1736,6 @@
   <button class="tab-btn" data-tab="planner">Course Planner</button>
   <button class="tab-btn" data-tab="triage">Student Triage</button>
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
-  <button class="tab-btn" data-tab="dropinsight">Drop Rate Insight</button>
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
   <button class="tab-btn" data-tab="wishlist">Wishlist</button>
@@ -2056,18 +2008,6 @@
 </div>
 
 <!-- Drop Rate Insight Tab -->
-<div class="tab-panel" id="tab-dropinsight">
-  <div class="di-wrap">
-    <div class="di-header">
-      <h2>Drop Rate Insight</h2>
-      <select id="di-hex-select" class="droprate-sp-select"></select>
-      <span class="di-note">Quick reference from last hex — where we lost students, why, and how to protect retention this hex.</span>
-    </div>
-    <div id="di-content"></div>
-  </div>
-</div>
-
-
 <!-- Email Assistant Tab -->
 <div class="tab-panel" id="tab-email">
   <div class="ea-wrap">
@@ -4094,131 +4034,12 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     initDropsUpload();
   }
 
-  // ── Drop Rate Insight ─────────────────────────────────────────
-  const DROP_INSIGHT = {
-    '2026 T4': {
-      label: '2026 T4',
-      snapshot: {
-        rate: '7.8%', rateSub: '89 drops of 1,144 commencements',
-        unreached: '~half', unreachedSub: '≈44 drops were students nobody reached — never logged in or went silent',
-        stated: 'Work Commitments', statedSub: 'often a soft excuse — map the unit\'s key dates & weekly schedule against their work, and dig into what\'s actually changed at work',
-        bottom: 'An engagement problem, not a content problem — we lose the students we don\'t reach in time. Those unreached drops are exactly what a high Attempted / Contacted rate protects.'
-      },
-      reasons: [
-        { r:'Roster File Dropped', c:25, p:28, tag:'disengagement' },
-        { r:'Unknown / Unresponsive', c:19, p:21, tag:'disengagement' },
-        { r:'Work Commitments', c:14, p:16, tag:'stated' },
-        { r:'Transfer to another program/course', c:6, p:7 },
-        { r:'University Administrative', c:5, p:6 },
-        { r:'Travelling', c:5, p:6 }
-      ],
-      reasonsNote: 'Reasons 1–2 are disengagement (nobody reached them in time). Work Commitments is the top reason students actually give.',
-      talkingPoints: [
-        'Contact rate is drop-prevention rate: ≈44 of the 89 drops (about half) were students nobody reached — Roster Dropped or Unresponsive. Every point of Attempted / Contacted rate is a student we keep.',
-        'A "Roster Dropped / Unresponsive" student is one nobody reached in time. A Week 1 "are you actually here?" check is the single biggest lever we have.',
-        'Work Commitments is the #1 stated reason — but it\'s often a soft excuse. We can\'t offer a lighter load and we\'re steering away from LOA, so instead walk the student through the unit\'s key dates and weekly schedule to show how study fits around work, and probe what has actually changed at work.',
-        'Priority units to defend in H5: Introductory Data Analysis, Analytics and Business, Cyber Operations, Strategic Rewards and Performance, Portfolio Management.'
-      ],
-      questions: [
-        { s:'Not started / gone quiet', q:['You\'re enrolled in [unit] starting [date] — still planning to study this hex?','Have you logged in and found your Week 1 materials? Any tech or access issues?','What\'s the one thing that would make it easiest to start this week?'] },
-        { s:'Work / time pressure', q:['What\'s changed at work since you enrolled — is this a short-term crunch or ongoing?','Let\'s map the unit\'s key dates and weekly schedule against your work week — where exactly is the clash?','The heavier weeks are around the key assessment dates — can we plan your study around work rather than dropping?'] },
-        { s:'Fit / thinking of transferring', q:['Does this unit still match your goals? Let\'s talk before you switch.'] },
-        { s:'Overwhelmed', q:['After Week 1 — manageable or already behind? Do you know where to get help?'] },
-        { s:'Personal / financial / health', q:['Anything outside study we should know? Would a Leave of Absence beat a full withdrawal so you keep your place?'] }
-      ],
-      units: [
-      {c:'ZZBU8510',n:'InsurTech and Financial Risk Management',comm:14,drops:3,dp:21.4,hp:13.3,vs:8.1,risk:'High',rz:'Roster File Dropped (1); Personal Reason (1); Work Commitments (1)',w:'Up sharply vs history — investigate what changed'},
-      {c:'ZZBU6501',n:'Introductory Data Analysis',comm:52,drops:11,dp:21.2,hp:8.6,vs:12.6,risk:'High',rz:'Roster File Dropped (4); Work Commitments (2); Transfer to another program/course (internal) (2); Unknown / Unresponsive (1); Health Issues (personal) (1); Travelling (1)',w:'Up sharply vs history — investigate what changed'},
-      {c:'ZZBU6502',n:'Analytics and Business',comm:50,drops:9,dp:18,hp:14.2,vs:3.8,risk:'High',rz:'Roster File Dropped (6); Unknown / Unresponsive (1); Health Issues (personal) (1); Financial Issues (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZPS5009',n:'Abnormal Psychology',comm:12,drops:2,dp:16.7,hp:3.9,vs:12.8,risk:'High',rz:'Unknown / Unresponsive (1); University Administrative (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZBU6408',n:'Strategic Rewards and Performance',comm:43,drops:6,dp:14,hp:7.6,vs:6.4,risk:'High',rz:'Unknown / Unresponsive (3); Roster File Dropped (2); Work Commitments (1)',w:'Up sharply vs history — investigate what changed'},
-      {c:'ZZBU8701',n:'Portfolio Management',comm:38,drops:5,dp:13.2,hp:14.7,vs:-1.6,risk:'High',rz:'Unknown / Unresponsive (2); Roster File Dropped (1); Work Commitments (1); University Administrative (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZPS5006',n:'Psychology Across the Lifespan',comm:8,drops:1,dp:12.5,hp:6.9,vs:5.6,risk:'High',rz:'Financial Issues (1)',w:'Monitor early engagement'},
-      {c:'ZZPS5002',n:'Introduction to Psychology 2',comm:29,drops:3,dp:10.3,hp:12,vs:-1.7,risk:'Watch',rz:'Unknown / Unresponsive (2); Travelling (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZCA9205',n:'Cyber Operations',comm:60,drops:6,dp:10,hp:5.1,vs:4.9,risk:'High',rz:'Work Commitments (2); Roster File Dropped (2); Transfer to another program/course (internal) (1); Unknown / Unresponsive (1)',w:'Up sharply vs history — investigate what changed'},
-      {c:'ZZLJ8212',n:'Commercial Contract Law',comm:30,drops:3,dp:10,hp:14.3,vs:-4.3,risk:'Watch',rz:'Roster File Dropped (1); Personal Reason (1); Health Issues (personal) (1)',w:'Below historical — on track'},
-      {c:'ZZCA6510',n:'Decision Making in Analytics',comm:41,drops:4,dp:9.8,hp:8.8,vs:0.9,risk:'Watch',rz:'Unknown / Unresponsive (1); Transfer to another program/course (internal) (1); Roster File Dropped (1); Work Commitments (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZBU6103',n:'Entrepreneurship and Innovation',comm:31,drops:3,dp:9.7,hp:2.5,vs:7.2,risk:'Watch',rz:'Unknown / Unresponsive (2); Roster File Dropped (1)',w:'Up sharply vs history — investigate what changed'},
-      {c:'ZZBU8501',n:'FinTech Ecosystem and Industry Insights',comm:23,drops:2,dp:8.7,hp:8.4,vs:0.3,risk:'Watch',rz:'Family Commitments (1); Transfer to another program/course (internal) (1)',w:'Monitor early engagement'},
-      {c:'ZZEN9311',n:'Database Systems',comm:24,drops:2,dp:8.3,hp:5.9,vs:2.5,risk:'Watch',rz:'Elective Not Preferred (1); Time commitement/ poor time management (1)',w:'Monitor early engagement'},
-      {c:'ZZBU6002',n:'Financial Management',comm:74,drops:6,dp:8.1,hp:6.3,vs:1.8,risk:'Watch',rz:'Roster File Dropped (3); Unknown / Unresponsive (1); Work Commitments (1); Family Commitments (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZBU6402',n:'Employee Wellbeing & Engagement',comm:58,drops:4,dp:6.9,hp:5.3,vs:1.6,risk:'Monitor',rz:'Travelling (2); University Administrative (1); Unknown / Unresponsive (1)',w:'Monitor early engagement'},
-      {c:'ZZBU8707',n:'Derivatives',comm:45,drops:3,dp:6.7,hp:8.9,vs:-2.3,risk:'Monitor',rz:'Unknown / Unresponsive (1); Roster File Dropped (1); Work Commitments (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZCA9204',n:'Cyber Ethics',comm:47,drops:3,dp:6.4,hp:10.9,vs:-4.5,risk:'Monitor',rz:'Work Commitments (2); Unknown / Unresponsive (1)',w:'Work/time pressure — map key dates & schedule around their work'},
-      {c:'ZZBU6516',n:'Database Management',comm:53,drops:3,dp:5.7,hp:8,vs:-2.3,risk:'Monitor',rz:'Health Issues (personal) (1); Roster File Dropped (1); Transfer to another program/course (internal) (1)',w:'Below historical — on track'},
-      {c:'ZZPS5003',n:'Data Analysis and Methods of Psychological Inquiry',comm:38,drops:2,dp:5.3,hp:4.7,vs:0.6,risk:'Monitor',rz:'Travelling (1); Financial Issues (1)',w:'Monitor early engagement'},
-      {c:'ZZBU6401',n:'Human Resource Policies and Practices',comm:45,drops:2,dp:4.4,hp:8.3,vs:-3.8,risk:'Low',rz:'Work Commitments (1); Roster File Dropped (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZBU8704',n:'Private Equity and Venture Capital',comm:84,drops:3,dp:3.6,hp:12.2,vs:-8.6,risk:'Low',rz:'University Administrative (2); Work Commitments (1)',w:'Below historical — on track'},
-      {c:'ZZPS5004',n:'Advanced Data Analysis and Methods of Psychological Inquiry',comm:28,drops:1,dp:3.6,hp:12.5,vs:-8.9,risk:'Low',rz:'Personal Reason (1)',w:'Below historical — on track'},
-      {c:'ZZEN9444',n:'Neural Networks, Deep Learning',comm:59,drops:2,dp:3.4,hp:5.3,vs:-1.9,risk:'Low',rz:'Personal Reason (1); Unknown / Unresponsive (1)',w:'Mostly disengagement — Week 1 "are you here?" check'},
-      {c:'ZZPS5005',n:'Behavioural Neuroscience',comm:16,drops:0,dp:0,hp:13.8,vs:-13.8,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZCA9211',n:'Digital Forensics',comm:18,drops:0,dp:0,hp:5.4,vs:-5.4,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZCA9208',n:'Management and Leadership Capstone Project',comm:24,drops:0,dp:0,hp:0,vs:0,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZPS5008',n:'Perception and Cognition',comm:6,drops:0,dp:0,hp:15.6,vs:-15.6,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZCA8310',n:'Project Schedule and Budget Control',comm:34,drops:0,dp:0,hp:0,vs:0,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZPS5010',n:'Psychological Assessment, Ethics and Professional Skills',comm:12,drops:0,dp:0,hp:2.5,vs:-2.5,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZSC5806',n:'Regression Analysis for Data Scientists',comm:12,drops:0,dp:0,hp:7.6,vs:-7.6,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZEN9209',n:'Security Engineering Capstone Project',comm:16,drops:0,dp:0,hp:0.9,vs:-0.9,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZBU6513',n:'Social Media & Digital Analytics',comm:13,drops:0,dp:0,hp:9.9,vs:-9.9,risk:'Low',rz:'—',w:'No drops this hex — hold steady'},
-      {c:'ZZPS5007',n:'The Individual, Culture and Society',comm:7,drops:0,dp:0,hp:11.1,vs:-11.1,risk:'Low',rz:'—',w:'No drops this hex — hold steady'}
-      ]
-    }
-  };
-
-  let diLoaded = false;
-  function renderDropInsight(hexKey) {
-    const sel = document.getElementById('di-hex-select');
-    const keys = Object.keys(DROP_INSIGHT);
-    if (sel.options.length === 0)
-      sel.innerHTML = keys.map(k => `<option value="${k}">${DROP_INSIGHT[k].label}</option>`).join('');
-    const hex = hexKey || sel.value || keys[0];
-    sel.value = hex;
-    const d = DROP_INSIGHT[hex];
-    const content = document.getElementById('di-content');
-    if (!d) { content.innerHTML = '<div class="dr-empty">No insight for this hex.</div>'; return; }
-    const s = d.snapshot;
-    const snap = `<div class="di-card"><div class="di-card-hd">📊 Snapshot — ${d.label}</div>
-      <div class="di-snap">
-        <div class="di-snap-cell"><div class="di-snap-val">${s.rate}</div><div class="di-snap-lbl">Overall drop rate</div><div class="di-snap-sub">${s.rateSub}</div></div>
-        <div class="di-snap-cell"><div class="di-snap-val">${s.unreached}</div><div class="di-snap-lbl">Went unreached</div><div class="di-snap-sub">${s.unreachedSub}</div></div>
-        <div class="di-snap-cell"><div class="di-snap-val" style="font-size:1.05rem;line-height:1.2;padding-top:5px;">${s.stated}</div><div class="di-snap-lbl">Top stated reason</div><div class="di-snap-sub">${s.statedSub}</div></div>
-      </div>
-      <div class="di-bottom">💡 ${s.bottom}</div></div>`;
-    const maxC = Math.max(...d.reasons.map(r => r.c), 1);
-    const rzRows = d.reasons.map((r, i) => `<div class="di-reason">
-      <div class="di-reason-rank">${i+1}</div>
-      <div class="di-reason-name" title="${r.r}">${r.r}</div>
-      <div class="di-reason-bar"><div class="di-reason-fill" style="width:${(r.c/maxC*100).toFixed(0)}%;background:${r.tag==='disengagement'?'#ef4444':(r.tag==='stated'?'#f59e0b':'#94a3b8')}"></div></div>
-      <div class="di-reason-val">${r.c} · ${r.p}%</div></div>`).join('');
-    const reasons = `<div class="di-card"><div class="di-card-hd">🔎 Top drop reasons</div>${rzRows}<div class="di-reason-note">${d.reasonsNote}</div></div>`;
-    const tp = `<div class="di-card"><div class="di-card-hd">🗣 Talking points → this hex</div>${d.talkingPoints.map(t => `<div class="di-tp">${t}</div>`).join('')}</div>`;
-    const q = `<div class="di-card"><div class="di-card-hd">❓ Questions to ask (Week 0–2)</div>${d.questions.map(g => `<div class="di-q-group"><div class="di-q-scenario">${g.s}</div>${g.q.map(x => `<div class="di-q">${x}”</div>`).join('')}</div>`).join('')}</div>`;
-    const vsCell = v => { const n = Number(v); if (!n) return '<span class="di-vs-flat">—</span>'; return n > 0 ? `<span class="di-vs-up">▲ ${n.toFixed(1)}</span>` : `<span class="di-vs-down">▼ ${Math.abs(n).toFixed(1)}</span>`; };
-    const units = d.units.filter(u => u.drops > 0).sort((a, b) => b.dp - a.dp);
-    const rows = units.map(u => `<tr>
-      <td class="di-code">${u.c}</td><td>${u.n}</td>
-      <td class="num">${u.comm}</td><td class="num">${u.drops}</td>
-      <td class="num" style="font-weight:800;color:${u.dp>=12?'#dc2626':u.dp>=8?'#ea580c':'#374151'}">${u.dp}%</td>
-      <td class="num">${u.hp}%</td><td class="num">${vsCell(u.vs)}</td>
-      <td><span class="di-risk ${u.risk}">${u.risk}</span></td>
-      <td style="max-width:280px;font-size:0.7rem;color:#6b7280;">${u.rz}</td></tr>`).join('');
-    const table = `<div class="di-sec-title">Units — highest drop rate first</div>
-      <div class="di-tbl-wrap"><table class="di-tbl"><thead><tr>
-        <th>Code</th><th>Unit</th><th class="num">Comm.</th><th class="num">Drops</th><th class="num">Drop %</th><th class="num">Hist %</th><th class="num">vs Hist</th><th>Risk</th><th>Top drop reasons</th>
-      </tr></thead><tbody>${rows}</tbody></table></div>`;
-    content.innerHTML = snap + `<div class="di-grid">${tp}${reasons}</div>` + q + table;
-  }
-  function initDropInsight() {
-    renderDropInsight();
-    document.getElementById('di-hex-select').addEventListener('change', function() { renderDropInsight(this.value); });
-  }
-
-
   // ── Email Assistant ───────────────────────────────────────────
   // Key is injected at deploy time by GitHub Actions (same pattern as the GROW portal).
   // If no key was injected, each advisor supplies their own and it stays in their browser.
   const EA_GEMINI_KEY = 'GEMINI_KEY_PLACEHOLDER';
   const EA_PLACEHOLDER = 'GEMINI_KEY_' + 'PLACEHOLDER';
+  const EA_PROXY = '';
   let eaType = 'Re-enrolment';
   let eaResult = null;
 
@@ -4260,6 +4081,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   function eaKeyNote() {
     const el = document.getElementById('ea-key-note');
     if (!el) return;
+    if (EA_PROXY) { el.textContent = 'Connected and ready. Nothing to set up.'; return; }
     const injected = EA_GEMINI_KEY && EA_GEMINI_KEY !== EA_PLACEHOLDER;
     const stored = localStorage.getItem('unsw-gemini-key');
     el.innerHTML = injected
@@ -4390,8 +4212,8 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
   async function eaRewrite() {
     const draft = document.getElementById('ea-draft').value.trim();
     if (!draft) { alert('Paste a draft email first.'); return; }
-    const key = eaGetKey(false);
-    if (!key) return;
+    const key = EA_PROXY ? null : eaGetKey(false);
+    if (!EA_PROXY && !key) return;
 
     const context = document.getElementById('ea-context').value.trim();
 
@@ -4431,12 +4253,15 @@ draft.slice(0, 6000),
     ].join('\n');
 
     try {
-      const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + key, {
+      const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.35, maxOutputTokens: 8000 } };
+      const url = EA_PROXY || ('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + key);
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.35, maxOutputTokens: 8000 } })
+        body: JSON.stringify(payload)
       });
       if (res.status === 400 || res.status === 401 || res.status === 403) {
+        if (EA_PROXY) throw new Error('The team connection was refused. Let Greg know the Email Assistant needs checking.');
         localStorage.removeItem('unsw-gemini-key');
         throw new Error('That API key was rejected. Refresh and you will be asked for a new one.');
       }
@@ -4539,9 +4364,6 @@ draft.slice(0, 6000),
       }
       if (btn.dataset.tab === 'email') initEmailAssistant();
       if (btn.dataset.tab === 'schedule') initSchedule();
-      if (btn.dataset.tab === 'dropinsight') {
-        if (!diLoaded) { diLoaded = true; initDropInsight(); } else renderDropInsight();
-      }
     });
   });
 
@@ -4782,7 +4604,7 @@ draft.slice(0, 6000),
     { id: 'week-1',  label: 'Week 1' },
     { id: 'week-2',  label: 'Week 2' },
   ];
-  const KANBAN_HEXES = ['H4','H5','H6'];
+  const KANBAN_HEXES = ['H5','H6'];
   const KANBAN_YEARS = ['25','26','27'];
 
   const KANBAN_CATS = {
@@ -7313,8 +7135,8 @@ ${cardsHTML}
     { text: 'Incomplete Enrollment Drop', week: 'Week 1', day: 1, hex: null },  // Tuesday
     { text: 'Escalate Late Enrollments', week: 'Week 1', day: 1, hex: null },  // Tuesday
     { text: 'LMS Non-Access - Canvas Outlines', week: 'Week 1', day: 2, hex: null }, // Wednesday
-    { text: 'Suspension Appeal Deadline', week: 'Week 2', day: 1, hex: null }, // Tuesday
-    { text: 'Suspension Appeal Outcomes', week: 'Week 2', day: 3, hex: null }, // Thursday
+    { text: 'Suspension Appeal Deadline', week: 'Week 3', day: 1, hex: null }, // Tuesday
+    { text: 'Suspension Appeal Outcomes', week: 'Week 3', day: 3, hex: null }, // Thursday
     { text: 'PGIPT FEE-HELP Received from SLC', week: 'Week 2', day: 0, hex: null }, // Monday
     { text: 'WADMs Drop', week: 'Week 3', day: 1, hex: null },                 // Tuesday
     { text: 'IPT Opens', week: 'Week 3', day: 0, hex: null },                  // Monday
@@ -7927,12 +7749,12 @@ ${cardsHTML}
         { type:'booked', t:'09:20', count:6, from:1, tag:'booked last Friday' },
         { type:'break', t:'11:15', mins:15, title:'Break' },
         { type:'huddle', t:'11:30', mins:30, title:'Team huddle', sub:'Bring one blocker' },
-        { type:'cold', t:'12:00', end:'12:45', title:'Cold outreach', target:6, carry:'Start with Friday\u2019s carry-over' },
+        { type:'cold', t:'12:00', end:'12:45', title:'Cold outreach', target:3, carry:'Start with Friday\u2019s carry-over' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:4, from:7 },
-        { type:'cold', t:'14:30', end:'15:00', title:'Cold outreach', target:3 },
+        { type:'cold', t:'14:30', end:'15:00', title:'Cold outreach', target:2 },
         { type:'break', t:'15:00', mins:15, title:'Break' },
-        { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:8, sub:'Best reach window of the day' },
+        { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:5, sub:'Best reach window of the day' },
         { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Log any shortfall, it carries to Tuesday' }
       ],
       todo:['Text your 10 booked students before 9:20','Morning is booked calls, protect it','Huddle at 11:30, bring one blocker','Clear Friday\u2019s carry-over in the 12:00 block'] },
@@ -7943,13 +7765,13 @@ ${cardsHTML}
         { type:'booked', t:'09:20', count:5, from:1, tag:'booked last Friday' },
         { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'break', t:'11:00', mins:15, title:'Break' },
-        { type:'bookahead', t:'11:15', end:'12:45', title:'Book ahead', pill:'Fill Thursday and Friday', target:11,
+        { type:'bookahead', t:'11:15', end:'12:45', title:'Book ahead', pill:'Fill Thursday and Friday', target:6,
           sub:'20 slots need filling across those two days. Book as you go.', carry:'Carry-over goes here first' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:5, from:6 },
         { type:'catchup', t:'14:50', mins:10, title:'Catch-up' },
         { type:'break', t:'15:00', mins:15, title:'Break' },
-        { type:'bookahead', t:'15:15', end:'16:30', title:'Book ahead', target:8, sub:'Best reach window. Keep filling Thursday and Friday.' },
+        { type:'bookahead', t:'15:15', end:'16:30', title:'Book ahead', target:4, sub:'Best reach window. Keep filling Thursday and Friday.' },
         { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Count Thursday and Friday. Both at 10?' }
       ],
       todo:['Text your 10 booked students before 9:20','Book ahead: Thursday and Friday, 20 slots','Do not stop until both days show 10','Rebook every no-show before you leave'] },
@@ -7960,13 +7782,13 @@ ${cardsHTML}
         { type:'booked', t:'09:20', count:5, from:1, tag:'booked last Friday' },
         { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'break', t:'11:00', mins:15, title:'Break' },
-        { type:'cold', t:'11:15', end:'12:45', title:'Cold outreach', target:11,
+        { type:'cold', t:'11:15', end:'12:45', title:'Cold outreach', target:6,
           sub:'Chase anyone who missed their Monday or Tuesday appointment. Second attempts at a new hour.', carry:'Carry-over goes here first' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:5, from:6 },
         { type:'catchup', t:'14:50', mins:10, title:'Catch-up' },
         { type:'break', t:'15:00', mins:15, title:'Break' },
-        { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:8, sub:'Best reach window of the day' },
+        { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:4, sub:'Best reach window of the day' },
         { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Check Thursday and Friday are full' }
       ],
       todo:['Text your 10 booked students before 9:20','No meetings today. Longest clear run.','Chase Monday and Tuesday no-shows','Check Thursday and Friday are filling'] },
@@ -7978,12 +7800,12 @@ ${cardsHTML}
         { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'huddle', t:'11:00', mins:30, title:'Team huddle', sub:'Bring one blocker' },
         { type:'break', t:'11:30', mins:15, title:'Break' },
-        { type:'cold', t:'11:45', end:'12:45', title:'Cold outreach', target:8, sub:'Second attempts at a new hour', carry:'Carry-over goes here first' },
+        { type:'cold', t:'11:45', end:'12:45', title:'Cold outreach', target:5, sub:'Second attempts at a new hour', carry:'Carry-over goes here first' },
         { type:'lunch', t:'12:45', mins:30, title:'Lunch', sub:'Away from the desk' },
         { type:'booked', t:'13:15', count:5, from:6 },
         { type:'catchup', t:'14:50', mins:10, title:'Catch-up' },
         { type:'break', t:'15:00', mins:15, title:'Break' },
-        { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:8, sub:'Best reach window of the day' },
+        { type:'cold', t:'15:15', end:'16:30', title:'Cold outreach', target:5, sub:'Best reach window of the day' },
         { type:'admin', t:'16:30', mins:30, title:'Admin and wrap', sub:'Friday must be at 10. Check it.' }
       ],
       todo:['Text your 10 booked students before 9:20','Huddle at 11:00, bring one blocker','Second attempts at a different hour','Friday must show 10 before you leave'] },
@@ -8204,7 +8026,7 @@ ${cardsHTML}
     stats.innerHTML =
       '<div class="ds-stat g"><b>' + w.booked + '</b><span>vCita appointments a week</span></div>' +
       '<div class="ds-stat g"><b>' + everyDay + '</b><span>booked every single day</span></div>' +
-      '<div class="ds-stat b"><b>' + w.attempts + '</b><span>attempts a week, 20+ a day</span></div>' +
+      '<div class="ds-stat b"><b>' + w.attempts + '</b><span>attempts a week, 20 a day</span></div>' +
       '<div class="ds-stat"><b>' + dsHhMm(w.bookedMin) + '</b><span>on booked appointments</span></div>' +
       '<div class="ds-stat"><b>' + dsHhMm(w.coldMin) + '</b><span>cold call time</span></div>' +
       '<div class="ds-stat p"><b>' + dsHhMm(w.hudMin) + '</b><span>huddles</span></div>';
