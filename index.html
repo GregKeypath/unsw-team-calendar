@@ -2912,6 +2912,32 @@
     );
   }
 
+  // One-time setup link. Opening the hub with ?setup=KEY stores the key for this
+  // browser and strips it straight back out of the address bar, so an advisor is
+  // never shown a key and never has to think about one.
+  (function eaSetupLink() {
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const k = p.get('setup');
+      if (!k || !k.trim()) return;
+      localStorage.setItem('unsw-gemini-key', k.trim());
+      p.delete('setup');
+      const q = p.toString();
+      history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+      const banner = function() {
+        const d = document.createElement('div');
+        d.textContent = '\u2713  Email Assistant is ready. Nothing else to set up.';
+        d.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:16px;z-index:9999;' +
+          'background:#1E9E73;color:#fff;padding:11px 20px;border-radius:9px;font-size:0.83rem;' +
+          'font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,0.24);transition:opacity .4s';
+        document.body.appendChild(d);
+        setTimeout(function() { d.style.opacity = '0'; }, 6000);
+        setTimeout(function() { d.remove(); }, 6500);
+      };
+      if (document.readyState === 'loading') window.addEventListener('DOMContentLoaded', banner); else banner();
+    } catch(e) {}
+  })();
+
   // Load saved theme immediately (before DOM ready to avoid flash)
   (function() {
     const saved = localStorage.getItem('unsw-theme') || 'gold';
@@ -4321,7 +4347,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     let k = (EA_GEMINI_KEY && EA_GEMINI_KEY !== EA_PLACEHOLDER) ? EA_GEMINI_KEY : null;
     if (!k) k = localStorage.getItem('unsw-gemini-key');
     if (!k || force) {
-      const entered = prompt('Enter your Gemini API key.\n\nGet a free one at aistudio.google.com/apikey\nIt is stored only in this browser.', k || '');
+      const entered = prompt('This browser is not set up for the Email Assistant yet.\n\nAsk Greg for your one-time setup link, or paste the team key here if you have it.', k || '');
       if (!entered) return null;
       k = entered.trim();
       localStorage.setItem('unsw-gemini-key', k);
@@ -4335,11 +4361,9 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     if (EA_PROXY) { el.textContent = 'Connected and ready. Nothing to set up.'; return; }
     const injected = EA_GEMINI_KEY && EA_GEMINI_KEY !== EA_PLACEHOLDER;
     const stored = localStorage.getItem('unsw-gemini-key');
-    el.innerHTML = injected
-      ? 'Connected using the shared team key.'
-      : (stored
-          ? 'Using your own key, saved in this browser only.'
-          : 'You will be asked for a free Gemini API key the first time. Get one at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> and it stays in your browser.');
+    el.innerHTML = (injected || stored)
+      ? 'Connected and ready.'
+      : 'Not set up on this browser yet. Ask Greg for your one-time setup link and the Email Assistant will work from then on.';
   }
 
   // Assemble the UNSW facts the model should check the email against
@@ -4514,7 +4538,7 @@ draft.slice(0, 6000),
       if (res.status === 400 || res.status === 401 || res.status === 403) {
         if (EA_PROXY) throw new Error('The team connection was refused. Let Greg know the Email Assistant needs checking.');
         localStorage.removeItem('unsw-gemini-key');
-        throw new Error('That API key was rejected. Refresh and you will be asked for a new one.');
+        throw new Error('This browser is no longer connected. Ask Greg for a fresh setup link.');
       }
       const data = await res.json();
       if (data.candidates && data.candidates[0] && data.candidates[0].finishReason === 'MAX_TOKENS') {
