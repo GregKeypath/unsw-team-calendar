@@ -1,0 +1,42 @@
+name: Deploy hub to Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject the Gemini key
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+        run: node -e "const fs=require('fs');const k=process.env.GEMINI_KEY;if(!k){console.log('No GEMINI_KEY secret set. Advisors will be asked for a key instead.');process.exit(0);}let s=fs.readFileSync('index.html','utf8');const n=(s.match(/GEMINI_KEY_PLACEHOLDER/g)||[]).length;if(n!==1){console.error('Expected 1 placeholder, found '+n);process.exit(1);}fs.writeFileSync('index.html',s.split('GEMINI_KEY_PLACEHOLDER').join(k));console.log('Key injected.');"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
