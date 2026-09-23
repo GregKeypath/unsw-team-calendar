@@ -1625,6 +1625,18 @@
     .dr-search:focus { border-color:#1e3a5f; }
     .dr-search::placeholder { color:#9ca3af; }
     .dr-rate-locked { display:inline-flex; align-items:center; gap:4px; border-radius:6px; padding:5px 9px; font-size:0.8rem; font-weight:800; white-space:nowrap; max-width:140px; overflow:hidden; text-overflow:ellipsis; }
+    .dr-howto { background:#fff; border:1px solid #e5e7eb; border-left:4px solid var(--tc-edge, var(--accent)); border-radius:10px; padding:16px 20px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+    .dr-howto-hd { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#6b7280; margin-bottom:10px; display:flex; align-items:center; gap:7px; }
+    .dr-howto-lead { font-size:0.8rem; color:#374151; line-height:1.6; margin-bottom:14px; }
+    .dr-howto-cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; }
+    @media (max-width:760px){ .dr-howto-cols { grid-template-columns:1fr; } }
+    .dr-howto-col h4 { font-size:0.66rem; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin:0 0 7px; }
+    .dr-howto-col ul { margin:0; padding-left:16px; }
+    .dr-howto-col li { font-size:0.76rem; color:#374151; line-height:1.55; margin-bottom:6px; }
+    .dr-howto-col li strong { color:#111; }
+    .dr-key { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .dr-key span { border-radius:6px; padding:3px 8px; font-size:0.66rem; font-weight:800; }
+    .dr-howto-foot { font-size:0.7rem; color:#9ca3af; line-height:1.55; margin-top:14px; padding-top:12px; border-top:1px solid #f3f4f6; }
     .droprate-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; }
     .dr-card { background:#fff; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.07); padding:16px; border-top:3px solid #e5e7eb; display:flex; flex-direction:column; gap:10px; }
     .dr-card.high-drop { background:#fff5f5; border-top-color:#ef4444 !important; box-shadow:0 2px 8px rgba(239,68,68,0.15); }
@@ -2134,6 +2146,45 @@
       </select>
       <input id="dr-search" class="dr-search" type="text" placeholder="Search units…">
       <span class="droprate-save-note">Changes save automatically and are shared with the team</span>
+    </div>
+    <div class="dr-howto">
+      <div class="dr-howto-hd">🧭 How to use these numbers</div>
+      <div class="dr-howto-lead">A drop rate is the share of students who left this unit in earlier runs of it. It tells you where a call is most likely to change an outcome, not which students are in trouble. Nobody on this list has done anything wrong.</div>
+      <div class="dr-howto-cols">
+        <div class="dr-howto-col">
+          <h4>Reading the badge</h4>
+          <div class="dr-key">
+            <span class="rate-green" style="background:#d1fae5;color:#065f46;">5% or under</span>
+            <span class="rate-amber" style="background:#fef3c7;color:#92400e;">to 10%</span>
+            <span class="rate-orange" style="background:#ffedd5;color:#9a3412;">to 14%</span>
+            <span class="rate-red" style="background:#fee2e2;color:#991b1b;">over 14%</span>
+            <span class="rate-none" style="background:#f3f4f6;color:#9ca3af;">no history</span>
+          </div>
+          <ul>
+            <li>Anything <strong>over 10%</strong> gets a red card and sorts to the top of its program.</li>
+            <li>Units at <strong>5% or under are hidden</strong>, so this page is already filtered to where the risk sits.</li>
+            <li><strong>No history</strong> means a new unit with nothing to forecast from. Treat it as unknown, not as safe.</li>
+          </ul>
+        </div>
+        <div class="dr-howto-col">
+          <h4>What to do with it</h4>
+          <ul>
+            <li><strong>Call the high ones first.</strong> If your week is short, this page is your call order.</li>
+            <li><strong>Lead with the unit, not the rate.</strong> Never tell a student their unit has a high drop rate. It plants the idea.</li>
+            <li><strong>Use the Why and Say lines on each card.</strong> The Say lines are written to be spoken, so read them out or bend them into your own voice.</li>
+            <li><strong>Time it early.</strong> Most of these reasons bite in the first fortnight, so the call is worth far more in week one than week five.</li>
+          </ul>
+        </div>
+        <div class="dr-howto-col">
+          <h4>What is on each card</h4>
+          <ul>
+            <li><strong>Convenor, LD and textbook</strong> from the course digest, so you can refer a student on without hunting.</li>
+            <li><strong>Assessments</strong> with weights. Most objections are really about one piece of work, and this is where you find it.</li>
+            <li><strong>Your notes.</strong> Anything you type saves automatically and the whole team sees it, so add what worked on a call.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="dr-howto-foot">Two things we cannot offer: a lighter study load, or Leave of Absence as an opener. Point at what is still available to the student instead. If a rate looks wrong against what you are seeing on calls, say so rather than working around it.</div>
     </div>
     <div id="droprate-grid" class="droprate-grid">
       <div class="dr-empty">Select a study period to see units running that hex.</div>
@@ -8002,6 +8053,14 @@ ${cardsHTML}
         ${digest.note ? `<div style="margin-top:6px;color:#92400e;font-size:0.6rem;background:#fef3c7;border-radius:4px;padding:2px 6px;">⚠️ ${digest.note}</div>` : ''}
       </div>` : '';
 
+    const outlineAssess = (!digest && Array.isArray(info.assessments)) ? info.assessments.filter(a => a && a.name) : [];
+    const outlineHtml = outlineAssess.length ? `
+      <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:6px;padding:8px 10px;margin-bottom:8px;">
+        <div style="color:#9ca3af;font-size:0.58rem;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Assessments <span style="text-transform:none;letter-spacing:0;">from the course outline</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;">
+          ${outlineAssess.map(a => `<span style="background:#eff6ff;color:#1e40af;border-radius:4px;padding:2px 6px;font-size:0.6rem;white-space:nowrap;">${a.name}${a.weight ? ' (' + a.weight + ')' : ''}</span>`).join('')}
+        </div>
+      </div>` : '';
     const card = document.createElement('div');
     card.className = 'dr-card' + (isHighDrop ? ' high-drop' : '');
     card.dataset.search = `${u.code} ${u.name} ${u.programs.join(' ')}`.toLowerCase();
@@ -8025,6 +8084,7 @@ ${cardsHTML}
       </div>
       ${info.description ? `<div style="font-size:0.67rem;color:#6b7280;line-height:1.4;margin-bottom:6px;">${info.description.substring(0,160)}…</div>` : ''}
       ${digestHtml}
+      ${outlineHtml}
       <div>
         <div class="dr-field-label" style="margin-bottom:4px;">Selling Points & Notes <span style="font-weight:400;font-size:0.6rem;color:#9ca3af;">• bullet per line</span></div>
         <textarea class="dr-notes-input" placeholder="• Add a selling point&#10;• Talk to specific outcomes&#10;• Flag any considerations" data-code="${u.code}">${currentNotes}</textarea>
