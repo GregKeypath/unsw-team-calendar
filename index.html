@@ -1625,6 +1625,10 @@
     .dr-search:focus { border-color:#1e3a5f; }
     .dr-search::placeholder { color:#9ca3af; }
     .dr-rate-locked { display:inline-flex; align-items:center; gap:4px; border-radius:6px; padding:5px 9px; font-size:0.8rem; font-weight:800; white-space:nowrap; max-width:140px; overflow:hidden; text-overflow:ellipsis; }
+    .school-switch { display:inline-flex; background:#f3f4f6; border-radius:8px; padding:3px; gap:2px; margin-right:10px; }
+    .school-btn { border:none; background:transparent; border-radius:6px; padding:5px 14px; font-size:0.72rem; font-weight:800; letter-spacing:0.3px; color:#6b7280; cursor:pointer; font-family:inherit; }
+    .school-btn:hover { color:#111; }
+    .school-btn.active { background:#fff; color:#111; box-shadow:0 1px 3px rgba(0,0,0,0.12); }
     .dr-howto { background:#fff; border:1px solid #e5e7eb; border-left:4px solid var(--tc-edge, var(--accent)); border-radius:10px; padding:16px 20px; margin-bottom:20px; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
     .dr-howto-hd { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px; color:#6b7280; margin-bottom:10px; display:flex; align-items:center; gap:7px; }
     .dr-howto-lead { font-size:0.8rem; color:#374151; line-height:1.6; margin-bottom:14px; }
@@ -4921,7 +4925,9 @@ draft.slice(0, 6000),
   const KANBAN_BASE = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
   let activeKanbanHex  = 'H6'; // default hex
   let activeKanbanYear = '26';
+  let activeKanbanSchool = 'UNSW';
   function getKanbanDB() {
+    if (activeKanbanSchool === 'MBS') return `${KANBAN_BASE}/kanban_MBS.json`;
     return `${KANBAN_BASE}/kanban_${activeKanbanHex}_${activeKanbanYear}.json`;
   }
 
@@ -4938,6 +4944,20 @@ draft.slice(0, 6000),
   const KANBAN_HEXES = ['H5','H6'];
   const KANBAN_YEARS = ['25','26','27'];
 
+  const MBS_COLS = [
+    { id: 'adhoc',   label: 'Ad hoc / To do' },
+    { id: 'o-week',  label: 'O-Week' },
+    { id: 'week-1',  label: 'Week 1' },
+    { id: 'week-2',  label: 'Week 2' },
+    { id: 'week-3',  label: 'Week 3' },
+    { id: 'week-4',  label: 'Week 4' },
+    { id: 'week-5',  label: 'Week 5' },
+    { id: 'week-6',  label: 'Week 6' },
+    { id: 'week-7',  label: 'Week 7' },
+  ];
+  function kanbanCols()     { return activeKanbanSchool === 'MBS' ? MBS_COLS : KANBAN_COLS; }
+  function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : KANBAN_INITIAL; }
+
   const KANBAN_CATS = {
     priority:    { label: 'Priority',              dot: '#EF4444' },
     calls:       { label: 'Calls',                 dot: '#3B82F6' },
@@ -4947,6 +4967,118 @@ draft.slice(0, 6000),
     automated:   { label: 'Automated',             dot: '#F59E0B' },
     webinar:     { label: 'Webinar',               dot: '#F97316' },
     other_resp:  { label: 'Other Responsibility',  dot: '#8B5CF6' },
+  };
+
+  const MBS_INITIAL = {
+    'adhoc': [
+      { id:'m1', text:'Daily Drops', cat:'admin' },
+      { id:'m2', text:'Send out Risk of WD comms/and WD comms if no contact made, MBS will request both.', cat:'admin' },
+      { id:'m3', text:'Any manual enrollments, outcome needs to be emailed to student by SSA', cat:'admin' },
+      { id:'m4', text:'To do Template', cat:'admin' },
+      { id:'m5', text:'Escalations Tracker once a week update', cat:'admin' },
+      { id:'m6', text:'Current Student Inbox check', cat:'admin' },
+    ],
+    'o-week': [
+      { id:'m7', text:'Daily Drops', cat:'admin' },
+      { id:'m8', text:'Final Enrolment Attempts', cat:'priority' },
+      { id:'m9', text:'Outbound remaining Welcome Calls — Welcome Call Tracking- Check all NS have had WCs', cat:'welcome' },
+      { id:'m10', text:'# Incorrect Enrolment Calls', cat:'calls' },
+      { id:'m11', text:'Send Letter of Offer emails (GC >M) (Friday of Oweek)', cat:'admin' },
+      { id:'m12', text:'#Previous TP Dropped- At Risk Calls', cat:'calls' },
+      { id:'m13', text:'^Failed Subject Last 12 Months At Risk Retention Calls', cat:'calls' },
+      { id:'m14', text:'#Duplicate Enrollment Calls', cat:'calls' },
+      { id:'m15', text:'At risk- Financial Hold Students (current term- unpaid - drop risk)', cat:'admin' },
+      { id:'m16', text:'Send Commendations (Friday of Oweek)', cat:'admin' },
+      { id:'m17', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+      { id:'m18', text:'TL- Ask for list of Hurdle Assessment Dates from LD so we can schedule Hurdle reminder dates', cat:'leadership' },
+    ],
+    'week-1': [
+      { id:'m19', text:'Daily Drops', cat:'admin' },
+      { id:'m20', text:'Final Enrolment Attempts (GC to M New App/ Potentially Eligible)', cat:'priority' },
+      { id:'m21', text:'First Priority: Call #Failed Current Term — (Prioritise Next Term Enrolled to swap enrolment if failed pre-req)', cat:'calls' },
+      { id:'m22', text:'Canvas non-access- 2x attempts Mon & Thurs', cat:'admin' },
+      { id:'m23', text:'T1-T2 CS Check in Calls (outbound or book all Enrolled) — (Start with High Risk T1-T2s)', cat:'calls' },
+      { id:'m24', text:'Assessment Nonsubmission (especially BE) — Greg to pull & share list: — SSAs call current students only, SEAs call new students (BE)', cat:'other_resp' },
+      { id:'m25', text:'#Failed Current Term then ^Failed Subject Last 12 Months At Risk Retention Calls', cat:'calls' },
+      { id:'m26', text:'At Risk /CS Check in Calls- — Reinforce Hurdle Assessment Due Dates — (missed hurdle = fail)', cat:'calls' },
+      { id:'m27', text:'#Duplicate Enrollment Calls', cat:'calls' },
+      { id:'m28', text:'At risk- Financial Hold Students (current term- unpaid - drop risk)', cat:'admin' },
+      { id:'m29', text:'At risk- high drop rate subject enrolled calls', cat:'calls' },
+      { id:'m30', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+      { id:'m31', text:'Kate pulls Canvas Non Access List- Monday & Thursday- send to SDIT & PA team', cat:'other_resp' },
+    ],
+    'week-2': [
+      { id:'m32', text:'Census Friday', cat:'priority', urgent:true },
+      { id:'m33', text:'Daily Drops', cat:'admin' },
+      { id:'m34', text:'At -Risk Calls — First Assessment Non Submission', cat:'calls' },
+      { id:'m35', text:'T1-T2 CS Check in Calls (outbound or book all Enrolled) — (Start with High Risk T1-T2s)', cat:'calls' },
+      { id:'m36', text:'^Failed Subject Last 12 Months At Risk Retention Calls', cat:'calls' },
+      { id:'m37', text:'#Duplicate Enrollment Calls', cat:'calls' },
+      { id:'m38', text:'At Risk /CS Check in Calls- — Reinforce Hurdle Assessment Due Dates — (missed hurdle = fail)', cat:'calls' },
+      { id:'m39', text:'At risk- high drop rate subject enrolled calls', cat:'calls' },
+      { id:'m40', text:'All Commendation Letters', cat:'admin' },
+      { id:'m41', text:'MBA Summit February 2026 - Registrations.xlsx', cat:'admin' },
+      { id:'m42', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+    ],
+    'week-3': [
+      { id:'m43', text:'Daily Drops - Before Status flip', cat:'admin' },
+      { id:'m44', text:'Monday first thing: Add Credits to DPs and Contact Required Waiver Test Students- Intake Lists', cat:'admin', urgent:true },
+      { id:'m45', text:'Email Academic Services- Waiver Test Scheduling', cat:'admin' },
+      { id:'m46', text:'Complete NCA- Pending Grad List First', cat:'admin' },
+      { id:'m47', text:'Degree Path Mapping — (Include F2F and Exchange Enrolments & Results)', cat:'admin' },
+      { id:'m48', text:'T1-T2: NS Check & Rego Calls (DP sent in follow up email) — Book follow up (if no contact)', cat:'calls' },
+      { id:'m49', text:'AWOL Pre-cancellation Calls & Emails by EOW3 (If Lauren has sent prior)', cat:'priority', urgent:true },
+      { id:'m50', text:'Send completion & conferral emails', cat:'admin' },
+      { id:'m51', text:'Send LOA Data to STID on Tuesday of Week 3', cat:'other_resp' },
+      { id:'m52', text:'TL to Request NTSS= NCA but with course planned on DP list from SDIT after DPs are done', cat:'leadership' },
+      { id:'m53', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+    ],
+    'week-4': [
+      { id:'m54', text:'Daily Drops', cat:'admin' },
+      { id:'m55', text:'First attempts Rego & Reengagement', cat:'admin' },
+      { id:'m56', text:'Continue any remaining T1-T2 NS Check Calls (all)', cat:'calls' },
+      { id:'m57', text:'AWOL Reengagement — Calls + emails — [All remaining students must receive Reengagement Emails by end of Week 4]', cat:'calls' },
+      { id:'m58', text:'Send all GC to M (Course Transfer Emails) — must be sent by end of Week 4', cat:'priority', urgent:true },
+      { id:'m59', text:'Arrange Waiver Tests required from Intake Lists', cat:'admin' },
+      { id:'m60', text:'Fee Hold Status Calls for CS Enrolled (Cancellation At Risk Calls) — SSAs to filter Risk Factor Notes', cat:'calls' },
+      { id:'m61', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+    ],
+    'week-5': [
+      { id:'m62', text:'UOM: Re-enrolment Calls', cat:'calls' },
+      { id:'m63', text:'Daily Drops', cat:'admin' },
+      { id:'m64', text:'GC to M Calls.', cat:'calls' },
+      { id:'m65', text:'First & 2nd attempts Rego & Reengagement', cat:'admin' },
+      { id:'m66', text:'GCM Winbacks (Make time for winbacks)', cat:'admin' },
+      { id:'m67', text:'#Duplicate Enrollment Calls', cat:'calls' },
+      { id:'m68', text:'Plot hurdle assessment dates- pull list of Fail Risk (focus: Pre-req Subjects)', cat:'admin' },
+      { id:'m69', text:'Review NCA List- find enrolment opportunities', cat:'admin' },
+      { id:'m70', text:'Arrange Waiver Tests for Next Term Subjects required', cat:'admin' },
+      { id:'m71', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+    ],
+    'week-6': [
+      { id:'m72', text:'Daily Drops', cat:'admin' },
+      { id:'m73', text:'2nd & 3rd Attempts Rego & Reengagement', cat:'admin' },
+      { id:'m74', text:'# Incorrect Enrolment Calls', cat:'calls' },
+      { id:'m75', text:'GCM Winbacks (Make time for winbacks)', cat:'admin' },
+      { id:'m76', text:'2nd attempts T1-T2 rego Calls', cat:'calls' },
+      { id:'m77', text:'2nd/3rd attempt GC to M Calls. — Follow up Emails', cat:'calls' },
+      { id:'m78', text:'UOM: Re-enrolment Calls', cat:'calls' },
+      { id:'m79', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+    ],
+    'week-7': [
+      { id:'m80', text:'Swappies', cat:'admin' },
+      { id:'m81', text:'Daily Drops', cat:'admin' },
+      { id:'m82', text:'Final Attempts Rego & Reeng calls', cat:'priority', urgent:true },
+      { id:'m83', text:'Final GC to M Calls. — Follow up Emails', cat:'priority' },
+      { id:'m84', text:'#Duplicate Enrollment Calls', cat:'calls' },
+      { id:'m85', text:'# Incorrect Enrolment Calls', cat:'calls' },
+      { id:'m86', text:'#Previous TP Dropped- At Risk Calls', cat:'calls' },
+      { id:'m87', text:'Swappies', cat:'admin' },
+      { id:'m88', text:'T1-T2 CS Check in Calls (outbound or book all Enrolled) — (Start with High Risk T1-T2s E.g Gc-C)', cat:'calls' },
+      { id:'m89', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
+      { id:'m90', text:'Prepare for subject email is sent monday of week 7', cat:'admin' },
+    ],
+    _themes: {'o-week':'Welcome Calls','week-1':'At Risk','week-2':'At Risk','week-3':'T1-T2','week-4':'1st Attempts Reenrol','week-5':'GCM','week-6':'2nd attempts REP & GCM','week-7':'Final Opportunities'},
   };
 
   const KANBAN_INITIAL = {
@@ -5088,13 +5220,21 @@ draft.slice(0, 6000),
     const nav = document.getElementById('kanban-hex-nav');
     if (!nav) return;
     // Year prev/next + hex buttons
+    const isMBS = activeKanbanSchool === 'MBS';
     nav.innerHTML =
-      `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 4px;align-self:center;">20${activeKanbanYear}</span>` +
-      KANBAN_HEXES.map(h =>
-        `<button class="hex-btn${h === activeKanbanHex ? ' active' : ''}" data-khex="${h}">${h} 20${activeKanbanYear}</button>`
-      ).join('') +
+      `<span class="school-switch">` +
+        ['UNSW','MBS'].map(s =>
+          `<button class="school-btn${s === activeKanbanSchool ? ' active' : ''}" data-kschool="${s}">${s}</button>`
+        ).join('') +
+      `</span>` +
+      (isMBS
+        ? `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 8px;align-self:center;">Melbourne Business School · one study period</span>`
+        : `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 4px;align-self:center;">20${activeKanbanYear}</span>` +
+          KANBAN_HEXES.map(hx =>
+            `<button class="hex-btn${hx === activeKanbanHex ? ' active' : ''}" data-khex="${hx}">${hx} 20${activeKanbanYear}</button>`
+          ).join('')) +
       `<button class="hex-btn" id="knav-reset-template" style="margin-left:12px;font-size:0.65rem;">↺ Reset to Template</button>` +
-      (kanbanUndo && kanbanUndo.hex === activeKanbanHex && kanbanUndo.year === activeKanbanYear
+      (kanbanUndo && kanbanUndo.school === activeKanbanSchool && kanbanUndo.hex === activeKanbanHex && kanbanUndo.year === activeKanbanYear
         ? `<button class="hex-btn" id="knav-undo-reset" style="margin-left:6px;font-size:0.65rem;background:#fef3c7;color:#92400e;border-color:#fcd34d;">↩ Undo Reset</button>`
         : '');
 
@@ -5104,11 +5244,21 @@ draft.slice(0, 6000),
         loadKanban();
       });
     });
+    nav.querySelectorAll('[data-kschool]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.kschool === activeKanbanSchool) return;
+        activeKanbanSchool = btn.dataset.kschool;
+        kanbanUndo = null;
+        kanbanBoard = null;
+        loadKanban();
+      });
+    });
     nav.querySelector('#knav-reset-template').addEventListener('click', () => {
-      if (confirm(`Reset ${activeKanbanHex} 20${activeKanbanYear} to the master template? This will overwrite all current data for this hex.`)) {
-        kanbanUndo = { hex: activeKanbanHex, year: activeKanbanYear, board: JSON.parse(JSON.stringify(kanbanBoard)) };
-        kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
-        kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
+      const what = activeKanbanSchool === 'MBS' ? 'the MBS board' : `${activeKanbanHex} 20${activeKanbanYear}`;
+      if (confirm(`Reset ${what} to the master template? This will overwrite everything currently on it.`)) {
+        kanbanUndo = { school: activeKanbanSchool, hex: activeKanbanHex, year: activeKanbanYear, board: JSON.parse(JSON.stringify(kanbanBoard)) };
+        kanbanBoard = JSON.parse(JSON.stringify(kanbanTemplate()));
+        kanbanBoard._themes = kanbanBoard._themes || {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
         saveKanban(); renderKanbanHexNav(); renderKanban();
       }
     });
@@ -5144,10 +5294,10 @@ draft.slice(0, 6000),
           else kanbanBoard[col] = [];
         }
         // Restore any columns missing from Firebase using the master template
-        KANBAN_COLS.forEach(c => {
+        kanbanCols().forEach(c => {
           if (!kanbanBoard[c.id] || kanbanBoard[c.id].length === 0) {
-            kanbanBoard[c.id] = KANBAN_INITIAL[c.id]
-              ? JSON.parse(JSON.stringify(KANBAN_INITIAL[c.id]))
+            kanbanBoard[c.id] = kanbanTemplate()[c.id]
+              ? JSON.parse(JSON.stringify(kanbanTemplate()[c.id]))
               : [];
           }
         });
@@ -5156,13 +5306,13 @@ draft.slice(0, 6000),
         if (!kanbanBoard._automated) kanbanBoard._automated = [];
       } else {
         // First time for this hex — copy master template
-        kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
-        kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
+        kanbanBoard = JSON.parse(JSON.stringify(kanbanTemplate()));
+        kanbanBoard._themes = kanbanBoard._themes || {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
         saveKanban(); // persist the template for this hex
       }
     } catch(e) {
-      kanbanBoard = JSON.parse(JSON.stringify(KANBAN_INITIAL));
-      kanbanBoard._themes = {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
+      kanbanBoard = JSON.parse(JSON.stringify(kanbanTemplate()));
+      kanbanBoard._themes = kanbanBoard._themes || {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
     }
     renderKanban();
   }
@@ -5268,12 +5418,12 @@ draft.slice(0, 6000),
     const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const todayWeek = UNSW_WEEKS[todayKey];
     let currentColId = null;
-    if (todayWeek) {
+    if (todayWeek && activeKanbanSchool !== 'MBS') {
       currentColId = todayWeek.label === 'O-Week' ? 'o-week'
                    : 'week-' + todayWeek.label.replace('Week ', '');
     }
 
-    KANBAN_COLS.forEach(col => {
+    kanbanCols().forEach(col => {
       const cards = kanbanBoard[col.id] || [];
       const isCurrent = col.id === currentColId;
 
@@ -5491,7 +5641,7 @@ draft.slice(0, 6000),
     otherStrip.appendChild(otherLbl);
     const otherRow = document.createElement('div');
     otherRow.className = 'kanban-strip-row';
-    KANBAN_COLS.forEach(col => {
+    kanbanCols().forEach(col => {
       const cards = (kanbanBoard[col.id] || []).filter(c => c.cat === 'other_resp');
       otherRow.appendChild(makeStripCell(col.id, cards, 'other_resp'));
     });
@@ -5503,7 +5653,7 @@ draft.slice(0, 6000),
     autoStrip.appendChild(autoLbl);
     const autoRow = document.createElement('div');
     autoRow.className = 'kanban-strip-row';
-    KANBAN_COLS.forEach(col => {
+    kanbanCols().forEach(col => {
       const cards = (kanbanBoard[col.id] || []).filter(c => c.cat === 'automated');
       autoRow.appendChild(makeStripCell(col.id, cards, 'automated'));
     });
