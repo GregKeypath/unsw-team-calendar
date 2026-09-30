@@ -1696,8 +1696,10 @@
     .ea-btn-sm:hover { border-color:#1e3a5f; color:#1e3a5f; }
     .ea-out-empty { text-align:center; padding:56px 20px; color:#9ca3af; font-size:0.82rem; line-height:1.6; }
     .ea-mail { background:#f8fafc; border:1px solid #e5e7eb; border-radius:9px; padding:14px 16px; }
-    .ea-mail-subj { font-size:0.85rem; font-weight:800; color:#111; padding-bottom:9px; margin-bottom:10px; border-bottom:1px solid #e5e7eb; }
-    .ea-mail-subj span { font-size:0.6rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:3px; }
+    .ea-part-hd { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+    .ea-part-hd span { font-size:0.6rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px; }
+    .ea-part-copy { margin-left:auto; padding:3px 9px; font-size:0.62rem; }
+    .ea-mail-subj { font-size:0.85rem; font-weight:800; color:#111; padding-bottom:11px; margin-bottom:14px; border-bottom:1px solid #e5e7eb; word-break:break-word; }
     .ea-mail-body { font-size:0.82rem; color:#1f2937; line-height:1.65; white-space:pre-wrap; }
     .ea-chg { display:flex; gap:9px; padding:8px 0; border-bottom:1px solid #f3f4f6; }
     .ea-chg:last-child { border-bottom:none; }
@@ -2214,9 +2216,6 @@
           <button class="ea-tone" data-tone="Internal / stakeholder">Internal / stakeholder</button>
         </div>
         <div class="ea-tone-hint" id="ea-tone-hint"></div>
-
-        <label class="ea-label" for="ea-context">What is this about? <span style="font-weight:400;text-transform:none;color:#c4c4c4;">(optional, helps accuracy)</span></label>
-        <input class="ea-input" id="ea-context" type="text" placeholder="e.g. hasn't submitted Week 4 assessment, census is Thursday" maxlength="200">
 
         <label class="ea-label" for="ea-draft">Draft email</label>
         <textarea class="ea-textarea" id="ea-draft" placeholder="Paste your email here, subject line and all. Rough is fine, that's the point."></textarea>
@@ -4535,7 +4534,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 '5. Self-efficacy: people move when the next step looks small. Someone behind is not weighing your deadline, they are weighing whether they can face the whole subject. Shrink the step until it is smaller than the dread. Asking for a first paragraph gets a reply that asking them to submit the assessment never will, and once they have answered once the next one is far easier.',
 '',
 'FIVE PARTS, IN ORDER, each with one job:',
-'1. Subject line: make the promise. Name the actual thing plus the action or date. The first 40 characters must carry it because the rest is cut off on a phone. Never "Following up", "Checking in", "Quick question", "Important information".',
+'1. Subject line: ALWAYS begin it with exactly "UNSW Online | " and then make the promise. Name the actual thing plus the action or date. The first 40 characters AFTER that prefix must carry it, because the rest is cut off on a phone, so be short. Never "Following up", "Checking in", "Quick question", "Important information".',
 '2. First line: get to the point. The reason you wrote goes in sentence one. Not a greeting, not history, not context.',
 '3. The middle: only what they need in order to do the right thing. Every extra sentence is a tax on the ask.',
 '4. The ask: ONE ask, on its own line, specific, with a date, and small enough that someone who has done nothing can still answer today. Two asks gets you the easy one, three gets you nothing.',
@@ -4560,8 +4559,6 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     const key = EA_PROXY ? null : eaGetKey(false);
     if (!EA_PROXY && !key) return;
 
-    const context = document.getElementById('ea-context').value.trim();
-
     const btn = document.getElementById('ea-go');
     btn.disabled = true;
     btn.innerHTML = '<span class="ea-spin"></span>Rewriting...';
@@ -4580,7 +4577,6 @@ eaBuildFacts(),
 'The student name is already in the advisor draft if it is needed. Keep whatever greeting the draft uses, or use a neutral one if there is none.',
 'SIGN OFF AND WELL WISHES: keep the warmth, but do not steer a student away from study. Where the draft wishes them a good weekend or break, frame it as room for both, getting some study in and getting some rest, rather than purely relaxing. Something like hoping they get a good run at their study and some downtime too. Never imply the work can wait.',
 'Do NOT add a signature block, job title or contact details. Outlook adds the signature automatically. End after the closing line.',
-context ? ('What this is about: ' + context) : '',
 '',
 'ADVISOR DRAFT:',
 '"""',
@@ -4589,7 +4585,7 @@ draft.slice(0, 6000),
 '',
 'Respond ONLY with valid JSON, no markdown fences, no commentary:',
 '{',
-'  "subject": "the rewritten subject line",',
+'  "subject": "UNSW Online | then the rewritten subject line",',
 '  "body": "the full rewritten email body as plain text with real line breaks between paragraphs, including the greeting and the sign off",',
 '  "changes": [{"what": "short label of what you changed", "why": "one sentence on why, naming the rule it fixes"}],',
 '  "flags": [{"level": "error or warn or ok", "text": "a factual problem you found and corrected, or something the advisor must verify before sending"}],',
@@ -4619,6 +4615,7 @@ draft.slice(0, 6000),
                  data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
       raw = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       eaResult = JSON.parse(raw);
+      eaResult.subject = eaSubject(eaResult.subject);
       eaRenderResult(eaResult);
     } catch (e) {
       document.getElementById('ea-output').innerHTML =
@@ -4629,6 +4626,13 @@ draft.slice(0, 6000),
       btn.textContent = 'Rewrite this email';
       eaKeyNote();
     }
+  }
+
+  const EA_SUBJECT_PREFIX = 'UNSW Online | ';
+  function eaSubject(s) {
+    let t = String(s == null ? '' : s).trim();
+    t = t.replace(/^(unsw[ ]*online[ ]*[|:–-][ ]*)+/i, '').trim();
+    return EA_SUBJECT_PREFIX + t;
   }
 
   function eaEsc(s) {
@@ -4652,7 +4656,9 @@ draft.slice(0, 6000),
 
     document.getElementById('ea-output').innerHTML =
       '<div class="ea-mail">' +
-        '<div class="ea-mail-subj"><span>Subject</span>' + eaEsc(r.subject) + '</div>' +
+        '<div class="ea-part-hd"><span>Subject</span><button class="ea-btn-sm ea-part-copy" data-eacopy="subject">Copy subject</button></div>' +
+        '<div class="ea-mail-subj">' + eaEsc(r.subject) + '</div>' +
+        '<div class="ea-part-hd"><span>Body</span><button class="ea-btn-sm ea-part-copy" data-eacopy="body">Copy body</button></div>' +
         '<div class="ea-mail-body">' + eaEsc(r.body) + '</div>' +
       '</div>' +
       (flags   ? '<div class="ea-card-hd" style="margin-top:18px;">🔎 Fact check</div>' + flags : '') +
@@ -4676,6 +4682,18 @@ draft.slice(0, 6000),
     });
 
     document.getElementById('ea-go').addEventListener('click', eaRewrite);
+
+    document.getElementById('ea-output').addEventListener('click', function(e) {
+      const b = e.target.closest('[data-eacopy]');
+      if (!b || !eaResult) return;
+      const which = b.dataset.eacopy;
+      const txt = which === 'subject' ? eaResult.subject : eaResult.body;
+      navigator.clipboard.writeText(txt).then(function() {
+        const was = b.textContent;
+        b.textContent = '✓ Copied';
+        setTimeout(function() { b.textContent = was; }, 1600);
+      });
+    });
 
     document.getElementById('ea-copy').addEventListener('click', function() {
       if (!eaResult) return;
