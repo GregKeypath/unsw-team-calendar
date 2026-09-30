@@ -4489,6 +4489,13 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
     } catch(e) {}
 
     try {
+      if (typeof EA_LINKS !== 'undefined' && EA_LINKS.length) {
+        lines.push('\nUNSW STUDENT RESOURCE LINKS. These URLs are verified. You may ONLY use a URL that appears in this list, copied exactly. Never shorten, guess, or build a URL. Format is: name | when to use it | url');
+        EA_LINKS.forEach(function(l) { lines.push(l.name + ' | ' + l.when + ' | ' + l.url); });
+      }
+    } catch(e) {}
+
+    try {
       if (typeof PROGRAM_RULES !== 'undefined') {
         const pr = [];
         Object.entries(PROGRAM_RULES).forEach(function(entry) {
@@ -4510,6 +4517,11 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 'KEEP THE HUMAN OPENER. If the draft opens by acknowledging something real, thanks for your time, thanks for getting back to me, great speaking with you, following our call, then that acknowledgement stays as the first line. Keep it in the advisor spirit and make it specific where the draft lets you, for example thanks for your time on the phone today. Never replace it with a functional summary like here are your login details. That one line is the difference between a colleague who just spoke to them and an automated notification, and it is the first thing the reader uses to decide whether you are friendly.',
 
 'NEVER DROP WHAT THE ADVISOR HANDED OVER. Every link, every URL, every email address, every phone number, every set of opening hours and every deadline in the draft must appear in the rewrite. These are the highest value lines in the email and the reason the student opened it. You may reformat them, label them or group them so they are easy to scan, but losing one is a failure even if the email reads better without it. If the draft has two links, the rewrite has two links.',
+'',
+'RECOMMEND THE RIGHT LINK. Emails to students should point somewhere. Look at what the email is actually about and pick the matching resource from the UNSW STUDENT RESOURCE LINKS list in the reference data, using the when-to-use column to decide. Put it inline where it is relevant, as the page name followed by the URL, not as a bare link dump at the bottom.',
+'HOW MANY LINKS: one is usually right, two at the very most. A wall of links reads as a brush off and kills the single ask. If nothing in the list genuinely fits, send no link rather than a loose one.',
+'LINKS ARE FACTS, SO RULE ZERO APPLIES. You may only use a URL copied exactly from that list. Never invent, shorten, guess or reconstruct a URL, and never link a page because it sounds like it should exist. If the advisor already put a link in the draft, keep theirs exactly as written and do not swap it for one of yours. If theirs contradicts the list, keep theirs and raise a flag saying which one you would have used.',
+'LINKS THAT CARRY POLICY: if there is any hint of risk or of someone not coping, include Emergency and after-hours services. If money is the barrier, link financial support before anyone talks about leaving. Never link Changing your enrolment as a way of suggesting Leave of Absence or a lighter load.',
 '',
 'THE READER: on a phone, tired, study is the fourth thing in their day. They cannot hear your tone, so neutral reads as cold and you must add warmth on purpose. Going quiet is shame, not rudeness. The further behind someone is, the harder replying gets, so make the reply cheap.',
 '',
@@ -8115,6 +8127,35 @@ ${cardsHTML}
   };
 
   // Courses running in Canvas (our LMS), by study period
+  const EA_LINKS = [
+    { name:'Census dates & enrolment deadlines', url:'https://www.unsw.edu.au/student/managing-your-studies/key-dates/census-date-enrolment-deadlines', when:'Any email about census, dropping without penalty, or an enrolment deadline' },
+    { name:'Academic calendar', url:'https://www.unsw.edu.au/student/managing-your-studies/key-dates/academic-calendar', when:'When a student asks when a period starts or finishes' },
+    { name:'Changing your enrolment or program', url:'https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment', when:'Swapping a unit, adding or dropping. Not to be used to suggest Leave of Absence' },
+    { name:'Enrolment', url:'https://www.unsw.edu.au/student/managing-your-studies/essentials/enrolment', when:'A student who has not enrolled yet, or cannot work out how' },
+    { name:'Credit transfer & advanced standing', url:'https://www.unsw.edu.au/student/managing-your-studies/essentials/credit-transfer', when:'Previous study that might count towards this degree' },
+    { name:'Program authority contacts', url:'https://www.unsw.edu.au/student/managing-your-studies/essentials/program-contacts', when:'Anything academic that has to go to the program, not to us' },
+    { name:'Course & program handbook', url:'https://www.unsw.edu.au/student/managing-your-studies/resources/handbook', when:'Questions about what a unit covers or what a program requires' },
+    { name:'Special consideration & short extensions', url:'https://www.unsw.edu.au/student/managing-your-studies/academic-life/special-consideration', when:'Illness, bereavement or anything that stopped them meeting a deadline' },
+    { name:'Grades, results & academic standing', url:'https://www.unsw.edu.au/student/managing-your-studies/academic-life/grades-results-academic-standing', when:'Results, a fail, academic standing or a suspension conversation' },
+    { name:'Assessments & exams resources', url:'https://www.unsw.edu.au/student/managing-your-studies/academic-life/assessments-exams-resources', when:'How an assessment or exam runs, including invigilated exams' },
+    { name:'Academic skills', url:'https://www.unsw.edu.au/student/managing-your-studies/academic-skills-support', when:'Writing, referencing, study technique, or feeling academically out of depth' },
+    { name:'Study success toolkit', url:'https://www.unsw.edu.au/student/managing-your-studies/academic-skills-support/toolkit', when:'A student who wants to work on it themselves at their own pace' },
+    { name:'Academic skills workshops & Study Hacks', url:'https://www.unsw.edu.au/student/managing-your-studies/academic-skills-support/events', when:'When a live session would suit them better than a document' },
+    { name:'Health & wellbeing services', url:'https://www.unsw.edu.au/student/support/health-wellbeing', when:'General wellbeing, stress, or life getting in the way of study' },
+    { name:'Mental health support', url:'https://www.unsw.edu.au/student/support/health-wellbeing/mental-health', when:'A student who names anxiety, depression or not coping' },
+    { name:'Emergency & after-hours services', url:'https://www.unsw.edu.au/student/support/emergency', when:'Anything urgent or out of hours. Always include this if there is any risk' },
+    { name:'Equitable Learning Services', url:'https://www.unsw.edu.au/student/support/services/equitable-learning-services', when:'A disability, chronic condition or carer responsibilities needing adjustments' },
+    { name:'Financial support', url:'https://www.unsw.edu.au/student/managing-your-studies/fees/financial-support', when:'Money is the barrier, before anyone talks about withdrawing' },
+    { name:'Tuition fee payment plan', url:'https://www.unsw.edu.au/student/support/financial-support/payment-plan', when:'They can continue but cannot pay it all at once' },
+    { name:'Fees contacts & FAQs', url:'https://www.unsw.edu.au/student/managing-your-studies/fees/contacts', when:'A specific billing question we cannot answer' },
+    { name:'Moodle & lecture recording support', url:'https://www.unsw.edu.au/student/support/edtech', when:'Cannot get into Moodle, or cannot find something in it' },
+    { name:'Logins', url:'https://www.unsw.edu.au/student/managing-your-studies/resources/logins', when:'Cannot get into a UNSW system at all' },
+    { name:'UNSW Online orientation', url:'https://www.unsw.edu.au/student/getting-started/orientation/online', when:'A new student, or one who never got started properly' },
+    { name:'Student Essentials module', url:'https://www.unsw.edu.au/student/getting-started/first-year-checklist/student-essentials-module', when:'Chasing the Student Essentials module' },
+    { name:'Forms and documents', url:'https://www.student.unsw.edu.au/forms', when:'They need an actual form, letter or official document' },
+    { name:'Moodle', url:'https://moodle.telt.unsw.edu.au/login/index.php', when:'Sending them straight to the LMS. Check the unit is not on Canvas first' },
+  ];
+
   const CANVAS_COURSES = {
     'H5 26': [
       { code:'ZZCA8147', name:'Business of Managing Projects' },
