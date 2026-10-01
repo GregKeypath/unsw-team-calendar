@@ -939,6 +939,84 @@
     .ds-legend div { display:flex; align-items:center; gap:6px; font-size:0.68rem; color:#4d5f72; }
     .ds-legend i { width:11px; height:11px; border-radius:3px; flex:none; }
 
+    .dp-shell { margin-bottom: 26px; }
+    .dp-loading { padding: 40px; text-align: center; color: #9ca3af; font-size: 0.85rem; }
+
+    .dp-pick { background: linear-gradient(135deg, #fff9e6 0%, #ffeef2 55%, #eef4ff 100%); border-radius: 20px; padding: 34px 28px; text-align: center; }
+    .dp-pick-hi { font-size: 1.5rem; font-weight: 900; color: #16202b; letter-spacing: -0.02em; }
+    .dp-pick-sub { font-size: 0.8rem; color: #6b7280; margin: 6px 0 20px; }
+    .dp-pick-grid { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; }
+    .dp-name { border: none; background: #fff; border-radius: 999px; padding: 11px 20px; font-size: 0.85rem; font-weight: 700; color: #16202b; cursor: pointer; font-family: inherit; box-shadow: 0 2px 8px rgba(22,32,43,0.1); transition: transform 0.14s ease, box-shadow 0.14s ease; }
+    .dp-name:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 7px 18px rgba(22,32,43,0.17); }
+
+    .dp-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .dp-who { border: none; background: #16202b; color: #fff; border-radius: 999px; padding: 8px 16px; font-size: 0.8rem; font-weight: 800; cursor: pointer; font-family: inherit; }
+    .dp-who span { font-weight: 500; opacity: 0.55; font-size: 0.68rem; margin-left: 5px; }
+    .dp-weeknav { display: flex; align-items: center; gap: 6px; background: #fff; border-radius: 999px; padding: 4px 6px; box-shadow: 0 1px 5px rgba(0,0,0,0.08); }
+    .dp-arw { border: none; background: transparent; font-size: 1.15rem; line-height: 1; color: #6b7280; cursor: pointer; padding: 4px 9px; border-radius: 999px; font-family: inherit; }
+    .dp-arw:hover { background: #f3f4f6; color: #16202b; }
+    .dp-weeklbl { font-size: 0.78rem; font-weight: 700; color: #16202b; padding: 0 4px; white-space: nowrap; }
+    .dp-weeklbl b { color: #e4060f; font-weight: 800; }
+    .dp-target-set { margin-left: auto; font-size: 0.72rem; font-weight: 700; color: #6b7280; display: flex; align-items: center; gap: 7px; }
+    .dp-target-set input { width: 62px; border: 1.5px solid #e5e7eb; border-radius: 9px; padding: 6px 9px; font-size: 0.82rem; font-weight: 800; color: #16202b; font-family: inherit; text-align: center; }
+
+    .dp-banner { display: flex; align-items: center; gap: 22px; background: linear-gradient(120deg, #fff6d9 0%, #ffe8ee 48%, #e8f0ff 100%); border-radius: 20px; padding: 20px 26px; margin-bottom: 18px; }
+    .dp-banner.done { background: linear-gradient(120deg, #d9f7e4 0%, #e6f8ee 50%, #e9fbf1 100%); }
+    .dp-banner-ring { text-align: center; flex-shrink: 0; }
+    .dp-banner-txt { flex: 1; min-width: 0; }
+    .dp-banner-hi { font-size: 1.28rem; font-weight: 900; color: #16202b; letter-spacing: -0.02em; line-height: 1.2; }
+    .dp-banner-sub { font-size: 0.75rem; color: #5b6572; margin: 7px 0 11px; }
+    .dp-bar { height: 10px; border-radius: 999px; background: rgba(22,32,43,0.1); overflow: hidden; }
+    .dp-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ffc43d, #ff7a59, #e4060f); transition: width 0.5s cubic-bezier(.3,1.3,.5,1); }
+    .dp-banner.done .dp-bar i { background: linear-gradient(90deg, #34d399, #10b981); }
+
+    .dp-ring { display: block; margin: 0 auto; }
+    .dp-ring-n { font-size: 1.32rem; font-weight: 900; fill: #16202b; font-family: inherit; }
+    .dp-ring-sub { font-size: 0.62rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+    .dp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    @media (max-width: 1100px) { .dp-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px)  { .dp-grid { grid-template-columns: 1fr; } }
+
+    .dp-day { background: #fff; border-radius: 18px; padding: 14px 13px 12px; box-shadow: 0 2px 10px rgba(22,32,43,0.07); display: flex; flex-direction: column; gap: 10px; transition: transform 0.14s ease, box-shadow 0.14s ease; }
+    .dp-day:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(22,32,43,0.12); }
+    .dp-day.is-today { box-shadow: 0 0 0 2.5px #ffc43d, 0 8px 22px rgba(255,196,61,0.3); }
+    .dp-day.is-off { background: #f7f8fa; box-shadow: none; }
+    .dp-day.is-off.leave { background: linear-gradient(160deg, #e8f8f0, #f2fbf6); }
+    .dp-day.is-off.sick  { background: linear-gradient(160deg, #fdeef0, #fdf5f6); }
+    .dp-day.is-off.rdo   { background: linear-gradient(160deg, #eef0fa, #f6f7fc); }
+
+    .dp-day-hd { display: flex; align-items: center; gap: 7px; }
+    .dp-day-n { font-size: 0.82rem; font-weight: 900; color: #16202b; letter-spacing: -0.01em; }
+    .dp-today { font-size: 0.56rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; background: #ffc43d; color: #16202b; border-radius: 999px; padding: 2px 7px; }
+
+    .dp-off-face { text-align: center; padding: 20px 0 16px; font-size: 2rem; line-height: 1; }
+    .dp-off-face span { display: block; font-size: 0.72rem; font-weight: 700; color: #6b7280; margin-top: 8px; }
+
+    .dp-day-ring { text-align: center; padding: 2px 0; }
+    .dp-count { display: flex; gap: 7px; }
+    .dp-count label { flex: 1; font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; color: #9ca3af; display: flex; flex-direction: column; gap: 3px; }
+    .dp-count input { width: 100%; border: 1.5px solid #eef0f3; border-radius: 10px; padding: 7px 4px; font-size: 0.9rem; font-weight: 800; color: #16202b; font-family: inherit; text-align: center; }
+    .dp-count input:focus { border-color: #ffc43d; outline: none; }
+
+    .dp-blocks { display: flex; flex-direction: column; gap: 5px; }
+    .dp-block { display: flex; align-items: center; gap: 6px; background: #f3f5f9; border-radius: 9px; padding: 5px 7px; }
+    .dp-block-t { font-size: 0.6rem; font-weight: 800; color: #4b5563; white-space: nowrap; }
+    .dp-block-l { font-size: 0.66rem; color: #4b5563; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dp-x { border: none; background: transparent; color: #9ca3af; cursor: pointer; font-size: 0.95rem; line-height: 1; padding: 0 2px; font-family: inherit; }
+    .dp-x:hover { color: #e4060f; }
+    .dp-add { border: 1.5px dashed #e0e4ea; background: transparent; border-radius: 10px; padding: 6px; font-size: 0.64rem; font-weight: 700; color: #9ca3af; cursor: pointer; font-family: inherit; }
+    .dp-add:hover { border-color: #ffc43d; color: #16202b; background: #fffbf0; }
+
+    .dp-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: auto; }
+    .dp-chip { border: none; background: #f3f5f9; border-radius: 999px; padding: 4px 9px; font-size: 0.58rem; font-weight: 700; color: #6b7280; cursor: pointer; font-family: inherit; }
+    .dp-chip:hover { background: #e8ebf1; color: #16202b; }
+    .dp-chip.on.leave { background: #10b981; color: #fff; }
+    .dp-chip.on.sick  { background: #ef4444; color: #fff; }
+    .dp-chip.on.rdo   { background: #6366f1; color: #fff; }
+
+    .ds-rhythm-hd { font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:#9ca3af; margin:28px 0 10px; }
+
     .ds-books { margin-top:14px; background:#EEF7FA; border:1px solid #CFE6EC; border-radius:9px; padding:14px 16px; }
     .ds-books h5 { margin:0 0 10px; font-size:0.78rem; font-weight:800; color:#0f5b68; }
     .ds-bookrow { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
@@ -2242,6 +2320,8 @@
 <!-- Daily Schedule tab -->
 <div class="tab-panel" id="tab-schedule">
   <div class="ds-wrap">
+    <div class="dp-shell" id="dp-shell"></div>
+    <div class="ds-rhythm-hd">The daily rhythm, for reference</div>
     <div class="ds-hero">
       <h2>Your Week at a Glance</h2>
       <p>Ten vCita appointments every day, then cold calls on top to clear 20 attempts. Green means someone is expecting your call. Blue means you are dialling cold.</p>
@@ -8437,6 +8517,328 @@ ${cardsHTML}
     mon:'#1E9E73', tue:'#1B8C9E', wed:'#1E9E73', thu:'#1E9E73', fri:'#1B8C9E'
   };
 
+  // ── Week Planner ──────────────────────────────────────────────
+  const DP_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
+  const DP_CALL_MINS = 360;
+  const DP_DEFAULT_WEEKLY = 100;
+  const DP_OFF = {
+    leave:  { label: 'Annual leave', emoji: '🌴', tone: 'leave' },
+    sick:   { label: 'Sick',         emoji: '🤒', tone: 'sick' },
+    rdo:    { label: 'Not working',  emoji: '🌙', tone: 'rdo' }
+  };
+  const DP_CHEERS = [
+    'Nice week. It all fits.',
+    'That is a real plan, not a wish.',
+    'Looks doable. Go get it.',
+    'Tidy. Your future self says thanks.'
+  ];
+
+  const DP_GONE = ['Saravanan Rajamani'];
+  let dpWho = null;
+  let dpWeek = null;
+  let dpPlan = null;
+  let dpSaveTimer = null;
+
+  function dpSlug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  function dpPad(n) { return String(n).padStart(2, '0'); }
+  function dpIso(d) { return d.getFullYear() + '-' + dpPad(d.getMonth() + 1) + '-' + dpPad(d.getDate()); }
+
+  function dpMondayOf(d) {
+    const x = new Date(d); x.setHours(0, 0, 0, 0);
+    const g = x.getDay();
+    x.setDate(x.getDate() - (g === 0 ? 6 : g - 1));
+    return x;
+  }
+
+  function dpWeekLabel(iso) {
+    const mon = new Date(iso + 'T00:00:00');
+    const fri = new Date(mon); fri.setDate(mon.getDate() + 4);
+    const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const same = mon.getMonth() === fri.getMonth();
+    return mon.getDate() + (same ? '' : ' ' + m[mon.getMonth()]) + ' to ' + fri.getDate() + ' ' + m[fri.getMonth()];
+  }
+
+  function dpThisMonday() { return dpIso(dpMondayOf(new Date())); }
+  function dpShiftWeek(iso, n) {
+    const d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + n * 7);
+    return dpIso(d);
+  }
+
+  function dpBlankPlan() {
+    const days = {};
+    DS_DAYS.forEach(d => { days[d.k] = { off: null, blocks: [], done: { vcita: 0, cold: 0 } }; });
+    return { weeklyTarget: DP_DEFAULT_WEEKLY, days: days };
+  }
+
+  function dpNormalise(raw) {
+    const p = dpBlankPlan();
+    if (!raw || typeof raw !== 'object') return p;
+    if (raw.weeklyTarget) p.weeklyTarget = Math.max(0, parseInt(raw.weeklyTarget, 10) || DP_DEFAULT_WEEKLY);
+    const rd = raw.days || {};
+    DS_DAYS.forEach(d => {
+      const s = rd[d.k] || {};
+      const blocks = Array.isArray(s.blocks) ? s.blocks : (s.blocks ? Object.values(s.blocks) : []);
+      p.days[d.k] = {
+        off: DP_OFF[s.off] ? s.off : null,
+        blocks: blocks.filter(Boolean).map(b => ({
+          id: b.id || ('b' + Math.random().toString(36).slice(2, 8)),
+          label: String(b.label || 'Meeting').slice(0, 60),
+          start: b.start || '09:00',
+          end: b.end || '10:00'
+        })),
+        done: { vcita: Math.max(0, parseInt((s.done || {}).vcita, 10) || 0),
+                cold:  Math.max(0, parseInt((s.done || {}).cold,  10) || 0) }
+      };
+    });
+    return p;
+  }
+
+  function dpBlockMins(b) {
+    const m = t => { const p = String(t).split(':'); return (+p[0]) * 60 + (+p[1] || 0); };
+    return Math.max(0, m(b.end) - m(b.start));
+  }
+
+  function dpCapacity(k) {
+    const d = dpPlan.days[k];
+    if (!d || d.off) return 0;
+    const used = d.blocks.reduce((a, b) => a + dpBlockMins(b), 0);
+    return Math.max(0, DP_CALL_MINS - used);
+  }
+
+  // Weekly target holds. Each day gets a share of it by how much calling time it has left,
+  // so blocking time out moves those attempts onto the other days instead of losing them.
+  function dpTargets() {
+    const caps = {}; let total = 0;
+    DS_DAYS.forEach(d => { caps[d.k] = dpCapacity(d.k); total += caps[d.k]; });
+    const out = {};
+    if (total <= 0) { DS_DAYS.forEach(d => out[d.k] = 0); return out; }
+    const exact = {}; let floored = 0;
+    DS_DAYS.forEach(d => {
+      exact[d.k] = dpPlan.weeklyTarget * caps[d.k] / total;
+      out[d.k] = Math.floor(exact[d.k]);
+      floored += out[d.k];
+    });
+    // hand the rounding remainder to the days with the biggest fractional part
+    let left = dpPlan.weeklyTarget - floored;
+    DS_DAYS.map(d => d.k)
+      .sort((a, b) => (exact[b] - Math.floor(exact[b])) - (exact[a] - Math.floor(exact[a])))
+      .forEach(k => { if (left > 0 && caps[k] > 0) { out[k]++; left--; } });
+    return out;
+  }
+
+  function dpDayDone(k) {
+    const d = dpPlan.days[k];
+    return (d.done.vcita || 0) + (d.done.cold || 0);
+  }
+
+  function dpWeekRoll() {
+    const t = dpTargets();
+    let target = 0, done = 0, vcita = 0, workDays = 0, offDays = 0, meetingMins = 0;
+    DS_DAYS.forEach(d => {
+      target += t[d.k];
+      done += dpDayDone(d.k);
+      vcita += dpPlan.days[d.k].done.vcita || 0;
+      if (dpPlan.days[d.k].off) offDays++; else workDays++;
+      meetingMins += dpPlan.days[d.k].blocks.reduce((a, b) => a + dpBlockMins(b), 0);
+    });
+    return { target, done, vcita, workDays, offDays, meetingMins, targets: t };
+  }
+
+  async function dpLoad() {
+    if (!dpWho) { dpPlan = null; dpRender(); return; }
+    dpPlan = dpBlankPlan();
+    dpRender();
+    try {
+      const r = await fetch(DP_DB + '/schedule/' + dpSlug(dpWho) + '/' + dpWeek + '.json');
+      dpPlan = dpNormalise(await r.json());
+    } catch (e) { dpPlan = dpBlankPlan(); }
+    dpRender();
+  }
+
+  function dpSave() {
+    if (!dpWho || !dpPlan) return;
+    clearTimeout(dpSaveTimer);
+    dpSaveTimer = setTimeout(() => {
+      fetch(DP_DB + '/schedule/' + dpSlug(dpWho) + '/' + dpWeek + '.json', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.assign({}, dpPlan, { name: dpWho, updated: Date.now() }))
+      }).catch(() => {});
+    }, 500);
+  }
+
+  function dpTouch() { dpSave(); dpRender(); }
+
+  function dpRing(pct, size, done, target) {
+    const r = (size / 2) - 6, c = 2 * Math.PI * r, off = c * (1 - Math.min(1, pct));
+    const hue = pct >= 1 ? 142 : (pct >= 0.6 ? 38 : 8);
+    return '<svg class="dp-ring" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">' +
+      '<circle cx="' + (size/2) + '" cy="' + (size/2) + '" r="' + r + '" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="7"/>' +
+      '<circle cx="' + (size/2) + '" cy="' + (size/2) + '" r="' + r + '" fill="none" stroke="hsl(' + hue + ',72%,52%)" stroke-width="7" ' +
+      'stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" ' +
+      'transform="rotate(-90 ' + (size/2) + ' ' + (size/2) + ')"/>' +
+      '<text x="50%" y="50%" text-anchor="middle" dy="0.34em" class="dp-ring-n">' + done + '</text>' +
+      '</svg><div class="dp-ring-sub">of ' + target + '</div>';
+  }
+
+  function dpRender() {
+    const shell = document.getElementById('dp-shell');
+    if (!shell) return;
+
+    if (!dpWho) {
+      shell.innerHTML = '<div class="dp-pick"><div class="dp-pick-hi">Who are you?</div>' +
+        '<div class="dp-pick-sub">Pick once. This browser will remember you.</div>' +
+        '<div class="dp-pick-grid">' +
+          ALL_SSA_NAMES.filter(n => DP_GONE.indexOf(n) === -1).map(n => '<button class="dp-name" data-dpname="' + dsEsc(n) + '">' + dsEsc(n) + '</button>').join('') +
+        '</div></div>';
+      return;
+    }
+    if (!dpPlan) { shell.innerHTML = '<div class="dp-loading">Getting your week…</div>'; return; }
+
+    const roll = dpWeekRoll();
+    const pct = roll.target ? roll.done / roll.target : 0;
+    const isThis = dpWeek === dpThisMonday();
+    const todayDow = new Date().getDay();
+
+    let head = '<div class="dp-head">' +
+      '<button class="dp-who" id="dp-switch">' + dsEsc(dpWho) + ' <span>change</span></button>' +
+      '<div class="dp-weeknav">' +
+        '<button class="dp-arw" data-dpweek="-1">‹</button>' +
+        '<span class="dp-weeklbl">' + dpWeekLabel(dpWeek) + (isThis ? ' <b>this week</b>' : '') + '</span>' +
+        '<button class="dp-arw" data-dpweek="1">›</button>' +
+      '</div>' +
+      '<div class="dp-target-set">Week goal <input id="dp-wt" type="number" min="0" max="500" value="' + dpPlan.weeklyTarget + '"></div>' +
+    '</div>';
+
+    const banner = '<div class="dp-banner' + (pct >= 1 ? ' done' : '') + '">' +
+      '<div class="dp-banner-ring">' + dpRing(pct, 96, roll.done, roll.target) + '</div>' +
+      '<div class="dp-banner-txt">' +
+        '<div class="dp-banner-hi">' + dpHeadline(roll, pct) + '</div>' +
+        '<div class="dp-banner-sub">' +
+          roll.workDays + ' day' + (roll.workDays === 1 ? '' : 's') + ' on' +
+          (roll.offDays ? ' · ' + roll.offDays + ' off' : '') +
+          (roll.meetingMins ? ' · ' + Math.round(roll.meetingMins / 60 * 10) / 10 + 'h in meetings' : '') +
+          ' · at least ' + Math.ceil(roll.target / 2) + ' on vCita' +
+        '</div>' +
+        '<div class="dp-bar"><i style="width:' + Math.min(100, pct * 100).toFixed(1) + '%"></i></div>' +
+      '</div></div>';
+
+    const cards = DS_DAYS.map(d => {
+      const day = dpPlan.days[d.k];
+      const tgt = roll.targets[d.k];
+      const done = dpDayDone(d.k);
+      const dpct = tgt ? done / tgt : 0;
+      const off = day.off ? DP_OFF[day.off] : null;
+      const isToday = isThis && d.dow === todayDow;
+
+      const chips = Object.keys(DP_OFF).map(o =>
+        '<button class="dp-chip ' + DP_OFF[o].tone + (day.off === o ? ' on' : '') + '" data-dpoff="' + d.k + '|' + o + '">' +
+        DP_OFF[o].emoji + ' ' + DP_OFF[o].label + '</button>').join('');
+
+      const blocks = day.blocks.map(b =>
+        '<div class="dp-block"><span class="dp-block-t">' + dsEsc(b.start) + '–' + dsEsc(b.end) + '</span>' +
+        '<span class="dp-block-l">' + dsEsc(b.label) + '</span>' +
+        '<button class="dp-x" data-dpdel="' + d.k + '|' + b.id + '">×</button></div>').join('');
+
+      return '<div class="dp-day' + (off ? ' is-off ' + off.tone : '') + (isToday ? ' is-today' : '') + '">' +
+        '<div class="dp-day-hd"><span class="dp-day-n">' + d.label + '</span>' +
+          (isToday ? '<span class="dp-today">today</span>' : '') + '</div>' +
+        (off
+          ? '<div class="dp-off-face">' + off.emoji + '<span>' + off.label + '</span></div>'
+          : '<div class="dp-day-ring">' + dpRing(dpct, 78, done, tgt) + '</div>' +
+            '<div class="dp-count">' +
+              '<label>vCita<input type="number" min="0" max="99" value="' + day.done.vcita + '" data-dpdone="' + d.k + '|vcita"></label>' +
+              '<label>Cold<input type="number" min="0" max="99" value="' + day.done.cold + '" data-dpdone="' + d.k + '|cold"></label>' +
+            '</div>') +
+        '<div class="dp-blocks">' + blocks +
+          '<button class="dp-add" data-dpadd="' + d.k + '">+ block out time</button>' +
+        '</div>' +
+        '<div class="dp-chips">' + chips + '</div>' +
+      '</div>';
+    }).join('');
+
+    shell.innerHTML = head + banner + '<div class="dp-grid">' + cards + '</div>';
+  }
+
+  function dpHeadline(roll, pct) {
+    if (!roll.target) return 'Nothing planned yet. Add a day back in.';
+    if (pct >= 1) return DP_CHEERS[Math.floor(Date.now() / 86400000) % DP_CHEERS.length];
+    if (pct > 0) return roll.target - roll.done + ' to go this week';
+    if (roll.offDays >= 3) return 'Short week. ' + roll.target + ' attempts across ' + roll.workDays + '.';
+    if (roll.meetingMins >= 120) return 'Meetings are eating the week. Still ' + roll.target + '.';
+    return roll.target + ' attempts, spread across your ' + roll.workDays + ' day' + (roll.workDays === 1 ? '' : 's') + '.';
+  }
+
+  function dpInit() {
+    dpWeek = dpThisMonday();
+    try { dpWho = localStorage.getItem('unsw-dp-who') || null; } catch (e) { dpWho = null; }
+    const shell = document.getElementById('dp-shell');
+    if (!shell) return;
+
+    shell.addEventListener('click', e => {
+      const name = e.target.closest('[data-dpname]');
+      if (name) {
+        dpWho = name.dataset.dpname;
+        try { localStorage.setItem('unsw-dp-who', dpWho); } catch (err) {}
+        dpLoad(); return;
+      }
+      if (e.target.closest('#dp-switch')) {
+        dpWho = null;
+        try { localStorage.removeItem('unsw-dp-who'); } catch (err) {}
+        dpRender(); return;
+      }
+      const wk = e.target.closest('[data-dpweek]');
+      if (wk) { dpWeek = dpShiftWeek(dpWeek, +wk.dataset.dpweek); dpLoad(); return; }
+
+      const off = e.target.closest('[data-dpoff]');
+      if (off) {
+        const parts = off.dataset.dpoff.split('|');
+        const day = dpPlan.days[parts[0]];
+        day.off = day.off === parts[1] ? null : parts[1];
+        dpTouch(); return;
+      }
+      const del = e.target.closest('[data-dpdel]');
+      if (del) {
+        const parts = del.dataset.dpdel.split('|');
+        const day = dpPlan.days[parts[0]];
+        day.blocks = day.blocks.filter(b => b.id !== parts[1]);
+        dpTouch(); return;
+      }
+      const add = e.target.closest('[data-dpadd]');
+      if (add) {
+        const label = prompt('What is it? (e.g. Team meeting)', 'Meeting');
+        if (label === null) return;
+        const start = prompt('Starts at, 24 hour like 11:30', '11:00');
+        if (start === null) return;
+        const end = prompt('Ends at', '12:00');
+        if (end === null) return;
+        const ok = /^([01]?\d|2[0-3]):[0-5]\d$/;
+        if (!ok.test(start) || !ok.test(end)) { alert('Times need to look like 09:30.'); return; }
+        dpPlan.days[add.dataset.dpadd].blocks.push({
+          id: 'b' + Math.random().toString(36).slice(2, 8),
+          label: label.trim().slice(0, 60) || 'Meeting', start: start, end: end
+        });
+        dpTouch(); return;
+      }
+    });
+
+    shell.addEventListener('change', e => {
+      if (e.target.id === 'dp-wt') {
+        dpPlan.weeklyTarget = Math.max(0, parseInt(e.target.value, 10) || 0);
+        dpTouch(); return;
+      }
+      const done = e.target.closest('[data-dpdone]');
+      if (done) {
+        const parts = done.dataset.dpdone.split('|');
+        dpPlan.days[parts[0]].done[parts[1]] = Math.max(0, parseInt(done.value, 10) || 0);
+        dpTouch(); return;
+      }
+    });
+
+    dpLoad();
+  }
+
   const DS_DAYS = [
     { k:'mon', label:'Monday', dow:1, note:'10 booked. Morning is booked calls. Huddle at 11:30.',
       blocks:[
@@ -9060,6 +9462,7 @@ ${cardsHTML}
 
   paintTabs(THEMES[localStorage.getItem('unsw-theme') || 'gold'] || THEMES.gold);
   initPlanner();
+  dpInit();
   initTriage();
   nbLoad();
 
