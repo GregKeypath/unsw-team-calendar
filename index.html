@@ -774,6 +774,7 @@
     .tz-hd { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
     .tz-ttl { font-size:0.88rem; font-weight:900; color:#16202b; letter-spacing:-0.01em; }
     .tz-base { font-size:0.72rem; font-weight:700; color:#6b7280; margin-left:auto; }
+    .tz-pick { border:1px solid rgba(0,0,0,0.12); background:#fff; border-radius:7px; padding:2px 5px; font-size:0.68rem; font-weight:800; color:#16202b; font-family:inherit; margin-left:5px; cursor:pointer; }
     .tz-body { display:flex; align-items:center; gap:18px; }
     @media (max-width:700px) { .tz-body { flex-direction:column; gap:10px; } }
     .tz-svg { display:block; width:296px; flex-shrink:0; height:auto; }
@@ -9245,7 +9246,8 @@ ${cardsHTML}
 
 
   // ── Australia clock map ───────────────────────────────────────
-  const TZ_BASE = 'Australia/Melbourne';
+  const TZ_HQ = 'VIC';
+  let tzHome = null;
   const TZ_STATES = [
     { k:'WA',  zone:'Australia/Perth',     name:'Western Australia' },
     { k:'NT',  zone:'Australia/Darwin',    name:'Northern Territory' },
@@ -9257,6 +9259,25 @@ ${cardsHTML}
   ];
   const TZ_MAP = {"viewBox":"0 0 1000 820","states":{"QLD":"M717.6,28.4L741.2,70.9L748.2,111.1L783.5,130.0L807.1,215.0L835.3,236.3L875.3,274.1L894.1,304.8L915.3,330.8L941.2,361.6L964.7,387.6L967.1,423.0L978.8,441.9L682.4,451.4L682.4,389.9L611.8,389.9L611.8,167.8L647.1,179.6L677.6,189.0L694.1,153.6L696.5,125.2L691.8,82.7L708.2,47.3Z","NSW":"M974.1,470.3L964.7,496.3L962.4,517.5L945.9,541.2L936.5,553.0L922.4,576.6L912.9,605.0L898.8,623.9L891.8,661.7L847.1,631.0L741.2,597.9L682.4,579.0L682.4,451.4L978.8,441.9Z","VIC":"M891.8,661.7L847.1,668.8L809.4,694.8L788.2,682.9L774.1,675.9L752.9,687.7L729.4,692.4L696.5,682.9L682.4,682.9L682.4,579.0L741.2,597.9L847.1,631.0Z","SA":"M682.4,682.9L658.8,661.7L649.4,626.2L625.9,616.8L611.8,583.7L607.1,607.3L585.9,609.7L581.2,586.1L562.4,600.2L545.9,590.8L522.4,555.3L482.4,531.7L447.1,519.9L400.0,524.6L400.0,389.9L682.4,389.9L682.4,682.9Z","WA":"M400.0,524.6L341.2,538.8L294.1,555.3L270.6,576.6L223.5,576.6L176.5,590.8L138.8,605.0L94.1,600.2L72.9,588.4L70.6,562.4L87.1,545.9L89.4,529.3L68.2,489.2L47.1,437.2L40.0,392.3L32.9,354.5L49.4,309.6L82.4,278.8L122.4,264.7L164.7,248.1L211.8,236.3L240.0,203.2L272.9,163.1L291.8,163.1L317.6,118.2L352.9,104.0L378.8,137.1L400.0,125.2L400.0,389.9L400.0,524.6Z","NT":"M416.5,127.6L432.9,78.0L447.1,63.8L470.6,66.2L484.7,47.3L505.9,61.4L541.2,63.8L564.7,61.4L585.9,59.1L576.5,92.2L560.0,104.0L550.6,130.0L571.8,144.1L588.2,156.0L611.8,167.8L611.8,389.9L400.0,389.9L400.0,125.2Z","TAS":"M769.4,737.3L788.2,739.7L818.8,746.7L854.1,742.0L854.1,772.7L844.7,791.6L821.2,805.8L800.0,803.5L785.9,777.5L781.2,756.2L769.4,737.3Z"},"anchors":{"WA":[200,389.9],"NT":[503.5,243.4],"SA":[541.2,493.9],"QLD":[776.5,307.2],"NSW":[811.8,536.4],"VIC":[760,647.5],"TAS":[816.5,768]}};
   // labels that sit outside their state, with a line back to it
+  function tzDetect() {
+    try {
+      const saved = localStorage.getItem('unsw-tz-home');
+      if (saved && TZ_STATES.some(s => s.k === saved)) return saved;
+    } catch (e) {}
+    let zone = '';
+    try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    const exact = TZ_STATES.find(s => s.zone === zone);
+    if (exact) return exact.k;
+    if (zone.indexOf('Australia/') === 0) {
+      // an Australian zone we do not list, Broken Hill or Lindeman say, so match on the clock
+      const now = new Date();
+      const mine = tzOffsetMins(zone, now);
+      const same = TZ_STATES.find(s => tzOffsetMins(s.zone, now) === mine);
+      if (same) return same.k;
+    }
+    return TZ_HQ;
+  }
+
   const TZ_OUTSIDE = {
     VIC: { x: 690, y: 742, tx: 757, ty: 640 },
     TAS: { x: 905, y: 775, tx: 822, ty: 768 }
@@ -9304,12 +9325,21 @@ ${cardsHTML}
 
   function tzEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+  function tzHomeZone() {
+    const s = TZ_STATES.find(x => x.k === tzHome);
+    return (s || TZ_STATES.find(x => x.k === TZ_HQ)).zone;
+  }
+  function tzHomeName() {
+    const s = TZ_STATES.find(x => x.k === tzHome);
+    return (s || TZ_STATES.find(x => x.k === TZ_HQ)).name;
+  }
+
   function tzRender() {
     const host = document.getElementById('tz-map');
     if (!host) return;
     const now = new Date();
-    const base = tzOffsetMins(TZ_BASE, now);
-    const baseDay = tzDayLabel(TZ_BASE, now);
+    const base = tzOffsetMins(tzHomeZone(), now);
+    const baseDay = tzDayLabel(tzHomeZone(), now);
 
     let shapes = '', labels = '', leaders = '';
     const rows = [];
@@ -9329,7 +9359,7 @@ ${cardsHTML}
       if (out) leaders += '<line x1="' + out.tx + '" y1="' + out.ty + '" x2="' + x + '" y2="' + (y - 14) +
                           '" stroke="' + tone.edge + '" stroke-width="3" stroke-linecap="round" opacity="0.5"/>';
 
-      const gap = diff === 0 ? (s.k === 'VIC' ? 'base' : 'same') : tzDiffLabel(diff);
+      const gap = diff === 0 ? (s.k === tzHome ? 'you' : 'same') : tzDiffLabel(diff);
       labels +=
         '<text x="' + x + '" y="' + (y - 24) + '" text-anchor="middle" class="tz-k" fill="' + tone.ink + '">' + s.k + '</text>' +
         '<text x="' + x + '" y="' + (y + 34) + '" text-anchor="middle" class="tz-g" fill="' + tone.edge + '">' + gap + '</text>';
@@ -9344,16 +9374,19 @@ ${cardsHTML}
         '<span class="tz-row-k" style="background:' + r.tone.fill + ';color:' + r.tone.ink + '">' + r.s.k + '</span>' +
         '<span class="tz-row-t">' + r.clock + (r.day !== baseDay ? ' <i>' + r.day + '</i>' : '') + '</span>' +
         '<span class="tz-row-g" style="color:' + r.tone.edge + '">' +
-          (r.diff === 0 ? (r.s.k === 'VIC' ? 'you' : 'same') : tzDiffLabel(r.diff)) + '</span>' +
+          (r.diff === 0 ? (r.s.k === tzHome ? 'you' : 'same') : tzDiffLabel(r.diff)) + '</span>' +
       '</div>').join('');
 
     host.innerHTML =
       '<div class="tz-hd">' +
         '<span class="tz-ttl">\u{1F552} Where everyone is right now</span>' +
-        '<span class="tz-base">Victoria ' + tzClock(TZ_BASE, now) + ', ' + baseDay + '</span>' +
+        '<span class="tz-base">' + tzHomeName() + ' ' + tzClock(tzHomeZone(), now) + ', ' + baseDay +
+          ' <select class="tz-pick" id="tz-pick" title="Where you are">' +
+            TZ_STATES.map(function (s) { return '<option value="' + s.k + '"' + (s.k === tzHome ? ' selected' : '') + '>' + s.k + '</option>'; }).join('') +
+          '</select></span>' +
       '</div>' +
       '<div class="tz-body">' +
-        '<svg class="tz-svg" viewBox="' + TZ_MAP.viewBox + '" role="img" aria-label="Map of Australia showing how far each state is from Victoria">' +
+        '<svg class="tz-svg" viewBox="' + TZ_MAP.viewBox + '" role="img" aria-label="Map of Australia showing how far each state is from you">' +
           shapes + leaders + labels +
         '</svg>' +
         '<div class="tz-list">' + list + '</div>' +
@@ -9364,7 +9397,15 @@ ${cardsHTML}
   }
 
   function tzInit() {
-    if (!document.getElementById('tz-map')) return;
+    const host = document.getElementById('tz-map');
+    if (!host) return;
+    tzHome = tzDetect();
+    host.addEventListener('change', function (e) {
+      if (e.target.id !== 'tz-pick') return;
+      tzHome = e.target.value;
+      try { localStorage.setItem('unsw-tz-home', tzHome); } catch (err) {}
+      tzRender();
+    });
     tzRender();
     setInterval(tzRender, 20000);
   }
