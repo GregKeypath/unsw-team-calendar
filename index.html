@@ -794,6 +794,25 @@
     @media (max-width:620px) { .tz-base { margin-left:0; } }
 
     .nb-wrap { padding:18px 22px 50px; }
+    .nb-flip { position:relative; perspective:2400px; }
+    .nb-face { transition:transform 0.75s cubic-bezier(.3,.9,.3,1); backface-visibility:hidden; }
+    .nb-front { transform:rotateY(0deg); }
+    .nb-back { position:absolute; inset:0; transform:rotateY(180deg); }
+    .nb-flip.flipped .nb-front { transform:rotateY(-180deg); position:absolute; inset:0; pointer-events:none; }
+    .nb-flip.flipped .nb-back  { transform:rotateY(0deg); position:relative; inset:auto; }
+    .nb-flip:not(.flipped) .nb-back { pointer-events:none; }
+    .nb-tab { position:absolute; right:26px; bottom:-26px; border:1px solid #d7dde4; border-top:none;
+      background:linear-gradient(180deg,#eef2f6,#dde4ec); color:#5a6878; border-radius:0 0 9px 9px;
+      padding:5px 15px 6px; font-size:0.66rem; font-weight:800; font-family:inherit; cursor:pointer;
+      box-shadow:0 3px 5px rgba(30,45,65,0.14); z-index:3; }
+    .nb-tab:hover { background:linear-gradient(180deg,#fff,#e7edf3); color:#16202b; }
+    .nb-surface-rear { background:linear-gradient(180deg,#eef1f5,#e3e8ee); }
+    .nb-rear-hd { margin-bottom:14px; }
+    .nb-rear-hd b { display:block; font-size:1rem; font-weight:900; color:#49566a; letter-spacing:-0.01em; }
+    .nb-rear-hd span { font-size:0.72rem; color:#8b97a5; }
+    .nb-rear-empty { font-size:0.78rem; color:#9aa5b1; padding:28px 0; text-align:center; }
+    .nb-back .nb-note { opacity:0.82; transform:rotate(0deg) !important; box-shadow:0 1px 3px rgba(0,0,0,0.12); }
+    .nb-back .nb-note:hover { opacity:1; }
     .nb-surface { position:relative; background:
       linear-gradient(180deg, rgba(255,255,255,0.9), rgba(246,248,250,0.9)),
       repeating-linear-gradient(0deg, rgba(120,140,160,0.05) 0 1px, transparent 1px 34px),
@@ -2395,12 +2414,24 @@
       <button class="nb-add" id="nb-add">+ Pin an update</button>
     </div>
     <div class="nb-filters" id="nb-filters"></div>
-    <div class="nb-surface">
-      <div class="nb-surface-top">
-        <div class="tz-card" id="tz-map"></div>
-        <div class="nb-marker"><b>Nothing here is optional reading.</b>If it is on the board, everyone needs it. Click a note once you have read it.</div>
+    <div class="nb-flip" id="nb-flip">
+      <div class="nb-face nb-front">
+        <div class="nb-surface">
+          <div class="nb-surface-top">
+            <div class="tz-card" id="tz-map"></div>
+            <div class="nb-marker"><b>Nothing here is optional reading.</b>If it is on the board, everyone needs it. Click a note once you have read it.</div>
+          </div>
+          <div class="nb-board" id="nb-board"></div>
+          <button class="nb-tab" id="nb-to-back"></button>
+        </div>
       </div>
-      <div class="nb-board" id="nb-board"></div>
+      <div class="nb-face nb-back">
+        <div class="nb-surface nb-surface-rear">
+          <div class="nb-rear-hd"><b>Taken down</b><span>Off the board, kept in case anyone needs to look back.</span></div>
+          <div class="nb-board" id="nb-board-old"></div>
+          <button class="nb-tab" id="nb-to-front">Back to the board</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2418,7 +2449,7 @@
     <input type="text" id="nb-f-author" placeholder="Who is posting this" maxlength="60">
     <div class="nb-lbl">Colour</div>
     <div class="nb-swatches" id="nb-swatches"></div>
-    <label class="nb-pin-toggle"><input type="checkbox" id="nb-f-pinned"> Keep this at the top of the board</label>
+    <label class="nb-pin-toggle"><input type="checkbox" id="nb-f-pinned" checked> Put this on the board. Unticked it goes straight to the back.</label>
     <div class="nb-modal-acts">
       <button class="nb-btn-cancel" id="nb-cancel">Cancel</button>
       <button class="nb-btn-save" id="nb-save">Save to the board</button>
@@ -9596,16 +9627,33 @@ ${cardsHTML}
     const seen = nbSeen();
     let items = Object.keys(nbNotices).map(k => Object.assign({ id:k }, nbNotices[k]));
     if (nbFilter !== 'all') items = items.filter(n => n.tag === nbFilter);
-    items.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.ts || 0) - (a.ts || 0));
+    items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
-    if (!items.length) {
+    const onBoard = items.filter(n => n.pinned !== false);
+    const takenDown = items.filter(n => n.pinned === false);
+
+    const tab = document.getElementById('nb-to-back');
+    if (tab) tab.textContent = takenDown.length ? 'Taken down (' + takenDown.length + ')' : 'Nothing taken down';
+
+    const rear = document.getElementById('nb-board-old');
+    if (rear) rear.innerHTML = takenDown.length
+      ? takenDown.map(nbNoteHtml).join('')
+      : '<div class="nb-rear-empty">Nothing has been taken down yet.</div>';
+
+    if (!onBoard.length) {
       board.innerHTML = '<div class="nb-empty">Nothing on the board' +
         (nbFilter === 'all' ? ' yet. Add the first update.' : ' under that label.') + '</div>';
       nbBadge();
       return;
     }
 
-    board.innerHTML = items.map(n => {
+    board.innerHTML = onBoard.map(nbNoteHtml).join('');
+    nbBadge();
+  }
+
+  function nbNoteHtml(n) {
+    const seen = nbSeen();
+    {
       const body = nbFormat(n.body || '');
       const d = n.ts ? new Date(n.ts) : null;
       const when = d ? d.toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }) : '';
@@ -9618,13 +9666,11 @@ ${cardsHTML}
         '<div class="nb-meta"><span>' + nbEsc(n.author || 'Team') + '</span>' +
         (when ? '<span>· ' + when + '</span>' : '') +
         '<span class="nb-acts">' +
-        '<button data-nbpin="' + n.id + '">' + (n.pinned ? 'Unpin' : 'Pin') + '</button>' +
+        '<button data-nbpin="' + n.id + '">' + (n.pinned === false ? 'Put back up' : 'Take down') + '</button>' +
         '<button data-nbedit="' + n.id + '">Edit</button>' +
         '<button data-nbdel="' + n.id + '">Delete</button>' +
         '</span></div></div>';
-    }).join('');
-
-    nbBadge();
+    }
   }
 
   function nbOpen(id) {
@@ -9634,7 +9680,7 @@ ${cardsHTML}
     document.getElementById('nb-f-title').value = n ? (n.title || '') : '';
     document.getElementById('nb-f-body').value = n ? (n.body || '') : '';
     document.getElementById('nb-f-author').value = n ? (n.author || '') : '';
-    document.getElementById('nb-f-pinned').checked = n ? !!n.pinned : false;
+    document.getElementById('nb-f-pinned').checked = n ? (n.pinned !== false) : true;
     const sel = document.getElementById('nb-f-tag');
     sel.innerHTML = NB_TAGS.map(t => '<option value="' + t + '">' + t + '</option>').join('');
     sel.value = n ? (n.tag || 'Heads up') : 'Heads up';
@@ -9665,11 +9711,11 @@ ${cardsHTML}
         nbRender();
       });
 
-      document.getElementById('nb-board').addEventListener('click', e => {
+      const _nbClick = e => {
         const pin = e.target.closest('[data-nbpin]');
         if (pin) {
           const id = pin.dataset.nbpin;
-          nbNotices[id].pinned = !nbNotices[id].pinned;
+          nbNotices[id].pinned = (nbNotices[id].pinned === false);
           nbSave(); nbRender(); return;
         }
         const ed = e.target.closest('[data-nbedit]');
@@ -9689,6 +9735,10 @@ ${cardsHTML}
           card.classList.remove('nb-unread');
           nbBadge();
         }
+      };
+      ['nb-board', 'nb-board-old'].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', _nbClick);
       });
 
       document.getElementById('nb-add').addEventListener('click', () => nbOpen(null));
@@ -9736,6 +9786,15 @@ ${cardsHTML}
   initPlanner();
   dpInit();
   tzInit();
+  (function () {
+    const flip = document.getElementById('nb-flip');
+    if (!flip) return;
+    const toggle = () => flip.classList.toggle('flipped');
+    ['nb-to-back', 'nb-to-front'].forEach(function (id) {
+      const b = document.getElementById(id);
+      if (b) b.addEventListener('click', toggle);
+    });
+  })();
   initTriage();
   nbLoad();
 
