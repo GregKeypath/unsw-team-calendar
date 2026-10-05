@@ -1822,6 +1822,19 @@
     .ea-btn-sm { padding:5px 12px; border-radius:7px; border:1px solid #e5e7eb; background:#fff; color:#374151; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit; }
     .ea-btn-sm:hover { border-color:#1e3a5f; color:#1e3a5f; }
     .ea-out-empty { text-align:center; padding:56px 20px; color:#9ca3af; font-size:0.82rem; line-height:1.6; }
+    .ea-vers { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    .ea-ver { flex:1; min-width:150px; text-align:left; border:1.5px solid #e5e7eb; background:#fff; border-radius:10px;
+      padding:9px 12px; cursor:pointer; font-family:inherit; transition:border-color 0.14s, box-shadow 0.14s; }
+    .ea-ver b { display:block; font-size:0.76rem; font-weight:800; color:#16202b; }
+    .ea-ver span { display:block; font-size:0.66rem; color:#9ca3af; line-height:1.4; margin-top:2px; }
+    .ea-ver:hover { border-color:#c7d2e0; }
+    .ea-ver.on { border-color:#1e3a5f; box-shadow:0 0 0 2px rgba(30,58,95,0.12); }
+    .ea-ver.on b { color:#1e3a5f; }
+    .ea-add { border:1.5px dashed #e0e4ea; border-radius:10px; padding:10px 12px; margin-bottom:8px; background:#fff; }
+    .ea-add.on { border-style:solid; border-color:#10b981; background:#f0fdf7; }
+    .ea-add-t b { font-size:0.74rem; font-weight:800; color:#16202b; }
+    .ea-add-t span { display:block; font-size:0.66rem; color:#9ca3af; margin-top:1px; }
+    .ea-add-p { font-size:0.73rem; color:#4b5563; line-height:1.55; margin:7px 0 8px; white-space:pre-wrap; }
     .ea-mail { background:#f8fafc; border:1px solid #e5e7eb; border-radius:9px; padding:14px 16px; }
     .ea-part-hd { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
     .ea-part-hd span { font-size:0.6rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px; }
@@ -4764,12 +4777,19 @@ draft.slice(0, 6000),
 '',
 'Respond ONLY with valid JSON, no markdown fences, no commentary:',
 '{',
-'  "subject": "UNSW Online | then the rewritten subject line",',
-'  "body": "the full rewritten email body as plain text with real line breaks between paragraphs, including the greeting and the sign off",',
+'  "versions": [',
+'    {"label": "a two or three word name for the angle, e.g. Warm and direct", "why": "one short line on when to pick this one", "subject": "UNSW Online | then the subject", "body": "the full email body as plain text with real line breaks between paragraphs, greeting and sign off included"},',
+'    {"label": "...", "why": "...", "subject": "...", "body": "..."}',
+'  ],',
+'  "additions": [{"label": "short name for the button, e.g. Assessment detail for ZZBU6501", "why": "one line on why the advisor might want it", "where": "before-ask or before-close", "paragraph": "the paragraph, ready to drop in, written in the same voice"}],',
 '  "changes": [{"what": "short label of what you changed", "why": "one sentence on why, naming the rule it fixes"}],',
 '  "flags": [{"level": "error or warn or ok", "text": "a factual problem you found and corrected, or something the advisor must verify before sending"}],',
 '  "questions": ["a question the advisor should answer or consider before sending this"]',
 '}',
+'TWO VERSIONS, GENUINELY DIFFERENT. Both must obey every rule above and carry every point the advisor made. They differ in approach, not in wording: for example one that leads with the deadline and one that leads with the offer of help, or one short and brisk against one that explains more. Never return two versions that are the same email with a few synonyms swapped. Label each one so the advisor can tell at a glance which is which.',
+'',
+'ADDITIONS, 0 TO 3. These are optional paragraphs the advisor can click to add. Use them for supporting detail that is useful but not always wanted, so the email stays short by default. Draw them ONLY from the reference data above: the assessments and weightings for a unit the advisor named, a relevant key date, what the unit actually covers, or one of the verified links. Rule Zero applies in full, so never invent an assessment, a weighting, a date or a URL. If the advisor named a unit code, an assessment breakdown for that unit is usually the most useful addition. If the reference data has nothing worth adding, return an empty list rather than padding.',
+'',
 'Give 3 to 6 changes, 0 to 4 flags, and 2 to 4 questions. If the draft had no factual problems, return one flag with level "ok" saying the facts checked out against the reference data.'
     ].join('\n');
 
@@ -4794,7 +4814,13 @@ draft.slice(0, 6000),
                  data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) || '';
       raw = raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       eaResult = JSON.parse(raw);
-      eaResult.subject = eaSubject(eaResult.subject);
+      if (!Array.isArray(eaResult.versions) || !eaResult.versions.length) {
+        eaResult.versions = [{ label: 'Rewrite', why: '', subject: eaResult.subject, body: eaResult.body }];
+      }
+      eaResult.versions.forEach(function (v) { v.subject = eaSubject(v.subject); });
+      eaResult.additions = Array.isArray(eaResult.additions) ? eaResult.additions : [];
+      eaPick = 0;
+      eaAdded = {};
       eaRenderResult(eaResult);
     } catch (e) {
       document.getElementById('ea-output').innerHTML =
@@ -4818,6 +4844,36 @@ draft.slice(0, 6000),
     return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
+  let eaPick = 0;
+  let eaAdded = {};
+
+  function eaCurrent() {
+    const v = (eaResult && eaResult.versions) ? eaResult.versions[eaPick] : null;
+    if (!v) return { subject: "", body: "" };
+    let body = v.body || "";
+    (eaResult.additions || []).forEach(function (a, i) {
+      if (!eaAdded[i]) return;
+      body = eaInsert(body, a.paragraph || "", a.where);
+    });
+    return { subject: v.subject || "", body: body };
+  }
+
+  // drop the paragraph in above the closing lines, or above the ask when asked to
+  function eaInsert(body, para, where) {
+    if (!para) return body;
+    const paras = String(body).split(/\n\s*\n/);
+    if (paras.length < 3) return body + "\n\n" + para;
+    let end = paras.length;
+    while (end > 2 && paras[end - 1].trim().split(' ').length <= 4) end--;
+    let at = Math.max(1, end - 1);
+    if (where === "before-ask") {
+      const q = paras.findIndex(function (p) { return p.indexOf("?") > -1; });
+      if (q > 0) at = q;
+    }
+    paras.splice(Math.max(1, at), 0, para);
+    return paras.join("\n\n");
+  }
+
   function eaRenderResult(r) {
     const changes = (r.changes || []).map(function(c, i) {
       return '<div class="ea-chg"><div class="ea-chg-i">' + (i+1) + '</div><div class="ea-chg-t"><b>' +
@@ -4833,13 +4889,38 @@ draft.slice(0, 6000),
       return '<div class="ea-q">' + eaEsc(q) + '</div>';
     }).join('');
 
+    const vers = r.versions || [];
+    const picker = vers.length > 1
+      ? '<div class="ea-vers">' + vers.map(function (v, i) {
+          return '<button class="ea-ver' + (i === eaPick ? ' on' : '') + '" data-eaver="' + i + '">' +
+                 '<b>' + eaEsc(v.label || ('Version ' + (i + 1))) + '</b>' +
+                 (v.why ? '<span>' + eaEsc(v.why) + '</span>' : '') + '</button>';
+        }).join('') + '</div>'
+      : '';
+
+    const adds = (r.additions || []).length
+      ? '<div class="ea-card-hd" style="margin-top:18px;">\u2795 Worth adding?</div>' +
+        r.additions.map(function (a, i) {
+          const on = !!eaAdded[i];
+          return '<div class="ea-add' + (on ? ' on' : '') + '">' +
+                 '<div class="ea-add-t"><b>' + eaEsc(a.label || 'Extra detail') + '</b>' +
+                 (a.why ? '<span>' + eaEsc(a.why) + '</span>' : '') + '</div>' +
+                 '<div class="ea-add-p">' + eaEsc(a.paragraph || '') + '</div>' +
+                 '<button class="ea-btn-sm" data-eaadd="' + i + '">' + (on ? 'Remove' : 'Add it in') + '</button>' +
+                 '</div>';
+        }).join('')
+      : '';
+
+    const cur = eaCurrent();
     document.getElementById('ea-output').innerHTML =
+      picker +
       '<div class="ea-mail">' +
         '<div class="ea-part-hd"><span>Subject</span><button class="ea-btn-sm ea-part-copy" data-eacopy="subject">Copy subject</button></div>' +
-        '<div class="ea-mail-subj">' + eaEsc(r.subject) + '</div>' +
+        '<div class="ea-mail-subj">' + eaEsc(cur.subject) + '</div>' +
         '<div class="ea-part-hd"><span>Body</span><button class="ea-btn-sm ea-part-copy" data-eacopy="body">Copy body</button></div>' +
-        '<div class="ea-mail-body">' + eaEsc(r.body) + '</div>' +
+        '<div class="ea-mail-body">' + eaEsc(cur.body) + '</div>' +
       '</div>' +
+      adds +
       (flags   ? '<div class="ea-card-hd" style="margin-top:18px;">🔎 Fact check</div>' + flags : '') +
       (changes ? '<div class="ea-card-hd" style="margin-top:18px;">✏️ What changed and why</div>' + changes : '') +
       (qs      ? '<div class="ea-card-hd" style="margin-top:18px;">❓ Before you send</div>' + qs : '') +
@@ -4863,10 +4944,20 @@ draft.slice(0, 6000),
     document.getElementById('ea-go').addEventListener('click', eaRewrite);
 
     document.getElementById('ea-output').addEventListener('click', function(e) {
+      const ver = e.target.closest('[data-eaver]');
+      if (ver) { eaPick = +ver.dataset.eaver; eaRenderResult(eaResult); return; }
+      const add = e.target.closest('[data-eaadd]');
+      if (add) {
+        const i = +add.dataset.eaadd;
+        eaAdded[i] = !eaAdded[i];
+        eaRenderResult(eaResult);
+        return;
+      }
       const b = e.target.closest('[data-eacopy]');
       if (!b || !eaResult) return;
       const which = b.dataset.eacopy;
-      const txt = which === 'subject' ? eaResult.subject : eaResult.body;
+      const cur = eaCurrent();
+      const txt = which === 'subject' ? cur.subject : cur.body;
       navigator.clipboard.writeText(txt).then(function() {
         const was = b.textContent;
         b.textContent = '✓ Copied';
@@ -4876,7 +4967,8 @@ draft.slice(0, 6000),
 
     document.getElementById('ea-copy').addEventListener('click', function() {
       if (!eaResult) return;
-      const txt = 'Subject: ' + eaResult.subject + '\n\n' + eaResult.body;
+      const cur = eaCurrent();
+      const txt = 'Subject: ' + cur.subject + '\n\n' + cur.body;
       navigator.clipboard.writeText(txt).then(function() {
         const b = document.getElementById('ea-copy');
         b.textContent = '✓ Copied';
