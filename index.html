@@ -770,17 +770,19 @@
     .kd-bar button:hover { background:#f3f4f6; }
     .kd-note { font-size:0.72rem; color:#6b7280; margin-top:10px; line-height:1.45; }
 
-    .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:16px; padding:12px 18px; margin-bottom:16px; }
+    .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:12px; padding:11px 14px;
+      border:1px solid rgba(30,45,65,0.08); box-shadow:0 2px 5px rgba(30,45,65,0.12); transform:rotate(-0.5deg); }
+    .tz-odd { font-size:0.64rem; font-weight:700; color:#9a3412; margin-top:6px; }
     .tz-hd { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
     .tz-ttl { font-size:0.88rem; font-weight:900; color:#16202b; letter-spacing:-0.01em; }
     .tz-base { font-size:0.72rem; font-weight:700; color:#6b7280; margin-left:auto; }
     .tz-pick { border:1px solid rgba(0,0,0,0.12); background:#fff; border-radius:7px; padding:2px 5px; font-size:0.68rem; font-weight:800; color:#16202b; font-family:inherit; margin-left:5px; cursor:pointer; }
-    .tz-body { display:flex; align-items:center; gap:18px; }
+    .tz-body { display:flex; align-items:center; gap:12px; }
     @media (max-width:700px) { .tz-body { flex-direction:column; gap:10px; } }
-    .tz-svg { display:block; width:296px; flex-shrink:0; height:auto; }
+    .tz-svg { display:block; width:196px; flex-shrink:0; height:auto; }
     .tz-k { font-size:36px; font-weight:800; letter-spacing:0.5px; }
     .tz-g { font-size:50px; font-weight:900; }
-    .tz-list { width:230px; flex-shrink:0; display:flex; flex-direction:column; gap:3px; }
+    .tz-list { width:186px; flex-shrink:0; display:flex; flex-direction:column; gap:2px; }
     .tz-row { display:flex; align-items:center; gap:9px; }
     .tz-row-k { font-size:0.64rem; font-weight:900; border-radius:6px; padding:3px 7px; min-width:40px; text-align:center; }
     .tz-row-t { font-size:0.78rem; font-weight:700; color:#16202b; flex:1; }
@@ -792,6 +794,18 @@
     @media (max-width:620px) { .tz-base { margin-left:0; } }
 
     .nb-wrap { padding:18px 22px 50px; }
+    .nb-surface { position:relative; background:
+      linear-gradient(180deg, rgba(255,255,255,0.9), rgba(246,248,250,0.9)),
+      repeating-linear-gradient(0deg, rgba(120,140,160,0.05) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(90deg, rgba(120,140,160,0.05) 0 1px, transparent 1px 34px), #fcfdfe;
+      border:1px solid #d7dde4; border-radius:12px; padding:20px 20px 10px;
+      box-shadow:inset 0 1px 0 #fff, inset 0 -18px 28px -22px rgba(30,45,65,0.22), 0 2px 5px rgba(30,45,65,0.08); }
+    .nb-surface::after { content:''; position:absolute; left:16px; right:16px; bottom:-9px; height:9px; border-radius:0 0 7px 7px;
+      background:linear-gradient(180deg,#c9d2db,#aab6c2); box-shadow:0 3px 6px rgba(30,45,65,0.22); }
+    .nb-surface-top { display:flex; align-items:flex-start; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+    .nb-surface-top .tz-card { flex-shrink:0; margin-bottom:0; }
+    .nb-marker { flex:1; min-width:180px; align-self:center; font-size:0.74rem; color:#8b97a5; line-height:1.5; }
+    .nb-marker b { display:block; font-size:0.95rem; font-weight:800; color:#49566a; letter-spacing:-0.01em; margin-bottom:3px; }
     .nb-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
     .nb-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
     .nb-sub { font-size:0.76rem; color:#6b7a8c; margin:0 0 16px; }
@@ -1989,7 +2003,8 @@
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
-  <button class="tab-btn" data-tab="wishlist">Wishlist</button>
+  <!-- Wishlist retired Oct 2026, nobody was using it. Uncomment this and the panel below to bring it back.
+  <button class="tab-btn" data-tab="wishlist">Wishlist</button> -->
   <div class="theme-picker-wrap">
     <button class="theme-toggle-btn" id="theme-toggle-btn">
       <span class="theme-dot"></span> Theme
@@ -2053,7 +2068,7 @@
 </div>
 
 <!-- Wishlist tab -->
-<div class="tab-panel" id="tab-wishlist">
+<div class="tab-panel" id="tab-wishlist" style="display:none !important;">
   <div class="wishlist-wrap">
 
     <!-- Controls bar -->
@@ -2381,10 +2396,14 @@
       <h2>📌 Notice Board</h2>
       <button class="nb-add" id="nb-add">+ Pin an update</button>
     </div>
-    <p class="nb-sub">The team noticeboard. Leave, process changes, policy, wins. Anything everyone needs to see. Click a note to mark it read.</p>
     <div class="nb-filters" id="nb-filters"></div>
-    <div class="tz-card" id="tz-map"></div>
-    <div class="nb-board" id="nb-board"></div>
+    <div class="nb-surface">
+      <div class="nb-surface-top">
+        <div class="tz-card" id="tz-map"></div>
+        <div class="nb-marker"><b>Nothing here is optional reading.</b>If it is on the board, everyone needs it. Click a note once you have read it.</div>
+      </div>
+      <div class="nb-board" id="nb-board"></div>
+    </div>
   </div>
 </div>
 
@@ -9452,9 +9471,8 @@ ${cardsHTML}
         '<svg class="tz-svg" viewBox="' + TZ_MAP.viewBox + '" role="img" aria-label="Map of Australia showing how far each state is from you">' +
           shapes + leaders + labels +
         '</svg>' +
-        '<div class="tz-list">' + list + '</div>' +
-        '<div class="tz-foot">Queensland and the Northern Territory skip daylight saving, so these gaps shift twice a year.' +
-        (odd.length ? ' <b>' + odd.map(r => r.s.k).join(' and ') + ' ' + (odd.length > 1 ? 'are' : 'is') + ' on a different day.</b>' : '') +
+        '<div class="tz-list">' + list +
+          (odd.length ? '<div class="tz-odd">' + odd.map(r => r.s.k).join(' and ') + ' ' + (odd.length > 1 ? 'are' : 'is') + ' on a different day</div>' : '') +
         '</div>' +
       '</div>';
   }
