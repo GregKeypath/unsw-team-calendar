@@ -816,11 +816,9 @@
     .nb-fbtn:hover { background:#f4f7fa; }
     .nb-fbtn.active { background:#1b2b3d; border-color:#1b2b3d; color:#fff; }
 
-    .nb-board { column-count:3; column-gap:16px; }
-    @media (max-width:1100px) { .nb-board { column-count:2; } }
-    @media (max-width:700px)  { .nb-board { column-count:1; } }
+    .nb-board { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; align-items:start; }
 
-    .nb-note { break-inside:avoid; margin:0 0 16px; border-radius:3px; padding:16px 18px 14px; position:relative;
+    .nb-note { margin:0; border-radius:3px; padding:16px 18px 14px; position:relative;
                box-shadow:0 2px 5px rgba(0,0,0,0.13), 0 10px 22px -12px rgba(0,0,0,0.3);
                font-size:0.78rem; line-height:1.5; color:#3a3326; display:inline-block; width:100%; }
     .nb-note:nth-child(4n+1) { transform:rotate(-0.7deg); }
