@@ -770,15 +770,23 @@
     .kd-bar button:hover { background:#f3f4f6; }
     .kd-note { font-size:0.72rem; color:#6b7280; margin-top:10px; line-height:1.45; }
 
-    .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:18px; padding:16px 20px 14px; margin-bottom:18px; }
+    .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:16px; padding:12px 18px; margin-bottom:16px; }
     .tz-hd { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
     .tz-ttl { font-size:0.88rem; font-weight:900; color:#16202b; letter-spacing:-0.01em; }
     .tz-base { font-size:0.72rem; font-weight:700; color:#6b7280; margin-left:auto; }
-    .tz-svg { display:block; width:100%; max-width:560px; margin:0 auto; height:auto; }
-    .tz-k { font-size:30px; font-weight:800; letter-spacing:0.5px; }
-    .tz-t { font-size:36px; font-weight:900; }
-    .tz-d { font-size:25px; font-weight:800; }
-    .tz-foot { font-size:0.7rem; color:#6b7280; line-height:1.5; text-align:center; margin-top:2px; }
+    .tz-body { display:flex; align-items:center; gap:18px; }
+    @media (max-width:700px) { .tz-body { flex-direction:column; gap:10px; } }
+    .tz-svg { display:block; width:296px; flex-shrink:0; height:auto; }
+    .tz-k { font-size:36px; font-weight:800; letter-spacing:0.5px; }
+    .tz-g { font-size:50px; font-weight:900; }
+    .tz-list { width:230px; flex-shrink:0; display:flex; flex-direction:column; gap:3px; }
+    .tz-row { display:flex; align-items:center; gap:9px; }
+    .tz-row-k { font-size:0.64rem; font-weight:900; border-radius:6px; padding:3px 7px; min-width:40px; text-align:center; }
+    .tz-row-t { font-size:0.78rem; font-weight:700; color:#16202b; flex:1; }
+    .tz-row-t i { font-style:normal; font-weight:600; color:#9ca3af; font-size:0.68rem; }
+    .tz-row-g { font-size:1rem; font-weight:900; min-width:58px; text-align:right; }
+    .tz-foot { font-size:0.68rem; color:#6b7280; line-height:1.5; flex:1; min-width:0; padding-left:16px; border-left:1px solid rgba(0,0,0,0.08); }
+    @media (max-width:700px) { .tz-foot { border-left:none; padding-left:0; padding-top:8px; border-top:1px solid rgba(0,0,0,0.08); } .tz-list { width:100%; } }
     .tz-foot b { color:#9a3412; }
     @media (max-width:620px) { .tz-base { margin-left:0; } }
 
@@ -9286,12 +9294,12 @@ ${cardsHTML}
   }
 
   function tzTone(mins) {
-    if (mins === 0) return { fill:'#c8f7dd', edge:'#10b981', ink:'#065f46' };
+    if (mins === 0) return { fill:'#a7f3d0', edge:'#047857', ink:'#064e3b' };
     const a = Math.abs(mins);
-    if (a <= 30)  return { fill:'#fdf0c4', edge:'#eab308', ink:'#854d0e' };
-    if (a <= 60)  return { fill:'#ffe2cc', edge:'#f97316', ink:'#9a3412' };
-    if (a <= 90)  return { fill:'#ffd4d9', edge:'#f43f5e', ink:'#9f1239' };
-    return             { fill:'#dcd9fb', edge:'#6366f1', ink:'#3730a3' };
+    if (a <= 30)  return { fill:'#fde68a', edge:'#a16207', ink:'#713f12' };
+    if (a <= 60)  return { fill:'#fdba74', edge:'#c2410c', ink:'#7c2d12' };
+    if (a <= 90)  return { fill:'#fda4af', edge:'#be123c', ink:'#881337' };
+    return             { fill:'#c4b5fd', edge:'#4338ca', ink:'#312e81' };
   }
 
   function tzEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -9321,29 +9329,37 @@ ${cardsHTML}
       if (out) leaders += '<line x1="' + out.tx + '" y1="' + out.ty + '" x2="' + x + '" y2="' + (y - 14) +
                           '" stroke="' + tone.edge + '" stroke-width="3" stroke-linecap="round" opacity="0.5"/>';
 
+      const gap = diff === 0 ? (s.k === 'VIC' ? 'base' : 'same') : tzDiffLabel(diff);
       labels +=
-        '<text x="' + x + '" y="' + (y - 20) + '" text-anchor="middle" class="tz-k" fill="' + tone.ink + '">' + s.k + '</text>' +
-        '<text x="' + x + '" y="' + (y + 18) + '" text-anchor="middle" class="tz-t" fill="' + tone.ink + '">' + clock + '</text>' +
-        '<text x="' + x + '" y="' + (y + 44) + '" text-anchor="middle" class="tz-d" fill="' + tone.edge + '">' +
-          (diff === 0 ? (s.k === 'VIC' ? 'you are here' : 'same time') : tzDiffLabel(diff)) + (day !== baseDay ? ' · ' + day : '') + '</text>';
+        '<text x="' + x + '" y="' + (y - 24) + '" text-anchor="middle" class="tz-k" fill="' + tone.ink + '">' + s.k + '</text>' +
+        '<text x="' + x + '" y="' + (y + 34) + '" text-anchor="middle" class="tz-g" fill="' + tone.edge + '">' + gap + '</text>';
     });
 
     const odd = rows.filter(r => r.day !== baseDay);
     const spread = rows.map(r => r.diff);
     const widest = Math.min.apply(null, spread);
 
+    const list = rows.slice().sort((a, b) => a.diff - b.diff).map(r =>
+      '<div class="tz-row">' +
+        '<span class="tz-row-k" style="background:' + r.tone.fill + ';color:' + r.tone.ink + '">' + r.s.k + '</span>' +
+        '<span class="tz-row-t">' + r.clock + (r.day !== baseDay ? ' <i>' + r.day + '</i>' : '') + '</span>' +
+        '<span class="tz-row-g" style="color:' + r.tone.edge + '">' +
+          (r.diff === 0 ? (r.s.k === 'VIC' ? 'you' : 'same') : tzDiffLabel(r.diff)) + '</span>' +
+      '</div>').join('');
+
     host.innerHTML =
       '<div class="tz-hd">' +
         '<span class="tz-ttl">\u{1F552} Where everyone is right now</span>' +
         '<span class="tz-base">Victoria ' + tzClock(TZ_BASE, now) + ', ' + baseDay + '</span>' +
       '</div>' +
-      '<svg class="tz-svg" viewBox="' + TZ_MAP.viewBox + '" role="img" aria-label="Map of Australia with the current time in each state">' +
-        shapes + leaders + labels +
-      '</svg>' +
-      '<div class="tz-foot">' +
-        (widest < 0 ? 'Perth is ' + tzDiffLabel(widest).replace('−','') + ' behind you. ' : '') +
-        'Queensland and the Northern Territory do not do daylight saving, so the gaps move twice a year.' +
-        (odd.length ? ' <b>' + odd.map(r => r.s.k).join(' and ') + ' ' + (odd.length > 1 ? 'are' : 'is') + ' on a different day to you.</b>' : '') +
+      '<div class="tz-body">' +
+        '<svg class="tz-svg" viewBox="' + TZ_MAP.viewBox + '" role="img" aria-label="Map of Australia showing how far each state is from Victoria">' +
+          shapes + leaders + labels +
+        '</svg>' +
+        '<div class="tz-list">' + list + '</div>' +
+        '<div class="tz-foot">Queensland and the Northern Territory skip daylight saving, so these gaps shift twice a year.' +
+        (odd.length ? ' <b>' + odd.map(r => r.s.k).join(' and ') + ' ' + (odd.length > 1 ? 'are' : 'is') + ' on a different day.</b>' : '') +
+        '</div>' +
       '</div>';
   }
 
