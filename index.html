@@ -2155,6 +2155,7 @@
             <option value="4">4 periods</option>
             <option value="6" selected>6 periods</option>
             <option value="8">8 periods</option>
+            <option value="10">10 periods</option>
             <option value="12">12 periods (full year+)</option>
           </select>
         </div>
@@ -6413,6 +6414,26 @@ draft.slice(0, 6000),
     return reqs.filter(req => !satisfied.has(req));
   }
 
+  function plannerCountForLevel(progName, code) {
+    const rules = PROGRAM_RULES[progName];
+    if (!rules || !rules.levels || !code) return null;
+    const lv = rules.levels.find(l => l.code === code);
+    if (!lv || !lv.totalCourses) return null;
+    const countSel = document.getElementById('planner-count');
+    const opts = [].slice.call(countSel.options).map(o => parseInt(o.value, 10)).sort((a, b) => a - b);
+    const exact = opts.indexOf(lv.totalCourses) > -1 ? lv.totalCourses : null;
+    return exact || opts.filter(n => n >= lv.totalCourses)[0] || opts[opts.length - 1];
+  }
+
+  function plannerSyncCount() {
+    const progName = document.getElementById('planner-program').value;
+    const code = document.getElementById('planner-qual').value;
+    const want = plannerCountForLevel(progName, code);
+    if (!want) return;
+    const countSel = document.getElementById('planner-count');
+    if (String(want) !== countSel.value) countSel.value = String(want);
+  }
+
   function initPlanner() {
     const progSel = document.getElementById('planner-program');
     const spSel = document.getElementById('planner-sp');
@@ -6431,7 +6452,14 @@ draft.slice(0, 6000),
       const prog = PLANNER_PROGRAMS[progSel.value];
       spSel.innerHTML = '';
       if (!prog || prog.sps.length === 0) { spSel.innerHTML = '<option value="">— No current study periods —</option>'; renderPlanMap(); return; }
-      prog.sps.forEach(sp => {
+      const _nowD = new Date();
+      const _nowK = `${_nowD.getFullYear()}-${String(_nowD.getMonth()+1).padStart(2,'0')}-${String(_nowD.getDate()).padStart(2,'0')}`;
+      const _nowWk = UNSW_WEEKS[_nowK];
+      const _nowSP = _nowWk ? `H${_nowWk.hex} ${String(_nowD.getFullYear()).slice(2)}` : null;
+      const _floor = _nowSP ? spToSortKey(_nowSP) : -Infinity;
+      let _startable = prog.sps.filter(sp => spToSortKey(sp) >= _floor);
+      if (!_startable.length) _startable = prog.sps.slice();
+      _startable.forEach(sp => {
         const opt = document.createElement('option');
         opt.value = sp;
         opt.textContent = sp;
@@ -6442,7 +6470,7 @@ draft.slice(0, 6000),
       const _tk = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
       const _wk = UNSW_WEEKS[_tk];
       const _curSP = _wk ? `H${_wk.hex} ${String(_now.getFullYear()).slice(2)}` : null;
-      spSel.value = (_curSP && prog.sps.includes(_curSP)) ? _curSP : prog.sps[0];
+      spSel.value = (_curSP && _startable.includes(_curSP)) ? _curSP : _startable[0];
 
       // Populate qualification level dropdown
       const qualSel = document.getElementById('planner-qual');
@@ -6457,6 +6485,7 @@ draft.slice(0, 6000),
         });
         // Auto-select if only one level available
         if (progRules.levels.length === 1) qualSel.value = progRules.levels[0].code;
+      plannerSyncCount();
         qualGrp.style.display = 'block';
       } else {
         qualGrp.style.display = 'none';
@@ -6467,7 +6496,11 @@ draft.slice(0, 6000),
       renderPlanMap();
     });
 
-    spSel.addEventListener('change', () => { renderPlanner(); renderPlanMap(); });
+    document.getElementById('planner-qual').addEventListener('change', () => {
+    plannerSyncCount();
+    renderPlanner(); renderPlanMap();
+  });
+  spSel.addEventListener('change', () => { renderPlanner(); renderPlanMap(); });
     countSel.addEventListener('change', () => { renderPlanner(); renderPlanMap(); });
 
     // Clear plan
@@ -6672,7 +6705,7 @@ draft.slice(0, 6000),
       if (body.children.length === 0) {
         body.innerHTML = seqPlan
           ? '<div class="sp-no-courses">✓ Plan complete</div>'
-          : '<div class="sp-no-courses">No courses scheduled</div>';
+          : '<div class="sp-no-courses">Nothing in the carousel for this period</div>';
       }
       tile.appendChild(body);
       seq.appendChild(tile);
