@@ -6482,7 +6482,8 @@ draft.slice(0, 6000),
       const _nowK = `${_nowD.getFullYear()}-${String(_nowD.getMonth()+1).padStart(2,'0')}-${String(_nowD.getDate()).padStart(2,'0')}`;
       const _nowWk = UNSW_WEEKS[_nowK];
       const _nowSP = _nowWk ? `H${_nowWk.hex} ${String(_nowD.getFullYear()).slice(2)}` : null;
-      const _floor = _nowSP ? spToSortKey(_nowSP) : -Infinity;
+      const _yr = String(_nowD.getFullYear()).slice(2);
+      const _floor = spToSortKey('H1 ' + _yr);
       let _startable = prog.sps.filter(sp => spToSortKey(sp) >= _floor);
       if (!_startable.length) _startable = prog.sps.slice();
       _startable.forEach(sp => {
@@ -6496,7 +6497,10 @@ draft.slice(0, 6000),
       const _tk = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
       const _wk = UNSW_WEEKS[_tk];
       const _curSP = _wk ? `H${_wk.hex} ${String(_now.getFullYear()).slice(2)}` : null;
-      spSel.value = (_curSP && _startable.includes(_curSP)) ? _curSP : _startable[0];
+      const _preferred = 'H4 ' + _yr;
+      spSel.value = _startable.includes(_preferred) ? _preferred
+                  : (_curSP && _startable.includes(_curSP)) ? _curSP
+                  : _startable[0];
 
       // Populate qualification level dropdown
       const qualSel = document.getElementById('planner-qual');
