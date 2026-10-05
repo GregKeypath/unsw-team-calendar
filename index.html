@@ -770,6 +770,18 @@
     .kd-bar button:hover { background:#f3f4f6; }
     .kd-note { font-size:0.72rem; color:#6b7280; margin-top:10px; line-height:1.45; }
 
+    .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:18px; padding:16px 20px 14px; margin-bottom:18px; }
+    .tz-hd { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
+    .tz-ttl { font-size:0.88rem; font-weight:900; color:#16202b; letter-spacing:-0.01em; }
+    .tz-base { font-size:0.72rem; font-weight:700; color:#6b7280; margin-left:auto; }
+    .tz-svg { display:block; width:100%; max-width:560px; margin:0 auto; height:auto; }
+    .tz-k { font-size:30px; font-weight:800; letter-spacing:0.5px; }
+    .tz-t { font-size:36px; font-weight:900; }
+    .tz-d { font-size:25px; font-weight:800; }
+    .tz-foot { font-size:0.7rem; color:#6b7280; line-height:1.5; text-align:center; margin-top:2px; }
+    .tz-foot b { color:#9a3412; }
+    @media (max-width:620px) { .tz-base { margin-left:0; } }
+
     .nb-wrap { padding:18px 22px 50px; }
     .nb-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
     .nb-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
@@ -2361,6 +2373,7 @@
     </div>
     <p class="nb-sub">The team noticeboard. Leave, process changes, policy, wins. Anything everyone needs to see. Click a note to mark it read.</p>
     <div class="nb-filters" id="nb-filters"></div>
+    <div class="tz-card" id="tz-map"></div>
     <div class="nb-board" id="nb-board"></div>
   </div>
 </div>
@@ -4593,11 +4606,15 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 'RULE ZERO, NEVER INVENT A FACT. This outranks every other rule below. You may only use specifics the advisor actually wrote in their draft or in the context box. You must never introduce a time, a day, a date, a deadline, a unit code, a unit name, a hexamester, a person, a number, or an event that the advisor did not give you. If the draft says you tried to call, do not add when. If the draft names no times, do not name times. If the draft is not about enrolment, do not bring up enrolment.',
 '',
 'WHEN A RULE NEEDS A SPECIFIC YOU DO NOT HAVE: leave a placeholder in square brackets for the advisor to fill, for example [DAY AND TIME] or [DEADLINE], and raise a flag telling them what to fill in. A placeholder the advisor completes is correct. An invented detail that reads plausibly is the worst possible outcome, because nobody will catch it before it reaches the student.',
+'KEEP EVERY POINT, AND KEEP ITS FORCE. Work through the draft point by point and make sure each one survives. Never merge two points into one sentence and never drop the reason behind an ask. If the advisor says a student has exhausted their program leave, the rewrite says they have exhausted their program leave. Softening that to something milder changes the meaning and removes the reason the student should act. The advisor knows things you do not.',
+'',
 'KEEP THE HUMAN OPENER. If the draft opens by acknowledging something real, thanks for your time, thanks for getting back to me, great speaking with you, following our call, then that acknowledgement stays as the first line. Keep it in the advisor spirit and make it specific where the draft lets you, for example thanks for your time on the phone today. Never replace it with a functional summary like here are your login details. That one line is the difference between a colleague who just spoke to them and an automated notification, and it is the first thing the reader uses to decide whether you are friendly.',
 
+'UNIT CODES ARE THE POINT OF THE EMAIL. If the advisor names a unit, the rewrite names it too, never a vague the unit or your course. Write it as the code followed by the unit name taken from the reference data, for example ZZBU6501 Introductory Data Analysis. Put it in the subject line as well when the email is about that unit. If the code is not in the reference data, keep the code exactly as the advisor wrote it and flag that you could not confirm the name.',
+'',
 'NEVER DROP WHAT THE ADVISOR HANDED OVER. Every link, every URL, every email address, every phone number, every set of opening hours and every deadline in the draft must appear in the rewrite. These are the highest value lines in the email and the reason the student opened it. You may reformat them, label them or group them so they are easy to scan, but losing one is a failure even if the email reads better without it. If the draft has two links, the rewrite has two links.',
 '',
-'RECOMMEND THE RIGHT LINK. Emails to students should point somewhere. Look at what the email is actually about and pick the matching resource from the UNSW STUDENT RESOURCE LINKS list in the reference data, using the when-to-use column to decide. Put it inline where it is relevant, as the page name followed by the URL, not as a bare link dump at the bottom.',
+'RECOMMEND A LINK ONLY WHEN IT EARNS ITS PLACE. The default is no link. Add one only when the email asks the student to go and do something, and the UNSW STUDENT RESOURCE LINKS list has the page for exactly that thing, judged on its when-to-use column. A link that is merely on the right topic is wrong. If the advisor is chasing a reply rather than sending the student somewhere, send no link at all. When you do use one, put it inline where it is relevant, page name then URL.',
 'HOW MANY LINKS: one is usually right, two at the very most. A wall of links reads as a brush off and kills the single ask. If nothing in the list genuinely fits, send no link rather than a loose one.',
 'LINKS ARE FACTS, SO RULE ZERO APPLIES. You may only use a URL copied exactly from that list. Never invent, shorten, guess or reconstruct a URL, and never link a page because it sounds like it should exist. If the advisor already put a link in the draft, keep theirs exactly as written and do not swap it for one of yours. If theirs contradicts the list, keep theirs and raise a flag saying which one you would have used.',
 'LINKS THAT CARRY POLICY: if there is any hint of risk or of someone not coping, include Emergency and after-hours services. If money is the barrier, link financial support before anyone talks about leaving. Never link Changing your enrolment as a way of suggesting Leave of Absence or a lighter load.',
@@ -4614,23 +4631,25 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 '5. Self-efficacy: people move when the next step looks small. Someone behind is not weighing your deadline, they are weighing whether they can face the whole subject. Shrink the step until it is smaller than the dread. Asking for a first paragraph gets a reply that asking them to submit the assessment never will, and once they have answered once the next one is far easier.',
 '',
 'FIVE PARTS, IN ORDER, each with one job:',
-'1. Subject line: ALWAYS begin it with exactly "UNSW Online | " and then make the promise. Name the actual thing plus the action or date. The first 40 characters AFTER that prefix must carry it, because the rest is cut off on a phone, so be short. Never "Following up", "Checking in", "Quick question", "Important information".',
+'1. Subject line: ALWAYS begin it with exactly "UNSW Online | " and then make the promise. If the email is about a particular unit, the code goes in the subject. Name the actual thing plus the action or date. The first 40 characters AFTER that prefix must carry it, because the rest is cut off on a phone, so be short. Never "Following up", "Checking in", "Quick question", "Important information".',
 '2. First line: get to the point. The reason you wrote goes in sentence one. Not a greeting, not history, not context.',
-'3. The middle: only what they need in order to do the right thing. Every extra sentence is a tax on the ask.',
-'4. The ask: ONE ask, on its own line, specific, with a date, and small enough that someone who has done nothing can still answer today. Two asks gets you the easy one, three gets you nothing.',
-'5. The close: two lines. One that treats them like a person, one that makes replying feel safe.',
+'3. The middle: EVERY distinct point the advisor made, each as its own short paragraph, in the order they made them. Trim the words, never the points. If the draft makes six points you write six paragraphs, not three. Compression is about wording, not about deciding what matters.',
+'4. The ask: ONE thing you want them to DO, on its own line, specific, with a date, and small enough that someone who has done nothing can still answer today. This limits actions, not information. Context, reasons, deadlines and an offer of help are not asks and must all stay.',
+'5. The close: its own paragraph, never tacked onto the end of another one. Offer the way back in, reply to this email or give me a call, then one short human line. Each on its own line with a blank line before them. End with the advisor first name on its own line if the draft had one. Nothing after that.',
 '',
 'THREE CHECKS: the ask must be visible at a glance; it must still read as warm in a flat, impatient voice; count the decisions being asked for and remove one. "Tuesday 10am or Thursday 2pm?" beats "let me know what suits".',
 '',
 'WORDS TO DROP (rewrite every one): "Just checking in", "As per my previous email", "Please advise", "Unfortunately we are unable to", "I hope this email finds you well", "You failed to submit", "Kindly note that", "At your earliest convenience", "Do not hesitate to reach out", "It has come to our attention", "As previously advised".',
 '',
-'SIX FAILURE PATTERNS TO FIX: The Wall (one block, no breaks). The Buried Ask (ask hidden mid paragraph). The Bundle (multiple requests, the word "also" is the tell). The Over-Apology (so softened the message vanishes). The Robot (nothing in it could only have been written to this student). The Leak (frustration leaking out as formality).',
+'SIX FAILURE PATTERNS TO FIX: The Wall (one block, no breaks). The Buried Ask (ask hidden mid paragraph). The Bundle (multiple things to DO, the word "also" is the tell, but note this is about actions, never about dropping information). The Over-Apology (so softened the message vanishes). The Robot (nothing in it could only have been written to this student). The Leak (frustration leaking out as formality).',
 '',
 'KEYPATH POLICY (must not be broken):',
 '- Do NOT offer a lighter study load. We cannot do it.',
 '- Do NOT suggest Leave of Absence as the opening option. We are steering away from LOA.',
 '- For work commitments, map the key dates and weekly schedule of the unit around their work, and ask what has actually changed at work.',
-'- Australian English. No em dashes. Never invent policy, dates, fees or outcomes.'
+'- Australian English, always. Organise not organize, enrolment not enrollment, recognise, apologise, practise as a verb, program is correct for a degree. Never American spelling.',
+'- No em dashes anywhere. Use a comma or a full stop.',
+'- Never invent policy, dates, fees or outcomes.'
   ].join('\n');
 
   async function eaRewrite() {
@@ -9217,6 +9236,123 @@ ${cardsHTML}
   }
 
 
+  // ── Australia clock map ───────────────────────────────────────
+  const TZ_BASE = 'Australia/Melbourne';
+  const TZ_STATES = [
+    { k:'WA',  zone:'Australia/Perth',     name:'Western Australia' },
+    { k:'NT',  zone:'Australia/Darwin',    name:'Northern Territory' },
+    { k:'SA',  zone:'Australia/Adelaide',  name:'South Australia' },
+    { k:'QLD', zone:'Australia/Brisbane',  name:'Queensland' },
+    { k:'NSW', zone:'Australia/Sydney',    name:'New South Wales' },
+    { k:'VIC', zone:'Australia/Melbourne', name:'Victoria' },
+    { k:'TAS', zone:'Australia/Hobart',    name:'Tasmania' }
+  ];
+  const TZ_MAP = {"viewBox":"0 0 1000 820","states":{"QLD":"M717.6,28.4L741.2,70.9L748.2,111.1L783.5,130.0L807.1,215.0L835.3,236.3L875.3,274.1L894.1,304.8L915.3,330.8L941.2,361.6L964.7,387.6L967.1,423.0L978.8,441.9L682.4,451.4L682.4,389.9L611.8,389.9L611.8,167.8L647.1,179.6L677.6,189.0L694.1,153.6L696.5,125.2L691.8,82.7L708.2,47.3Z","NSW":"M974.1,470.3L964.7,496.3L962.4,517.5L945.9,541.2L936.5,553.0L922.4,576.6L912.9,605.0L898.8,623.9L891.8,661.7L847.1,631.0L741.2,597.9L682.4,579.0L682.4,451.4L978.8,441.9Z","VIC":"M891.8,661.7L847.1,668.8L809.4,694.8L788.2,682.9L774.1,675.9L752.9,687.7L729.4,692.4L696.5,682.9L682.4,682.9L682.4,579.0L741.2,597.9L847.1,631.0Z","SA":"M682.4,682.9L658.8,661.7L649.4,626.2L625.9,616.8L611.8,583.7L607.1,607.3L585.9,609.7L581.2,586.1L562.4,600.2L545.9,590.8L522.4,555.3L482.4,531.7L447.1,519.9L400.0,524.6L400.0,389.9L682.4,389.9L682.4,682.9Z","WA":"M400.0,524.6L341.2,538.8L294.1,555.3L270.6,576.6L223.5,576.6L176.5,590.8L138.8,605.0L94.1,600.2L72.9,588.4L70.6,562.4L87.1,545.9L89.4,529.3L68.2,489.2L47.1,437.2L40.0,392.3L32.9,354.5L49.4,309.6L82.4,278.8L122.4,264.7L164.7,248.1L211.8,236.3L240.0,203.2L272.9,163.1L291.8,163.1L317.6,118.2L352.9,104.0L378.8,137.1L400.0,125.2L400.0,389.9L400.0,524.6Z","NT":"M416.5,127.6L432.9,78.0L447.1,63.8L470.6,66.2L484.7,47.3L505.9,61.4L541.2,63.8L564.7,61.4L585.9,59.1L576.5,92.2L560.0,104.0L550.6,130.0L571.8,144.1L588.2,156.0L611.8,167.8L611.8,389.9L400.0,389.9L400.0,125.2Z","TAS":"M769.4,737.3L788.2,739.7L818.8,746.7L854.1,742.0L854.1,772.7L844.7,791.6L821.2,805.8L800.0,803.5L785.9,777.5L781.2,756.2L769.4,737.3Z"},"anchors":{"WA":[200,389.9],"NT":[503.5,243.4],"SA":[541.2,493.9],"QLD":[776.5,307.2],"NSW":[811.8,536.4],"VIC":[760,647.5],"TAS":[816.5,768]}};
+  // labels that sit outside their state, with a line back to it
+  const TZ_OUTSIDE = {
+    VIC: { x: 690, y: 742, tx: 757, ty: 640 },
+    TAS: { x: 905, y: 775, tx: 822, ty: 768 }
+  };
+
+  function tzOffsetMins(zone, at) {
+    // what the wall clock in `zone` reads, as minutes from the UTC wall clock
+    const f = new Intl.DateTimeFormat('en-GB', {
+      timeZone: zone, hour12: false,
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+    const p = {};
+    f.formatToParts(at).forEach(x => { if (x.type !== 'literal') p[x.type] = x.value; });
+    const asUtc = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second);
+    return Math.round((asUtc - Math.floor(at.getTime() / 1000) * 1000) / 60000);
+  }
+
+  function tzClock(zone, at) {
+    return new Intl.DateTimeFormat('en-AU', {
+      timeZone: zone, hour: 'numeric', minute: '2-digit', hour12: true
+    }).format(at).replace(/\s?(am|pm)/i, m => m.trim().toLowerCase());
+  }
+
+  function tzDayLabel(zone, at) {
+    return new Intl.DateTimeFormat('en-AU', { timeZone: zone, weekday: 'short' }).format(at);
+  }
+
+  function tzDiffLabel(mins) {
+    if (mins === 0) return 'same as VIC';
+    const sign = mins < 0 ? '−' : '+';
+    const a = Math.abs(mins);
+    const hr = Math.floor(a / 60), m = a % 60;
+    return sign + (hr ? hr : '') + (m ? '½' : '') + 'h';
+  }
+
+  function tzTone(mins) {
+    if (mins === 0) return { fill:'#c8f7dd', edge:'#10b981', ink:'#065f46' };
+    const a = Math.abs(mins);
+    if (a <= 30)  return { fill:'#fdf0c4', edge:'#eab308', ink:'#854d0e' };
+    if (a <= 60)  return { fill:'#ffe2cc', edge:'#f97316', ink:'#9a3412' };
+    if (a <= 90)  return { fill:'#ffd4d9', edge:'#f43f5e', ink:'#9f1239' };
+    return             { fill:'#dcd9fb', edge:'#6366f1', ink:'#3730a3' };
+  }
+
+  function tzEsc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function tzRender() {
+    const host = document.getElementById('tz-map');
+    if (!host) return;
+    const now = new Date();
+    const base = tzOffsetMins(TZ_BASE, now);
+    const baseDay = tzDayLabel(TZ_BASE, now);
+
+    let shapes = '', labels = '', leaders = '';
+    const rows = [];
+
+    TZ_STATES.forEach(s => {
+      const diff = tzOffsetMins(s.zone, now) - base;
+      const tone = tzTone(diff);
+      const clock = tzClock(s.zone, now);
+      const day = tzDayLabel(s.zone, now);
+      rows.push({ s: s, diff: diff, clock: clock, day: day, tone: tone });
+
+      shapes += '<path d="' + TZ_MAP.states[s.k] + '" fill="' + tone.fill + '" stroke="#fff" stroke-width="4"/>';
+
+      const out = TZ_OUTSIDE[s.k];
+      const a = TZ_MAP.anchors[s.k];
+      const x = out ? out.x : a[0], y = out ? out.y : a[1];
+      if (out) leaders += '<line x1="' + out.tx + '" y1="' + out.ty + '" x2="' + x + '" y2="' + (y - 14) +
+                          '" stroke="' + tone.edge + '" stroke-width="3" stroke-linecap="round" opacity="0.5"/>';
+
+      labels +=
+        '<text x="' + x + '" y="' + (y - 20) + '" text-anchor="middle" class="tz-k" fill="' + tone.ink + '">' + s.k + '</text>' +
+        '<text x="' + x + '" y="' + (y + 18) + '" text-anchor="middle" class="tz-t" fill="' + tone.ink + '">' + clock + '</text>' +
+        '<text x="' + x + '" y="' + (y + 44) + '" text-anchor="middle" class="tz-d" fill="' + tone.edge + '">' +
+          (diff === 0 ? (s.k === 'VIC' ? 'you are here' : 'same time') : tzDiffLabel(diff)) + (day !== baseDay ? ' · ' + day : '') + '</text>';
+    });
+
+    const odd = rows.filter(r => r.day !== baseDay);
+    const spread = rows.map(r => r.diff);
+    const widest = Math.min.apply(null, spread);
+
+    host.innerHTML =
+      '<div class="tz-hd">' +
+        '<span class="tz-ttl">\u{1F552} Where everyone is right now</span>' +
+        '<span class="tz-base">Victoria ' + tzClock(TZ_BASE, now) + ', ' + baseDay + '</span>' +
+      '</div>' +
+      '<svg class="tz-svg" viewBox="' + TZ_MAP.viewBox + '" role="img" aria-label="Map of Australia with the current time in each state">' +
+        shapes + leaders + labels +
+      '</svg>' +
+      '<div class="tz-foot">' +
+        (widest < 0 ? 'Perth is ' + tzDiffLabel(widest).replace('−','') + ' behind you. ' : '') +
+        'Queensland and the Northern Territory do not do daylight saving, so the gaps move twice a year.' +
+        (odd.length ? ' <b>' + odd.map(r => r.s.k).join(' and ') + ' ' + (odd.length > 1 ? 'are' : 'is') + ' on a different day to you.</b>' : '') +
+      '</div>';
+  }
+
+  function tzInit() {
+    if (!document.getElementById('tz-map')) return;
+    tzRender();
+    setInterval(tzRender, 20000);
+  }
+
   const NB_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/notices.json';
   const NB_COLOURS = ['yellow','blue','green','pink','orange','purple'];
   const NB_TAGS = ['Leave','Process','Policy','Heads up','Win','Event'];
@@ -9463,6 +9599,7 @@ ${cardsHTML}
   paintTabs(THEMES[localStorage.getItem('unsw-theme') || 'gold'] || THEMES.gold);
   initPlanner();
   dpInit();
+  tzInit();
   initTriage();
   nbLoad();
 
