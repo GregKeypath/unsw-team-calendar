@@ -758,6 +758,7 @@
     .unsw-badge.suspension-appeal { background:#FEF3C7; color:#92400E; border-left:3px solid #F59E0B; }
     .unsw-badge.ipt-open { background:#CCFBF1; color:#115E59; border-left:3px solid #14B8A6; }
     .unsw-badge.wadm-drop { background:#FCE7F3; color:#9D174D; border-left:3px solid #DB2777; }
+    .unsw-badge.aw-deadline { background:#EDE9FE; color:#4C1D95; border-left:3px solid #7C3AED; }
     .unsw-badge.sem-block { background:#E2E8F0; color:#334155; border-left:3px solid #64748B; }
     .unsw-badge.huddle { background:#EEF2FF; color:#3730A3; border-left:3px solid #6366F1; }
     .unsw-badge.kd-moved { box-shadow:inset 0 0 0 1px #94A3B8; }
@@ -2694,6 +2695,12 @@
 
   // UNSW 2026 Academic Calendar – key dates
   const UNSW_DATES_BASE = {
+    '2026-12-04':[{type:'aw-deadline', label:'AW Deadline H6'}],
+    '2026-10-09':[{type:'aw-deadline', label:'AW Deadline H5'}],
+    '2026-08-14':[{type:'aw-deadline', label:'AW Deadline H4'}],
+    '2026-06-19':[{type:'aw-deadline', label:'AW Deadline H3'}],
+    '2026-04-24':[{type:'aw-deadline', label:'AW Deadline H2'}],
+    '2026-02-27':[{type:'aw-deadline', label:'AW Deadline H1'}],
     // ── Hexa 1 ──
     '2026-01-12':[{type:'o-week', label:'O-Week H1'}],
     '2026-01-13':[{type:'o-week', label:'O-Week H1'}],
@@ -2798,7 +2805,8 @@
   const KD_ICONS = {
     'o-week':'🎓', 'census':'📋', 'enrol-deadline':'📝', 'late-enrol':'⏰',
     'standing-report':'📊', 'suspension-appeal':'⚖️', 'ipt-open':'🔓',
-    'wadm-drop':'📉', 'sem-block':'🚧', 'huddle':'🤝'
+    'wadm-drop':'📉', 'sem-block':'🚧', 'huddle':'🤝',
+    'aw-deadline':'🚪'
   };
 
   // Coded key dates are seeds. The team can move or cancel any of them, and those
