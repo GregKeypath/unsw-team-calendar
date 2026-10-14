@@ -1581,6 +1581,10 @@
     .sp-unit.in-plan { opacity: 0.35; cursor: not-allowed; }
     .sp-unit.in-plan .sp-unit-name { text-decoration: line-through; color: #aaa; }
     .sp-unit.in-plan .sp-unit-code { color: #ccc; }
+    .sp-unit-pre { display:block; margin-top:3px; font-size:0.56rem; font-weight:800; color:#9a3412; background:#ffedd5; border-radius:4px; padding:1px 5px; }
+    .plan-slot.pre-warn { box-shadow:inset 0 0 0 2px #f97316; }
+    .plan-warn { background:#fff7ed; border:1px solid #fed7aa; border-left:3px solid #f97316; border-radius:7px; padding:8px 11px; margin-bottom:8px; font-size:0.7rem; color:#7c2d12; line-height:1.5; }
+    .plan-warn b { color:#9a3412; }
     .sp-unit-cat { font-size: 0.54rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; opacity: 0.7; }
     .sp-unit-code { font-family: monospace; font-weight: 700; font-size: 0.65rem; color: #444; }
     .sp-unit-name { font-size: 0.7rem; font-weight: 500; line-height: 1.3; color: #222; }
@@ -2218,6 +2222,7 @@
         <button class="plan-btn plan-btn-clear" id="plan-clear-btn">✕ Clear</button>
         <button class="plan-btn plan-btn-copy" id="plan-export-btn">⬆ Export</button>
       </div>
+      <div id="plan-prereq-warn"></div>
       <div class="plan-scroll" id="plan-scroll">
         <div class="plan-empty-msg">Select a program above to start building your degree plan.</div>
       </div>
@@ -6754,7 +6759,7 @@ draft.slice(0, 6000),
   }
 
   // Build a single planner unit element (draggable, with valid drop-target SPs)
-  function buildPlannerUnitEl(prog, code, name, catType, catLabel) {
+  function buildPlannerUnitEl(prog, code, name, catType, catLabel, sp) {
     const inPlan = code !== '' && Object.values(planData).some(arr => arr.some(u => u.code === code));
     const c = document.createElement('div');
     c.className = `sp-unit cat-${catType}` + (inPlan ? ' in-plan' : '');
@@ -6762,7 +6767,9 @@ draft.slice(0, 6000),
     c.dataset.code = code;
     c.dataset.name = name;
     c.dataset.cat = catType;
-    c.innerHTML = `<span class="sp-unit-cat">${catLabel}</span><span class="sp-unit-code">${code}</span> <span class="sp-unit-name">${name}</span>`;
+    const _pr = prereqFor(code, sp || null);
+    const _prTag = (_pr && _pr.needs && _pr.needs.length) ? '<span class="sp-unit-pre" title="' + _pr.text.replace(/"/g, '&quot;') + '">needs ' + _pr.needs.join(' + ') + '</span>' : '';
+    c.innerHTML = `<span class="sp-unit-cat">${catLabel}</span><span class="sp-unit-code">${code}</span> <span class="sp-unit-name">${name}</span>` + _prTag;
     if (!inPlan) {
       c.addEventListener('dragstart', e => {
         const validSPs = [];
@@ -6889,7 +6896,7 @@ draft.slice(0, 6000),
           const spaceIdx = item.course.indexOf(' ');
           const code = item.course.substring(0, spaceIdx);
           const name = item.course.substring(spaceIdx + 1);
-          body.appendChild(buildPlannerUnitEl(prog, code, name, item.catType, item.catLabel));
+          body.appendChild(buildPlannerUnitEl(prog, code, name, item.catType, item.catLabel, sp));
         }
       } else {
         prog.cats.forEach(cat => {
@@ -6902,7 +6909,7 @@ draft.slice(0, 6000),
               code = course.substring(0, spaceIdx);
               name = course.substring(spaceIdx + 1);
             }
-            body.appendChild(buildPlannerUnitEl(prog, code, name, cat.type, cat.label));
+            body.appendChild(buildPlannerUnitEl(prog, code, name, cat.type, cat.label, sp));
           });
         });
       }
@@ -6941,6 +6948,24 @@ draft.slice(0, 6000),
     const planSPs = prog.sps.slice(startIdx, startIdx + count);
 
     scroll.innerHTML = '';
+
+    // anything planned before the unit it depends on, judged per year
+    const breaches = [];
+    Object.keys(planData).forEach(function (sp) {
+      (planData[sp] || []).forEach(function (u) {
+        const missing = prereqBreaches(sp, u.code);
+        if (missing.length) breaches.push({ sp: sp, code: u.code, missing: missing, year: prereqYear(sp) });
+      });
+    });
+    const warnBox = document.getElementById('plan-prereq-warn');
+    if (warnBox) {
+      warnBox.innerHTML = breaches.length
+        ? breaches.map(function (b) {
+            return '<div class=plan-warn>⚠️ <b>' + b.code + '</b> in ' + b.sp +
+              ' needs ' + b.missing.join(' and ') + ' first. Under the ' + b.year + ' rules.</div>';
+          }).join('')
+        : '';
+    }
 
     planSPs.forEach(sp => {
       const col = document.createElement('div');
@@ -7346,6 +7371,83 @@ ${cardsHTML}
   }
 
   // ── Program Rules (from Master Carousel) ─────────────────────
+  const PREREQS = {
+    "ZZBU0037": { "2026":{needs:["ZZBU0032"],text:"Prerequisites: Students must complete ZZBU0032 Responsible AI for Business and Society before taking this course."}, "2027":{needs:["ZZBU0032"],text:"Prerequisites: Students must complete ZZBU0032 Responsible AI for Business and Society before taking this course."} },
+    "ZZBU0038": { "2026":{needs:[],uoc:"48",text:"Maturity requirement: Students must have completed a minimum of 48 UOC to enrol in this course."}, "2027":{needs:[],uoc:"48",text:"Maturity requirement: Students must have completed a minimum of 48 UOC to enrol in this course."} },
+    "ZZBU5611": { "2026":{needs:[],programs:["8646","5646","7446"],text:"Enrolment is restricted to the Data Science programs (8646, 5646 and 7446)."}, "2027":{needs:[],programs:["8646","5646","7446","8513","5513"],text:"Enrolment is restricted to the Data Science programs (8646, 5646 and 7446) and Business Psychology (8513, 5513)."} },
+    "ZZBU6008": { "2026":{needs:[],uoc:"36",text:"Maturity requirement: Students must have completed a minimum of 36 UOC to enrol in this course"}, "2027":{needs:[],uoc:"36",text:"Maturity requirement: Students must have completed a minimum of 36 UOC to enrol in this course"} },
+    "ZZBU6404": { "2026":{needs:["ZZBU6501"],text:"Prerequisite: ZZBU6501 Introductory Data Analysis"}, "2027":{needs:["ZZBU6501"],text:"Prerequisite: ZZBU6501 Introductory Data Analysis"} },
+    "ZZBU6507": { "2026":{needs:["ZZBU6501","ZZSC9001"],text:"Prerequisite: ZZBU6501 or ZZSC9001"}, "2027":{needs:["ZZBU6501","ZZSC9001"],text:"Prerequisite: ZZBU6501 or ZZSC9001"} },
+    "ZZBU6509": { "2026":{needs:["ZZBU6501"],text:"ZZBU6501 Introductory Data Analysis"}, "2027":{needs:["ZZBU6501"],text:"ZZBU6501 Introductory Data Analysis"} },
+    "ZZBU6511": { "2026":{needs:["ZZBU6501"],text:"Pre-requisite: ZZBU6501"}, "2027":{needs:["ZZBU6501"],text:"Pre-requisite: ZZBU6501"} },
+    "ZZBU6512": { "2026":{needs:["ZZBU6501"],text:"ZZBU6501 Introductory Data Analysis"}, "2027":{needs:["ZZBU6501"],text:"ZZBU6501 Introductory Data Analysis"} },
+    "ZZBU6514": { "2026":{needs:["ZZBU6501"],text:"ZZBU6501 Introductory Data Analysis"}, "2027":{needs:["ZZBU6501"],text:"ZZBU6501 Introductory Data Analysis"} },
+    "ZZBU6601": { "2026":{needs:[],uoc:"36",programs:["8437"],text:"36UOC and enrolled in Master of Analytics (8437)"}, "2027":{needs:[],uoc:"36",programs:["8437"],text:"36UOC and enrolled in Master of Analytics (8437)"} },
+    "ZZBU8505": { "2026":{needs:["ZZBU8504"],text:"Pre-requisite: ZZBU8504"} },
+    "ZZBU8506": { "2026":{needs:["ZZBU8504"],text:"Prerequisite: ZZBU8504"} },
+    "ZZCA6510": { "2026":{needs:["ZZBU6501","ZZSC9001"],text:"Prerequisites ZZBU6501 or ZZSC9001"}, "2027":{needs:["ZZBU6501","ZZSC9001"],text:"Prerequisites ZZBU6501 or ZZSC9001"} },
+    "ZZCA9205": { "2026":{needs:["ZZEN9201"],text:"ZZEN9201"}, "2027":{needs:["ZZEN9201"],text:"ZZEN9201"} },
+    "ZZCA9208": { "2026":{needs:[],uoc:"48",programs:["8649"],text:"Enrolment in 8649 and 48 UOC completed"}, "2027":{needs:[],uoc:"48",programs:["8649"],text:"Enrolment in 8649 and 48 UOC completed"} },
+    "ZZCA9211": { "2026":{needs:["ZZEN9217"],text:"ZZEN9217"}, "2027":{needs:["ZZEN9217"],text:"ZZEN9217"} },
+    "ZZCO5005": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
+    "ZZCO5006": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
+    "ZZCO5007": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
+    "ZZCO5008": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004","ZZCO5005"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, ZZCO5004, and ZZCO5005"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004","ZZCO5005"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, ZZCO5004, and ZZCO5005"} },
+    "ZZCO5009": { "2026":{needs:["ZZCO5005","ZZCO5008"],text:"Prerequisite: ZZCO5005 and ZZCO5008"}, "2027":{needs:["ZZCO5005","ZZCO5008"],text:"Prerequisite: ZZCO5005 and ZZCO5008"} },
+    "ZZCO5010": { "2026":{needs:["ZZCO5009"],text:"Prerequisite: ZZCO5009"}, "2027":{needs:["ZZCO5009"],text:"Prerequisite: ZZCO5009"} },
+    "ZZCO5011": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
+    "ZZCO5012": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, ZZCO5004"} },
+    "ZZCO5013": { "2026":{needs:["ZZCO5009"],text:"Prerequisite: ZZCO5009"}, "2027":{needs:["ZZCO5009"],text:"Prerequisite: ZZCO5009"} },
+    "ZZCO5014": { "2026":{needs:["ZZCO5010"],text:"Prerequisite: ZZCO5010"}, "2027":{needs:["ZZCO5010"],text:"Prerequisite: ZZCO5010"} },
+    "ZZEN9209": { "2026":{needs:[],uoc:"48",programs:["8649"],text:"Prerequisite: Enrolment in 8649 and completion of 48 UOC."}, "2027":{needs:[],uoc:"48",programs:["8649"],text:"Prerequisite: Enrolment in 8649 and completion of 48 UOC."} },
+    "ZZEN9212": { "2026":{needs:["ZZEN9213"],text:"Prerequisite: ZZEN9213"}, "2027":{needs:["ZZEN9213"],text:"Prerequisite: ZZEN9213"} },
+    "ZZEN9215": { "2026":{needs:["ZZEN9217"],text:"Prerequisite: ZZEN9217"}, "2027":{needs:["ZZEN9217"],text:"Prerequisite: ZZEN9217"} },
+    "ZZEN9217": { "2026":{needs:["ZZEN9216"],text:"Prerequisite: ZZEN9216"}, "2027":{needs:["ZZEN9216"],text:"Prerequisite: ZZEN9216"} },
+    "ZZEN9313": { "2026":{needs:["ZZEN9021"],text:"Prerequisite: ZZEN9021"}, "2027":{needs:["ZZEN9021"],text:"Prerequisite: ZZEN9021"} },
+    "ZZEN9444": { "2026":{needs:["ZZEN9021"],text:"pre-req: ZZEN9021"}, "2027":{needs:["ZZEN9021"],text:"pre-req: ZZEN9021"} },
+    "ZZLJ8100": { "2026":{needs:[],programs:["7301","8431","7413","8436","7430","5436"],text:"Must be enrolled in program 7301, 8431, 7413, 8436, 7430 or 5436"} },
+    "ZZLJ8211": { "2026":{needs:[],programs:["7301","8876","8431"],text:"Must be enrolled in program 7301, 8876 or 8431"} },
+    "ZZLJ8212": { "2026":{needs:[],programs:["7301","8876","8431"],text:"Must be enrolled in program 7301, 8876 or 8431"}, "2027":{needs:[],programs:["7301","8876","8431"],text:"Must be enrolled in program 7301, 8876 or 8431"} },
+    "ZZPS5003": { "2026":{needs:["ZZPS5001","ZZPS5002"],text:"Prerequisite: ZZPS5001 and ZZPS5002"}, "2027":{needs:["ZZPS5001","ZZPS5002"],text:"Prerequisite: ZZPS5001 and ZZPS5002"} },
+    "ZZPS5004": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003"} },
+    "ZZPS5005": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"} },
+    "ZZPS5006": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"} },
+    "ZZPS5007": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"} },
+    "ZZPS5008": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"} },
+    "ZZPS5009": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"} },
+    "ZZPS5010": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004","ZZPS5005","ZZPS5006","ZZPS5007","ZZPS5008","ZZPS5009"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004 and ZZPS5005 and ZZPS5006 and ZZPS5007 and ZZPS5008 and ZZPS5009"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004","ZZPS5005","ZZPS5006","ZZPS5007","ZZPS5008","ZZPS5009"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004 and ZZPS5005 and ZZPS5006 and ZZPS5007 and ZZPS5008 and ZZPS5009"} },
+    "ZZSC5114": { "2026":{needs:[],uoc:"48",text:"Students must be enrolled in the Master of Business Psychology and have completed at least 48 UOC."}, "2027":{needs:[],uoc:"48",text:"Students must be enrolled in the Master of Business Psychology and have completed at least 48 UOC."} },
+    "ZZSC5806": { "2026":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"}, "2027":{needs:["ZZSC9001"],programs:["7446","5646","8646"],text:"Prerequisite: Must be enrolled in 7446 or 5646 or 8646, and have completed ZZSC9001 Foundations of Data Science or equivalent."} },
+    "ZZSC5836": { "2026":{needs:["ZZEN9021"],programs:["5646","8646"],text:"Prerequisite: ZZEN9021 and enrolment in either the 5646 or 8646 Data Science program."}, "2027":{needs:["ZZEN9021"],programs:["5646","8646"],text:"Prerequisite: ZZEN9021 and enrolment in either the 5646 or 8646 Data Science program."} },
+    "ZZSC5855": { "2026":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"}, "2027":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"} },
+    "ZZSC5960": { "2026":{needs:[],programs:["5646","8646"],text:"Must be enrolled in 5646 Graduate Diploma in Data Science or 8646 Master of Data Science."}, "2027":{needs:[],programs:["5646","8646"],text:"Must be enrolled in 5646 Graduate Diploma in Data Science or 8646 Master of Data Science."} },
+    "ZZSC9001": { "2026":{needs:[],programs:["8646","5646","7446","8433","5433","7434"],text:"Prerequisite: Enrolment in Data Science 8646 or 5646 or 7446 or Financial Technology 8433 or 5433 or 7434"}, "2027":{needs:[],programs:["8646","5646","7446","8433","5433","7434"],text:"Prerequisite: Enrolment in Data Science 8646 or 5646 or 7446 or Financial Technology 8433 or 5433 or 7434"} },
+    "ZZSC9020": { "2026":{needs:[],uoc:"48",programs:["8646"],text:"Enrolled in 8646 and completed 48UOC of courses within the program"}, "2027":{needs:[],uoc:"48",programs:["8646"],text:"Enrolled in 8646 and completed 48UOC of courses within the program"} },
+  };
+
+  // Enrolment rules change between years, so a plan is always judged against
+  // the rules for the year of the period it sits in.
+  function prereqYear(sp) {
+    const m = String(sp || '').match(/\s(\d{2})$/);
+    return m ? '20' + m[1] : '2027';
+  }
+  function prereqFor(code, sp) {
+    const rec = PREREQS[code];
+    if (!rec) return null;
+    const y = prereqYear(sp);
+    return rec[y] || null;
+  }
+  function prereqBreaches(sp, code) {
+    const r = prereqFor(code, sp);
+    if (!r || !r.needs || !r.needs.length) return [];
+    const key = spToSortKey(sp);
+    const done = {};
+    Object.entries(planData).forEach(function (e) {
+      if (spToSortKey(e[0]) < key) e[1].forEach(function (u) { done[u.code] = 1; });
+    });
+    return r.needs.filter(function (n) { return !done[n]; });
+  }
+
   const PROGRAM_RULES = {
     'AI Strategy': { levels: [
       { label:'Graduate Certificate in AI Strategy, 4 courses, 24UOC', code:'GCAIS', totalCourses:4, electiveSlots:1,
