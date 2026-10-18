@@ -759,6 +759,7 @@
     .unsw-badge.ipt-open { background:#CCFBF1; color:#115E59; border-left:3px solid #14B8A6; }
     .unsw-badge.wadm-drop { background:#FCE7F3; color:#9D174D; border-left:3px solid #DB2777; }
     .unsw-badge.aw-deadline { background:#EDE9FE; color:#4C1D95; border-left:3px solid #7C3AED; }
+    .unsw-badge.ipt-close { background:#FEF2F2; color:#7F1D1D; border-left:3px solid #DC2626; }
     .unsw-badge.sem-block { background:#E2E8F0; color:#334155; border-left:3px solid #64748B; }
     .unsw-badge.huddle { background:#EEF2FF; color:#3730A3; border-left:3px solid #6366F1; }
     .unsw-badge.kd-moved { box-shadow:inset 0 0 0 1px #94A3B8; }
@@ -2653,8 +2654,7 @@
     { label: 'Training',         bg: '#D1FAE5', text: '#065F46', dot: '#10B981' },
     { label: 'UNSW Meeting',     bg: '#FEF3C7', text: '#92400E', dot: '#F59E0B' },
     { label: 'Annual Leave',     bg: '#ECFDF5', text: '#065F46', dot: '#34D399' },
-    { label: 'Public Holiday',   bg: '#FFE4E6', text: '#9F1239', dot: '#F43F5E' },
-  ];
+    { label: 'Public Holiday',   bg: '#FFE4E6', text: '#9F1239', dot: '#F43F5E' }];
 
   const DAY_NAMES   = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
   const MONTH_NAMES = ['January','February','March','April','May','June',
@@ -2685,8 +2685,7 @@
       [5,'Week 6',2026,10,5],[5,'Week 7',2026,10,12],
       [6,'O-Week',2026,10,19],[6,'Week 1',2026,10,26],[6,'Week 2',2026,11,2],
       [6,'Week 3',2026,11,9],[6,'Week 4',2026,11,16],[6,'Week 5',2026,11,23],
-      [6,'Week 6',2026,11,30],[6,'Week 7',2026,12,7],
-    ];
+      [6,'Week 6',2026,11,30],[6,'Week 7',2026,12,7]];
     defs.forEach(([hex, label, y, mo, d]) => {
       const mon = new Date(y, mo - 1, d);
       for (let i = 0; i < 5; i++) {
@@ -2700,6 +2699,18 @@
 
   // UNSW 2026 Academic Calendar – key dates
   const UNSW_DATES_BASE = {
+    '2026-02-02':[{type:'ipt-open', label:'IPT Opens H2'}],
+    '2026-03-06':[{type:'ipt-close', label:'IPT Deadline H2 (12pm Friday, week 7)'}],
+    '2026-03-30':[{type:'ipt-open', label:'IPT Opens H3'}],
+    '2026-05-01':[{type:'ipt-close', label:'IPT Deadline H3 (12pm Friday, week 7)'}],
+    '2026-05-25':[{type:'ipt-open', label:'IPT Opens H4'}],
+    '2026-06-26':[{type:'ipt-close', label:'IPT Deadline H4 (12pm Friday, week 7)'}],
+    '2026-07-20':[{type:'ipt-open', label:'IPT Opens H5'}],
+    '2026-08-21':[{type:'ipt-close', label:'IPT Deadline H5 (12pm Friday, week 7)'}],
+    '2026-09-14':[{type:'ipt-open', label:'IPT Opens H6'}],
+    '2026-10-16':[{type:'ipt-close', label:'IPT Deadline H6 (12pm Friday, week 7)'}],
+    '2026-11-09':[{type:'ipt-open', label:'IPT Opens H7'}],
+    '2026-12-11':[{type:'ipt-close', label:'IPT Deadline H7 (12pm Friday, week 7)'}],
     '2026-12-04':[{type:'aw-deadline', label:'AW Deadline H6'}],
     '2026-10-09':[{type:'aw-deadline', label:'AW Deadline H5'}],
     '2026-08-14':[{type:'aw-deadline', label:'AW Deadline H4'}],
@@ -2715,7 +2726,7 @@
     '2026-01-19':[{type:'enrol-deadline', label:'Enrol Deadline H1'}],
     '2026-01-20':[{type:'late-enrol', label:'Late Enrol H1 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H1'}],
     '2026-01-21':[{type:'standing-report', label:'First Academic Standing Report H1'}],
-    '2026-03-06':[{type:'ipt-open', label:'IPT Closes H2'}],
+
     '2026-02-03':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1'}],
     '2026-02-10':[{type:'wadm-drop', label:'WADM Students Dropped H1'}],
     // SEM block applied to students — Monday of Week 5
@@ -2729,65 +2740,65 @@
     // ── Hexa 2 ──
     '2026-03-09':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-10':[{type:'o-week', label:'O-Week H2'}],
-    '2026-03-11':[{type:'o-week', label:'O-Week H2'},{type:'ipt-open', label:'IPT Deadline (Midnight) H2'}],
+    '2026-03-11':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-12':[{type:'o-week', label:'O-Week H2'}],
     '2026-03-13':[{type:'results',label:'Results H1'},{type:'o-week',label:'O-Week H2'}],
     '2026-03-16':[{type:'enrol-deadline', label:'Enrol Deadline H2'}],
     '2026-03-17':[{type:'late-enrol', label:'Late Enrol H2 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H2'}],
     '2026-03-18':[{type:'standing-report', label:'First Academic Standing Report H2'}],
-    '2026-05-01':[{type:'ipt-open', label:'IPT Closes H3'}],
+
     '2026-03-31':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H2'}],
     '2026-04-07':[{type:'wadm-drop', label:'WADM Students Dropped H2'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
     '2026-05-04':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-05':[{type:'o-week', label:'O-Week H3'}],
-    '2026-05-06':[{type:'o-week', label:'O-Week H3'},{type:'ipt-open', label:'IPT Deadline (Midnight) H3'}],
+    '2026-05-06':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-07':[{type:'o-week', label:'O-Week H3'}],
     '2026-05-08':[{type:'results',label:'Results H2'},{type:'o-week',label:'O-Week H3'}],
     '2026-05-11':[{type:'enrol-deadline', label:'Enrol Deadline H3'}],
     '2026-05-12':[{type:'late-enrol', label:'Late Enrol H3 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H3'}],
     '2026-05-13':[{type:'standing-report', label:'First Academic Standing Report H3'}],
-    '2026-06-26':[{type:'ipt-open', label:'IPT Closes H4'}],
+
     '2026-05-26':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H3'}],
     '2026-06-02':[{type:'wadm-drop', label:'WADM Students Dropped H3'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
     '2026-06-29':[{type:'o-week', label:'O-Week H4'}],
     '2026-06-30':[{type:'o-week', label:'O-Week H4'}],
-    '2026-07-01':[{type:'o-week', label:'O-Week H4'},{type:'ipt-open', label:'IPT Deadline (Midnight) H4'}],
+    '2026-07-01':[{type:'o-week', label:'O-Week H4'}],
     '2026-07-02':[{type:'o-week', label:'O-Week H4'}],
     '2026-07-03':[{type:'results',label:'Results H3'},{type:'o-week',label:'O-Week H4'}],
     '2026-07-06':[{type:'enrol-deadline', label:'Enrol Deadline H4'}],
     '2026-07-07':[{type:'late-enrol', label:'Late Enrol H4 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H4'}],
     '2026-07-08':[{type:'standing-report', label:'First Academic Standing Report H4'}],
-    '2026-08-21':[{type:'ipt-open', label:'IPT Closes H5'}],
+
     '2026-07-21':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H4'}],
     '2026-07-28':[{type:'wadm-drop', label:'WADM Students Dropped H4'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
     '2026-08-24':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-25':[{type:'o-week', label:'O-Week H5'}],
-    '2026-08-26':[{type:'o-week', label:'O-Week H5'},{type:'ipt-open', label:'IPT Deadline (Midnight) H5'}],
+    '2026-08-26':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-27':[{type:'o-week', label:'O-Week H5'}],
     '2026-08-28':[{type:'results',label:'Results H4'},{type:'o-week',label:'O-Week H5'}],
     '2026-08-31':[{type:'enrol-deadline', label:'Enrol Deadline H5'}],
     '2026-09-01':[{type:'late-enrol', label:'Late Enrol H5 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H5'}],
     '2026-09-02':[{type:'standing-report', label:'First Academic Standing Report H5'}],
-    '2026-10-16':[{type:'ipt-open', label:'IPT Closes H6'}],
+
     '2026-09-15':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H5'}],
     '2026-09-22':[{type:'wadm-drop', label:'WADM Students Dropped H5'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
     '2026-10-19':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-20':[{type:'o-week', label:'O-Week H6'}],
-    '2026-10-21':[{type:'o-week', label:'O-Week H6'},{type:'ipt-open', label:'IPT Deadline (Midnight) H6'}],
+    '2026-10-21':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-22':[{type:'o-week', label:'O-Week H6'}],
     '2026-10-23':[{type:'results',label:'Results H5'},{type:'o-week',label:'O-Week H6'}],
     '2026-10-26':[{type:'enrol-deadline', label:'Enrol Deadline H6'}],
     '2026-10-27':[{type:'late-enrol', label:'Late Enrol H6 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H6'}],
     '2026-10-28':[{type:'standing-report', label:'First Academic Standing Report H6'}],
-    '2026-11-09':[{type:'ipt-open', label:'IPT Opens H7'}],
+
     '2026-11-10':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H6'}],
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
@@ -2811,7 +2822,7 @@
     'o-week':'🎓', 'census':'📋', 'enrol-deadline':'📝', 'late-enrol':'⏰',
     'standing-report':'📊', 'suspension-appeal':'⚖️', 'ipt-open':'🔓',
     'wadm-drop':'📉', 'sem-block':'🚧', 'huddle':'🤝',
-    'aw-deadline':'🚪'
+    'aw-deadline':'🚪', 'ipt-close':'🔓'
   };
 
   // Coded key dates are seeds. The team can move or cancel any of them, and those
@@ -2909,8 +2920,7 @@
         { bg:'#78350f', txt:'#fde68a' },
         { bg:'#1e40af', txt:'#bfdbfe' },
         { bg:'#134e4a', txt:'#99f6e4' },
-        { bg:'#881337', txt:'#fda4af' },
-      ],
+        { bg:'#881337', txt:'#fda4af' }],
       days: ['#EFF6FF','#F0FDF4','#FFFBEB','#FDF4FF','#FFF1F2'],
     },
     blue: {
@@ -2925,8 +2935,7 @@
         { bg:'#164e63', txt:'#a5f3fc' },
         { bg:'#1e3654', txt:'#bae6fd' },
         { bg:'#0f3460', txt:'#93c5fd' },
-        { bg:'#0c3547', txt:'#7dd3fc' },
-      ],
+        { bg:'#0c3547', txt:'#7dd3fc' }],
       days: ['#EFF6FF','#E0F2FE','#DBEAFE','#E0F7FA','#EDE9FE'],
     },
     emerald: {
@@ -2941,8 +2950,7 @@
         { bg:'#134e4a', txt:'#99f6e4' },
         { bg:'#0f4c36', txt:'#6ee7b7' },
         { bg:'#1a3d2b', txt:'#4ade80' },
-        { bg:'#065f46', txt:'#a7f3d0' },
-      ],
+        { bg:'#065f46', txt:'#a7f3d0' }],
       days: ['#F0FDF4','#DCFCE7','#D1FAE5','#CCFBF1','#ECFDF5'],
     },
     purple: {
@@ -2957,8 +2965,7 @@
         { bg:'#581c87', txt:'#d8b4fe' },
         { bg:'#3730a3', txt:'#c7d2fe' },
         { bg:'#4a044e', txt:'#f0abfc' },
-        { bg:'#3b0764', txt:'#d8b4fe' },
-      ],
+        { bg:'#3b0764', txt:'#d8b4fe' }],
       days: ['#F5F3FF','#EDE9FE','#FAE8FF','#FDF4FF','#EFF6FF'],
     },
     coral: {
@@ -2973,8 +2980,7 @@
         { bg:'#9a3412', txt:'#fdba74' },
         { bg:'#78350f', txt:'#fcd34d' },
         { bg:'#7f1d1d', txt:'#fca5a5' },
-        { bg:'#431407', txt:'#fed7aa' },
-      ],
+        { bg:'#431407', txt:'#fed7aa' }],
       days: ['#FFF7ED','#FFEDD5','#FEF3C7','#FFF1F2','#FDF4FF'],
     },
     rose: {
@@ -2989,8 +2995,7 @@
         { bg:'#831843', txt:'#fbcfe8' },
         { bg:'#881337', txt:'#fda4af' },
         { bg:'#4c0519', txt:'#fecdd3' },
-        { bg:'#7f1d1d', txt:'#fca5a5' },
-      ],
+        { bg:'#7f1d1d', txt:'#fca5a5' }],
       days: ['#FFF1F2','#FFE4E6','#FCE7F3','#FDF2F8','#FEF2F2'],
     },
     teal: {
@@ -3005,8 +3010,7 @@
         { bg:'#0d3d3b', txt:'#99f6e4' },
         { bg:'#0f3d3d', txt:'#a5f3fc' },
         { bg:'#0c4038', txt:'#6ee7b7' },
-        { bg:'#0a3332', txt:'#5eead4' },
-      ],
+        { bg:'#0a3332', txt:'#5eead4' }],
       days: ['#F0FDFA','#CCFBF1','#CFFAFE','#D1FAE5','#E0F2FE'],
     },
     sunset: {
@@ -3021,8 +3025,7 @@
         { bg:'#9f1239', txt:'#fecdd3' },
         { bg:'#92400e', txt:'#fcd34d' },
         { bg:'#701a75', txt:'#f5d0fe' },
-        { bg:'#9a3412', txt:'#fdba74' },
-      ],
+        { bg:'#9a3412', txt:'#fdba74' }],
       days: ['#FFF7ED','#FFE4E6','#FEF3C7','#FCE7F3','#FFEDD5'],
     },
     candy: {
@@ -3037,8 +3040,7 @@
         { bg:'#78350f', txt:'#fde68a' },
         { bg:'#581c87', txt:'#d8b4fe' },
         { bg:'#134e4a', txt:'#99f6e4' },
-        { bg:'#9f1239', txt:'#fecdd3' },
-      ],
+        { bg:'#9f1239', txt:'#fecdd3' }],
       days: ['#FCE7F3','#F3E8FF','#E0F2FE','#FEF3C7','#FFE4E6'],
     },
     forest: {
@@ -3053,8 +3055,7 @@
         { bg:'#134e4a', txt:'#99f6e4' },
         { bg:'#365314', txt:'#d9f99d' },
         { bg:'#064e3b', txt:'#6ee7b7' },
-        { bg:'#422006', txt:'#fed7aa' },
-      ],
+        { bg:'#422006', txt:'#fed7aa' }],
       days: ['#F7FEE7','#ECFDF5','#FEFCE8','#F0FDF4','#ECFEFF'],
     },
     midnight: {
@@ -3069,8 +3070,7 @@
         { bg:'#1e293b', txt:'#e2e8f0' },
         { bg:'#0f172a', txt:'#94a3b8' },
         { bg:'#1e293b', txt:'#cbd5e1' },
-        { bg:'#0f172a', txt:'#94a3b8' },
-      ],
+        { bg:'#0f172a', txt:'#94a3b8' }],
       days: ['#F1F5F9','#E2E8F0','#F8FAFC','#EFF6FF','#F5F3FF'],
     },
   };
@@ -3621,8 +3621,7 @@
         { name:'Saravanan Rajamani',st:180, en:163, pctSt:'90.56%', it:162, pctIt:'100.62%',stt:170, pctSt2:'96%',  t1t2:16, pctT1:'76%', gcm:9,  gcmC:'45%', cohort:270,  ctd:141, cPct:'52%', calls:62,  sts:27, cr:'38%', cq:null, kR:'ACHIEVED EXPECTATIONS',  kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
         { name:'Melanie Richards',  st:133, en:128, pctSt:'96.24%', it:121, pctIt:'105.79%',stt:124, pctSt2:'103%', t1t2:19, pctT1:'90%', gcm:9,  gcmC:'53%', cohort:217,  ctd:157, cPct:'72%', calls:42,  sts:21, cr:'50%', cq:null, kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
         { name:'Amelia Mosley',     st:190, en:169, pctSt:'88.95%', it:167, pctIt:'101.20%',stt:170, pctSt2:'99%',  t1t2:22, pctT1:'81%', gcm:4,  gcmC:'40%', cohort:264,  ctd:212, cPct:'80%', calls:50,  sts:25, cr:'47%', cq:null, kR:'ACHIEVED EXPECTATIONS',  kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
-        { name:'Tyler Bruns',       st:179, en:158, pctSt:'88.27%', it:161, pctIt:'98.14%', stt:164, pctSt2:'96%',  t1t2:25, pctT1:'71%', gcm:5,  gcmC:'42%', cohort:269,  ctd:206, cPct:'77%', calls:58,  sts:25, cr:'39%', cq:null, kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
-      ],
+        { name:'Tyler Bruns',       st:179, en:158, pctSt:'88.27%', it:161, pctIt:'98.14%', stt:164, pctSt2:'96%',  t1t2:25, pctT1:'71%', gcm:5,  gcmC:'42%', cohort:269,  ctd:206, cPct:'77%', calls:58,  sts:25, cr:'39%', cq:null, kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' }],
       total: { name:'UNSW Total', st:1018,en:935,pctSt:'91.85%',it:936,pctIt:'99.89%',stt:959,pctSt2:'97%',t1t2:117,pctT1:'78%',gcm:33,gcmC:'42%',cohort:1562,ctd:1147,cPct:'73%',calls:57,sts:25,cr:'23%',cq:null,kR:null,kS:null,k6:null }
     },
     H2: {
@@ -3633,8 +3632,7 @@
         { name:'Saravanan Rajamani',st:141, en:134, pctSt:'95.04%', it:129, pctIt:'103.88%', stt:130, pctSt2:'103%', t1t2:31, pctT1:'72%', gcm:1,  gcmC:'11%', cohort:205, ctd:127, cPct:'62%', calls:59, sts:29, cr:'42%', cq:'73%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
         { name:'Melanie Richards',  st:140, en:123, pctSt:'87.86%', it:128, pctIt:'96.09%',  stt:130, pctSt2:'95%',  t1t2:20, pctT1:'77%', gcm:2,  gcmC:'18%', cohort:207, ctd:84,  cPct:'41%', calls:40, sts:20, cr:'48%', cq:'81%', kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
         { name:'Amelia Mosley',     st:198, en:190, pctSt:'95.96%', it:180, pctIt:'105.56%', stt:182, pctSt2:'104%', t1t2:35, pctT1:'74%', gcm:4,  gcmC:'31%', cohort:288, ctd:255, cPct:'89%', calls:51, sts:26, cr:'48%', cq:'81%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
-        { name:'Tyler Bruns',       st:202, en:198, pctSt:'98.02%', it:185, pctIt:'107.03%', stt:187, pctSt2:'106%', t1t2:47, pctT1:'81%', gcm:0,  gcmC:'0%',  cohort:281, ctd:150, cPct:'53%', calls:56, sts:24, cr:'39%', cq:'77%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
-      ],
+        { name:'Tyler Bruns',       st:202, en:198, pctSt:'98.02%', it:185, pctIt:'107.03%', stt:187, pctSt2:'106%', t1t2:47, pctT1:'81%', gcm:0,  gcmC:'0%',  cohort:281, ctd:150, cPct:'53%', calls:56, sts:24, cr:'39%', cq:'77%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' }],
       total: { name:'UNSW Total', st:1069,en:989,pctSt:'92.52%',it:983,pctIt:'100.61%',stt:996,pctSt2:'99%',t1t2:200,pctT1:'78%',gcm:11,gcmC:'14%',cohort:1547,ctd:1101,cPct:'72%',calls:56,sts:25,cr:'22%',cq:'80%',kR:null,kS:null,k6:null }
     },
     H3: {
@@ -3644,8 +3642,7 @@
         { name:'Priscilla Samuel',  st:265, en:248, pctSt:'93.58%', it:241, pctIt:'102.90%', stt:244, pctSt2:'102%', t1t2:60, pctT1:'87%', gcm:6, gcmC:'30%', cohort:373, ctd:308, cPct:'83%', calls:59, sts:28, cr:'41%', cq:'85%', kR:'ACHIEVED EXPECTATIONS', kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
         { name:'Saravanan Rajamani',st:210, en:200, pctSt:'95.24%', it:191, pctIt:'104.71%', stt:194, pctSt2:'103%', t1t2:63, pctT1:'79%', gcm:1, gcmC:'14%', cohort:300, ctd:149, cPct:'50%', calls:56, sts:30, cr:'46%', cq:'73%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
         { name:'Amelia Mosley',     st:256, en:246, pctSt:'96.09%', it:235, pctIt:'104.68%', stt:239, pctSt2:'103%', t1t2:50, pctT1:'79%', gcm:4, gcmC:'24%', cohort:364, ctd:292, cPct:'80%', calls:56, sts:30, cr:'50%', cq:'81%', kR:'EXCEPTIONAL PERFORMANCE', kS:'SUPPORT NEEDED', k6:'ACHIEVED EXPECTATIONS' },
-        { name:'Kimmi',             st:148, en:130, pctSt:'87.84%', it:134, pctIt:'97.01%',  stt:137, pctSt2:'95%',  t1t2:13, pctT1:'72%', gcm:3, gcmC:'25%', cohort:225, ctd:113, cPct:'50%', calls:33, sts:20, cr:'67%', cq:'NA',  kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' },
-      ],
+        { name:'Kimmi',             st:148, en:130, pctSt:'87.84%', it:134, pctIt:'97.01%',  stt:137, pctSt2:'95%',  t1t2:13, pctT1:'72%', gcm:3, gcmC:'25%', cohort:225, ctd:113, cPct:'50%', calls:33, sts:20, cr:'67%', cq:'NA',  kR:'SUPPORT NEEDED',         kS:'SUPPORT NEEDED', k6:'SUPPORT NEEDED' }],
       total: { name:'UNSW Total', st:1141,en:1058,pctSt:'92.73%',it:1038,pctIt:'101.93%',stt:1053,pctSt2:'100%',t1t2:229,pctT1:'80%',gcm:17,gcmC:'25%',cohort:1636,ctd:1151,cPct:'72%',calls:56,sts:27,cr:'27%',cq:'81%',kR:null,kS:null,k6:null }
     },
     H4: {
@@ -3655,8 +3652,7 @@
         { name:'Priscilla Samuel',  st:241, en:229, it:219, stt:219, gcm:1,  gcmPool:31, gcmt:31, t1t2pool:39, t1t2:39, cohort:339, ctd:246, cohortContact:276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:2,  intentNo:22, intentUndec:5, intentUnknown:5,  intentBlank:78 },
         { name:'Saravanan Rajamani',st:199, en:193, it:181, stt:196, gcm:6,  gcmPool:18, gcmt:18, t1t2pool:41, t1t2:41, cohort:270, ctd:189, cohortContact:207,  calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:1,  intentNo:15, intentUndec:2, intentUnknown:13, intentBlank:47 },
         { name:'Amelia Churchill',  st:244, en:246, it:223, stt:224, gcm:4,  gcmPool:36, gcmt:36, t1t2pool:48, t1t2:48, cohort:344, ctd:266, cohortContact:285, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0,  intentNo:7,  intentUndec:2, intentUnknown:9,  intentBlank:82 },
-        { name:'Kimmi',             st:225, en:200, it:204, stt:204, gcm:3,  gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:336, ctd:199, cohortContact:223, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:3,  intentNo:36, intentUndec:4, intentUnknown:26, intentBlank:70 },
-      ],
+        { name:'Kimmi',             st:225, en:200, it:204, stt:204, gcm:3,  gcmPool:43, gcmt:43, t1t2pool:25, t1t2:25, cohort:336, ctd:199, cohortContact:223, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:3,  intentNo:36, intentUndec:4, intentUnknown:26, intentBlank:70 }],
       total: { name:'UNSW Total', st:1155, en:1103, it:1053, stt:1068, gcm:18, gcmPool:154, gcmt:154, t1t2pool:193, t1t2:193, cohort:1624, ctd:1173, cohortContact:1276, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:18, intentNo:155, intentUndec:14, intentUnknown:57, intentBlank:286 }
     },
     H5: {
@@ -3666,8 +3662,7 @@
         { name:'Priscilla Samuel', st:238, en:232, it:216, stt:221, gcm:5, gcmPool:16, gcmt:16, t1t2pool:45, t1t2:40, cohort:324, ctd:266, cohortContact:143, drops:26, dropsCensus:13, calls:null, sts:null, cr:'—', cq:'75%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'Amelia Churchill', st:240, en:234, it:218, stt:222, gcm:7, gcmPool:15, gcmt:15, t1t2pool:39, t1t2:32, cohort:329, ctd:306, cohortContact:186, drops:38, dropsCensus:9, calls:null, sts:null, cr:'—', cq:'78%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'Kimmi', st:216, en:187, it:196, stt:200, gcm:9, gcmPool:23, gcmt:23, t1t2pool:36, t1t2:31, cohort:315, ctd:277, cohortContact:134, drops:31, dropsCensus:7, calls:null, sts:null, cr:'—', cq:'75%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
-        { name:'James Miller', st:226, en:215, it:205, stt:208, gcm:7, gcmPool:17, gcmt:17, t1t2pool:28, t1t2:19, cohort:323, ctd:237, cohortContact:117, drops:28, dropsCensus:8, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
-      ],
+        { name:'James Miller', st:226, en:215, it:205, stt:208, gcm:7, gcmPool:17, gcmt:17, t1t2pool:28, t1t2:19, cohort:323, ctd:237, cohortContact:117, drops:28, dropsCensus:8, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 }],
       total: { name:'UNSW Total', st:1155, en:1095, it:1048, stt:1068, gcm:39, gcmPool:88, gcmt:88, t1t2pool:197, t1t2:166, cohort:1625, ctd:1399, cohortContact:736, drops:161, dropsCensus:53, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 }
     },
     H6: {
@@ -3679,8 +3674,7 @@
         { name:'Kimmi', st:216, en:139, it:196, stt:200, gcm:0, gcmPool:0, gcmt:0, t1t2pool:72, t1t2:47, cohort:267, ctd:232, cohortContact:151, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:'75%', dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'James Miller', st:226, en:102, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:59, t1t2:24, cohort:224, ctd:188, cohortContact:144, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
         { name:'Andrew', st:226, en:103, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:30, t1t2:19, cohort:221, ctd:154, cohortContact:1, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
-        { name:'Steph', st:226, en:89, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:22, t1t2:14, cohort:164, ctd:141, cohortContact:1, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 },
-      ],
+        { name:'Steph', st:226, en:89, it:205, stt:208, gcm:0, gcmPool:0, gcmt:0, t1t2pool:22, t1t2:14, cohort:164, ctd:141, cohortContact:1, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 }],
       total: { name:'UNSW Total', st:1607, en:913, it:1458, stt:1484, gcm:0, gcmPool:0, gcmt:0, t1t2pool:427, t1t2:266, cohort:1698, ctd:1460, cohortContact:811, drops:null, dropsCensus:null, calls:null, sts:null, cr:'—', cq:null, dr:'9%', kR:null, kS:null, k6:null, intentYes:0, intentNo:0, intentUndec:0, intentUnknown:0, intentBlank:0 }
     }
   };
@@ -3725,48 +3719,40 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
       bar:{ value:'en', primaryIdx:0, markers:[
         { f:'st',  label:'Start' },
         { f:'it',  label:'Inc' },
-        { f:'stt', label:'Str' },
-      ]},
+        { f:'stt', label:'Str' }]},
       cols:[
         { h:'Start Target', f:'st',  edit:true },
         { h:'Enrolled',     f:'en',  edit:true },
         { h:'Inc Target',   f:'it',  edit:true },
-        { h:'Str Target',   f:'stt', edit:true },
-      ]},
+        { h:'Str Target',   f:'stt', edit:true }]},
     { cls:'s-gcm', label:'🎓 GC > M Conversion (Enrolled vs Pool)', span:'half',
       bar:{ value:'gcm', primaryIdx:0, markers:[ { f:'gcmPool', label:'Pool' } ] },
       cols:[
         { h:'GC-M Pool',     f:'gcmPool', edit:true },
-        { h:'GC-M Enrolled', f:'gcm',     edit:true },
-      ]},
+        { h:'GC-M Enrolled', f:'gcm',     edit:true }]},
     { cls:'s-t1t2', label:'📋 T1-T2 Census (Enrolments vs 80% Target)', span:'half',
       bar:{ value:'t1t2', primaryIdx:0, markers:[ { f:'t1t2CensusTarget', label:'Target' } ] },
       cols:[
         { h:'T1-T2 Pool',        f:'t1t2pool', edit:true },
-        { h:'T1-T2 Enrollments', f:'t1t2',     edit:true },
-      ]},
+        { h:'T1-T2 Enrollments', f:'t1t2',     edit:true }]},
     { cls:'s-cohortContact', label:'🗓️ Cohort Contact (Contacted vs Cohort)', span:'half',
       bar:{ value:'cohortContact', primaryIdx:0, markers:[ { f:'cohort', label:'Cohort' } ] },
       cols:[
         { h:'Cohort',    f:'cohort',        edit:true },
-        { h:'Contacted', f:'cohortContact', edit:true },
-      ]},
+        { h:'Contacted', f:'cohortContact', edit:true }]},
     { cls:'s-drops', label:'⚠️ Enrolment Drops', span:'half',
       cols:[
         { h:'Total Drops',   f:'drops',       edit:true },
         { h:'Drop Rate',     f:'dr',          edit:true, type:'pct-input' },
         { h:'Census Drops',  f:'dropsCensus', edit:true },
-        { h:'Census Drop %', f:'drCensus',    edit:false, type:'pct' },
-      ]},
+        { h:'Census Drop %', f:'drCensus',    edit:false, type:'pct' }]},
     { cls:'s-kpi', label:'📈 KPI Tracking', span:'half',
       cols:[
         { h:'Student Contacts (FY)', f:'contactsFY', edit:false },
         { h:'60 Day %',              f:'cPct',       edit:false, type:'pct' },
         { h:'Avg Calls/Week', f:'calls', edit:true },
         { h:'Avg STS/Week',   f:'sts',   edit:true },
-        { h:'Call Quality %', f:'cq',    edit:true, type:'pct-input' },
-      ]},
-  ];
+        { h:'Call Quality %', f:'cq',    edit:true, type:'pct-input' }]}];
 
   const COHORT_CENSUS_DATE  = '2026-07-16';
   const ENROL_CLOSE_DATE    = '2026-07-06';
@@ -3917,7 +3903,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
         row[field] = raw || '—'; return;
       }
       // Numeric fields
-      const n = parseFloat(raw.replace(/[%,]/g, ''));
+      const n = parseFloat(raw.replace(/[%]/g, ''));
       row[field] = isNaN(n) ? (raw === '—' || raw === '' ? 0 : 0) : n;
     });
     return row;
@@ -4069,8 +4055,7 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
           /\bemail\b/i, /\bmobile\b/i, /phone\s*(number|no\.?|#)/i,
           /\bdate.of.birth\b/i, /\bdob\b/i, /\baddress\b/i,
           /\bfirst.name\b/i, /\blast.name\b/i, /\bfull.name\b/i,
-          /\bstudent.name\b/i, /\bgiven.name\b/i, /\bsurname\b/i,
-        ];
+          /\bstudent.name\b/i, /\bgiven.name\b/i, /\bsurname\b/i];
         const piiCols = headers.filter(h => PII_PATTERNS.some(p => p.test(h)));
         if (piiCols.length) {
           alert('⛔ Upload blocked — this file contains student personal information:\n\n' +
@@ -5253,8 +5238,7 @@ draft.slice(0, 6000),
     { id: 'week-7',  label: 'Week 7' },
     { id: 'o-week',  label: 'O-Week' },
     { id: 'week-1',  label: 'Week 1' },
-    { id: 'week-2',  label: 'Week 2' },
-  ];
+    { id: 'week-2',  label: 'Week 2' }];
   const KANBAN_HEXES = ['H5','H6'];
   const KANBAN_YEARS = ['25','26','27'];
 
@@ -5267,8 +5251,7 @@ draft.slice(0, 6000),
     { id: 'week-4',  label: 'Week 4' },
     { id: 'week-5',  label: 'Week 5' },
     { id: 'week-6',  label: 'Week 6' },
-    { id: 'week-7',  label: 'Week 7' },
-  ];
+    { id: 'week-7',  label: 'Week 7' }];
   function kanbanCols()     { return activeKanbanSchool === 'MBS' ? MBS_COLS : KANBAN_COLS; }
   function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : KANBAN_INITIAL; }
 
@@ -5290,8 +5273,7 @@ draft.slice(0, 6000),
       { id:'m3', text:'Any manual enrollments, outcome needs to be emailed to student by SSA', cat:'admin' },
       { id:'m4', text:'To do Template', cat:'admin' },
       { id:'m5', text:'Escalations Tracker once a week update', cat:'admin' },
-      { id:'m6', text:'Current Student Inbox check', cat:'admin' },
-    ],
+      { id:'m6', text:'Current Student Inbox check', cat:'admin' }],
     'o-week': [
       { id:'m7', text:'Daily Drops', cat:'admin' },
       { id:'m8', text:'Final Enrolment Attempts', cat:'priority' },
@@ -5304,8 +5286,7 @@ draft.slice(0, 6000),
       { id:'m15', text:'At risk- Financial Hold Students (current term- unpaid - drop risk)', cat:'admin' },
       { id:'m16', text:'Send Commendations (Friday of Oweek)', cat:'admin' },
       { id:'m17', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-      { id:'m18', text:'TL- Ask for list of Hurdle Assessment Dates from LD so we can schedule Hurdle reminder dates', cat:'leadership' },
-    ],
+      { id:'m18', text:'TL- Ask for list of Hurdle Assessment Dates from LD so we can schedule Hurdle reminder dates', cat:'leadership' }],
     'week-1': [
       { id:'m19', text:'Daily Drops', cat:'admin' },
       { id:'m20', text:'Final Enrolment Attempts (GC to M New App/ Potentially Eligible)', cat:'priority' },
@@ -5319,8 +5300,7 @@ draft.slice(0, 6000),
       { id:'m28', text:'At risk- Financial Hold Students (current term- unpaid - drop risk)', cat:'admin' },
       { id:'m29', text:'At risk- high drop rate subject enrolled calls', cat:'calls' },
       { id:'m30', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-      { id:'m31', text:'Kate pulls Canvas Non Access List- Monday & Thursday- send to SDIT & PA team', cat:'other_resp' },
-    ],
+      { id:'m31', text:'Kate pulls Canvas Non Access List- Monday & Thursday- send to SDIT & PA team', cat:'other_resp' }],
     'week-2': [
       { id:'m32', text:'Census Friday', cat:'priority', urgent:true },
       { id:'m33', text:'Daily Drops', cat:'admin' },
@@ -5332,8 +5312,7 @@ draft.slice(0, 6000),
       { id:'m39', text:'At risk- high drop rate subject enrolled calls', cat:'calls' },
       { id:'m40', text:'All Commendation Letters', cat:'admin' },
       { id:'m41', text:'MBA Summit February 2026 - Registrations.xlsx', cat:'admin' },
-      { id:'m42', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-    ],
+      { id:'m42', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' }],
     'week-3': [
       { id:'m43', text:'Daily Drops - Before Status flip', cat:'admin' },
       { id:'m44', text:'Monday first thing: Add Credits to DPs and Contact Required Waiver Test Students- Intake Lists', cat:'admin', urgent:true },
@@ -5345,8 +5324,7 @@ draft.slice(0, 6000),
       { id:'m50', text:'Send completion & conferral emails', cat:'admin' },
       { id:'m51', text:'Send LOA Data to STID on Tuesday of Week 3', cat:'other_resp' },
       { id:'m52', text:'TL to Request NTSS= NCA but with course planned on DP list from SDIT after DPs are done', cat:'leadership' },
-      { id:'m53', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-    ],
+      { id:'m53', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' }],
     'week-4': [
       { id:'m54', text:'Daily Drops', cat:'admin' },
       { id:'m55', text:'First attempts Rego & Reengagement', cat:'admin' },
@@ -5355,8 +5333,7 @@ draft.slice(0, 6000),
       { id:'m58', text:'Send all GC to M (Course Transfer Emails) — must be sent by end of Week 4', cat:'priority', urgent:true },
       { id:'m59', text:'Arrange Waiver Tests required from Intake Lists', cat:'admin' },
       { id:'m60', text:'Fee Hold Status Calls for CS Enrolled (Cancellation At Risk Calls) — SSAs to filter Risk Factor Notes', cat:'calls' },
-      { id:'m61', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-    ],
+      { id:'m61', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' }],
     'week-5': [
       { id:'m62', text:'UOM: Re-enrolment Calls', cat:'calls' },
       { id:'m63', text:'Daily Drops', cat:'admin' },
@@ -5367,8 +5344,7 @@ draft.slice(0, 6000),
       { id:'m68', text:'Plot hurdle assessment dates- pull list of Fail Risk (focus: Pre-req Subjects)', cat:'admin' },
       { id:'m69', text:'Review NCA List- find enrolment opportunities', cat:'admin' },
       { id:'m70', text:'Arrange Waiver Tests for Next Term Subjects required', cat:'admin' },
-      { id:'m71', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-    ],
+      { id:'m71', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' }],
     'week-6': [
       { id:'m72', text:'Daily Drops', cat:'admin' },
       { id:'m73', text:'2nd & 3rd Attempts Rego & Reengagement', cat:'admin' },
@@ -5377,8 +5353,7 @@ draft.slice(0, 6000),
       { id:'m76', text:'2nd attempts T1-T2 rego Calls', cat:'calls' },
       { id:'m77', text:'2nd/3rd attempt GC to M Calls. — Follow up Emails', cat:'calls' },
       { id:'m78', text:'UOM: Re-enrolment Calls', cat:'calls' },
-      { id:'m79', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-    ],
+      { id:'m79', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' }],
     'week-7': [
       { id:'m80', text:'Swappies', cat:'admin' },
       { id:'m81', text:'Daily Drops', cat:'admin' },
@@ -5390,8 +5365,7 @@ draft.slice(0, 6000),
       { id:'m87', text:'Swappies', cat:'admin' },
       { id:'m88', text:'T1-T2 CS Check in Calls (outbound or book all Enrolled) — (Start with High Risk T1-T2s E.g Gc-C)', cat:'calls' },
       { id:'m89', text:'CS Engagement > 60 days — Focus: Pre-enrollment Academic Year', cat:'admin' },
-      { id:'m90', text:'Prepare for subject email is sent monday of week 7', cat:'admin' },
-    ],
+      { id:'m90', text:'Prepare for subject email is sent monday of week 7', cat:'admin' }],
     _themes: {'o-week':'Welcome Calls','week-1':'At Risk','week-2':'At Risk','week-3':'T1-T2','week-4':'1st Attempts Reenrol','week-5':'GCM','week-6':'2nd attempts REP & GCM','week-7':'Final Opportunities'},
   };
 
@@ -5411,8 +5385,7 @@ draft.slice(0, 6000),
       { id:'k15', text:'Post Making Connections webinar slides in Hubs', cat:'admin' },
       { id:'k16', text:'Lead: Graduated - Failed Last TP List (Friday Morning)', cat:'leadership' },
       { id:'k17', text:'Welcome Call Tracking', cat:'admin' },
-      { id:'k18', text:'Welcome Webinar', cat:'webinar' },
-    ],
+      { id:'k18', text:'Welcome Webinar', cat:'webinar' }],
     'week-1': [
       { id:'k19', text:'Census on Thursday', cat:'priority' },
       { id:'k20', text:'Track Academic Standing Drop Risk', cat:'priority' },
@@ -5428,8 +5401,7 @@ draft.slice(0, 6000),
       { id:'k30', text:'Lead: Academic Standing & Appeals', cat:'leadership' },
       { id:'k31', text:'Welcome Call Tracking', cat:'welcome' },
       { id:'k32', text:'Incomplete Requisite List from SLC', cat:'admin' },
-      { id:'k33', text:'PGIPT Approvals list → ROPS for GC>M sheet & CRM update', cat:'admin' },
-    ],
+      { id:'k33', text:'PGIPT Approvals list → ROPS for GC>M sheet & CRM update', cat:'admin' }],
     'week-2': [
       { id:'k34', text:'Post Census Wrapup & Degree Pathing', cat:'priority' },
       { id:'k35', text:'Suspension appeal deadline Tuesday, outcomes Thursday', cat:'priority' },
@@ -5442,8 +5414,7 @@ draft.slice(0, 6000),
       { id:'k42', text:'Final Attempts Moodle Non-Access Calls', cat:'calls' },
       { id:'k43', text:'Schedule Welcome Webinar next term + send Rego Link to SSA & SEA', cat:'admin' },
       { id:'k44', text:'Lead: Academic Standing & Appeals', cat:'leadership' },
-      { id:'k45', text:'Welcome Call Tracking', cat:'welcome' },
-    ],
+      { id:'k45', text:'Welcome Call Tracking', cat:'welcome' }],
     'week-3': [
       { id:'k46', text:'WADMs Drop Tuesday', cat:'priority' },
       { id:'k47', text:'Goal: finish 1st attempts Reg-Reeng by EOW', cat:'priority' },
@@ -5461,8 +5432,7 @@ draft.slice(0, 6000),
       { id:'k59', text:'TL review R&FC doc - identify potential course cancellations (<10 enrolments)', cat:'admin' },
       { id:'k60', text:'Block days for DP Review & Post Census Wrap Up', cat:'admin' },
       { id:'k61', text:'Appeals - SSA Input for UNSWO', cat:'admin' },
-      { id:'k62', text:'Welcome Call Tracking', cat:'welcome' },
-    ],
+      { id:'k62', text:'Welcome Call Tracking', cat:'welcome' }],
     'week-4': [
       { id:'k63', text:'🎉 GC>M Party - Goal: Finish First Attempts by EOW', cat:'priority' },
       { id:'k64', text:'LOA Pool Blitz', cat:'calls' },
@@ -5480,8 +5450,7 @@ draft.slice(0, 6000),
       { id:'k76', text:'T1-T2 QA & Feedback', cat:'admin' },
       { id:'k77', text:'Spot Checks: Pending Grad / No Course Available List', cat:'admin' },
       { id:'k78', text:'TL: Request NTSS = NCA with course planned on DP list from SDIT', cat:'admin' },
-      { id:'k79', text:'Welcome Calls', cat:'welcome' },
-    ],
+      { id:'k79', text:'Welcome Calls', cat:'welcome' }],
     'week-5': [
       { id:'k80', text:'Academic Discontinue deadline (AW grade) Friday', cat:'priority' },
       { id:'k81', text:'Goal: finish 2nd attempts Reg-Reeng by EOW', cat:'priority' },
@@ -5496,8 +5465,7 @@ draft.slice(0, 6000),
       { id:'k90', text:'Lead: T1-T2 Tracking - Team & All SSA Adherence', cat:'leadership' },
       { id:'k91', text:'Confirm Webinar hosts & panellists', cat:'admin' },
       { id:'k92', text:'Course Digest & UNSWO Central Walkthrough (Week 5 Every Hex)', cat:'webinar' },
-      { id:'k93', text:'Welcome Calls', cat:'welcome' },
-    ],
+      { id:'k93', text:'Welcome Calls', cat:'welcome' }],
     'week-6': [
       { id:'k94',  text:'PGIPT deadline Friday', cat:'priority' },
       { id:'k95',  text:'Winback Blitz - Non-negotiable from H6, H1', cat:'priority' },
@@ -5513,8 +5481,7 @@ draft.slice(0, 6000),
       { id:'k105', text:'Welcome Call Tracking', cat:'welcome' },
       { id:'k106', text:'Confirm MC webinar Staff with UNSWO', cat:'admin' },
       { id:'k107', text:'Email UNSW Online (Helen) to add SSAs + Joey to next session courses', cat:'admin' },
-      { id:'k108', text:'Re-Enrolment Automated Emails', cat:'automated' },
-    ],
+      { id:'k108', text:'Re-Enrolment Automated Emails', cat:'automated' }],
     'week-7': [
       { id:'k109', text:'GC>Masters Final Attempts + GC Winbacks List', cat:'priority' },
       { id:'k110', text:'Go back to PRIORITY: 1. T1-T2  2. Registration  3. Reengagement', cat:'priority' },
@@ -5522,8 +5489,7 @@ draft.slice(0, 6000),
       { id:'k112', text:'#Previous TP Dropped - At Risk Calls', cat:'calls' },
       { id:'k113', text:'Winback or NCA - GCM & Withdrawn Winbacks (Final Attempts)', cat:'calls' },
       { id:'k114', text:'Welcome Calls', cat:'welcome' },
-      { id:'k115', text:'Welcome Webinar (WC webinar 1 & 2)', cat:'webinar' },
-    ],
+      { id:'k115', text:'Welcome Webinar (WC webinar 1 & 2)', cat:'webinar' }],
   };
 
   let kanbanBoard = null;
@@ -7503,8 +7469,7 @@ ${cardsHTML}
         mandatory:['ZZBU8702','ZZBU8701','ZZBU8703','ZZBU8704','ZZBU8705','ZZBU8706','ZZBU8707','ZZBU8708'],
         electivePool:['spec2','spec3','spec4'],
         handbookUrl:'https://www.handbook.unsw.edu.au/postgraduate/programs/2026/8436?year=2026',
-        note:'Complete all 8 core courses (Core A + Core B), then choose 4 elective courses from Management, FinTech, and Analytics pools.' },
-    ]},
+        note:'Complete all 8 core courses (Core A + Core B), then choose 4 elective courses from Management, FinTech, and Analytics pools.' }]},
     'Analytics': { levels: [
       // GC-GA: Any 4 from core or specialisations (broad choice)
       { label:'GC General Analytics, 4 courses, 24UOC', code:'GC-GA', totalCourses:4, electiveSlots:4,
@@ -7533,15 +7498,13 @@ ${cardsHTML}
         mandatory:['ZZBU6503','ZZBU6501','ZZBU6505','ZZBU6502','ZZEN9021','ZZBU6507','ZZBU6511','ZZBU6516','ZZBU6404','ZZBU6407'],
         electivePool:['elective'],
         handbookUrl:'https://handbook.unsw.edu.au/postgraduate/programs/2026/8437?year=2026',
-        note:'Complete all 8 core + ZZBU6404 HR Analytics + ZZBU6407 HR IS + 2 HRM electives + capstone (ZZBU6601).' },
-    ]},
+        note:'Complete all 8 core + ZZBU6404 HR Analytics + ZZBU6407 HR IS + 2 HRM electives + capstone (ZZBU6601).' }]},
     'Business Law': { levels: [
       // GC: All core courses are selectable choices (not all mandatory)
       { label:'Graduate Certificate in Business Law, 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:3,
         mandatory:['ZZLJ8100'], electivePool:['coreA','elective'],
         handbookUrl:'https://www.handbook.unsw.edu.au/postgraduate/programs/2026/7301?year=2026',
-        note:'Must complete ZZLJ8100 Law Regulation & Ethics + choose 3 from: ZZBU6414, ZZLJ8211, ZZLJ8212, ZZLJ9223. Pathways to Master of Management available.' },
-    ]},
+        note:'Must complete ZZLJ8100 Law Regulation & Ethics + choose 3 from: ZZBU6414, ZZLJ8211, ZZLJ8212, ZZLJ9223. Pathways to Master of Management available.' }]},
     'Cyber Security': { levels: [
       // GC: No free electives — all 4 core are mandatory
       { label:'Graduate Certificate, 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:0,
@@ -7554,8 +7517,7 @@ ${cardsHTML}
       // Masters: Core + specialisation + cross-spec electives
       { label:'Masters, 12 courses, 72UOC', code:'M', totalCourses:12, electiveSlots:3,
         mandatory:['ZZCA9202','ZZCA9204','ZZEN9203'], electivePool:['spec1','spec2','elective'],
-        note:'4 core + min 18UOC from chosen specialisation + 18UOC electives (incl. 6UOC cross-spec elective). Masters-only capstone from chosen spec.' },
-    ]},
+        note:'4 core + min 18UOC from chosen specialisation + 18UOC electives (incl. 6UOC cross-spec elective). Masters-only capstone from chosen spec.' }]},
     'Data Science': { levels: [
       // GC: 2 core mandatory; choose 2 from elective pools
       { label:'Graduate Certificate, 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:2,
@@ -7569,8 +7531,7 @@ ${cardsHTML}
       { label:'Masters, 12 courses, 72UOC', code:'M', totalCourses:12, electiveSlots:6,
         mandatory:['ZZSC9001','ZZEN9021','ZZSC5905','ZZSC5806','ZZSC5836'], electivePool:['spec1','spec2','spec3'],
         handbookUrl:'https://www.handbook.unsw.edu.au/postgraduate/programs/2026/8646?year=2026',
-        note:'Complete 2 GCert core + 3 GDip core + 6 elective courses + capstone (ZZSC9020). Capstone requires 48UOC completed first.' },
-    ]},
+        note:'Complete 2 GCert core + 3 GDip core + 6 elective courses + capstone (ZZSC9020). Capstone requires 48UOC completed first.' }]},
     'Human Resource Management': { levels: [
       // GCHRA: spec1 mandatory; 1 free elective from elective pool only
       { label:'GCHRA, HR Analytics, 4 courses, 24UOC', code:'GCHRA', totalCourses:4, electiveSlots:1,
@@ -7592,8 +7553,7 @@ ${cardsHTML}
       { label:'Masters of HRM, 12 courses, 72UOC', code:'MHRM', totalCourses:12, electiveSlots:8,
         mandatory:['ZZBU6401','ZZBU6410','ZZBU6412','ZZBU6414'], electivePool:['spec1','spec2','spec3','elective'],
         handbookUrl:'https://www.handbook.unsw.edu.au/postgraduate/programs/2026/8451?year=2026',
-        note:'Complete 4 core HRM courses + 8 electives from the full HRM elective pool. Can include a specialisation area (HRA, DEI, or LOD — 24UOC each).' },
-    ]},
+        note:'Complete 4 core HRM courses + 8 electives from the full HRM elective pool. Can include a specialisation area (HRA, DEI, or LOD — 24UOC each).' }]},
     'Management': { levels: [
       // GCB: Any 4 from the entire core course list (coreA + spec types)
       { label:'GC Business, 4 courses, 24UOC', code:'GCB', totalCourses:4, electiveSlots:4,
@@ -7625,17 +7585,14 @@ ${cardsHTML}
           { name:'FinTech & Digital Finance',
             forWho:'Those seeking to lead digital transformation in financial services.',
             codes:['ZZBU8501','ZZBU8511','ZZBU8510','ZZBU8502','ZZBU8503','ZZBU8508','ZZBU8509','ZZBU8505','ZZBU6516'],
-            keywords:['fintech','digital','technology','payments','blockchain','insurtech','regtech','decentralised','disruption','ai','lending'] },
-        ]
-      },
-    ]},
+            keywords:['fintech','digital','technology','payments','blockchain','insurtech','regtech','decentralised','disruption','ai','lending'] }]
+      }]},
     'Psychology': { levels: [
       { label:'Graduate Diploma in Psychology, 10 courses, 60UOC', code:'GDP', totalCourses:10, electiveSlots:0,
         mandatory:['ZZPS5001','ZZPS5002','ZZPS5003','ZZPS5004','ZZPS5005','ZZPS5006','ZZPS5007','ZZPS5008','ZZPS5009','ZZPS5010'],
         electivePool:[],
         handbookUrl:'https://handbook.unsw.edu.au/postgraduate/programs/2026/5334',
-        note:'Fully prescribed program — all 10 courses are mandatory in sequence. No elective selection. APAC accredited.' },
-    ]},
+        note:'Fully prescribed program — all 10 courses are mandatory in sequence. No elective selection. APAC accredited.' }]},
     'Project Management': { levels: [
       // GC: 2 mandatory core + choose 2 from coreB (Core 2); no free electives
       { label:'Graduate Certificate, 4 courses, 24UOC', code:'GC', totalCourses:4, electiveSlots:0,
@@ -7650,8 +7607,7 @@ ${cardsHTML}
         mandatory:['ZZCA8303','ZZCA8302','ZZCA8301','ZZCA8310','ZZCA8147','ZZCA8145','ZZCA8203','ZZCA8101','ZZCA8401','ZZCA8300'],
         electivePool:['elective'],
         handbookUrl:'https://handbook.unsw.edu.au/postgraduate/programs/2026/8876',
-        note:'2 yellow + all 3 Core 2 + all 4 Leadership spec + capstone (ZZCA8300) + 2 prescribed electives from a specific handbook pool of 6: ZZBU5611, ZZBU6002, ZZBU6411, ZZBU6502, ZZLJ8211, ZZLJ8212.' },
-    ]},
+        note:'2 yellow + all 3 Core 2 + all 4 Leadership spec + capstone (ZZCA8300) + 2 prescribed electives from a specific handbook pool of 6: ZZBU5611, ZZBU6002, ZZBU6411, ZZBU6502, ZZLJ8211, ZZLJ8212.' }]},
   };
 
   // ── Student Triage ────────────────────────────────────────────
@@ -7690,8 +7646,7 @@ ${cardsHTML}
       { match:['software engineer','developer','software developer','programmer','engineering manager','tech lead','architect','devops','cloud engineer'],
         industry:'Technology & IT' },
       { match:['cyber security','security analyst','penetration tester','security engineer','infosec','soc analyst','threat intelligence','security consultant','security manager'],
-        industry:'Technology & IT' },
-    ];
+        industry:'Technology & IT' }];
 
     const IND_KW = {
       'Finance & Banking':            ['finance','financial','investment','banking','portfolio','equity','valuation','derivatives','capital','fund','market','risk','asset','return','monetary','economic','treasury'],
@@ -8659,8 +8614,7 @@ ${cardsHTML}
     { name:'UNSW Online orientation', url:'https://www.unsw.edu.au/student/getting-started/orientation/online', when:'A new student, or one who never got started properly' },
     { name:'Student Essentials module', url:'https://www.unsw.edu.au/student/getting-started/first-year-checklist/student-essentials-module', when:'Chasing the Student Essentials module' },
     { name:'Forms and documents', url:'https://www.student.unsw.edu.au/forms', when:'They need an actual form, letter or official document' },
-    { name:'Moodle', url:'https://moodle.telt.unsw.edu.au/login/index.php', when:'Sending them straight to the LMS. Check the unit is not on Canvas first' },
-  ];
+    { name:'Moodle', url:'https://moodle.telt.unsw.edu.au/login/index.php', when:'Sending them straight to the LMS. Check the unit is not on Canvas first' }];
 
   const CANVAS_COURSES = {
     'H5 26': [
