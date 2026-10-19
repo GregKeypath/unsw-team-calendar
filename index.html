@@ -802,7 +802,9 @@
     .nb-back { position:absolute; inset:0; transform:rotateY(180deg); }
     .nb-flip.flipped .nb-front { transform:rotateY(-180deg); position:absolute; inset:0; pointer-events:none; }
     .nb-flip.flipped .nb-back  { transform:rotateY(0deg); position:relative; inset:auto; }
-    .nb-flip:not(.flipped) .nb-back { pointer-events:none; }
+    .nb-flip:not(.flipped) .nb-back { pointer-events:none; visibility:hidden; }
+    .nb-flip.flipped .nb-front { pointer-events:none; visibility:hidden; }
+    .nb-face { transition:transform 0.75s cubic-bezier(.3,.9,.3,1), visibility 0s linear 0.375s; }
     .nb-tab { position:absolute; right:26px; bottom:-26px; border:1px solid #d7dde4; border-top:none;
       background:linear-gradient(180deg,#eef2f6,#dde4ec); color:#5a6878; border-radius:0 0 9px 9px;
       padding:5px 15px 6px; font-size:0.66rem; font-weight:800; font-family:inherit; cursor:pointer;
@@ -857,6 +859,8 @@
     .nb-pin { position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:1.1rem; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); }
     .nb-tag { display:inline-block; background:rgba(0,0,0,0.11); border-radius:11px; padding:2px 9px; font-size:0.6rem; font-weight:800;
               text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+    .nb-pic { display:block; margin:10px 0; border-radius:6px; overflow:hidden; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,0.14); }
+    .nb-pic img { display:block; width:100%; height:auto; }
     .nb-note h4 { margin:0 0 7px; font-size:0.92rem; font-weight:800; line-height:1.3; }
     .nb-body { word-break:break-word; }
     .nb-body p { margin:0 0 9px; }
@@ -9855,6 +9859,8 @@ ${cardsHTML}
       const t = raw.trim();
       if (!t) { flushPara(); flushList(); return; }
       const head = t.match(/^##\s+(.*)$/);
+      const pic = t.match(/^!\[([^\]]*)\]\((https?:\/\/[^)]+|[^):]+)\)$/);
+      if (pic) { flushPara(); flushList(); out.push('<a class="nb-pic" href="' + nbEsc(pic[2]) + '" target="_blank" rel="noopener"><img src="' + nbEsc(pic[2]) + '" alt="' + nbEsc(pic[1]) + '" loading="lazy"></a>'); return; }
       if (head) { flushPara(); flushList(); out.push('<h5 class="nb-h">' + nbInline(head[1]) + '</h5>'); return; }
       const item = t.match(/^[-\u2022]\s+(.*)$/);
       if (item) { flushPara(); if (!list) list = []; list.push('<li>' + nbInline(item[1]) + '</li>'); return; }
