@@ -1758,6 +1758,8 @@
     .dr-search:focus { border-color:#1e3a5f; }
     .dr-search::placeholder { color:#9ca3af; }
     .dr-rate-locked { display:inline-flex; align-items:center; gap:4px; border-radius:6px; padding:5px 9px; font-size:0.8rem; font-weight:800; white-space:nowrap; max-width:140px; overflow:hidden; text-overflow:ellipsis; }
+    .card-owner { display:inline-block; margin-top:5px; margin-right:5px; background:rgba(22,32,43,0.08); border-radius:5px; padding:1px 6px; font-size:0.6rem; font-weight:800; color:#49566a; }
+    .card-link { display:inline-block; margin-top:5px; font-size:0.6rem; font-weight:700; color:#1e40af; }
     .school-switch { display:inline-flex; background:#f3f4f6; border-radius:8px; padding:3px; gap:2px; margin-right:10px; }
     .school-btn { border:none; background:transparent; border-radius:6px; padding:5px 14px; font-size:0.72rem; font-weight:800; letter-spacing:0.3px; color:#6b7280; cursor:pointer; font-family:inherit; }
     .school-btn:hover { color:#111; }
@@ -5227,6 +5229,7 @@ draft.slice(0, 6000),
   let activeKanbanSchool = 'UNSW';
   function getKanbanDB() {
     if (activeKanbanSchool === 'MBS') return `${KANBAN_BASE}/kanban_MBS.json`;
+    if (activeKanbanSchool === 'UoM') return `${KANBAN_BASE}/kanban_UoM.json`;
     return `${KANBAN_BASE}/kanban_${activeKanbanHex}_${activeKanbanYear}.json`;
   }
 
@@ -5242,6 +5245,64 @@ draft.slice(0, 6000),
   const KANBAN_HEXES = ['H5','H6'];
   const KANBAN_YEARS = ['25','26','27'];
 
+  const UOM_COLS = [
+    { id: 'week-1', label: 'Week 1' },
+    { id: 'week-2', label: 'Week 2' },
+    { id: 'week-3', label: 'Week 3' },
+    { id: 'week-4', label: 'Week 4' },
+    { id: 'week-5', label: 'Week 5' },
+    { id: 'week-6', label: 'Week 6' },
+    { id: 'week-7', label: 'Week 7' },
+    { id: 'week-8', label: 'Week 8' },
+    { id: 'next-1', label: 'Next OT wk 1' },
+    { id: 'next-2', label: 'Next OT wk 2' },
+    { id: 'tbc', label: 'Timing TBC' },
+  ];
+
+  const UOM_INITIAL = {
+    'week-1': [
+    ],
+    'week-2': [
+    ],
+    'week-3': [
+      { id:'u1', text:'POTC report lands in the Award Upgrade POTC Reports folder', cat:'keydate', owner:'UOM (Mim/Chris)' },
+      { id:'u2', text:'1. Export each Monday.com course planner to Excel and send to SDIT to consolidate', cat:'admin', owner:'TBC' },
+      { id:'u3', text:'2. Update CRM Next Term Status and Next Term Status Sub for students on Study Break next term', cat:'admin', owner:'KP Enrolment Adviser' },
+      { id:'u4', text:'3. Set NTS and NTSS to NCA for students with no course available next term', cat:'admin', owner:'KP Enrolment Adviser' },
+      { id:'u5', text:'3a. Set POTC = GC to M on CRM for potentially complete students', cat:'admin', owner:'KP Enrolment Adviser' },
+      { id:'u6', text:'4. Cross-check the consolidated study plan list against degree paths', cat:'admin', owner:'Greg' },
+      { id:'u7', text:'5. Confirm TP, EP and forecast from the consolidated list and adviser input', cat:'admin', owner:'Carmela' },
+      { id:'u8', text:'Open questions for UOM on study plans (draft)', cat:'admin', owner:'Carmela' },
+    ],
+    'week-4': [
+      { id:'u9', text:'Send award upgrade intention email to POTC students', cat:'calls', owner:'KP Enrolment Adviser' },
+      { id:'u10', text:'Track POTC offers in the flat file and offers inbox, follow up until enrolled', cat:'admin', owner:'KP Enrolment Adviser' },
+    ],
+    'week-5': [
+      { id:'u11', text:'Start proactive re-enrolment outreach to the eligible pool', cat:'calls', owner:'KP Enrolment Adviser' },
+      { id:'u12', text:'Follow-up calls to POTC students after the intention email', cat:'calls', owner:'KP Enrolment Adviser' },
+      { id:'u13', text:'Auto SMS: re-enrolment reminder 26 days before the enrolment deadline (Marketing, requested)', cat:'automated', owner:'Marketing', priority:'wed' },
+    ],
+    'week-6': [
+      { id:'u14', text:'Re-enrolment call round 2: continuing students not yet enrolled (draft)', cat:'calls', owner:'KP Enrolment Adviser' },
+    ],
+    'week-7': [
+      { id:'u15', text:'Final attempt calls before the enrolment deadline (draft)', cat:'calls', owner:'KP Enrolment Adviser', urgent:true },
+    ],
+    'week-8': [
+    ],
+    'next-1': [
+      { id:'u16', text:'Late enrolment follow-ups (draft)', cat:'calls', owner:'KP Enrolment Adviser' },
+    ],
+    'next-2': [
+    ],
+    'tbc': [
+      { id:'u17', text:'Existing automated re-enrolment SMS 1 (live)', cat:'automated', owner:'Marketing' },
+      { id:'u18', text:'Existing automated re-enrolment SMS 2 (live)', cat:'automated', owner:'Marketing' },
+    ],
+    _themes: {'week-3':'Build the pool, POTC list lands','week-4':'Outreach, POTC intentions','week-5':'Call round 2','week-7':'Final attempts','tbc':'Not placed yet'},
+  };
+
   const MBS_COLS = [
     { id: 'adhoc',   label: 'Ad hoc / To do' },
     { id: 'o-week',  label: 'O-Week' },
@@ -5252,8 +5313,8 @@ draft.slice(0, 6000),
     { id: 'week-5',  label: 'Week 5' },
     { id: 'week-6',  label: 'Week 6' },
     { id: 'week-7',  label: 'Week 7' }];
-  function kanbanCols()     { return activeKanbanSchool === 'MBS' ? MBS_COLS : KANBAN_COLS; }
-  function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : KANBAN_INITIAL; }
+  function kanbanCols()     { return activeKanbanSchool === 'MBS' ? MBS_COLS : activeKanbanSchool === 'UoM' ? UOM_COLS : KANBAN_COLS; }
+  function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : activeKanbanSchool === 'UoM' ? UOM_INITIAL : KANBAN_INITIAL; }
 
   const KANBAN_CATS = {
     priority:    { label: 'Priority',              dot: '#EF4444' },
@@ -5500,15 +5561,18 @@ draft.slice(0, 6000),
     const nav = document.getElementById('kanban-hex-nav');
     if (!nav) return;
     // Year prev/next + hex buttons
-    const isMBS = activeKanbanSchool === 'MBS';
+    const isMBS = activeKanbanSchool !== 'UNSW';
     nav.innerHTML =
       `<span class="school-switch">` +
-        ['UNSW','MBS'].map(s =>
+        ['UNSW','MBS','UoM'].map(s =>
           `<button class="school-btn${s === activeKanbanSchool ? ' active' : ''}" data-kschool="${s}">${s}</button>`
         ).join('') +
       `</span>` +
       (isMBS
-        ? `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 8px;align-self:center;">Melbourne Business School · one study period</span>`
+        ? `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 8px;align-self:center;">` +
+            (activeKanbanSchool === 'UoM'
+              ? 'University of Melbourne · re-enrolment, one OT study period'
+              : 'Melbourne Business School · one study period') + `</span>`
         : `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 4px;align-self:center;">20${activeKanbanYear}</span>` +
           KANBAN_HEXES.map(hx =>
             `<button class="hex-btn${hx === activeKanbanHex ? ' active' : ''}" data-khex="${hx}">${hx} 20${activeKanbanYear}</button>`
@@ -5974,6 +6038,20 @@ draft.slice(0, 6000),
       textEl.appendChild(document.createTextNode(' '));
     }
     textEl.appendChild(document.createTextNode(card.text));
+    if (card.owner) {
+      const own = document.createElement('span');
+      own.className = 'card-owner';
+      own.textContent = card.owner;
+      textEl.appendChild(own);
+    }
+    if (card.link && card.linkLabel) {
+      const a = document.createElement('a');
+      a.className = 'card-link';
+      a.href = card.link; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = card.linkLabel;
+      a.addEventListener('click', e => e.stopPropagation());
+      textEl.appendChild(a);
+    }
 
     const actions = document.createElement('div');
     actions.className = 'card-actions';
