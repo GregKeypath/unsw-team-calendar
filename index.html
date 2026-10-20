@@ -4881,31 +4881,70 @@ draft.slice(0, 6000),
   let eaPick = 0;
   let eaAdded = {};
 
+  let eaWeaveError = false;
+  let eaWoven = {};   // version index -> body with the chosen additions worked in
+  let eaWeaving = false;
+
   function eaCurrent() {
     const v = (eaResult && eaResult.versions) ? eaResult.versions[eaPick] : null;
     if (!v) return { subject: "", body: "" };
-    let body = v.body || "";
-    (eaResult.additions || []).forEach(function (a, i) {
-      if (!eaAdded[i]) return;
-      body = eaInsert(body, a.paragraph || "", a.where);
-    });
-    return { subject: v.subject || "", body: body };
+    return { subject: v.subject || "", body: (eaWoven[eaPick] != null ? eaWoven[eaPick] : (v.body || "")) };
   }
 
-  // drop the paragraph in above the closing lines, or above the ask when asked to
-  function eaInsert(body, para, where) {
-    if (!para) return body;
-    const paras = String(body).split(/\n\s*\n/);
-    if (paras.length < 3) return body + "\n\n" + para;
-    let end = paras.length;
-    while (end > 2 && paras[end - 1].trim().split(' ').length <= 4) end--;
-    let at = Math.max(1, end - 1);
-    if (where === "before-ask") {
-      const q = paras.findIndex(function (p) { return p.indexOf("?") > -1; });
-      if (q > 0) at = q;
+  // Rather than dropping the paragraph on the end, the email is rewritten with
+  // it worked in, so it reads as though it was always there.
+  async function eaWeave() {
+    const v = eaResult.versions[eaPick];
+    const chosen = (eaResult.additions || []).filter((a, i) => eaAdded[i]);
+    if (!chosen.length) { delete eaWoven[eaPick]; eaRenderResult(eaResult); return; }
+
+    const key = EA_PROXY ? null : eaGetKey(false);
+    if (!EA_PROXY && !key) return;
+
+    eaWeaving = true;
+    eaRenderResult(eaResult);
+
+    const prompt = [
+      'You are editing an email that is already written and already follows the house style. Work the extra information below into it so it reads as though it was always part of the email.',
+      '',
+      EA_RULES,
+      '',
+      'RULES FOR THIS EDIT:',
+      '- Keep every point the email already makes. You are adding, not trimming.',
+      '- Put each piece of new information where it actually belongs, next to the point it relates to. Never bolt it onto the end.',
+      '- Rewrite the surrounding sentences where that makes it flow, but do not change their meaning.',
+      '- The closing lines and the sign off stay last.',
+      '- Rule Zero still applies. Use only what is in the email and in the additions below.',
+      '',
+      'THE EMAIL:',
+      '"""',
+      v.body || '',
+      '"""',
+      '',
+      'WORK IN THIS INFORMATION:',
+      chosen.map(function (a, i) { return (i + 1) + '. ' + (a.label || '') + ': ' + (a.paragraph || ''); }).join('\n'),
+      '',
+      'Respond ONLY with valid JSON, no markdown fences:',
+      '{ "body": "the full email body with the information worked in, plain text with real line breaks between paragraphs" }'
+    ].join('\n');
+
+    try {
+      const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 4000 } };
+      const url = EA_PROXY || ('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + key);
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      let raw = (((data.candidates || [])[0] || {}).content || {}).parts ? data.candidates[0].content.parts[0].text : '';
+      raw = String(raw).replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const out = JSON.parse(raw);
+      if (out && out.body) eaWoven[eaPick] = out.body;
+      else throw new Error("no body came back");
+    } catch (e) {
+      // fall back to the old behaviour rather than losing the addition
+      eaWoven[eaPick] = (v.body || '') + '\n' + '\n' + chosen.map(function (a) { return a.paragraph; }).join('\n' + '\n');
+      eaWeaveError = true;
     }
-    paras.splice(Math.max(1, at), 0, para);
-    return paras.join("\n\n");
+    eaWeaving = false;
+    eaRenderResult(eaResult);
   }
 
   function eaRenderResult(r) {
@@ -4940,12 +4979,16 @@ draft.slice(0, 6000),
                  '<div class="ea-add-t"><b>' + eaEsc(a.label || 'Extra detail') + '</b>' +
                  (a.why ? '<span>' + eaEsc(a.why) + '</span>' : '') + '</div>' +
                  '<div class="ea-add-p">' + eaEsc(a.paragraph || '') + '</div>' +
-                 '<button class="ea-btn-sm" data-eaadd="' + i + '">' + (on ? 'Remove' : 'Add it in') + '</button>' +
+                 '<button class="ea-btn-sm" data-eaadd="' + i + '"' + (eaWeaving ? ' disabled' : '') + '>' +
+                   (eaWeaving ? 'Working it in\u2026' : (on ? 'Remove' : 'Add it in')) + '</button>' +
                  '</div>';
         }).join('')
       : '';
 
     const cur = eaCurrent();
+    const weaveNote = eaWeaveError
+      ? '<div class="ea-flag warn"><div class="ea-flag-t">\u26a0\ufe0f Could not rework that in, so it has been added at the end. Worth a read before sending.</div></div>'
+      : '';
     document.getElementById('ea-output').innerHTML =
       picker +
       '<div class="ea-mail">' +
@@ -4954,7 +4997,7 @@ draft.slice(0, 6000),
         '<div class="ea-part-hd"><span>Body</span><button class="ea-btn-sm ea-part-copy" data-eacopy="body">Copy body</button></div>' +
         '<div class="ea-mail-body">' + eaEsc(cur.body) + '</div>' +
       '</div>' +
-      adds +
+      weaveNote + adds +
       (flags   ? '<div class="ea-card-hd" style="margin-top:18px;">🔎 Fact check</div>' + flags : '') +
       (changes ? '<div class="ea-card-hd" style="margin-top:18px;">✏️ What changed and why</div>' + changes : '') +
       (qs      ? '<div class="ea-card-hd" style="margin-top:18px;">❓ Before you send</div>' + qs : '') +
@@ -4982,9 +5025,11 @@ draft.slice(0, 6000),
       if (ver) { eaPick = +ver.dataset.eaver; eaRenderResult(eaResult); return; }
       const add = e.target.closest('[data-eaadd]');
       if (add) {
+        if (eaWeaving) return;
         const i = +add.dataset.eaadd;
         eaAdded[i] = !eaAdded[i];
-        eaRenderResult(eaResult);
+        eaWeaveError = false;
+        eaWeave();
         return;
       }
       const b = e.target.closest('[data-eacopy]');
