@@ -813,6 +813,7 @@
     .ci-card { background:#fff; border:1px solid #e5e7eb; border-left:4px solid #9ca3af; border-radius:11px; padding:13px 16px; }
     .ci-card.st-open { border-left-color:#ef4444; }
     .ci-card.st-unsw { border-left-color:#f59e0b; }
+    .ci-card.st-sdit { border-left-color:#0ea5e9; }
     .ci-card.st-resolved { border-left-color:#10b981; background:#f8fdfa; }
     .ci-card.st-noissue { border-left-color:#94a3b8; opacity:0.72; }
     .ci-top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:7px; }
@@ -822,6 +823,7 @@
     .ci-status { margin-left:auto; font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; border-radius:999px; padding:3px 10px; }
     .ci-status.st-open { background:#fee2e2; color:#991b1b; }
     .ci-status.st-unsw { background:#fef3c7; color:#92400e; }
+    .ci-status.st-sdit { background:#e0f2fe; color:#075985; }
     .ci-status.st-resolved { background:#d1fae5; color:#065f46; }
     .ci-status.st-noissue { background:#e5e7eb; color:#4b5563; }
     .ci-vs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0; }
@@ -2084,7 +2086,6 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">Calendar</button>
   <button class="tab-btn" data-tab="notices">Notice Board</button>
-  <button class="tab-btn" data-tab="issues">Carousel Issues</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">Pacing Board</button>
   <!-- HIDDEN: Activity Dashboard. Uncomment the line below to bring the tab back. The panel and pod-c-dashboard.html are untouched.
@@ -2095,6 +2096,7 @@
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
+  <button class="tab-btn" data-tab="issues">Carousel Issues</button>
   <!-- Wishlist retired Oct 2026, nobody was using it. Uncomment this and the panel below to bring it back.
   <button class="tab-btn" data-tab="wishlist">Wishlist</button> -->
   <div class="theme-picker-wrap">
@@ -10224,6 +10226,7 @@ ${cardsHTML}
   const CI_STATUS = {
     open:     { label: 'Open',        cls: 'st-open' },
     unsw:     { label: 'With UNSW',   cls: 'st-unsw' },
+    sdit:     { label: 'With SDIT',   cls: 'st-sdit' },
     resolved: { label: 'Resolved',    cls: 'st-resolved' },
     noissue:  { label: 'Not an issue', cls: 'st-noissue' }
   };
@@ -10255,23 +10258,24 @@ ${cardsHTML}
     if (!list) return;
 
     const all = Object.keys(ciItems).map(k => Object.assign({ id:k }, ciItems[k]));
-    const counts = { open:0, unsw:0, resolved:0, noissue:0 };
+    const counts = { open:0, unsw:0, sdit:0, resolved:0, noissue:0 };
     all.forEach(i => { if (counts[i.status] != null) counts[i.status]++; });
 
     const stats = document.getElementById('ci-stats');
     if (stats) stats.innerHTML =
-      '<div class="ci-stat"><b>' + (counts.open + counts.unsw) + '</b><span>Still open</span></div>' +
+      '<div class="ci-stat"><b>' + (counts.open + counts.unsw + counts.sdit) + '</b><span>Still open</span></div>' +
       '<div class="ci-stat"><b>' + counts.unsw + '</b><span>With UNSW</span></div>' +
+      '<div class="ci-stat"><b>' + counts.sdit + '</b><span>With SDIT</span></div>' +
       '<div class="ci-stat"><b>' + counts.resolved + '</b><span>Resolved</span></div>' +
       '<div class="ci-stat"><b>' + all.length + '</b><span>Logged</span></div>';
 
-    const tabs = [['live','Still open'],['open','Open'],['unsw','With UNSW'],['resolved','Resolved'],['noissue','Not an issue'],['all','Everything']];
+    const tabs = [['live','Still open'],['open','Open'],['unsw','With UNSW'],['sdit','With SDIT'],['resolved','Resolved'],['noissue','Not an issue'],['all','Everything']];
     const fl = document.getElementById('ci-filters');
     if (fl) fl.innerHTML = tabs.map(t =>
       '<button class="ci-fbtn' + (ciFilter === t[0] ? ' active' : '') + '" data-cif="' + t[0] + '">' + t[1] + '</button>').join('');
 
     let items = all;
-    if (ciFilter === 'live') items = all.filter(i => i.status === 'open' || i.status === 'unsw');
+    if (ciFilter === 'live') items = all.filter(i => i.status === 'open' || i.status === 'unsw' || i.status === 'sdit');
     else if (ciFilter !== 'all') items = all.filter(i => i.status === ciFilter);
     items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
@@ -10302,6 +10306,7 @@ ${cardsHTML}
           (i.closedBy ? '<span>\u00b7 signed off by ' + ciEsc(i.closedBy) + '</span>' : '') +
           '<span class="ci-acts">' +
             (done ? '' : '<button data-cistat="' + i.id + '|unsw">With UNSW</button>') +
+            (done ? '' : '<button data-cistat="' + i.id + '|sdit">With SDIT</button>') +
             (done ? '<button data-cistat="' + i.id + '|open">Reopen</button>'
                   : '<button class="go" data-cistat="' + i.id + '|resolved">\u2713 Resolved</button>') +
             (done ? '' : '<button data-cistat="' + i.id + '|noissue">Not an issue</button>') +
