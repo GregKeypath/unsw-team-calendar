@@ -10331,9 +10331,9 @@ ${cardsHTML}
     set('ci-f-carousel', i && i.carousel); set('ci-f-other', i && i.other);
     set('ci-f-notes', i && i.notes);
     sel.value = (i && i.status) || 'open';
-    document.getElementById('ci-overlay').classList.add('show');
+    document.getElementById('ci-overlay').classList.add('open');
   }
-  function ciClose() { document.getElementById('ci-overlay').classList.remove('show'); ciEditId = null; }
+  function ciClose() { document.getElementById('ci-overlay').classList.remove('open'); ciEditId = null; }
 
   function initIssues() {
     if (!document.getElementById('ci-list')) return;
