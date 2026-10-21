@@ -126,6 +126,7 @@
     .tab-btn[data-tab="email"]::before     { content: '✉️'; }
     .tab-btn[data-tab="schedule"]::before  { content: '⏰'; }
     .tab-btn[data-tab="wishlist"]::before  { content: '💡'; }
+    .tab-btn[data-tab="issues"]::before    { content: '🔎'; }
 
     .theme-picker-wrap { align-self: center; margin-bottom: 7px; }
     .sw-strip { display: flex; width: 34px; height: 16px; border-radius: 4px; overflow: hidden; flex: none; box-shadow: 0 1px 2px rgba(0,0,0,0.18); }
@@ -795,6 +796,56 @@
     .tz-foot b { color:#9a3412; }
     @media (max-width:620px) { .tz-base { margin-left:0; } }
 
+    .ci-wrap { padding:18px 22px 50px; max-width:1200px; }
+    .ci-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+    .ci-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
+    .ci-sub { font-size:0.76rem; color:#8b97a5; margin:0 0 16px; line-height:1.5; }
+    .ci-add { margin-left:auto; border:none; background:#16202b; color:#fff; border-radius:999px; padding:8px 16px; font-size:0.76rem; font-weight:800; cursor:pointer; font-family:inherit; }
+    .ci-add:hover { background:#000; }
+    .ci-stats { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .ci-stat { background:#fff; border:1px solid #e5e7eb; border-radius:11px; padding:9px 15px; min-width:92px; }
+    .ci-stat b { display:block; font-size:1.35rem; font-weight:900; color:#16202b; line-height:1.1; }
+    .ci-stat span { font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; }
+    .ci-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .ci-fbtn { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 13px; font-size:0.7rem; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
+    .ci-fbtn.active { background:#16202b; color:#fff; border-color:#16202b; }
+    .ci-list { display:flex; flex-direction:column; gap:10px; }
+    .ci-card { background:#fff; border:1px solid #e5e7eb; border-left:4px solid #9ca3af; border-radius:11px; padding:13px 16px; }
+    .ci-card.st-open { border-left-color:#ef4444; }
+    .ci-card.st-unsw { border-left-color:#f59e0b; }
+    .ci-card.st-resolved { border-left-color:#10b981; background:#f8fdfa; }
+    .ci-card.st-noissue { border-left-color:#94a3b8; opacity:0.72; }
+    .ci-top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:7px; }
+    .ci-code { font-size:0.82rem; font-weight:900; color:#16202b; }
+    .ci-prog { font-size:0.7rem; font-weight:700; color:#6b7280; background:#f3f4f6; border-radius:5px; padding:2px 8px; }
+    .ci-sp { font-size:0.7rem; font-weight:800; color:#4338ca; background:#eef2ff; border-radius:5px; padding:2px 8px; }
+    .ci-status { margin-left:auto; font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; border-radius:999px; padding:3px 10px; }
+    .ci-status.st-open { background:#fee2e2; color:#991b1b; }
+    .ci-status.st-unsw { background:#fef3c7; color:#92400e; }
+    .ci-status.st-resolved { background:#d1fae5; color:#065f46; }
+    .ci-status.st-noissue { background:#e5e7eb; color:#4b5563; }
+    .ci-vs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0; }
+    @media (max-width:640px) { .ci-vs { grid-template-columns:1fr; } }
+    .ci-side { background:#f8fafc; border-radius:8px; padding:8px 11px; }
+    .ci-side b { display:block; font-size:0.58rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; margin-bottom:3px; }
+    .ci-side span { font-size:0.76rem; color:#1f2937; line-height:1.45; }
+    .ci-notes { font-size:0.74rem; color:#4b5563; line-height:1.55; margin-top:6px; white-space:pre-wrap; }
+    .ci-foot { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:10px; padding-top:9px; border-top:1px solid #f3f4f6; font-size:0.66rem; color:#9ca3af; }
+    .ci-acts { margin-left:auto; display:flex; gap:5px; }
+    .ci-acts button { border:1px solid #e5e7eb; background:#fff; border-radius:6px; font-size:0.64rem; font-weight:700; padding:3px 9px; cursor:pointer; color:#4b5563; font-family:inherit; }
+    .ci-acts button:hover { border-color:#16202b; color:#16202b; }
+    .ci-acts button.go { background:#10b981; border-color:#10b981; color:#fff; }
+    .ci-empty { text-align:center; padding:56px 20px; color:#9ca3af; font-size:0.85rem; }
+    .ci-modal { background:#fff; border-radius:14px; padding:22px 24px; width:min(620px,94vw); max-height:90vh; overflow:auto; }
+    .ci-modal h3 { margin:0 0 16px; font-size:1.05rem; font-weight:800; color:#16202b; }
+    .ci-row2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media (max-width:560px) { .ci-row2 { grid-template-columns:1fr; } }
+    .ci-lbl { font-size:0.64rem; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:#6b7280; margin:11px 0 4px; }
+    .ci-modal input, .ci-modal textarea, .ci-modal select { width:100%; border:1.5px solid #e5e7eb; border-radius:9px; padding:9px 11px; font-size:0.82rem; font-family:inherit; color:#16202b; background:#fff; }
+    .ci-modal textarea { min-height:78px; resize:vertical; line-height:1.55; }
+    .ci-modal-actions { display:flex; gap:9px; justify-content:flex-end; margin-top:18px; }
+    .ci-btn { border:none; background:#16202b; color:#fff; border-radius:9px; padding:9px 20px; font-size:0.8rem; font-weight:800; cursor:pointer; font-family:inherit; }
+    .ci-btn-ghost { border:1px solid #e5e7eb; background:#fff; color:#6b7280; border-radius:9px; padding:9px 18px; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:inherit; }
     .nb-wrap { padding:18px 22px 50px; }
     .nb-flip { position:relative; perspective:2400px; }
     .nb-face { transition:transform 0.75s cubic-bezier(.3,.9,.3,1); backface-visibility:hidden; }
@@ -2033,6 +2084,7 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">Calendar</button>
   <button class="tab-btn" data-tab="notices">Notice Board</button>
+  <button class="tab-btn" data-tab="issues">Carousel Issues</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
   <button class="tab-btn" data-tab="pacing">Pacing Board</button>
   <!-- HIDDEN: Activity Dashboard. Uncomment the line below to bring the tab back. The panel and pod-c-dashboard.html are untouched.
@@ -2430,6 +2482,45 @@
   </div>
 </div>
 
+<!-- Carousel Issues tab -->
+<div class="tab-panel" id="tab-issues">
+  <div class="ci-wrap">
+    <div class="ci-head">
+      <h2>🔎 Carousel Issues</h2>
+      <button class="ci-add" id="ci-add">+ Log an issue</button>
+    </div>
+    <p class="ci-sub">Where the carousel and the handbook disagree, or anything about a study period that looks wrong. Log it here so it is not sitting in someone’s inbox.</p>
+    <div class="ci-stats" id="ci-stats"></div>
+    <div class="ci-filters" id="ci-filters"></div>
+    <div class="ci-list" id="ci-list"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="ci-overlay">
+  <div class="ci-modal">
+    <h3 id="ci-modal-title">Log an issue</h3>
+    <div class="ci-row2">
+      <div><div class="ci-lbl">Program</div><input type="text" id="ci-f-prog" placeholder="e.g. Applied Finance" maxlength="60"></div>
+      <div><div class="ci-lbl">Unit code</div><input type="text" id="ci-f-code" placeholder="e.g. ZZBU6103" maxlength="20"></div>
+    </div>
+    <div class="ci-row2">
+      <div><div class="ci-lbl">Study period</div><input type="text" id="ci-f-sp" placeholder="e.g. H2 27" maxlength="20"></div>
+      <div><div class="ci-lbl">Raised by</div><input type="text" id="ci-f-by" placeholder="Your name" maxlength="40"></div>
+    </div>
+    <div class="ci-lbl">What the carousel says</div>
+    <input type="text" id="ci-f-carousel" placeholder="e.g. available in Hex 2" maxlength="200">
+    <div class="ci-lbl">What the other source says</div>
+    <input type="text" id="ci-f-other" placeholder="e.g. handbook shows H4 2027" maxlength="200">
+    <div class="ci-lbl">Anything else worth knowing</div>
+    <textarea id="ci-f-notes" placeholder="Context, who you have already asked, which page you were looking at"></textarea>
+    <div class="ci-lbl">Status</div>
+    <select id="ci-f-status"></select>
+    <div class="ci-modal-actions">
+      <button class="ci-btn-ghost" id="ci-cancel">Cancel</button>
+      <button class="ci-btn" id="ci-save">Save</button>
+    </div>
+  </div>
+</div>
 <!-- Notice Board tab -->
 <div class="tab-panel" id="tab-notices">
   <div class="nb-wrap">
@@ -10127,10 +10218,192 @@ ${cardsHTML}
   }
 
 
+
+  // ── Carousel Issues ───────────────────────────────────────────────
+  const CI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/carousel_issues.json';
+  const CI_STATUS = {
+    open:     { label: 'Open',        cls: 'st-open' },
+    unsw:     { label: 'With UNSW',   cls: 'st-unsw' },
+    resolved: { label: 'Resolved',    cls: 'st-resolved' },
+    noissue:  { label: 'Not an issue', cls: 'st-noissue' }
+  };
+  let ciItems = {};
+  let ciFilter = 'live';
+  let ciEditId = null;
+
+  function ciEsc(s) {
+    return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  async function ciLoad() {
+    try {
+      const r = await fetch(CI_DB);
+      const d = await r.json();
+      ciItems = (d && typeof d === 'object') ? d : {};
+    } catch (e) { ciItems = {}; }
+    ciRender();
+  }
+
+  async function ciSave() {
+    try {
+      await fetch(CI_DB, { method:'PUT', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(ciItems) });
+    } catch (e) {}
+  }
+
+  function ciRender() {
+    const list = document.getElementById('ci-list');
+    if (!list) return;
+
+    const all = Object.keys(ciItems).map(k => Object.assign({ id:k }, ciItems[k]));
+    const counts = { open:0, unsw:0, resolved:0, noissue:0 };
+    all.forEach(i => { if (counts[i.status] != null) counts[i.status]++; });
+
+    const stats = document.getElementById('ci-stats');
+    if (stats) stats.innerHTML =
+      '<div class="ci-stat"><b>' + (counts.open + counts.unsw) + '</b><span>Still open</span></div>' +
+      '<div class="ci-stat"><b>' + counts.unsw + '</b><span>With UNSW</span></div>' +
+      '<div class="ci-stat"><b>' + counts.resolved + '</b><span>Resolved</span></div>' +
+      '<div class="ci-stat"><b>' + all.length + '</b><span>Logged</span></div>';
+
+    const tabs = [['live','Still open'],['open','Open'],['unsw','With UNSW'],['resolved','Resolved'],['noissue','Not an issue'],['all','Everything']];
+    const fl = document.getElementById('ci-filters');
+    if (fl) fl.innerHTML = tabs.map(t =>
+      '<button class="ci-fbtn' + (ciFilter === t[0] ? ' active' : '') + '" data-cif="' + t[0] + '">' + t[1] + '</button>').join('');
+
+    let items = all;
+    if (ciFilter === 'live') items = all.filter(i => i.status === 'open' || i.status === 'unsw');
+    else if (ciFilter !== 'all') items = all.filter(i => i.status === ciFilter);
+    items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
+
+    if (!items.length) {
+      list.innerHTML = '<div class="ci-empty">' +
+        (all.length ? 'Nothing under that filter.' : 'Nothing logged yet. Add the first one.') + '</div>';
+      return;
+    }
+
+    list.innerHTML = items.map(i => {
+      const st = CI_STATUS[i.status] || CI_STATUS.open;
+      const when = i.ts ? new Date(i.ts).toLocaleDateString('en-AU', { day:'numeric', month:'short', year:'numeric' }) : '';
+      const done = i.status === 'resolved' || i.status === 'noissue';
+      return '<div class="ci-card ' + st.cls + '">' +
+        '<div class="ci-top">' +
+          (i.code ? '<span class="ci-code">' + ciEsc(i.code) + '</span>' : '') +
+          (i.program ? '<span class="ci-prog">' + ciEsc(i.program) + '</span>' : '') +
+          (i.sp ? '<span class="ci-sp">' + ciEsc(i.sp) + '</span>' : '') +
+          '<span class="ci-status ' + st.cls + '">' + st.label + '</span>' +
+        '</div>' +
+        '<div class="ci-vs">' +
+          '<div class="ci-side"><b>Carousel says</b><span>' + (ciEsc(i.carousel) || '\u2014') + '</span></div>' +
+          '<div class="ci-side"><b>Other source says</b><span>' + (ciEsc(i.other) || '\u2014') + '</span></div>' +
+        '</div>' +
+        (i.notes ? '<div class="ci-notes">' + ciEsc(i.notes) + '</div>' : '') +
+        '<div class="ci-foot">' +
+          '<span>' + ciEsc(i.by || 'Unknown') + (when ? ' \u00b7 ' + when : '') + '</span>' +
+          (i.closedBy ? '<span>\u00b7 signed off by ' + ciEsc(i.closedBy) + '</span>' : '') +
+          '<span class="ci-acts">' +
+            (done ? '' : '<button data-cistat="' + i.id + '|unsw">With UNSW</button>') +
+            (done ? '<button data-cistat="' + i.id + '|open">Reopen</button>'
+                  : '<button class="go" data-cistat="' + i.id + '|resolved">\u2713 Resolved</button>') +
+            (done ? '' : '<button data-cistat="' + i.id + '|noissue">Not an issue</button>') +
+            '<button data-ciedit="' + i.id + '">Edit</button>' +
+            '<button data-cidel="' + i.id + '">Delete</button>' +
+          '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function ciOpen(id) {
+    ciEditId = id;
+    const i = id ? ciItems[id] : null;
+    document.getElementById('ci-modal-title').textContent = i ? 'Edit issue' : 'Log an issue';
+    const sel = document.getElementById('ci-f-status');
+    sel.innerHTML = Object.keys(CI_STATUS).map(k =>
+      '<option value="' + k + '">' + CI_STATUS[k].label + '</option>').join('');
+    const set = (el, v) => { document.getElementById(el).value = v || ''; };
+    set('ci-f-prog', i && i.program); set('ci-f-code', i && i.code);
+    set('ci-f-sp', i && i.sp); set('ci-f-by', i && i.by);
+    set('ci-f-carousel', i && i.carousel); set('ci-f-other', i && i.other);
+    set('ci-f-notes', i && i.notes);
+    sel.value = (i && i.status) || 'open';
+    document.getElementById('ci-overlay').classList.add('show');
+  }
+  function ciClose() { document.getElementById('ci-overlay').classList.remove('show'); ciEditId = null; }
+
+  function initIssues() {
+    if (!document.getElementById('ci-list')) return;
+
+    document.getElementById('ci-add').addEventListener('click', () => ciOpen(null));
+    document.getElementById('ci-cancel').addEventListener('click', ciClose);
+    document.getElementById('ci-overlay').addEventListener('click', e => {
+      if (e.target.id === 'ci-overlay') ciClose();
+    });
+
+    document.getElementById('ci-save').addEventListener('click', () => {
+      const v = el => document.getElementById(el).value.trim();
+      if (!v('ci-f-code') && !v('ci-f-prog')) { alert('Add at least a unit code or a program.'); return; }
+      const id = ciEditId || ('i' + Date.now());
+      const prev = ciItems[id] || {};
+      const status = v('ci-f-status') || 'open';
+      ciItems[id] = {
+        program: v('ci-f-prog'), code: v('ci-f-code').toUpperCase(), sp: v('ci-f-sp'),
+        by: v('ci-f-by'), carousel: v('ci-f-carousel'), other: v('ci-f-other'),
+        notes: v('ci-f-notes'), status: status,
+        ts: prev.ts || Date.now(),
+        closedBy: prev.closedBy || ''
+      };
+      ciSave(); ciClose(); ciRender();
+    });
+
+    document.getElementById('ci-filters').addEventListener('click', e => {
+      const b = e.target.closest('[data-cif]');
+      if (!b) return;
+      ciFilter = b.dataset.cif;
+      ciRender();
+    });
+
+    document.getElementById('ci-list').addEventListener('click', e => {
+      const st = e.target.closest('[data-cistat]');
+      if (st) {
+        const parts = st.dataset.cistat.split('|');
+        const it = ciItems[parts[0]];
+        if (!it) return;
+        it.status = parts[1];
+        if (parts[1] === 'resolved' || parts[1] === 'noissue') {
+          const who = prompt('Signed off by? (your name)', it.closedBy || '');
+          if (who === null) return;
+          it.closedBy = who.trim();
+        } else { it.closedBy = ''; }
+        ciSave(); ciRender();
+        return;
+      }
+      const ed = e.target.closest('[data-ciedit]');
+      if (ed) { ciOpen(ed.dataset.ciedit); return; }
+      const del = e.target.closest('[data-cidel]');
+      if (del) {
+        const it = ciItems[del.dataset.cidel];
+        if (confirm('Delete this issue? It goes for the whole team.')) {
+          delete ciItems[del.dataset.cidel];
+          ciSave(); ciRender();
+        }
+      }
+    });
+
+    setInterval(() => {
+      fetch(CI_DB).then(r => r.json()).then(d => {
+        const next = (d && typeof d === 'object') ? d : {};
+        if (JSON.stringify(next) !== JSON.stringify(ciItems)) { ciItems = next; ciRender(); }
+      }).catch(() => {});
+    }, 25000);
+
+    ciLoad();
+  }
+
   paintTabs(THEMES[localStorage.getItem('unsw-theme') || 'gold'] || THEMES.gold);
   initPlanner();
   dpInit();
   tzInit();
+  initIssues();
   (function () {
     const flip = document.getElementById('nb-flip');
     if (!flip) return;
