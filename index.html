@@ -809,6 +809,9 @@
     .ci-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
     .ci-fbtn { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 13px; font-size:0.7rem; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
     .ci-fbtn.active { background:#16202b; color:#fff; border-color:#16202b; }
+    .ci-progfilters { margin-top:-6px; }
+    .ci-progfilters .ci-fbtn { font-size:0.66rem; padding:4px 11px; border-style:dashed; }
+    .ci-progfilters .ci-fbtn.active { border-style:solid; background:#4338ca; border-color:#4338ca; }
     .ci-list { display:flex; flex-direction:column; gap:10px; }
     .ci-card { background:#fff; border:1px solid #e5e7eb; border-left:4px solid #9ca3af; border-radius:11px; padding:13px 16px; }
     .ci-card.st-open { border-left-color:#ef4444; }
@@ -2494,6 +2497,7 @@
     <p class="ci-sub">Where the carousel and the handbook disagree, or anything about a study period that looks wrong. Log it here so it is not sitting in someone’s inbox.</p>
     <div class="ci-stats" id="ci-stats"></div>
     <div class="ci-filters" id="ci-filters"></div>
+    <div class="ci-filters ci-progfilters" id="ci-progfilters"></div>
     <div class="ci-list" id="ci-list"></div>
   </div>
 </div>
@@ -2502,7 +2506,7 @@
   <div class="ci-modal">
     <h3 id="ci-modal-title">Log an issue</h3>
     <div class="ci-row2">
-      <div><div class="ci-lbl">Program</div><input type="text" id="ci-f-prog" placeholder="e.g. Applied Finance" maxlength="60"></div>
+      <div><div class="ci-lbl">Program</div><input type="text" id="ci-f-prog" list="ci-progs" placeholder="Pick one or type your own" maxlength="60"><datalist id="ci-progs"></datalist></div>
       <div><div class="ci-lbl">Unit code</div><input type="text" id="ci-f-code" placeholder="e.g. ZZBU6103" maxlength="20"></div>
     </div>
     <div class="ci-row2">
@@ -10232,6 +10236,7 @@ ${cardsHTML}
   };
   let ciItems = {};
   let ciFilter = 'live';
+  let ciProg = 'all';
   let ciEditId = null;
 
   function ciEsc(s) {
@@ -10274,14 +10279,24 @@ ${cardsHTML}
     if (fl) fl.innerHTML = tabs.map(t =>
       '<button class="ci-fbtn' + (ciFilter === t[0] ? ' active' : '') + '" data-cif="' + t[0] + '">' + t[1] + '</button>').join('');
 
+    const progs = [...new Set(all.map(i => i.program).filter(Boolean))].sort();
+    const pf = document.getElementById('ci-progfilters');
+    if (pf) pf.innerHTML = progs.length
+      ? ['<button class="ci-fbtn' + (ciProg === 'all' ? ' active' : '') + '" data-ciprog="all">All programs</button>']
+          .concat(progs.map(p =>
+            '<button class="ci-fbtn' + (ciProg === p ? ' active' : '') + '" data-ciprog="' + ciEsc(p) + '">' +
+            ciEsc(p) + ' ' + all.filter(i => i.program === p).length + '</button>')).join('')
+      : '';
+
     let items = all;
     if (ciFilter === 'live') items = all.filter(i => i.status === 'open' || i.status === 'unsw' || i.status === 'sdit');
     else if (ciFilter !== 'all') items = all.filter(i => i.status === ciFilter);
+    if (ciProg !== 'all') items = items.filter(i => i.program === ciProg);
     items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
     if (!items.length) {
       list.innerHTML = '<div class="ci-empty">' +
-        (all.length ? 'Nothing under that filter.' : 'Nothing logged yet. Add the first one.') + '</div>';
+        (all.length ? 'Nothing under those filters.' : 'Nothing logged yet. Add the first one.') + '</div>';
       return;
     }
 
@@ -10320,6 +10335,13 @@ ${cardsHTML}
 
   function ciOpen(id) {
     ciEditId = id;
+    const dl = document.getElementById('ci-progs');
+    if (dl) {
+      const known = (typeof PLANNER_PROGRAMS !== 'undefined') ? Object.keys(PLANNER_PROGRAMS) : [];
+      const used = Object.values(ciItems).map(x => x.program).filter(Boolean);
+      dl.innerHTML = [...new Set(known.concat(used))].sort()
+        .map(p => '<option value="' + ciEsc(p) + '"></option>').join('');
+    }
     const i = id ? ciItems[id] : null;
     document.getElementById('ci-modal-title').textContent = i ? 'Edit issue' : 'Log an issue';
     const sel = document.getElementById('ci-f-status');
@@ -10358,6 +10380,13 @@ ${cardsHTML}
         closedBy: prev.closedBy || ''
       };
       ciSave(); ciClose(); ciRender();
+    });
+
+    document.getElementById('ci-progfilters').addEventListener('click', e => {
+      const b = e.target.closest('[data-ciprog]');
+      if (!b) return;
+      ciProg = b.dataset.ciprog;
+      ciRender();
     });
 
     document.getElementById('ci-filters').addEventListener('click', e => {
