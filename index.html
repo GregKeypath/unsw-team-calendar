@@ -126,6 +126,7 @@
     .tab-btn[data-tab="email"]::before     { content: '✉️'; }
     .tab-btn[data-tab="schedule"]::before  { content: '⏰'; }
     .tab-btn[data-tab="wishlist"]::before  { content: '💡'; }
+    .tab-btn[data-tab="actions"]::before   { content: '📋'; }
     .tab-btn[data-tab="issues"]::before    { content: '🔎'; }
 
     .theme-picker-wrap { align-self: center; margin-bottom: 7px; }
@@ -796,6 +797,51 @@
     .tz-foot b { color:#9a3412; }
     @media (max-width:620px) { .tz-base { margin-left:0; } }
 
+    .ai-wrap { padding:18px 22px 50px; max-width:1200px; }
+    .ai-head { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+    .ai-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
+    .ai-src { font-size:0.66rem; font-weight:700; color:#9ca3af; }
+    .ai-sub { font-size:0.76rem; color:#8b97a5; margin:0 0 16px; line-height:1.5; max-width:820px; }
+    .ai-stats { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .ai-stat { background:#fff; border:1px solid #e5e7eb; border-radius:11px; padding:9px 15px; min-width:92px; }
+    .ai-stat b { display:block; font-size:1.35rem; font-weight:900; color:#16202b; line-height:1.1; }
+    .ai-stat span { font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; }
+    .ai-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .ai-fbtn { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 13px; font-size:0.7rem; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
+    .ai-fbtn.active { background:#16202b; color:#fff; border-color:#16202b; }
+    .ai-whofilters { margin-top:-6px; }
+    .ai-whofilters .ai-fbtn { font-size:0.66rem; padding:4px 11px; border-style:dashed; }
+    .ai-whofilters .ai-fbtn.active { border-style:solid; background:#4338ca; border-color:#4338ca; color:#fff; }
+    .ai-list { display:flex; flex-direction:column; gap:10px; }
+    .ai-card { background:#fff; border:1px solid #e5e7eb; border-left:4px solid #ef4444; border-radius:11px; padding:13px 16px; }
+    .ai-card.st-chasing { border-left-color:#f59e0b; }
+    .ai-card.st-done { border-left-color:#10b981; background:#f8fdfa; }
+    .ai-top { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:8px; }
+    .ai-sid { font-size:0.86rem; font-weight:900; color:#16202b; letter-spacing:-0.2px; }
+    .ai-chip { font-size:0.68rem; font-weight:700; color:#6b7280; background:#f3f4f6; border-radius:5px; padding:2px 8px; }
+    .ai-chip.term { color:#4338ca; background:#eef2ff; font-weight:800; }
+    .ai-chip.late { color:#991b1b; background:#fee2e2; font-weight:800; }
+    .ai-type { font-size:0.68rem; font-weight:800; color:#0369a1; background:#e0f2fe; border-radius:5px; padding:2px 8px; }
+    .ai-status { margin-left:auto; font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; border-radius:999px; padding:3px 10px; }
+    .ai-status.st-todo { background:#fee2e2; color:#991b1b; }
+    .ai-status.st-chasing { background:#fef3c7; color:#92400e; }
+    .ai-status.st-done { background:#d1fae5; color:#065f46; }
+    .ai-need { font-size:0.82rem; font-weight:700; color:#16202b; line-height:1.5; margin-bottom:6px; }
+    .ai-letter { font-size:0.74rem; color:#4b5563; line-height:1.6; background:#f8fafc; border-radius:8px; padding:9px 12px; display:none; }
+    .ai-letter.open { display:block; }
+    .ai-letter a { color:#4338ca; }
+    .ai-more { border:none; background:none; padding:0; font-size:0.68rem; font-weight:800; color:#6b7280; cursor:pointer; font-family:inherit; text-decoration:underline; }
+    .ai-who { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:10px; font-size:0.7rem; color:#6b7280; }
+    .ai-who b { font-weight:800; color:#16202b; }
+    .ai-foot { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:10px; padding-top:9px; border-top:1px solid #f3f4f6; font-size:0.66rem; color:#9ca3af; }
+    .ai-acts { margin-left:auto; display:flex; gap:5px; flex-wrap:wrap; }
+    .ai-acts button, .ai-who button { border:1px solid #e5e7eb; background:#fff; border-radius:6px; font-size:0.64rem; font-weight:700; padding:3px 9px; cursor:pointer; color:#4b5563; font-family:inherit; }
+    .ai-acts button:hover, .ai-who button:hover { border-color:#16202b; color:#16202b; }
+    .ai-acts button.go { background:#10b981; border-color:#10b981; color:#fff; }
+    .ai-cmts { margin-top:9px; display:flex; flex-direction:column; gap:6px; }
+    .ai-cmt { background:#f8fafc; border-radius:8px; padding:7px 11px; font-size:0.74rem; color:#1f2937; line-height:1.5; white-space:pre-wrap; }
+    .ai-cmt i { display:block; font-style:normal; font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin-bottom:2px; }
+    .ai-empty { text-align:center; padding:56px 20px; color:#9ca3af; font-size:0.85rem; }
     .ci-wrap { padding:18px 22px 50px; max-width:1200px; }
     .ci-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
     .ci-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
@@ -2099,6 +2145,7 @@
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
+  <button class="tab-btn" data-tab="actions">Action Items</button>
   <button class="tab-btn" data-tab="issues">Carousel Issues</button>
   <!-- Wishlist retired Oct 2026, nobody was using it. Uncomment this and the panel below to bring it back.
   <button class="tab-btn" data-tab="wishlist">Wishlist</button> -->
@@ -2487,6 +2534,20 @@
   </div>
 </div>
 
+<!-- Action Items tab -->
+<div class="tab-panel" id="tab-actions">
+  <div class="ai-wrap">
+    <div class="ai-head">
+      <h2>📋 Action Items</h2>
+      <span class="ai-src" id="ai-src"></span>
+    </div>
+    <p class="ai-sub">Students with an outstanding condition on their offer. Assign one to yourself or to someone else, tick it off once the student has provided what is needed, and leave a comment so the next person knows where it got to. Student IDs only, no names, because this page is on the open internet.</p>
+    <div class="ai-stats" id="ai-stats"></div>
+    <div class="ai-filters" id="ai-filters"></div>
+    <div class="ai-filters ai-whofilters" id="ai-whofilters"></div>
+    <div class="ai-list" id="ai-list"></div>
+  </div>
+</div>
 <!-- Carousel Issues tab -->
 <div class="tab-panel" id="tab-issues">
   <div class="ci-wrap">
@@ -10225,6 +10286,243 @@ ${cardsHTML}
 
 
 
+  // ── Action Items ────────────────────────────────────
+  const AI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/action_items.json';
+  const AI_LOADED = 'Loaded 23 Oct 2026 from the accounts conditional offer list';
+  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn."},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn."},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn."}];
+  const AI_STATUS = {
+    todo:    { label: 'To do',          cls: 'st-todo' },
+    chasing: { label: 'Chasing student', cls: 'st-chasing' },
+    done:    { label: 'Done',           cls: 'st-done' }
+  };
+  let aiState = {};
+  let aiFilter = 'live';
+  let aiWho = 'all';
+  let aiOpen = {};
+
+  function aiEsc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function aiLinkify(s) {
+    return aiEsc(s).replace(/(https?:\/\/[^\s]+)/g, function (u) {
+      return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>';
+    });
+  }
+
+  function aiMe() {
+    let who = localStorage.getItem('unsw-me') || '';
+    if (!who) {
+      who = (prompt('Your name, so the board knows who did what') || '').trim();
+      if (who) localStorage.setItem('unsw-me', who);
+    }
+    return who;
+  }
+
+  function aiDays(iso) {
+    const d = new Date(iso + 'T00:00:00');
+    return Math.floor((Date.now() - d.getTime()) / 86400000);
+  }
+
+  function aiNice(iso) {
+    return new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  async function aiLoad() {
+    try {
+      const r = await fetch(AI_DB);
+      const d = await r.json();
+      aiState = (d && typeof d === 'object') ? d : {};
+    } catch (e) { aiState = {}; }
+    aiRender();
+  }
+
+  async function aiSave() {
+    try {
+      await fetch(AI_DB, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(aiState) });
+    } catch (e) {}
+  }
+
+  function aiRec(id) {
+    if (!aiState[id]) aiState[id] = { status: 'todo', assignee: '', comments: [] };
+    if (!aiState[id].comments) aiState[id].comments = [];
+    return aiState[id];
+  }
+
+  function aiRender() {
+    const list = document.getElementById('ai-list');
+    if (!list) return;
+
+    const src = document.getElementById('ai-src');
+    if (src) src.textContent = AI_LOADED;
+
+    const all = AI_ROWS.map(function (r) {
+      const s = aiState[r.id] || {};
+      return Object.assign({}, r, {
+        status: s.status || 'todo',
+        assignee: s.assignee || '',
+        comments: s.comments || []
+      });
+    });
+
+    const counts = { todo: 0, chasing: 0, done: 0 };
+    all.forEach(function (i) { if (counts[i.status] != null) counts[i.status]++; });
+    const unassigned = all.filter(function (i) { return !i.assignee && i.status !== 'done'; }).length;
+
+    const stats = document.getElementById('ai-stats');
+    if (stats) stats.innerHTML =
+      '<div class="ai-stat"><b>' + (counts.todo + counts.chasing) + '</b><span>Still open</span></div>' +
+      '<div class="ai-stat"><b>' + unassigned + '</b><span>Unassigned</span></div>' +
+      '<div class="ai-stat"><b>' + counts.chasing + '</b><span>Chasing</span></div>' +
+      '<div class="ai-stat"><b>' + counts.done + '</b><span>Done</span></div>';
+
+    const tabs = [['live', 'Still open'], ['todo', 'To do'], ['chasing', 'Chasing'], ['mine', 'Mine'], ['none', 'Unassigned'], ['done', 'Done'], ['all', 'Everything']];
+    const fl = document.getElementById('ai-filters');
+    if (fl) fl.innerHTML = tabs.map(function (t) {
+      return '<button class="ai-fbtn' + (aiFilter === t[0] ? ' active' : '') + '" data-aif="' + t[0] + '">' + t[1] + '</button>';
+    }).join('');
+
+    const who = [...new Set(all.map(function (i) { return i.assignee; }).filter(Boolean))].sort();
+    const wf = document.getElementById('ai-whofilters');
+    if (wf) wf.innerHTML = who.length
+      ? ['<button class="ai-fbtn' + (aiWho === 'all' ? ' active' : '') + '" data-aiwho="all">Everyone</button>']
+          .concat(who.map(function (p) {
+            return '<button class="ai-fbtn' + (aiWho === p ? ' active' : '') + '" data-aiwho="' + aiEsc(p) + '">' +
+              aiEsc(p) + ' ' + all.filter(function (i) { return i.assignee === p; }).length + '</button>';
+          })).join('')
+      : '';
+
+    const me = (localStorage.getItem('unsw-me') || '').toLowerCase();
+    let items = all;
+    if (aiFilter === 'live') items = all.filter(function (i) { return i.status !== 'done'; });
+    else if (aiFilter === 'mine') items = all.filter(function (i) { return me && String(i.assignee).toLowerCase() === me; });
+    else if (aiFilter === 'none') items = all.filter(function (i) { return !i.assignee; });
+    else if (aiFilter !== 'all') items = all.filter(function (i) { return i.status === aiFilter; });
+    if (aiWho !== 'all') items = items.filter(function (i) { return i.assignee === aiWho; });
+    items.sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+
+    if (!items.length) {
+      list.innerHTML = '<div class="ai-empty">Nothing under those filters.</div>';
+      return;
+    }
+
+    list.innerHTML = items.map(function (i) {
+      const st = AI_STATUS[i.status] || AI_STATUS.todo;
+      const late = aiDays(i.start);
+      const lateChip = (late > 0 && i.status !== 'done')
+        ? '<span class="ai-chip late">Intake started ' + late + ' days ago</span>'
+        : '<span class="ai-chip">Intake starts ' + aiNice(i.start) + '</span>';
+      const cmts = i.comments.map(function (c) {
+        return '<div class="ai-cmt"><i>' + aiEsc(c.by || 'Unknown') + ' \u00b7 ' +
+          new Date(c.ts || 0).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) +
+          '</i>' + aiEsc(c.text) + '</div>';
+      }).join('');
+      const done = i.status === 'done';
+      return '<div class="ai-card ' + st.cls + '">' +
+        '<div class="ai-top">' +
+          '<span class="ai-sid">' + aiEsc(i.sid) + '</span>' +
+          '<span class="ai-chip term">' + aiEsc(i.term) + '</span>' +
+          '<span class="ai-chip">Program ' + aiEsc(i.prog) + '</span>' +
+          '<span class="ai-chip">Appl ' + aiEsc(i.appl) + '</span>' +
+          '<span class="ai-type">' + aiEsc(i.type) + '</span>' +
+          lateChip +
+          '<span class="ai-status ' + st.cls + '">' + st.label + '</span>' +
+        '</div>' +
+        '<div class="ai-need">' + aiEsc(i.need) + '</div>' +
+        '<div class="ai-foot" style="border:none; margin:0; padding:0; color:#9ca3af;">' +
+          '<span>' + aiEsc(i.gate) + '</span>' +
+          '<button class="ai-more" data-ailetter="' + i.id + '">' +
+            (aiOpen[i.id] ? 'Hide the letter wording' : 'Show the letter wording') + '</button>' +
+        '</div>' +
+        '<div class="ai-letter' + (aiOpen[i.id] ? ' open' : '') + '">' + aiLinkify(i.letter) + '</div>' +
+        '<div class="ai-who">' +
+          (i.assignee ? 'Assigned to <b>' + aiEsc(i.assignee) + '</b>' : '<span>Nobody assigned</span>') +
+          '<button data-aiclaim="' + i.id + '">' + (i.assignee ? 'Reassign' : 'Assign') + '</button>' +
+          (i.assignee ? '<button data-aiclear="' + i.id + '">Clear</button>' : '') +
+        '</div>' +
+        (cmts ? '<div class="ai-cmts">' + cmts + '</div>' : '') +
+        '<div class="ai-foot">' +
+          '<span>' + i.action + ' \u00b7 ' + i.reason + ' \u00b7 Online Acceptance Process</span>' +
+          '<span class="ai-acts">' +
+            '<button data-aicmt="' + i.id + '">Comment</button>' +
+            (done ? '' : '<button data-aistat="' + i.id + '|chasing">Chasing</button>') +
+            (done ? '<button data-aistat="' + i.id + '|todo">Reopen</button>'
+                  : '<button class="go" data-aistat="' + i.id + '|done">\u2713 Done</button>') +
+          '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function initActions() {
+    if (!document.getElementById('ai-list')) return;
+
+    document.getElementById('ai-filters').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-aif]');
+      if (!b) return;
+      if (b.dataset.aif === 'mine' && !aiMe()) return;
+      aiFilter = b.dataset.aif;
+      aiRender();
+    });
+
+    document.getElementById('ai-whofilters').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-aiwho]');
+      if (!b) return;
+      aiWho = b.dataset.aiwho;
+      aiRender();
+    });
+
+    document.getElementById('ai-list').addEventListener('click', function (e) {
+      const lt = e.target.closest('[data-ailetter]');
+      if (lt) { aiOpen[lt.dataset.ailetter] = !aiOpen[lt.dataset.ailetter]; aiRender(); return; }
+
+      const cl = e.target.closest('[data-aiclaim]');
+      if (cl) {
+        const rec = aiRec(cl.dataset.aiclaim);
+        const n = prompt('Assign this to which SSA?', rec.assignee || (localStorage.getItem('unsw-me') || ''));
+        if (n === null) return;
+        rec.assignee = n.trim();
+        aiSave(); aiRender();
+        return;
+      }
+
+      const cr = e.target.closest('[data-aiclear]');
+      if (cr) { aiRec(cr.dataset.aiclear).assignee = ''; aiSave(); aiRender(); return; }
+
+      const cm = e.target.closest('[data-aicmt]');
+      if (cm) {
+        const me = aiMe();
+        if (!me) return;
+        const t = prompt('Add a comment');
+        if (t === null || !t.trim()) return;
+        aiRec(cm.dataset.aicmt).comments.push({ by: me, text: t.trim(), ts: Date.now() });
+        aiSave(); aiRender();
+        return;
+      }
+
+      const st = e.target.closest('[data-aistat]');
+      if (st) {
+        const parts = st.dataset.aistat.split('|');
+        const rec = aiRec(parts[0]);
+        rec.status = parts[1];
+        if (parts[1] === 'done') {
+          const me = aiMe();
+          rec.comments.push({ by: me || 'Unknown', text: 'Marked done.', ts: Date.now() });
+          if (me && !rec.assignee) rec.assignee = me;
+        }
+        aiSave(); aiRender();
+      }
+    });
+
+    setInterval(function () {
+      fetch(AI_DB).then(function (r) { return r.json(); }).then(function (d) {
+        const next = (d && typeof d === 'object') ? d : {};
+        if (JSON.stringify(next) !== JSON.stringify(aiState)) { aiState = next; aiRender(); }
+      }).catch(function () {});
+    }, 25000);
+
+    aiLoad();
+  }
   // ── Carousel Issues ───────────────────────────────────────────────
   const CI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/carousel_issues.json';
   const CI_STATUS = {
@@ -10438,6 +10736,7 @@ ${cardsHTML}
   dpInit();
   tzInit();
   initIssues();
+  initActions();
   (function () {
     const flip = document.getElementById('nb-flip');
     if (!flip) return;
