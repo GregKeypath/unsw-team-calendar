@@ -797,6 +797,64 @@
     .tz-foot b { color:#9a3412; }
     @media (max-width:620px) { .tz-base { margin-left:0; } }
 
+    .inst-switch { display:inline-flex; margin-left:16px; background:rgba(0,0,0,0.16); border-radius:999px; padding:3px; gap:2px; }
+    .inst-switch button { border:none; background:none; color:rgba(255,255,255,0.72); font-family:inherit; font-size:0.66rem; font-weight:800; letter-spacing:0.5px; padding:4px 13px; border-radius:999px; cursor:pointer; }
+    .inst-switch button.on { background:#fff; color:#16202b; }
+
+    /* In MBS mode every tab shows only its MBS content. */
+    body[data-inst="mbs"] .tab-panel > *:not(.mbs-only) { display:none !important; }
+    body:not([data-inst="mbs"]) .mbs-only { display:none !important; }
+    body[data-inst="mbs"] .top-bar { display:none !important; }
+    body[data-inst="mbs"] #nav-controls { visibility:hidden; }
+
+    .mbs-soon { padding:70px 24px; text-align:center; max-width:560px; margin:0 auto; }
+    .mbs-soon h3 { margin:0 0 8px; font-size:1.1rem; font-weight:800; color:#1b2b3d; }
+    .mbs-soon p { margin:0; font-size:0.8rem; color:#8b97a5; line-height:1.6; }
+    .mbs-soon .tagline { display:inline-block; margin-bottom:14px; font-size:0.6rem; font-weight:800; letter-spacing:0.6px; text-transform:uppercase; color:#7c3aed; background:#f3e8ff; border-radius:999px; padding:4px 12px; }
+
+    .mbsa-wrap { padding:18px 22px 50px; }
+    .mbsa-head { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+    .mbsa-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
+    .mbsa-sub { font-size:0.76rem; color:#8b97a5; margin:0 0 14px; line-height:1.5; max-width:860px; }
+    .mbsa-bar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+    .mbsa-wk { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 14px; font-size:0.7rem; font-weight:800; color:#6b7280; cursor:pointer; font-family:inherit; }
+    .mbsa-wk.on { background:#16202b; color:#fff; border-color:#16202b; }
+    .mbsa-wk .n { display:inline-block; margin-left:6px; opacity:0.6; font-weight:700; }
+    .mbsa-key { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:16px; font-size:0.62rem; }
+    .mbsa-key span { display:inline-flex; align-items:center; gap:5px; color:#6b7280; font-weight:700; }
+    .mbsa-key i { width:10px; height:10px; border-radius:3px; display:inline-block; }
+
+    .mbsa-grid { overflow-x:auto; border:1px solid #e5e7eb; border-radius:11px; background:#fff; }
+    .mbsa-grid table { border-collapse:collapse; width:100%; min-width:1100px; }
+    .mbsa-grid th { position:sticky; top:0; background:#f8fafc; font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; text-align:left; padding:9px 10px; border-bottom:1px solid #e5e7eb; z-index:2; }
+    .mbsa-grid th:first-child { left:0; z-index:3; min-width:210px; }
+    .mbsa-grid td { padding:7px 8px; border-bottom:1px solid #f3f4f6; border-left:1px solid #f8fafc; vertical-align:top; }
+    .mbsa-grid td:first-child { position:sticky; left:0; background:#fff; border-left:none; min-width:210px; z-index:1; }
+    .mbsa-grid tr:hover td:first-child { background:#f9fafb; }
+    .mbsa-subj { font-size:0.76rem; font-weight:800; color:#16202b; line-height:1.3; }
+    .mbsa-code { font-size:0.62rem; font-weight:700; color:#9ca3af; }
+    .mbsa-nocode { font-size:0.58rem; font-weight:800; color:#b45309; background:#fef3c7; border-radius:4px; padding:1px 5px; }
+
+    .mbsa-item { border-radius:7px; padding:6px 8px; margin-bottom:5px; border-left:3px solid #9ca3af; background:#f8fafc; cursor:pointer; }
+    .mbsa-item:last-child { margin-bottom:0; }
+    .mbsa-item b { display:block; font-size:0.68rem; font-weight:800; color:#16202b; line-height:1.35; }
+    .mbsa-item .wt { display:inline-block; margin-top:3px; font-size:0.58rem; font-weight:800; color:#4338ca; background:#eef2ff; border-radius:4px; padding:1px 6px; }
+    .mbsa-item .wt.none { color:#b45309; background:#fef3c7; }
+    .mbsa-item .dt { font-size:0.62rem; color:#6b7280; line-height:1.45; margin-top:4px; display:none; }
+    .mbsa-item.open .dt { display:block; }
+    .mbsa-item.c-contribution { border-left-color:#10b981; background:#f0fdf4; }
+    .mbsa-item.c-hurdle       { border-left-color:#ef4444; background:#fef2f2; }
+    .mbsa-item.c-syndicate    { border-left-color:#7c3aed; background:#faf5ff; }
+    .mbsa-item.c-weekly       { border-left-color:#f59e0b; background:#fffbeb; }
+    .mbsa-item.c-quiz         { border-left-color:#0ea5e9; background:#f0f9ff; }
+    .mbsa-item.c-individual   { border-left-color:#64748b; background:#f8fafc; }
+    .mbsa-item.c-other        { border-left-color:#cbd5e1; background:#fff; }
+
+    .mbsa-weekview { display:flex; flex-direction:column; gap:9px; }
+    .mbsa-card { background:#fff; border:1px solid #e5e7eb; border-radius:11px; padding:12px 15px; }
+    .mbsa-card h4 { margin:0 0 2px; font-size:0.84rem; font-weight:800; color:#16202b; }
+    .mbsa-card .code { font-size:0.64rem; font-weight:700; color:#9ca3af; margin-bottom:8px; }
+    .mbsa-empty { text-align:center; padding:52px 20px; color:#9ca3af; font-size:0.85rem; }
     .ai-wrap { padding:18px 22px 50px; max-width:1200px; }
     .ai-head { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
     .ai-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
@@ -2121,6 +2179,10 @@
       <span class="logo-sydney">Sydney</span>
     </div>
     <span class="header-title">Advisor Hub</span>
+    <div class="inst-switch" id="inst-switch">
+      <button data-inst-btn="unsw">UNSW</button>
+      <button data-inst-btn="mbs">MBS</button>
+    </div>
   </div>
 
   <div class="nav-controls" id="nav-controls">
@@ -2162,6 +2224,16 @@
 
 <!-- Calendar tab -->
 <div class="tab-panel active" id="tab-calendar">
+  <div class="mbs-only mbsa-wrap">
+    <div class="mbsa-head">
+      <h2>📅 MBS Assessment Schedule</h2>
+      <span class="mbsa-sub" id="mbsa-count"></span>
+    </div>
+    <p class="mbsa-sub">Every subject by teaching week, so you can see at a glance what a student has due. Click an assessment to see the opening and due detail. Weeks are relative, not dates, because the MBS study period dates are not loaded yet.</p>
+    <div class="mbsa-bar" id="mbsa-bar"></div>
+    <div class="mbsa-key" id="mbsa-key"></div>
+    <div id="mbsa-body"></div>
+  </div>
 
 <!-- Shared Inbox Roster -->
 <div class="roster-bar">
@@ -2186,6 +2258,11 @@
 
 <!-- Kanban tab -->
 <div class="tab-panel" id="tab-kanban">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Engagement Strategy</h3>
+    <p>The MBS engagement board already exists on the UNSW side. Say the word and I will move it across so it only shows here.</p>
+  </div>
   <div class="kanban-wrap">
     <div class="pacing-hex-nav" id="kanban-hex-nav" style="margin-bottom:16px;"></div>
     <div class="kanban-board" id="kanban-board"></div>
@@ -2196,11 +2273,21 @@
 
 <!-- Pod C Dashboard tab -->
 <div class="tab-panel" id="tab-podc">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Activity Dashboard</h3>
+    <p>Needs MBS call and activity data. The UNSW version reads from an export, so the same export for MBS would do it.</p>
+  </div>
   <iframe class="es-iframe" src="pod-c-dashboard.html" title="Pod C Dashboard"></iframe>
 </div>
 
 <!-- Pacing Board tab -->
 <div class="tab-panel" id="tab-pacing">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Pacing Board</h3>
+    <p>Needs MBS pacing targets and the study period dates before this can show anything real.</p>
+  </div>
   <div class="pacing-wrap">
     <div class="pacing-controls">
       <div class="pacing-hex-nav" id="pacing-hex-nav"></div>
@@ -2287,6 +2374,11 @@
 
 <!-- Course Planner tab -->
 <div class="tab-panel" id="tab-planner">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Course Planner</h3>
+    <p>Needs the MBS subject list by study period, and the rules on cores, electives and prerequisites.</p>
+  </div>
   <div class="planner-wrap">
     <div class="planner-header">
       <div class="planner-controls-row">
@@ -2404,6 +2496,11 @@
 
 <!-- Historical Drop Rate Tab -->
 <div class="tab-panel" id="tab-droprate">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Historical Drop Rate</h3>
+    <p>Needs MBS withdrawal history by subject and study period.</p>
+  </div>
   <div class="droprate-wrap">
     <div class="droprate-header">
       <h2>Historical Drop Rate</h2>
@@ -2457,6 +2554,11 @@
 <!-- Drop Rate Insight Tab -->
 <!-- Email Assistant Tab -->
 <div class="tab-panel" id="tab-email">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Email Assistant</h3>
+    <p>Needs the MBS resource links, policy rules and subject names before it can write anything safe.</p>
+  </div>
   <div class="ea-wrap">
     <div class="ea-header">
       <h2>Email Assistant</h2>
@@ -2501,6 +2603,11 @@
 <!-- Student Triage Tab -->
 <!-- Daily Schedule tab -->
 <div class="tab-panel" id="tab-schedule">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Daily Schedule</h3>
+    <p>Works the same for any team. Tell me who the MBS advisers are and it can switch on.</p>
+  </div>
   <div class="ds-wrap">
     <div class="dp-shell" id="dp-shell"></div>
     <div class="ds-rhythm-hd">The daily rhythm, for reference</div>
@@ -2536,6 +2643,11 @@
 
 <!-- Action Items tab -->
 <div class="tab-panel" id="tab-actions">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Action Items</h3>
+    <p>Ready for MBS rows whenever you have a list.</p>
+  </div>
   <div class="ai-wrap">
     <div class="ai-head">
       <h2>📋 Action Items</h2>
@@ -2550,6 +2662,11 @@
 </div>
 <!-- Carousel Issues tab -->
 <div class="tab-panel" id="tab-issues">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Carousel Issues</h3>
+    <p>Ready for MBS issues whenever the team starts logging them.</p>
+  </div>
   <div class="ci-wrap">
     <div class="ci-head">
       <h2>🔎 Carousel Issues</h2>
@@ -2590,6 +2707,11 @@
 </div>
 <!-- Notice Board tab -->
 <div class="tab-panel" id="tab-notices">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Notice Board</h3>
+    <p>MBS notices will live here. Give me the content and it works exactly like the UNSW board, including the flip to taken down notices.</p>
+  </div>
   <div class="nb-wrap">
     <div class="nb-head">
       <h2>📌 Notice Board</h2>
@@ -2639,6 +2761,11 @@
 </div>
 
 <div class="tab-panel" id="tab-triage">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Student Triage</h3>
+    <p>Follows the Course Planner. Once MBS subjects and periods are loaded this comes with them.</p>
+  </div>
   <div class="triage-layout">
     <!-- Left: Form -->
     <div class="triage-form">
@@ -10355,6 +10482,117 @@ ${cardsHTML}
 
 
 
+  // ── MBS ─────────────────────────────────────────
+  const MBS_WEEKS = ["O-Week","Week 1","Week 2","Week 3","Week 4","Week 5","Week 6","Week 7"];
+  const MBS_CATS = {
+    contribution: { label: "Contribution to Learning", dot: "#10b981" },
+    hurdle:       { label: "Hurdle", dot: "#ef4444" },
+    syndicate:    { label: "Syndicate", dot: "#7c3aed" },
+    weekly:       { label: "Weekly Challenges", dot: "#f59e0b" },
+    quiz:         { label: "Quiz", dot: "#0ea5e9" },
+    individual:   { label: "Individual", dot: "#64748b" },
+    other:        { label: "Other", dot: "#cbd5e1" }
+  };
+  const MBS_SUBJECTS = [{"name":"Business Essentials for Managers","code":"BUSA90556","elective":false,"weeks":{"Week 1":[{"t":"A1a: Quiz  (5%)","d":"Open - Wed 8:30am · Due - Friday 11:59pm","w":5,"c":"quiz"}],"Week 3":[{"t":"A3a: Syndicate","d":"Due Wedneday 11:59pm · Syndicate Review - Due Friday 11:59pm · Reivew Feedback - Due Sunday 11:59pm · (Combined Weightage = 2.5%)","w":2.5,"c":"syndicate"}],"Week 4":[{"t":"A3b: Syndicate (25%)","d":"Due -Saturday 11:59pm","w":25,"c":"syndicate"}],"Week 5":[{"t":"A1b: Quiz (10%)","d":"Open -  Wed 8:30am · Due -  Friday 11:59pm · Syndicate Review - Due Friday 11:5pm · Reivew Feedback Due Sunday 11:59pm · Combined Weightage = 2.5%","w":10,"c":"syndicate"}],"Week 7":[{"t":"A4: Case Analysis (40%)","d":"Open Sunday 9:00am · Due Tuesday 12:00pm","w":40,"c":"individual"}],"O-Week":[{"t":"A1: Contribution to Learning","d":"Weightage: 15% · Opens Friday of O-Week, closes Sunday 11:59pm in Week 6","w":15,"c":"contribution"}]}},{"name":"Financial Accounting","code":"BUSA90003","elective":false,"weeks":{"O-Week":[{"t":"A2: Weekly Accounting Challenges","d":"Weightage: 50% ( 10% Per week for W1 to W5 ) · Opens Friday of O-Week, closes Sunday 11:59pm in Week 6","w":50,"c":"weekly"},{"t":"A1: Contribution to Learning","d":"Weightage: 10% · Opens Friday of O-Week, closes Sunday 11:59pm in Week 6","w":10,"c":"contribution"}],"Week 7":[{"t":"A3: Final Accounting Challenge","d":"Weightage: 40% · Open Sunday 8:30am · Due Tuesday at 12:00pm","w":40,"c":"individual"}]}},{"name":"Marketing","code":"BUSA90246","elective":false,"weeks":{"Week 3":[{"t":"A2: Recent Purcahse Interview  (20%)","d":"Due Tuesday 12:00pm","w":20,"c":"individual"}],"Week 5":[{"t":"A3:  Elevator Pitch (30%)","d":"Due Tuesday 12:00pm","w":30,"c":"individual"}],"Week 7":[{"t":"A4:  Reflection Journal 40%)","d":"Due Tuesday 12:00pm","w":40,"c":"individual"}],"O-Week":[{"t":"A1: Contribution to Learning","d":"Weightage: 10% · Opens Friday of O-Week, closes Sunday 11:59pm in Week 6","w":10,"c":"contribution"}]}},{"name":"Strategic Management","code":"BUSA90025","elective":true,"weeks":{"Week 2":[{"t":"A2A: Personal Strategy (15%)","d":"Due Tuesday at 12:00pm","w":15,"c":"individual"}],"Week 3":[{"t":"A3a: Syndicate Charter","d":"Due Wedneday 11:59pm · Syndicate Review - Due Friday 11:5pm · Reivew Feedback - Due Sunday 11:59pm","w":null,"c":"syndicate"}],"Week 6":[{"t":"A3b: Syndicate Case Analysis","d":"Due Wedneday 11:59pm · Syndicate Review - Due Friday 11:5pm · Reivew Feedback - Due Sunday 11:59pm","w":null,"c":"syndicate"}],"Week 7":[{"t":"Ab2: Reflective Journal (45%)","d":"Due Tuesday at 12:00pm","w":45,"c":"individual"}],"O-Week":[{"t":"A1: Contribution to Learning","d":"Weightage: 10% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.\"","w":10,"c":"contribution"}]}},{"name":"Implementing Strategy","code":"BUSA90126","elective":true,"weeks":{"Week 3":[{"t":"A2a: Problem Identification (10%)","d":"Due Tuesday at 12:00pm ( midday)","w":10,"c":"individual"}],"Week 5":[{"t":"Assessment 2b: Actions and organisational leadership (30%)","d":"Due Tuesday at 12:00pm ( midday)","w":30,"c":"individual"}],"Week 7":[{"t":"Assessment 2c: Metrics and communication (Hurdle) ( 40%)","d":"Due Tuesday at 12:00pm","w":40,"c":"hurdle"}],"O-Week":[{"t":"A1: Contribution to Learning","d":"Weightage: 10% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.\"","w":10,"c":"contribution"}]}},{"name":"Managing People","code":"BUSA90225","elective":false,"weeks":{"O-Week":[{"t":"A3: Contribution to Learning","d":"Weightage: 15% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.\"","w":15,"c":"contribution"}],"Week 1":[{"t":"A1: Organisational Chance Forcefield Analysis","d":"Weightage: 10% · Due: Tuesday at 12:00pm","w":10,"c":"individual"}],"Week 3":[{"t":"A2: Global Team Charter","d":"Weightage: 10% · Due: Tuesday at 5pm · Review - Due Friday 11:5pm · Feedback - Due Sunday 11:59pm","w":10,"c":"individual"}],"Week 6":[{"t":"A2b: Syndicate Project Analysis","d":"Weightage: 25% · Due: Tuesday 12pm · Review - Due Friday 11:5pm · Feedback - Due Sunday 11:59pm","w":25,"c":"syndicate"}],"Week 7":[{"t":"A4: Managerial Review and Plan","d":"Weightage: 40% · Due: Tuesday at 12pm","w":40,"c":"individual"}]}},{"name":"Finance","code":"BUSA90095","elective":true,"weeks":{"O-Week":[{"t":"A2: Weekly Challenges","d":"Weightage: 60% ( 10% each week ) · Due Friday at 11:59pm · W6 Challenges due Tuesday W7 at 12:00pm","w":60,"c":"weekly"},{"t":"A1: Contribution to Learning","d":"Weightage: 10% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.\"","w":10,"c":"contribution"}],"Week 3":[{"t":"A3a: Syndicate","d":"Due Wedneday 11:59pm · Syndicate Review - Due Friday 11:5pm · Reivew Feedback - Due Sunday 11:59pm · (Combined Weightage = 2.5%)","w":2.5,"c":"syndicate"}],"Week 6":[{"t":"A3: Syndicate","d":"Case Analysis (30%) · Due - Tuesday 12:00pm · Submit Review - Due Friday 11:59pm · Review Feedback - Due Sunday 11:59pm","w":30,"c":"syndicate"}]}},{"name":"Negotiations","code":"BUSA90276","elective":false,"weeks":{"O-Week":[{"t":"A2: Negotiation Preparation","d":"Weightage: 40% · Due: Wednesday's at 5pm","w":40,"c":"individual"},{"t":"A3: Negotiation Report","d":"Weightage: 20% · Due: Wednesday's at 6pm","w":20,"c":"individual"},{"t":"A1: Contribution to Learning","d":"Weightage: 5% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.\"","w":5,"c":"contribution"}],"Week 7":[{"t":"A4: Negotiation Self Anaylsis","d":"Weightage: 35% · Due: Tuesday at 12:00pm","w":35,"c":"individual"}]}},{"name":"Ethics for Managers (0.5)","code":"BUSA90558","elective":false,"weeks":{"O-Week":[{"t":"A3: Contribution to Learning","d":"Due: Sunday 11:59pm · (Due at the end of each week)","w":null,"c":"contribution"}],"Week 1":[{"t":"A1: Shared Vakue Opp (30%)","d":"Due Sunday 11:59pm","w":30,"c":"individual"}],"Week 3":[{"t":"A2: Ethical Fading Case","d":"Due Sunday 11:59pm","w":null,"c":"individual"}]}},{"name":"Leadership in Changing Times (0.5)","code":"BUSA90557","elective":false,"weeks":{"Week 4":[{"t":"A3: Contribution to Learning","d":"Open Friday Week 3, Due: Sunday 11:59pm · (Due at the end of each week)","w":null,"c":"contribution"}],"Week 6":[{"t":"A1: Branching Scenario Reflection","d":"Due Sunday 11:59pm","w":null,"c":"individual"}],"Week 7":[{"t":"A2: Immersive Scenario","d":"Due Tuesday 12pm","w":null,"c":"individual"}]}},{"name":"Managerial Economics","code":"BUSA90195","elective":true,"weeks":{"O-Week":[{"t":"A1: Weekly Challenges","d":"Weightage 10% · Opens Monday O-week","w":10,"c":"weekly"},{"t":"A2: Weekly Challenges","d":"Weightage 40% · Opens Monday O-week","w":40,"c":"weekly"}],"Week 1":[{"t":"A2: Weekly Challenges","d":"Weightage 40% (Week 1-5 7% each, Week 6 5%) · Opens Monday O-week · (Due Friday 11.59pm weekly)","w":40,"c":"weekly"}],"Week 3":[{"t":"A3: Syndicate","d":"Due - Wednesday 11:59pm · Syndicate Review - Due Friday 11:5pm · Reivew Feedback Due Sunday 11:59pm","w":null,"c":"syndicate"}],"Week 7":[{"t":"A3b: Syndicate Final project","d":"Weightage: 50% (including reviews) · Due Tuesday 12:00pm · Syndicate Review - Due Wed 11:59pm · Reivew Feedback Due Friday 11:59pm · (Combined Weightage = 2.5% of syndicate total)","w":50,"c":"syndicate"}]}},{"name":"Brand Management","code":"BUSA90016","elective":true,"weeks":{"O-Week":[{"t":"A1: Contribution to Learning (15%)","d":"Opens Friday O-week · (Due at the end of each week)","w":15,"c":"contribution"}],"Week 2":[{"t":"A2: Quiz (5%)","d":"Open - Sunday Week 1 · Due - Tuesday 12pm","w":5,"c":"quiz"},{"t":"A3: Syndicate Charter","d":"Due - Wednesday 5:00pm · Submit Review - Due Friday 11:59pm · Review Feedback - Due Sunday 11:59pm","w":null,"c":"syndicate"}],"Week 5":[{"t":"A3: Syndicate","d":"Due - Between Thursday and Saturday · Submit Review - Due Friday 11:59pm · Review Feedback - Due Sunday 11:59pm","w":null,"c":"syndicate"}],"Week 6":[{"t":"A3: Syndicate","d":"Report and Presenation (40%) · Due - Tuesday 12:00pm · Submit Review - Due Friday 11:59pm · Review Feedback - Due Sunday 11:59pm","w":40,"c":"syndicate"},{"t":"A2: Controbution to Learning (15%)","d":"Due Sunday 11:59pm","w":15,"c":"contribution"}],"Week 7":[{"t":"A4: Final Paper (40%)","d":"Opens - Sunday Week 6 · Due - Tuesday 12pm","w":40,"c":"individual"}]}},{"name":"Managing in a Global Environment","code":"","elective":true,"weeks":{"O-Week":[{"t":"A1: Contribution to Learning (10%)","d":"Opens Friday O-week · (Due at the end of each week)","w":10,"c":"contribution"}],"Week 2":[{"t":"A1a: Syndicate Charter","d":"due - Wednesday 11:59pm · Submit Review - Due Friday 11:59pm · Review Feedback - Due Sunday 11:59pm · (Combined Weightage = 2.5%)","w":2.5,"c":"syndicate"}],"Week 4":[{"t":"A2a: One-Page Narrative (10%)","d":"Due - Tuesday 12:00pm","w":10,"c":"individual"}],"Week 6":[{"t":"A1b: Syndicate Market Entry","d":"Due - Tuesday 12pm · Submit Review - Due Friday 11:59pm · Review Feedback - Due Sunday 11:59pm · (Combined Weightage = 2.5%)\"","w":2.5,"c":"syndicate"},{"t":"A2: Controbution to Learning (15%)","d":"Due Sunday 11:59pm","w":15,"c":"contribution"}],"Week 7":[{"t":"A2b: Global Market Reporting (30%)","d":"Due Tuesday 12pm","w":30,"c":"individual"}]}},{"name":"Data Analytics for Decision Making","code":"BUSA90059","elective":true,"weeks":{"Week 3":[{"t":"A2: Cast Stusy Project ( Syndicate )","d":"Weightage: 20% · Due: Charter: Wednesday, Week 3, 5.00pm (VIC time)","w":20,"c":"syndicate"}],"Week 6":[{"t":"A2: Cast Stusy Project ( Syndicate )","d":"Weightage: 20% · Case study project: Tuesday, Week 6, 12.00pm (midday, VIC time)","w":20,"c":"syndicate"}],"Week 7":[{"t":"A3: Final Chllenge ( Individual )","d":"Weighting: 40% · Due: Tuesday  at 12.00pm (midday, VIC time). You have 60 minutes to complete each challenge once opened.","w":40,"c":"individual"}],"O-Week":[{"t":"A4: Contribution to Learning","d":"Weightage: 10% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.","w":10,"c":"contribution"},{"t":"A1: Weekly Challenges","d":"Weightage 6% · Opens Monday O-week · Due: Friday 11.59pm (VIC time) of Week 1, Week 2, Week 3, Week 4, and Week 5","w":6,"c":"weekly"}],"Week 1":[{"t":"A1: Weekly Challenges","d":"Weightage 6% · Opens Monday O-week · Due: Friday 11.59pm (VIC time) of Week 1, Week 2, Week 3, Week 4, and Week 5","w":6,"c":"weekly"}],"Week 2":[{"t":"A1: Weekly Challenges","d":"Weightage 6% · Opens Monday O-week · Due: Friday 11.59pm (VIC time) of Week 1, Week 2, Week 3, Week 4, and Week 5","w":6,"c":"weekly"}],"Week 4":[{"t":"A1: Weekly Challenges","d":"Weightage 6% · Opens Monday O-week · Due: Friday 11.59pm (VIC time) of Week 1, Week 2, Week 3, Week 4, and Week 5","w":6,"c":"weekly"}],"Week 5":[{"t":"A1: Weekly Challenges","d":"Weightage 6% · Opens Monday O-week · Due: Friday 11.59pm (VIC time) of Week 1, Week 2, Week 3, Week 4, and Week 5","w":6,"c":"weekly"}]}},{"name":"Operations","code":"BUSA90229","elective":true,"weeks":{"Week 1":[{"t":"A1: Weekly Challenges","d":"Weightage: 50% · Due: Friday 11.59pm of Weeks 1, 3 and 6.","w":50,"c":"weekly"}],"Week 3":[{"t":"A1: Weekly Challenges","d":"Weightage: 50% · Due: Friday 11.59pm of Weeks 1, 3 and 6.","w":50,"c":"weekly"},{"t":"A2: Syndicate Case","d":"Weightage: 40% · Due: Syndicate charter: Wednesday, Week 3, 11.59pm VIC time","w":40,"c":"syndicate"}],"Week 6":[{"t":"A1: Weekly Challenges","d":"Weightage: 50% · Due: Friday 11.59pm of Weeks 1, 3 and 6.","w":50,"c":"weekly"}],"Week 7":[{"t":"A2: Syndicate Case","d":"Weightage: 40% · Due: Syndicate case: Tuesday, Week 7, 12.00pm (midday) VIC time.","w":40,"c":"syndicate"}],"O-Week":[{"t":"A4: Contribution to Learning","d":"Weightage: 10% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.","w":10,"c":"contribution"}]}},{"name":"Leading Sustainability with Data and AI","code":"BUSA90559","elective":true,"weeks":{"Week 3":[{"t":"A2: Data Narrative","d":"Weightage: 20% · Due: Tuesday at 12pm midday","w":20,"c":"individual"},{"t":"A3: Syndicate Chater","d":"Weightage: 30% · Due: Friday at 9:00pm","w":30,"c":"syndicate"}],"Week 6":[{"t":"A3: Syndicate Materiality Matrix","d":"Weightage: 30% · Due: Tuesday at 12:00pm","w":30,"c":"syndicate"}],"Week 7":[{"t":"A4: Case Study Responce","d":"Weightage: 40% · Due: Tuesday at 12:00pm ( Opens Monday of week 6 at 8:00am)","w":40,"c":"individual"}],"O-Week":[{"t":"A1: Contribution to Learning","d":"Weightage: 10% · Due: This will be throughout the study period, starting at 12.01am Friday of Week 0, and must be completed by 11.59pm Sunday of Week 6.","w":10,"c":"contribution"}]}},{"name":"Applied Business Modelling","code":"BUSA90576","elective":true,"weeks":{"Week 2":[{"t":"A2: Weekly Challenges (40%)","d":"Due: Friday, 11:59pm (VIC time)","w":40,"c":"weekly"}],"Week 3":[{"t":"A3: Syndicate Charter","d":"Due: Wednesday, 11:59pm · Syndicate Review: Due Friday, 11:59pm · Review Feedback: Due Sunday, 11:59pm · (All times VIC)","w":null,"c":"syndicate"}],"Week 4":[{"t":"A3: Syndicate Interim (15%, including reviews)","d":"Due: Sunday, 11:59pm (VIC time)","w":15,"c":"syndicate"}],"Week 6":[{"t":"Teaching Evaluation Survey","d":"Open: Thursday · Close: Saturday","w":null,"c":"other"}],"Week 7":[{"t":"A3: Syndicate Project (35%, including reviews)","d":"Due: Tuesday, 12:00pm · Syndicate Review: Due Wednesday, 11:59pm · Review Feedback: Due Friday, 11:59pm · (All times VIC)","w":35,"c":"syndicate"}],"Week 1":[{"t":"A1: Contribution to Learning (10%)","d":"Open: Friday, Week 0 · Due: Friday, 11:59pm (VIC time)","w":10,"c":"contribution"}]}}];
+  let mbsaWeek = "all";
+
+  function mbsEsc(s) {
+    return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function mbsItem(a) {
+    return '<div class="mbsa-item c-' + a.c + '">' +
+      '<b>' + mbsEsc(a.t) + '</b>' +
+      (a.w != null ? '<span class="wt">' + a.w + '%</span>'
+                   : '<span class="wt none">no weight given</span>') +
+      (a.d ? '<span class="dt">' + mbsEsc(a.d) + '</span>' : '') +
+    '</div>';
+  }
+
+  function mbsRender() {
+    const body = document.getElementById("mbsa-body");
+    if (!body) return;
+
+    const count = MBS_SUBJECTS.reduce(function (n, s) {
+      return n + MBS_WEEKS.reduce(function (m, w) { return m + ((s.weeks[w] || []).length); }, 0);
+    }, 0);
+    const cEl = document.getElementById("mbsa-count");
+    if (cEl) cEl.textContent = MBS_SUBJECTS.length + " subjects \u00b7 " + count + " assessment entries";
+
+    const bar = document.getElementById("mbsa-bar");
+    if (bar) bar.innerHTML = ['<button class="mbsa-wk' + (mbsaWeek === "all" ? " on" : "") + '" data-mbsw="all">All weeks</button>']
+      .concat(MBS_WEEKS.map(function (w) {
+        const n = MBS_SUBJECTS.filter(function (s) { return (s.weeks[w] || []).length; }).length;
+        return '<button class="mbsa-wk' + (mbsaWeek === w ? " on" : "") + '" data-mbsw="' + w + '">' +
+          w + '<span class="n">' + n + '</span></button>';
+      })).join("");
+
+    const key = document.getElementById("mbsa-key");
+    if (key) key.innerHTML = Object.keys(MBS_CATS).map(function (k) {
+      return '<span><i style="background:' + MBS_CATS[k].dot + '"></i>' + MBS_CATS[k].label + '</span>';
+    }).join("");
+
+    if (mbsaWeek === "all") {
+      body.innerHTML = '<div class="mbsa-grid"><table><thead><tr><th>Subject</th>' +
+        MBS_WEEKS.map(function (w) { return '<th>' + w + '</th>'; }).join("") +
+        '</tr></thead><tbody>' +
+        MBS_SUBJECTS.map(function (s) {
+          return '<tr><td><div class="mbsa-subj">' + mbsEsc(s.name) + '</div>' +
+            (s.code ? '<div class="mbsa-code">' + mbsEsc(s.code) + '</div>'
+                    : '<div><span class="mbsa-nocode">no code in source</span></div>') +
+            '</td>' +
+            MBS_WEEKS.map(function (w) {
+              return '<td>' + (s.weeks[w] || []).map(mbsItem).join("") + '</td>';
+            }).join("") + '</tr>';
+        }).join("") + '</tbody></table></div>';
+      return;
+    }
+
+    const due = MBS_SUBJECTS.filter(function (s) { return (s.weeks[mbsaWeek] || []).length; });
+    body.innerHTML = due.length
+      ? '<div class="mbsa-weekview">' + due.map(function (s) {
+          return '<div class="mbsa-card"><h4>' + mbsEsc(s.name) + '</h4>' +
+            '<div class="code">' + (s.code ? mbsEsc(s.code) : "no code in source") + '</div>' +
+            s.weeks[mbsaWeek].map(mbsItem).join("") + '</div>';
+        }).join("") + '</div>'
+      : '<div class="mbsa-empty">Nothing due in ' + mbsaWeek + '.</div>';
+  }
+
+  function mbsSetInst(inst) {
+    document.body.setAttribute("data-inst", inst);
+    try { localStorage.setItem("hub-institution", inst); } catch (e) {}
+    const sw = document.getElementById("inst-switch");
+    if (sw) [...sw.querySelectorAll("[data-inst-btn]")].forEach(function (b) {
+      b.classList.toggle("on", b.dataset.instBtn === inst);
+    });
+    if (inst === "mbs") mbsRender();
+  }
+
+  function initMbs() {
+    const sw = document.getElementById("inst-switch");
+    if (sw) sw.addEventListener("click", function (e) {
+      const b = e.target.closest("[data-inst-btn]");
+      if (b) mbsSetInst(b.dataset.instBtn);
+    });
+
+    const bar = document.getElementById("mbsa-bar");
+    if (bar) bar.addEventListener("click", function (e) {
+      const b = e.target.closest("[data-mbsw]");
+      if (!b) return;
+      mbsaWeek = b.dataset.mbsw;
+      mbsRender();
+    });
+
+    const body = document.getElementById("mbsa-body");
+    if (body) body.addEventListener("click", function (e) {
+      const it = e.target.closest(".mbsa-item");
+      if (it) it.classList.toggle("open");
+    });
+
+    let saved = "unsw";
+    try { saved = localStorage.getItem("hub-institution") || "unsw"; } catch (e) {}
+    mbsSetInst(saved === "mbs" ? "mbs" : "unsw");
+  }
   // ── Action Items ────────────────────────────────────
   const AI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/action_items.json';
   const AI_LOADED = 'Loaded 23 Oct 2026 from the accounts conditional offer list';
@@ -10806,6 +11044,7 @@ ${cardsHTML}
   tzInit();
   initIssues();
   initActions();
+  initMbs();
   (function () {
     const flip = document.getElementById('nb-flip');
     if (!flip) return;
