@@ -828,6 +828,14 @@
     .mbsa-key span { display:inline-flex; align-items:center; gap:5px; color:#6b7280; font-weight:700; }
     .mbsa-key i { width:10px; height:10px; border-radius:3px; display:inline-block; }
 
+    .mbsa-nowtag { font-size:0.62rem; font-weight:800; color:#0369a1; background:#e0f2fe; border-radius:999px; padding:3px 11px; }
+    .mbsa-wk .dt { display:block; font-size:0.56rem; font-weight:700; opacity:0.6; margin-top:1px; }
+    .mbsa-wk.now { border-color:#0ea5e9; box-shadow:inset 0 0 0 1px #0ea5e9; }
+    .mbsa-wk.now.on { background:#0369a1; border-color:#0369a1; box-shadow:none; }
+    .mbsa-grid th .wkdate { display:block; font-size:0.54rem; font-weight:700; opacity:0.65; letter-spacing:0.2px; margin-top:1px; }
+    .mbsa-grid th.now { background:#0369a1; }
+    .mbsa-grid th.now .wkdate { opacity:1; }
+    .mbsa-grid td.nowcol { background:#f0f9ff; box-shadow:inset 1px 0 0 #7dd3fc, inset -1px 0 0 #7dd3fc; }
     .mbsa-grid { overflow:auto; max-height:calc(100vh - 300px); border:1px solid #cbd5e1; border-radius:8px; background:#fff; }
     .mbsa-grid table { border-collapse:separate; border-spacing:0; width:100%; min-width:1320px; table-layout:fixed; }
     .mbsa-grid col.subj { width:186px; }
@@ -2258,8 +2266,9 @@
     <div class="mbsa-head">
       <h2>📅 MBS Assessment Schedule</h2>
       <span class="mbsa-sub" id="mbsa-count"></span>
+      <span class="mbsa-nowtag" id="mbsa-now"></span>
     </div>
-    <p class="mbsa-sub">Every subject by teaching week, laid out as it is in the spreadsheet. Colour follows the assessment type and the weighting sits top right. Use Hide the detail to see the whole study period at once, or pick a week to see only what is due then. Weeks are relative, not dates, because the MBS study period dates are not loaded yet.</p>
+    <p class="mbsa-sub">Every subject by teaching week, laid out as it is in the spreadsheet. Colour follows the assessment type and the weighting sits top right. Use Hide the detail to see the whole study period at once, or pick a week to see only what is due then. MBS runs the same teaching weeks as UNSW, so the current week is marked.</p>
     <div class="mbsa-bar" id="mbsa-bar"></div>
     <div class="mbsa-key" id="mbsa-key"></div>
     <div id="mbsa-body"></div>
@@ -3617,8 +3626,7 @@
         if (wk) {
           const pill = document.createElement('span');
           pill.className = 'week-pill';
-          pill.textContent = isMbs() ? '' : `H${wk.hex} · ${wk.label === 'O-Week' ? 'OW' : wk.label.replace('Week ','W')}`;
-          if (isMbs()) pill.style.display = 'none';
+          pill.textContent = `H${wk.hex} · ${wk.label === 'O-Week' ? 'OW' : wk.label.replace('Week ','W')}`;
           labelEl.appendChild(pill);
         }
 
@@ -10515,6 +10523,31 @@ ${cardsHTML}
   let mbsaWeek = "all";
   let mbsaDense = false;
 
+  // MBS runs the same teaching weeks as UNSW, so the hexamester calendar
+  // tells us which week the schedule is sitting in today.
+  function mbsNow() {
+    if (typeof UNSW_WEEKS === "undefined") return null;
+    const t = new Date();
+    const k = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+    const wk = UNSW_WEEKS[k];
+    if (!wk) return null;
+
+    const mondays = {};
+    Object.keys(UNSW_WEEKS).forEach(function (key) {
+      const w = UNSW_WEEKS[key];
+      if (w.hex !== wk.hex) return;
+      const d = new Date(key + "T00:00:00");
+      if (!mondays[w.label] || d < mondays[w.label]) mondays[w.label] = d;
+    });
+    return { hex: wk.hex, label: wk.label, mondays: mondays };
+  }
+
+  function mbsWeekDate(label) {
+    const n = mbsNow();
+    if (!n || !n.mondays[label]) return "";
+    return n.mondays[label].toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+  }
+
   function mbsEsc(s) {
     return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
@@ -10542,9 +10575,13 @@ ${cardsHTML}
     const body = document.getElementById("mbsa-body");
     if (!body) return;
 
+    const now = mbsNow();
+
     const count = MBS_SUBJECTS.reduce(function (n, s) { return n + s.points.length + s.spans.length; }, 0);
     const cEl = document.getElementById("mbsa-count");
     if (cEl) cEl.textContent = MBS_SUBJECTS.length + " subjects \u00b7 " + count + " assessment entries";
+    const nEl = document.getElementById("mbsa-now");
+    if (nEl) nEl.textContent = now ? ("Today: Hexamester " + now.hex + ", " + now.label) : "Outside a teaching week";
 
     const bar = document.getElementById("mbsa-bar");
     if (bar) bar.innerHTML = ['<button class="mbsa-wk' + (mbsaWeek === "all" ? " on" : "") + '" data-mbsw="all">All weeks</button>']
@@ -10554,8 +10591,11 @@ ${cardsHTML}
           return s.points.some(function (p) { return p.wi === wi2; }) ||
                  s.spans.some(function (b) { return wi2 >= b.from && wi2 <= b.to; });
         }).length;
-        return '<button class="mbsa-wk' + (mbsaWeek === w ? " on" : "") + '" data-mbsw="' + w + '">' +
-          w + '<span class="n">' + n + '</span></button>';
+        const dt = mbsWeekDate(w);
+        const isNow = now && now.label === w;
+        return '<button class="mbsa-wk' + (mbsaWeek === w ? " on" : "") + (isNow ? " now" : "") + '" data-mbsw="' + w + '">' +
+          w + (dt ? '<span class="dt">' + dt + '</span>' : '') +
+          '<span class="n">' + n + '</span></button>';
       })).concat(['<button class="mbsa-wk mbsa-dense" data-mbsdense="1">' +
         (mbsaDense ? "Show the detail" : "Hide the detail") + '</button>']).join("");
 
@@ -10577,7 +10617,8 @@ ${cardsHTML}
           (s.elective ? '<span class="mbsa-el">Elective</span>' : '') + '</td>';
         html += MBS_WEEKS.map(function (w, i) {
           const here = s.points.filter(function (p) { return p.wi === i; });
-          return '<td' + (!s.spans.length ? ' class="lastcell"' : '') + '>' + here.map(mbsItem).join('') + '</td>';
+          const nowCol = now && MBS_WEEKS.indexOf(now.label) === i;
+          return '<td' + (nowCol ? ' class="nowcol"' : '') + '>' + here.map(mbsItem).join('') + '</td>';
         }).join('');
         html += '</tr>';
         s.spans.forEach(function (b, bi) {
@@ -10594,7 +10635,12 @@ ${cardsHTML}
 
       body.innerHTML = '<div class="mbsa-grid"><table>' +
         '<colgroup><col class="subj">' + MBS_WEEKS.map(function () { return '<col class="wk">'; }).join('') + '</colgroup>' +
-        '<thead><tr><th>Subject</th>' + MBS_WEEKS.map(function (w) { return '<th>' + w + '</th>'; }).join('') +
+        '<thead><tr><th>Subject</th>' + MBS_WEEKS.map(function (w) {
+          const dt = mbsWeekDate(w);
+          const isNow = now && now.label === w;
+          return '<th' + (isNow ? ' class="now"' : '') + '>' + w +
+            (dt ? '<span class="wkdate">' + dt + (isNow ? ' \u00b7 now' : '') + '</span>' : '') + '</th>';
+        }).join('') +
         '</tr></thead><tbody>' + rows + '</tbody></table></div>';
       return;
     }
