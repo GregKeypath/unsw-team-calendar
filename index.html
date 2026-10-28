@@ -1782,6 +1782,7 @@
     .sp-unit.in-plan .sp-unit-name { text-decoration: line-through; color: #aaa; }
     .sp-unit.in-plan .sp-unit-code { color: #ccc; }
     .sp-unit-pre { display:block; margin-top:3px; font-size:0.56rem; font-weight:800; color:#9a3412; background:#ffedd5; border-radius:4px; padding:1px 5px; }
+    .sp-unit-pre i { font-style:normal; opacity:0.72; }
     .plan-slot.pre-warn { box-shadow:inset 0 0 0 2px #f97316; }
     .plan-warn { background:#fff7ed; border:1px solid #fed7aa; border-left:3px solid #f97316; border-radius:7px; padding:8px 11px; margin-bottom:8px; font-size:0.7rem; color:#7c2d12; line-height:1.5; }
     .plan-warn b { color:#9a3412; }
@@ -7247,7 +7248,14 @@ draft.slice(0, 6000),
     c.dataset.name = name;
     c.dataset.cat = catType;
     const _pr = prereqFor(code, sp || null);
-    const _prTag = (_pr && _pr.needs && _pr.needs.length) ? '<span class="sp-unit-pre" title="' + _pr.text.replace(/"/g, '&quot;') + '">needs ' + _pr.needs.join(' + ') + '</span>' : '';
+    const _prVia = (_pr && _pr.needs && _pr.needs.length) ? prereqIndirect(code, sp || null) : [];
+    const _prTitle = ((_pr && _pr.text) ? _pr.text : '') +
+      (_prVia.length ? '  UNSW list only the last course in the chain, so ' + _prVia.join(' and ') +
+        ' is needed as well: it is a prerequisite of ' + _pr.needs.join(' and ') + '.' : '');
+    const _prTag = (_pr && _pr.needs && _pr.needs.length)
+      ? '<span class="sp-unit-pre" title="' + _prTitle.replace(/"/g, '&quot;') + '">needs ' + _pr.needs.join(' + ') +
+          (_prVia.length ? '<i> + ' + _prVia.join(' + ') + ' first</i>' : '') + '</span>'
+      : '';
     c.innerHTML = `<span class="sp-unit-cat">${catLabel}</span><span class="sp-unit-code">${code}</span> <span class="sp-unit-name">${name}</span>` + _prTag;
     if (!inPlan) {
       c.addEventListener('dragstart', e => {
@@ -7440,8 +7448,11 @@ draft.slice(0, 6000),
     if (warnBox) {
       warnBox.innerHTML = breaches.length
         ? breaches.map(function (b) {
+            const via = prereqIndirect(b.code, b.sp).filter(function (x) { return b.missing.indexOf(x) > -1; });
             return '<div class=plan-warn>⚠️ <b>' + b.code + '</b> in ' + b.sp +
-              ' needs ' + b.missing.join(' and ') + ' first. Under the ' + b.year + ' rules.</div>';
+              ' needs ' + b.missing.join(' and ') + ' first. Under the ' + b.year + ' rules.' +
+              (via.length ? ' ' + via.join(' and ') + ' is not listed against it, but sits behind the course that is.' : '') +
+              '</div>';
           }).join('')
         : '';
     }
@@ -7867,7 +7878,7 @@ ${cardsHTML}
     "ZZCA6510": { "2026":{needs:["ZZBU6501","ZZSC9001"],text:"Prerequisites ZZBU6501 or ZZSC9001"}, "2027":{needs:["ZZBU6501","ZZSC9001"],text:"Prerequisites ZZBU6501 or ZZSC9001"} },
     "ZZCA9205": { "2026":{needs:["ZZEN9201"],text:"ZZEN9201"}, "2027":{needs:["ZZEN9201"],text:"ZZEN9201"} },
     "ZZCA9208": { "2026":{needs:[],uoc:"48",programs:["8649"],text:"Enrolment in 8649 and 48 UOC completed"}, "2027":{needs:[],uoc:"48",programs:["8649"],text:"Enrolment in 8649 and 48 UOC completed"} },
-    "ZZCA9211": { "2026":{needs:["ZZEN9217"],text:"ZZEN9217"}, "2027":{needs:["ZZEN9217"],text:"ZZEN9217"} },
+    "ZZCA9211": { "2026":{needs:["ZZEN9217"],text:"Prerequisite: ZZEN9217"}, "2027":{needs:["ZZEN9217"],text:"Prerequisite: ZZEN9217"} },
     "ZZCO5005": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
     "ZZCO5006": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
     "ZZCO5007": { "2026":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"}, "2027":{needs:["ZZCO5001","ZZCO5002","ZZCO5003","ZZCO5004"],text:"Prerequisite: ZZCO5001, ZZCO5002, ZZCO5003, and ZZCO5004"} },
@@ -7896,7 +7907,7 @@ ${cardsHTML}
     "ZZPS5009": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004"} },
     "ZZPS5010": { "2026":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004","ZZPS5005","ZZPS5006","ZZPS5007","ZZPS5008","ZZPS5009"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004 and ZZPS5005 and ZZPS5006 and ZZPS5007 and ZZPS5008 and ZZPS5009"}, "2027":{needs:["ZZPS5001","ZZPS5002","ZZPS5003","ZZPS5004","ZZPS5005","ZZPS5006","ZZPS5007","ZZPS5008","ZZPS5009"],text:"Prerequisite: ZZPS5001 and ZZPS5002 and ZZPS5003 and ZZPS5004 and ZZPS5005 and ZZPS5006 and ZZPS5007 and ZZPS5008 and ZZPS5009"} },
     "ZZSC5114": { "2026":{needs:[],uoc:"48",text:"Students must be enrolled in the Master of Business Psychology and have completed at least 48 UOC."}, "2027":{needs:[],uoc:"48",text:"Students must be enrolled in the Master of Business Psychology and have completed at least 48 UOC."} },
-    "ZZSC5806": { "2026":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"}, "2027":{needs:["ZZSC9001"],programs:["7446","5646","8646"],text:"Prerequisite: Must be enrolled in 7446 or 5646 or 8646, and have completed ZZSC9001 Foundations of Data Science or equivalent."} },
+    "ZZSC5806": { "2026":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"}, "2027":{needs:["ZZSC9001"],programs:["7446","5646","8646"],text:"Prerequisite: Must be enrolled in 7446 or 5646 or 8646, and have completed ZZSC9001 Foundations of Data Science or equivalent. Confirmed by UNSW: the Faculty decided ZZSC5905 Statistical Inference is no longer needed, so this is a real change from 2026, not a carousel error."} },
     "ZZSC5836": { "2026":{needs:["ZZEN9021"],programs:["5646","8646"],text:"Prerequisite: ZZEN9021 and enrolment in either the 5646 or 8646 Data Science program."}, "2027":{needs:["ZZEN9021"],programs:["5646","8646"],text:"Prerequisite: ZZEN9021 and enrolment in either the 5646 or 8646 Data Science program."} },
     "ZZSC5855": { "2026":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"}, "2027":{needs:["ZZSC9001","ZZSC5905"],programs:["5646","8646"],text:"Prerequisite: Must be enrolled in 5646 or 8646 and have completed ZZSC9001 Foundations of Data Science and ZZSC5905 Statistical Inference for data scientists or equivalent"} },
     "ZZSC5960": { "2026":{needs:[],programs:["5646","8646"],text:"Must be enrolled in 5646 Graduate Diploma in Data Science or 8646 Master of Data Science."}, "2027":{needs:[],programs:["5646","8646"],text:"Must be enrolled in 5646 Graduate Diploma in Data Science or 8646 Master of Data Science."} },
@@ -7916,15 +7927,41 @@ ${cardsHTML}
     const y = prereqYear(sp);
     return rec[y] || null;
   }
-  function prereqBreaches(sp, code) {
+  // UNSW list only the last prerequisite in a chain, because that course
+  // carries the earlier one itself. ZZEN9215 shows ZZEN9217 alone, and
+  // ZZEN9217 needs ZZEN9216, so a student really needs both. Walk the
+  // chain so the planner asks for everything, not just the last step.
+  function prereqChain(code, sp) {
+    const out = [], seen = {};
+    (function walk(c) {
+      const r = prereqFor(c, sp);
+      if (!r || !r.needs) return;
+      r.needs.forEach(function (n) {
+        if (seen[n]) return;
+        seen[n] = 1;
+        out.push(n);
+        walk(n);
+      });
+    })(code);
+    return out;
+  }
+
+  // the courses behind the ones actually listed, for explaining why
+  function prereqIndirect(code, sp) {
     const r = prereqFor(code, sp);
-    if (!r || !r.needs || !r.needs.length) return [];
+    const direct = (r && r.needs) ? r.needs : [];
+    return prereqChain(code, sp).filter(function (n) { return direct.indexOf(n) === -1; });
+  }
+
+  function prereqBreaches(sp, code) {
+    const chain = prereqChain(code, sp);
+    if (!chain.length) return [];
     const key = spToSortKey(sp);
     const done = {};
     Object.entries(planData).forEach(function (e) {
       if (spToSortKey(e[0]) < key) e[1].forEach(function (u) { done[u.code] = 1; });
     });
-    return r.needs.filter(function (n) { return !done[n]; });
+    return chain.filter(function (n) { return !done[n]; });
   }
 
   const PROGRAM_RULES = {
