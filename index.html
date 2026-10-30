@@ -989,6 +989,18 @@
     .ci-modal-actions { display:flex; gap:9px; justify-content:flex-end; margin-top:18px; }
     .ci-btn { border:none; background:#16202b; color:#fff; border-radius:9px; padding:9px 20px; font-size:0.8rem; font-weight:800; cursor:pointer; font-family:inherit; }
     .ci-btn-ghost { border:1px solid #e5e7eb; background:#fff; color:#6b7280; border-radius:9px; padding:9px 18px; font-size:0.8rem; font-weight:700; cursor:pointer; font-family:inherit; }
+    .nb-chase { font-size:0.72rem; color:#6b7280; background:#fffbeb; border:1px solid #fde68a;
+      border-radius:8px; padding:8px 13px; margin-bottom:14px; line-height:1.5; }
+    .nb-chase b { color:#92400e; }
+    .nb-ack { margin-top:9px; padding-top:8px; border-top:1px dashed rgba(0,0,0,0.14); }
+    .nb-ack-h { font-size:0.57rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
+      color:rgba(0,0,0,0.42); margin-bottom:5px; }
+    .nb-ack-h b { color:rgba(0,0,0,0.7); }
+    .nb-ack-row { display:flex; flex-wrap:wrap; gap:4px; }
+    .nb-ack-btn { border:1px solid rgba(0,0,0,0.18); background:rgba(255,255,255,0.55); border-radius:999px;
+      font-size:0.6rem; font-weight:700; padding:2px 9px; cursor:pointer; color:rgba(0,0,0,0.6); font-family:inherit; }
+    .nb-ack-btn:hover { border-color:rgba(0,0,0,0.45); color:rgba(0,0,0,0.85); }
+    .nb-ack-btn.on { background:#15803d; border-color:#15803d; color:#fff; }
     .nb-wrap { padding:18px 22px 50px; }
     .nb-flip { position:relative; perspective:2400px; }
     .nb-face { transition:transform 0.75s cubic-bezier(.3,.9,.3,1); backface-visibility:hidden; }
@@ -2743,6 +2755,7 @@
       <button class="nb-add" id="nb-add">+ Pin an update</button>
     </div>
     <div class="nb-filters" id="nb-filters"></div>
+    <div class="nb-chase" id="nb-chase"></div>
     <div class="nb-flip" id="nb-flip">
       <div class="nb-face nb-front">
         <div class="nb-surface">
@@ -10340,6 +10353,25 @@ ${cardsHTML}
     try { const s = nbSeen(); s[id] = 1; localStorage.setItem('unsw-nb-seen', JSON.stringify(s)); } catch(e) {}
   }
 
+  const NB_SSAS = ["Milly", "James", "Priscilla", "D", "Kimmi", "Andrew", "Steph"];
+
+  function nbAcks(n) { return (n && n.acks) ? n.acks : {}; }
+
+  function nbAckRow(n) {
+    const a = nbAcks(n);
+    const done = NB_SSAS.filter(function (p) { return a[p]; });
+    return '<div class="nb-ack">' +
+      '<div class="nb-ack-h">Read and understood ' +
+        '<b>' + done.length + ' of ' + NB_SSAS.length + '</b></div>' +
+      '<div class="nb-ack-row">' + NB_SSAS.map(function (p) {
+        const at = a[p];
+        const when = at ? new Date(at).toLocaleDateString("en-AU", { day: "numeric", month: "short" }) : "";
+        return '<button class="nb-ack-btn' + (at ? " on" : "") + '" data-nback="' + n.id + '|' + nbEsc(p) + '"' +
+          (at ? ' title="Acknowledged ' + when + '. Click to undo."' : ' title="Tick when you have read this."') + '>' +
+          (at ? "\u2713 " : "") + nbEsc(p) + '</button>';
+      }).join("") + '</div></div>';
+  }
+
   async function nbLoad() {
     try {
       const res = await fetch(NB_DB_URL());
@@ -10386,6 +10418,21 @@ ${cardsHTML}
       (t === 'all' ? 'All' : (NB_PINS[t] || '') + ' ' + nbEsc(t)) + '</button>'
     ).join('');
 
+    const chase = document.getElementById("nb-chase");
+    if (chase) {
+      const live = Object.keys(nbNotices).map(function (k) { return nbNotices[k]; })
+        .filter(function (n) { return n.pinned !== false; });
+      const behind = NB_SSAS.map(function (p) {
+        return { p: p, n: live.filter(function (x) { return !nbAcks(x)[p]; }).length };
+      }).filter(function (x) { return x.n > 0; });
+      chase.innerHTML = !live.length ? ""
+        : behind.length
+          ? '<b>Still to acknowledge:</b> ' + behind.map(function (x) {
+              return nbEsc(x.p) + ' (' + x.n + ')';
+            }).join(", ")
+          : '<b>\u2713 Everyone has acknowledged every notice on the board.</b>';
+    }
+
     const seen = nbSeen();
     let items = Object.keys(nbNotices).map(k => Object.assign({ id:k }, nbNotices[k]));
     if (nbFilter !== 'all') items = items.filter(n => n.tag === nbFilter);
@@ -10425,6 +10472,7 @@ ${cardsHTML}
         (n.tag ? '<span class="nb-tag">' + nbEsc(n.tag) + '</span>' : '') +
         '<h4>' + nbEsc(n.title || 'Untitled') + '</h4>' +
         '<div class="nb-body">' + body + '</div>' +
+        nbAckRow(n) +
         '<div class="nb-meta"><span>' + nbEsc(n.author || 'Team') + '</span>' +
         (when ? '<span>· ' + when + '</span>' : '') +
         '<span class="nb-acts">' +
@@ -10474,7 +10522,18 @@ ${cardsHTML}
       });
 
       const _nbClick = e => {
-        const pin = e.target.closest('[data-nbpin]');
+        const ack = e.target.closest('[data-nback]');
+      if (ack) {
+        const parts = ack.dataset.nback.split('|');
+        const n = nbNotices[parts[0]];
+        if (!n) return;
+        if (!n.acks) n.acks = {};
+        if (n.acks[parts[1]]) delete n.acks[parts[1]];
+        else n.acks[parts[1]] = Date.now();
+        nbSave(); nbRender();
+        return;
+      }
+      const pin = e.target.closest('[data-nbpin]');
         if (pin) {
           const id = pin.dataset.nbpin;
           nbNotices[id].pinned = (nbNotices[id].pinned === false);
