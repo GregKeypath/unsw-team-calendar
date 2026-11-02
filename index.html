@@ -1128,8 +1128,6 @@
     .ds-daybtn.is-today .ds-dot { display:inline-block; width:5px; height:5px; border-radius:50%; background:#1E9E73; margin-left:6px; vertical-align:middle; }
     .ds-daybtn.active.is-today .ds-dot { background:#7BE3BC; }
     .ds-spacer { flex:1; }
-    .ds-print-btn { border:1px solid #dfe5ec; background:#fff; border-radius:7px; padding:7px 13px; font-size:0.73rem; cursor:pointer; color:#5b6b7c; }
-    .ds-print-btn:hover { background:#f5f8fb; }
 
     .ds-scroll { overflow-x:auto; padding-bottom:8px; }
     .ds-week { display:grid; grid-template-columns:repeat(5,minmax(228px,1fr)); gap:12px; align-items:start; }
@@ -1202,6 +1200,8 @@
     .ds-legend i { width:11px; height:11px; border-radius:3px; flex:none; }
 
     .dp-shell { margin-bottom: 26px; }
+    .dp-target-note { display:block; font-size:0.56rem; font-weight:700; opacity:0.6; margin-top:2px; }
+    .dp-count label b { font-weight:800; opacity:0.55; font-size:0.56rem; }
     .dp-loading { padding: 40px; text-align: center; color: #9ca3af; font-size: 0.85rem; }
 
     .dp-pick { background: linear-gradient(135deg, #fff9e6 0%, #ffeef2 55%, #eef4ff 100%); border-radius: 20px; padding: 34px 28px; text-align: center; }
@@ -2661,7 +2661,6 @@
     <div class="ds-toolbar">
       <div class="ds-toolbar" id="ds-daynav" style="margin:0;"></div>
       <span class="ds-spacer"></span>
-      <button class="ds-print-btn" id="ds-print-btn">🖨 Print the week</button>
     </div>
     <div id="ds-body"></div>
     <div class="ds-legend" id="ds-legend"></div>
@@ -9469,7 +9468,9 @@ ${cardsHTML}
   // ── Week Planner ──────────────────────────────────────────────
   const DP_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
   const DP_CALL_MINS = 360;
-  const DP_DEFAULT_WEEKLY = 100;
+  const DP_DEFAULT_WEEKLY = 100;   // 20 attempts a day across five days
+  const DP_PER_DAY = 20;
+  const DP_SPLIT = { vcita: 10, cold: 10 };
   const DP_OFF = {
     leave:  { label: 'Annual leave', emoji: '🌴', tone: 'leave' },
     sick:   { label: 'Sick',         emoji: '🤒', tone: 'sick' },
@@ -9482,7 +9483,7 @@ ${cardsHTML}
     'Tidy. Your future self says thanks.'
   ];
 
-  const DP_GONE = ['Saravanan Rajamani'];
+  const DP_GONE = ['Saravanan Rajamani', 'Melanie Richards', 'Tyler Bruns', 'Carmela Gomez'];
   let dpWho = null;
   let dpWeek = null;
   let dpPlan = null;
@@ -9523,7 +9524,11 @@ ${cardsHTML}
   function dpNormalise(raw) {
     const p = dpBlankPlan();
     if (!raw || typeof raw !== 'object') return p;
-    if (raw.weeklyTarget) p.weeklyTarget = Math.max(0, parseInt(raw.weeklyTarget, 10) || DP_DEFAULT_WEEKLY);
+    if (raw.weeklyTarget) {
+      const saved = Math.max(0, parseInt(raw.weeklyTarget, 10) || DP_DEFAULT_WEEKLY);
+      // plans saved against the old half target move up to 20 a day
+      p.weeklyTarget = (saved === 50) ? DP_DEFAULT_WEEKLY : saved;
+    }
     const rd = raw.days || {};
     DS_DAYS.forEach(d => {
       const s = rd[d.k] || {};
@@ -9574,6 +9579,14 @@ ${cardsHTML}
       .sort((a, b) => (exact[b] - Math.floor(exact[b])) - (exact[a] - Math.floor(exact[a])))
       .forEach(k => { if (left > 0 && caps[k] > 0) { out[k]++; left--; } });
     return out;
+  }
+
+  // A full day is 20 attempts, half booked through vCita and half cold.
+  // On a short day the target drops, so split whatever it has become.
+  function dpStreamTarget(dayTarget, stream) {
+    if (!dayTarget) return 0;
+    const half = dayTarget / 2;
+    return stream === "vcita" ? Math.ceil(half) : Math.floor(half);
   }
 
   function dpDayDone(k) {
@@ -9657,7 +9670,8 @@ ${cardsHTML}
         '<span class="dp-weeklbl">' + dpWeekLabel(dpWeek) + (isThis ? ' <b>this week</b>' : '') + '</span>' +
         '<button class="dp-arw" data-dpweek="1">›</button>' +
       '</div>' +
-      '<div class="dp-target-set">Week goal <input id="dp-wt" type="number" min="0" max="500" value="' + dpPlan.weeklyTarget + '"></div>' +
+      '<div class="dp-target-set">Week goal <input id="dp-wt" type="number" min="0" max="500" value="' + dpPlan.weeklyTarget + '">' +
+        '<span class="dp-target-note">' + DP_PER_DAY + ' a day, ' + DP_SPLIT.vcita + ' vCita and ' + DP_SPLIT.cold + ' cold</span></div>' +
     '</div>';
 
     const banner = '<div class="dp-banner' + (pct >= 1 ? ' done' : '') + '">' +
@@ -9668,7 +9682,7 @@ ${cardsHTML}
           roll.workDays + ' day' + (roll.workDays === 1 ? '' : 's') + ' on' +
           (roll.offDays ? ' · ' + roll.offDays + ' off' : '') +
           (roll.meetingMins ? ' · ' + Math.round(roll.meetingMins / 60 * 10) / 10 + 'h in meetings' : '') +
-          ' · at least ' + Math.ceil(roll.target / 2) + ' on vCita' +
+          ' · half on vCita, half cold' +
         '</div>' +
         '<div class="dp-bar"><i style="width:' + Math.min(100, pct * 100).toFixed(1) + '%"></i></div>' +
       '</div></div>';
@@ -9697,8 +9711,10 @@ ${cardsHTML}
           ? '<div class="dp-off-face">' + off.emoji + '<span>' + off.label + '</span></div>'
           : '<div class="dp-day-ring">' + dpRing(dpct, 78, done, tgt) + '</div>' +
             '<div class="dp-count">' +
-              '<label>vCita<input type="number" min="0" max="99" value="' + day.done.vcita + '" data-dpdone="' + d.k + '|vcita"></label>' +
-              '<label>Cold<input type="number" min="0" max="99" value="' + day.done.cold + '" data-dpdone="' + d.k + '|cold"></label>' +
+              '<label>vCita <b>of ' + dpStreamTarget(tgt, "vcita") + '</b>' +
+                '<input type="number" min="0" max="99" value="' + day.done.vcita + '" data-dpdone="' + d.k + '|vcita"></label>' +
+              '<label>Cold <b>of ' + dpStreamTarget(tgt, "cold") + '</b>' +
+                '<input type="number" min="0" max="99" value="' + day.done.cold + '" data-dpdone="' + d.k + '|cold"></label>' +
             '</div>') +
         '<div class="dp-blocks">' + blocks +
           '<button class="dp-add" data-dpadd="' + d.k + '">+ block out time</button>' +
@@ -9791,7 +9807,7 @@ ${cardsHTML}
   const DS_DAYS = [
     { k:'mon', label:'Monday', dow:1, note:'10 booked. Morning is booked calls. Huddle at 11:30.',
       blocks:[
-        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Check for cancelled booking notifications' },
         { type:'booked', t:'09:20', count:6, from:1, tag:'booked last Friday' },
         { type:'break', t:'11:15', mins:15, title:'Break' },
         { type:'huddle', t:'11:30', mins:30, title:'Team huddle', sub:'Bring one blocker' },
@@ -9807,7 +9823,7 @@ ${cardsHTML}
 
     { k:'tue', label:'Tuesday', dow:2, note:'10 booked. Book ahead for Thu and Fri.',
       blocks:[
-        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Check for cancelled booking notifications' },
         { type:'booked', t:'09:20', count:5, from:1, tag:'booked last Friday' },
         { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'break', t:'11:00', mins:15, title:'Break' },
@@ -9824,7 +9840,7 @@ ${cardsHTML}
 
     { k:'wed', label:'Wednesday', dow:3, note:'10 booked. No meetings, longest run.',
       blocks:[
-        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Check for cancelled booking notifications' },
         { type:'booked', t:'09:20', count:5, from:1, tag:'booked last Friday' },
         { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'break', t:'11:00', mins:15, title:'Break' },
@@ -9841,7 +9857,7 @@ ${cardsHTML}
 
     { k:'thu', label:'Thursday', dow:4, note:'10 booked. Huddle at 11:00.',
       blocks:[
-        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Check for cancelled booking notifications' },
         { type:'booked', t:'09:20', count:5, from:1, tag:'booked Tuesday' },
         { type:'catchup', t:'10:55', mins:5, title:'Catch-up' },
         { type:'huddle', t:'11:00', mins:30, title:'Team huddle', sub:'Bring one blocker' },
@@ -9858,7 +9874,7 @@ ${cardsHTML}
 
     { k:'fri', label:'Friday', dow:5, note:'10 booked. Book ahead for next Mon to Wed.', tight:true,
       blocks:[
-        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Reminder text to all 10 booked students' },
+        { type:'admin', t:'09:00', mins:20, title:'Admin and confirm', sub:'Check for cancelled booking notifications' },
         { type:'booked', t:'09:20', count:6, from:1, tag:'booked Tuesday' },
         { type:'break', t:'11:15', mins:15, title:'Break' },
         { type:'bookahead', t:'11:30', end:'12:45', title:'Book ahead', pill:'Fill next Mon, Tue and Wed', target:10,
@@ -10151,16 +10167,6 @@ ${cardsHTML}
         dsSave(dateStr, st); renderSchedule();
       });
 
-      document.getElementById('ds-print-btn').addEventListener('click', () => {
-        const prev = dsActive;
-        dsActive = 'week';
-        renderSchedule();
-        document.body.classList.add('ds-printing');
-        window.print();
-        document.body.classList.remove('ds-printing');
-        dsActive = prev;
-        renderSchedule();
-      });
     }
     renderSchedule();
   }
