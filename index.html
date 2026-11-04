@@ -3056,7 +3056,7 @@
     '2026-01-20':[{type:'late-enrol', label:'Late Enrol H1 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H1'}],
     '2026-01-21':[{type:'standing-report', label:'First Academic Standing Report H1'}],
 
-    '2026-02-03':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1'}],
+    '2026-02-02':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H1 (9am Monday, week 3)'}],
     '2026-02-10':[{type:'wadm-drop', label:'WADM Students Dropped H1'}],
     // SEM block applied to students — Monday of Week 5
     '2026-02-16':[{type:'sem-block', label:'SEM Block Applied H1'}],
@@ -3076,7 +3076,7 @@
     '2026-03-17':[{type:'late-enrol', label:'Late Enrol H2 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H2'}],
     '2026-03-18':[{type:'standing-report', label:'First Academic Standing Report H2'}],
 
-    '2026-03-31':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H2'}],
+    '2026-03-30':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H2 (9am Monday, week 3)'}],
     '2026-04-07':[{type:'wadm-drop', label:'WADM Students Dropped H2'}],
     '2026-03-26':[{type:'census', label:'Census H2'}],
     // ── Hexa 3 ──
@@ -3089,7 +3089,7 @@
     '2026-05-12':[{type:'late-enrol', label:'Late Enrol H3 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H3'}],
     '2026-05-13':[{type:'standing-report', label:'First Academic Standing Report H3'}],
 
-    '2026-05-26':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H3'}],
+    '2026-05-25':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H3 (9am Monday, week 3)'}],
     '2026-06-02':[{type:'wadm-drop', label:'WADM Students Dropped H3'}],
     '2026-05-21':[{type:'census', label:'Census H3'}],
     // ── Hexa 4 ──
@@ -3102,7 +3102,7 @@
     '2026-07-07':[{type:'late-enrol', label:'Late Enrol H4 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H4'}],
     '2026-07-08':[{type:'standing-report', label:'First Academic Standing Report H4'}],
 
-    '2026-07-21':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H4'}],
+    '2026-07-20':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H4 (9am Monday, week 3)'}],
     '2026-07-28':[{type:'wadm-drop', label:'WADM Students Dropped H4'}],
     '2026-07-16':[{type:'census', label:'Census H4'}],
     // ── Hexa 5 ──
@@ -3115,7 +3115,7 @@
     '2026-09-01':[{type:'late-enrol', label:'Late Enrol H5 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H5'}],
     '2026-09-02':[{type:'standing-report', label:'First Academic Standing Report H5'}],
 
-    '2026-09-15':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H5'}],
+    '2026-09-14':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H5 (9am Monday, week 3)'}],
     '2026-09-22':[{type:'wadm-drop', label:'WADM Students Dropped H5'}],
     '2026-09-10':[{type:'census', label:'Census H5'}],
     // ── Hexa 6 ──
@@ -3128,7 +3128,7 @@
     '2026-10-27':[{type:'late-enrol', label:'Late Enrol H6 (till 12pm)', link:'https://portal.insight.unsw.edu.au/ler/'},{type:'withdrawal', label:'Incomplete Enrolments Withdrawn H6'}],
     '2026-10-28':[{type:'standing-report', label:'First Academic Standing Report H6'}],
 
-    '2026-11-10':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H6'}],
+    '2026-11-09':[{type:'suspension-appeal', label:'Academic Suspension Appeal Deadline H6 (9am Monday, week 3)'}],
     '2026-11-05':[{type:'census', label:'Census H6'}],
     '2026-12-18':[{type:'results',label:'Results H6'}],
   };
@@ -5913,7 +5913,7 @@ draft.slice(0, 6000),
       { id:'k33', text:'PGIPT Approvals list → ROPS for GC>M sheet & CRM update', cat:'admin' }],
     'week-2': [
       { id:'k34', text:'Post Census Wrapup & Degree Pathing', cat:'priority' },
-      { id:'k35', text:'Suspension appeal deadline Tuesday, outcomes Thursday', cat:'priority' },
+      { id:'k35', text:'Suspension appeal deadline Monday 9am, outcomes Thursday', cat:'priority' },
       { id:'k36', text:'WADM Risk Reengagement Calls', cat:'calls' },
       { id:'k37', text:'CS Engagement >60 days: Pre-enrollment Academic Year focus', cat:'calls' },
       { id:'k38', text:'PGIPT FEE-HELP received Mon Week 2 from SLC', cat:'admin' },
@@ -8762,7 +8762,7 @@ ${cardsHTML}
     { text: 'Incomplete Enrollment Drop', week: 'Week 1', day: 1, hex: null },  // Tuesday
     { text: 'Escalate Late Enrollments', week: 'Week 1', day: 1, hex: null },  // Tuesday
     { text: 'LMS Non-Access - Canvas Outlines', week: 'Week 1', day: 2, hex: null }, // Wednesday
-    { text: 'Suspension Appeal Deadline', week: 'Week 3', day: 1, hex: null }, // Tuesday
+    { text: 'Suspension Appeal Deadline', week: 'Week 3', day: 0, hex: null }, // Monday 9am
     { text: 'Suspension Appeal Outcomes', week: 'Week 3', day: 3, hex: null }, // Thursday
     { text: 'PGIPT FEE-HELP Received from SLC', week: 'Week 2', day: 0, hex: null }, // Monday
     { text: 'WADMs Drop', week: 'Week 3', day: 1, hex: null },                 // Tuesday
