@@ -6003,7 +6003,6 @@ draft.slice(0, 6000),
 
   let kanbanBoard = null;
   let kDragInsert = null; // { colId, refId, before }
-  let kanbanUndo = null;
 
   function renderKanbanHexNav() {
     const nav = document.getElementById('kanban-hex-nav');
@@ -6024,11 +6023,7 @@ draft.slice(0, 6000),
         : `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 4px;align-self:center;">20${activeKanbanYear}</span>` +
           KANBAN_HEXES.map(hx =>
             `<button class="hex-btn${hx === activeKanbanHex ? ' active' : ''}" data-khex="${hx}">${hx} 20${activeKanbanYear}</button>`
-          ).join('')) +
-      `<button class="hex-btn" id="knav-reset-template" style="margin-left:12px;font-size:0.65rem;">↺ Reset to Template</button>` +
-      (kanbanUndo && kanbanUndo.school === activeKanbanSchool && kanbanUndo.hex === activeKanbanHex && kanbanUndo.year === activeKanbanYear
-        ? `<button class="hex-btn" id="knav-undo-reset" style="margin-left:6px;font-size:0.65rem;background:#fef3c7;color:#92400e;border-color:#fcd34d;">↩ Undo Reset</button>`
-        : '');
+          ).join(''));
 
     nav.querySelectorAll('[data-khex]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -6040,27 +6035,9 @@ draft.slice(0, 6000),
       btn.addEventListener('click', () => {
         if (btn.dataset.kschool === activeKanbanSchool) return;
         activeKanbanSchool = btn.dataset.kschool;
-        kanbanUndo = null;
         kanbanBoard = null;
         loadKanban();
       });
-    });
-    nav.querySelector('#knav-reset-template').addEventListener('click', () => {
-      const what = activeKanbanSchool === 'MBS' ? 'the MBS board' : `${activeKanbanHex} 20${activeKanbanYear}`;
-      if (confirm(`Reset ${what} to the master template? This will overwrite everything currently on it.`)) {
-        kanbanUndo = { school: activeKanbanSchool, hex: activeKanbanHex, year: activeKanbanYear, board: JSON.parse(JSON.stringify(kanbanBoard)) };
-        kanbanBoard = JSON.parse(JSON.stringify(kanbanTemplate()));
-        kanbanBoard._themes = kanbanBoard._themes || {}; kanbanBoard._tasks = []; kanbanBoard._automated = [];
-        saveKanban(); renderKanbanHexNav(); renderKanban();
-      }
-    });
-    const undoBtn = nav.querySelector('#knav-undo-reset');
-    if (undoBtn) undoBtn.addEventListener('click', () => {
-      if (kanbanUndo && kanbanUndo.board) {
-        kanbanBoard = JSON.parse(JSON.stringify(kanbanUndo.board));
-        kanbanUndo = null;
-        saveKanban(); renderKanbanHexNav(); renderKanban();
-      }
     });
   }
 
