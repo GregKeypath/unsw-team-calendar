@@ -7169,8 +7169,8 @@ draft.slice(0, 6000),
       const _tk = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}`;
       const _wk = UNSW_WEEKS[_tk];
       const _curSP = _wk ? `H${_wk.hex} ${String(_now.getFullYear()).slice(2)}` : null;
-      const _preferred = 'H4 ' + _yr;
-      spSel.value = _startable.includes(_preferred) ? _preferred
+      const _preferred = currentSP();
+      spSel.value = (_preferred && _startable.includes(_preferred)) ? _preferred
                   : (_curSP && _startable.includes(_curSP)) ? _curSP
                   : _startable[0];
 
@@ -9426,7 +9426,7 @@ ${cardsHTML}
       });
 
     // Default to H5 2026 (current hex); fall back to H4 if H5 isn't an available SP
-    spSel.value = 'H5 26';
+    spSel.value = currentSP() || START_SP;
     if (!spSel.value) spSel.value = START_SP;
     spSel.addEventListener('change', () => renderDropRateGrid(spSel.value));
 
@@ -9488,6 +9488,16 @@ ${cardsHTML}
   let dpWeek = null;
   let dpPlan = null;
   let dpSaveTimer = null;
+
+  // The study period we are actually in, worked out from the calendar so
+  // the tabs roll over on their own instead of sitting on a stale default.
+  function currentSP() {
+    if (typeof UNSW_WEEKS === 'undefined') return null;
+    const d = new Date();
+    const k = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    const w = UNSW_WEEKS[k];
+    return w ? ("H" + w.hex + " " + String(d.getFullYear()).slice(2)) : null;
+  }
 
   function dpSlug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
   function dpPad(n) { return String(n).padStart(2, '0'); }
