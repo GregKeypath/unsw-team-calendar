@@ -2255,7 +2255,7 @@
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
   <button class="tab-btn" data-tab="actions">Action Items</button>
-  <button class="tab-btn" data-tab="issues">Carousel Issues</button>
+  <button class="tab-btn" data-tab="issues">Carousel and DP Issues</button>
   <!-- Wishlist retired Oct 2026, nobody was using it. Uncomment this and the panel below to bring it back.
   <button class="tab-btn" data-tab="wishlist">Wishlist</button> -->
   <div class="theme-picker-wrap">
@@ -2701,16 +2701,16 @@
     <div class="ai-list" id="ai-list"></div>
   </div>
 </div>
-<!-- Carousel Issues tab -->
+<!-- Carousel and DP Issues tab -->
 <div class="tab-panel" id="tab-issues">
   <div class="mbs-only mbs-soon">
     <span class="tagline">MBS</span>
-    <h3>Carousel Issues</h3>
+    <h3>Carousel and DP Issues</h3>
     <p>Ready for MBS issues whenever the team starts logging them.</p>
   </div>
   <div class="ci-wrap">
     <div class="ci-head">
-      <h2>🔎 Carousel Issues</h2>
+      <h2>🔎 Carousel and DP Issues</h2>
       <button class="ci-add" id="ci-add">+ Log an issue</button>
     </div>
     <p class="ci-sub">Where the carousel and the handbook disagree, or anything about a study period that looks wrong. Log it here so it is not sitting in someone’s inbox.</p>
@@ -11083,7 +11083,7 @@ ${cardsHTML}
 
     aiLoad();
   }
-  // ── Carousel Issues ───────────────────────────────────────────────
+  // ── Carousel and DP Issues ───────────────────────────────────────────────
   const CI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/carousel_issues.json';
   const CI_STATUS = {
     open:     { label: 'Open',        cls: 'st-open' },
