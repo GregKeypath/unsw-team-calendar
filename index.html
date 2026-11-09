@@ -901,6 +901,7 @@
     .ai-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
     .ai-fbtn { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 13px; font-size:0.7rem; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
     .ai-fbtn.active { background:#16202b; color:#fff; border-color:#16202b; }
+    .ai-listfilters .ai-fbtn.active { background:#0369a1; border-color:#0369a1; color:#fff; }
     .ai-whofilters { margin-top:-6px; }
     .ai-whofilters .ai-fbtn { font-size:0.66rem; padding:4px 11px; border-style:dashed; }
     .ai-whofilters .ai-fbtn.active { border-style:solid; background:#4338ca; border-color:#4338ca; color:#fff; }
@@ -2254,7 +2255,7 @@
   <button class="tab-btn" data-tab="droprate">Historical Drop Rate</button>
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
-  <button class="tab-btn" data-tab="actions">Action Items</button>
+  <button class="tab-btn" data-tab="actions">Lists to Action</button>
   <button class="tab-btn" data-tab="issues">Carousel and DP Issues</button>
   <!-- Wishlist retired Oct 2026, nobody was using it. Uncomment this and the panel below to bring it back.
   <button class="tab-btn" data-tab="wishlist">Wishlist</button> -->
@@ -2682,21 +2683,22 @@
   </div>
 </div>
 
-<!-- Action Items tab -->
+<!-- Lists to Action tab -->
 <div class="tab-panel" id="tab-actions">
   <div class="mbs-only mbs-soon">
     <span class="tagline">MBS</span>
-    <h3>Action Items</h3>
+    <h3>Lists to Action</h3>
     <p>Ready for MBS rows whenever you have a list.</p>
   </div>
   <div class="ai-wrap">
     <div class="ai-head">
-      <h2>📋 Action Items</h2>
+      <h2>📋 Lists to Action</h2>
       <span class="ai-src" id="ai-src"></span>
     </div>
-    <p class="ai-sub">Students with an outstanding condition on their offer. Assign one to yourself or to someone else, tick it off once the student has provided what is needed, and leave a comment so the next person knows where it got to. Student IDs only, no names, because this page is on the open internet.</p>
+    <p class="ai-sub">Lists of students needing something chased. Assign one to yourself or to someone else, tick it off once it is sorted, and leave a comment so the next person knows where it got to. Student IDs only, no names, because this page is on the open internet. An address is the ID with a z in front, at unsw.edu.au.</p>
     <div class="ai-stats" id="ai-stats"></div>
     <div class="ai-filters" id="ai-filters"></div>
+    <div class="ai-filters ai-listfilters" id="ai-listfilters"></div>
     <div class="ai-filters ai-whofilters" id="ai-whofilters"></div>
     <div class="ai-list" id="ai-list"></div>
   </div>
@@ -10846,10 +10848,10 @@ ${cardsHTML}
     try { saved = localStorage.getItem("hub-institution") || "unsw"; } catch (e) {}
     mbsSetInst(saved === "mbs" ? "mbs" : "unsw");
   }
-  // ── Action Items ────────────────────────────────────
+  // ── Lists to Action ────────────────────────────────────
   const AI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/action_items.json';
-  const AI_LOADED = 'Loaded 23 Oct 2026 from the accounts conditional offer list';
-  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn."},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn."},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn."}];
+  const AI_LOADED = 'Conditional offers loaded 23 Oct, Student Essentials blocks 9 Nov 2026';
+  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Conditional offers"},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Conditional offers"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Conditional offers"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Conditional offers"},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Conditional offers"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Conditional offers"},{"id":"se3543847","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7494","sid":"3543847","fac":"BUS","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5112957","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"5436","sid":"5112957","fac":"BUS","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5138054","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7446","sid":"5138054","fac":"SCI","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5789933","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5789933","fac":"LAW","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5796517","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7413","sid":"5796517","fac":"BUS","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5798636","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7430","sid":"5798636","fac":"BUS","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5799846","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7649","sid":"5799846","fac":"ENG","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."},{"id":"se5800437","list":"Student Essentials H5","term":"H5 26","start":"2026-08-31","prog":"7413","sid":"5800437","fac":"BUS","type":"Student Essentials","gate":"Block raised in Hexamester 5 and still open","need":"Student Essentials module not completed, so the block is still sitting against the student."}];
   const AI_STATUS = {
     todo:    { label: 'To do',          cls: 'st-todo' },
     chasing: { label: 'Chasing student', cls: 'st-chasing' },
@@ -10858,6 +10860,7 @@ ${cardsHTML}
   let aiState = {};
   let aiFilter = 'live';
   let aiWho = 'all';
+  let aiList = 'all';
   let aiOpen = {};
 
   function aiEsc(s) {
@@ -10904,7 +10907,7 @@ ${cardsHTML}
   }
 
   function aiRec(id) {
-    if (!aiState[id]) aiState[id] = { status: 'todo', assignee: '', comments: [] };
+    if (!aiState[id]) aiState[id] = { status: 'todo', assignee: '', comments: [], closedBy: '', closedAt: 0 };
     if (!aiState[id].comments) aiState[id].comments = [];
     return aiState[id];
   }
@@ -10921,7 +10924,7 @@ ${cardsHTML}
       return Object.assign({}, r, {
         status: s.status || 'todo',
         assignee: s.assignee || '',
-        comments: s.comments || []
+        comments: s.comments || [], closedBy: s.closedBy || '', closedAt: s.closedAt || 0
       });
     });
 
@@ -10942,6 +10945,16 @@ ${cardsHTML}
       return '<button class="ai-fbtn' + (aiFilter === t[0] ? ' active' : '') + '" data-aif="' + t[0] + '">' + t[1] + '</button>';
     }).join('');
 
+    const lists = [...new Set(AI_ROWS.map(function (i) { return i.list; }).filter(Boolean))];
+    const lf = document.getElementById("ai-listfilters");
+    if (lf) lf.innerHTML = lists.length < 2 ? "" :
+      ['<button class="ai-fbtn' + (aiList === "all" ? " active" : "") + '" data-ailist="all">All lists</button>']
+        .concat(lists.map(function (L) {
+          const n = all.filter(function (i) { return i.list === L && i.status !== "done"; }).length;
+          return '<button class="ai-fbtn' + (aiList === L ? " active" : "") + '" data-ailist="' + aiEsc(L) + '">' +
+            aiEsc(L) + ' ' + n + '</button>';
+        })).join("");
+
     const who = [...new Set(all.map(function (i) { return i.assignee; }).filter(Boolean))].sort();
     const wf = document.getElementById('ai-whofilters');
     if (wf) wf.innerHTML = who.length
@@ -10959,7 +10972,11 @@ ${cardsHTML}
     else if (aiFilter === 'none') items = all.filter(function (i) { return !i.assignee; });
     else if (aiFilter !== 'all') items = all.filter(function (i) { return i.status === aiFilter; });
     if (aiWho !== 'all') items = items.filter(function (i) { return i.assignee === aiWho; });
-    items.sort(function (a, b) { return a.start < b.start ? -1 : a.start > b.start ? 1 : 0; });
+    if (aiList !== 'all') items = items.filter(function (i) { return i.list === aiList; });
+    items.sort(function (a, b) {
+      if (a.list !== b.list) return a.list < b.list ? -1 : 1;
+      return a.start < b.start ? -1 : a.start > b.start ? 1 : 0;
+    });
 
     if (!items.length) {
       list.innerHTML = '<div class="ai-empty">Nothing under those filters.</div>';
@@ -10983,7 +11000,8 @@ ${cardsHTML}
           '<span class="ai-sid">' + aiEsc(i.sid) + '</span>' +
           '<span class="ai-chip term">' + aiEsc(i.term) + '</span>' +
           '<span class="ai-chip">Program ' + aiEsc(i.prog) + '</span>' +
-          '<span class="ai-chip">Appl ' + aiEsc(i.appl) + '</span>' +
+          (i.appl ? '<span class="ai-chip">Appl ' + aiEsc(i.appl) + '</span>' : '') +
+          (i.fac ? '<span class="ai-chip">' + aiEsc(i.fac) + '</span>' : '') +
           '<span class="ai-type">' + aiEsc(i.type) + '</span>' +
           lateChip +
           '<span class="ai-status ' + st.cls + '">' + st.label + '</span>' +
@@ -10991,18 +11009,22 @@ ${cardsHTML}
         '<div class="ai-need">' + aiEsc(i.need) + '</div>' +
         '<div class="ai-foot" style="border:none; margin:0; padding:0; color:#9ca3af;">' +
           '<span>' + aiEsc(i.gate) + '</span>' +
-          '<button class="ai-more" data-ailetter="' + i.id + '">' +
-            (aiOpen[i.id] ? 'Hide the letter wording' : 'Show the letter wording') + '</button>' +
+          (i.letter ? '<button class="ai-more" data-ailetter="' + i.id + '">' +
+            (aiOpen[i.id] ? 'Hide the letter wording' : 'Show the letter wording') + '</button>' : '') +
         '</div>' +
-        '<div class="ai-letter' + (aiOpen[i.id] ? ' open' : '') + '">' + aiLinkify(i.letter) + '</div>' +
+        (i.letter ? '<div class="ai-letter' + (aiOpen[i.id] ? ' open' : '') + '">' + aiLinkify(i.letter) + '</div>' : '') +
         '<div class="ai-who">' +
-          (i.assignee ? 'Assigned to <b>' + aiEsc(i.assignee) + '</b>' : '<span>Nobody assigned</span>') +
+          (i.status === 'done' && i.closedBy
+            ? 'Closed off by <b>' + aiEsc(i.closedBy) + '</b>' +
+              (i.closedAt ? ' on ' + new Date(i.closedAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) : '')
+            : (i.assignee ? 'Assigned to <b>' + aiEsc(i.assignee) + '</b>' : '<span>Nobody assigned</span>')) +
           '<button data-aiclaim="' + i.id + '">' + (i.assignee ? 'Reassign' : 'Assign') + '</button>' +
           (i.assignee ? '<button data-aiclear="' + i.id + '">Clear</button>' : '') +
         '</div>' +
         (cmts ? '<div class="ai-cmts">' + cmts + '</div>' : '') +
         '<div class="ai-foot">' +
-          '<span>' + i.action + ' \u00b7 ' + i.reason + ' \u00b7 Online Acceptance Process</span>' +
+          '<span>' + (i.action ? aiEsc(i.action) + ' \u00b7 ' + aiEsc(i.reason) + ' \u00b7 Online Acceptance Process'
+                                : aiEsc(i.list)) + '</span>' +
           '<span class="ai-acts">' +
             '<button data-aicmt="' + i.id + '">Comment</button>' +
             (done ? '' : '<button data-aistat="' + i.id + '|chasing">Chasing</button>') +
@@ -11022,6 +11044,13 @@ ${cardsHTML}
       if (!b) return;
       if (b.dataset.aif === 'mine' && !aiMe()) return;
       aiFilter = b.dataset.aif;
+      aiRender();
+    });
+
+    document.getElementById('ai-listfilters').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-ailist]');
+      if (!b) return;
+      aiList = b.dataset.ailist;
       aiRender();
     });
 
@@ -11066,9 +11095,15 @@ ${cardsHTML}
         const rec = aiRec(parts[0]);
         rec.status = parts[1];
         if (parts[1] === 'done') {
-          const me = aiMe();
-          rec.comments.push({ by: me || 'Unknown', text: 'Marked done.', ts: Date.now() });
-          if (me && !rec.assignee) rec.assignee = me;
+          const who = prompt('Closed off by? (your name)', rec.closedBy || localStorage.getItem('unsw-me') || '');
+          if (who === null) { rec.status = 'todo'; return; }
+          rec.closedBy = who.trim();
+          rec.closedAt = Date.now();
+          rec.comments.push({ by: rec.closedBy || 'Unknown', text: 'Closed off.', ts: Date.now() });
+          if (rec.closedBy && !rec.assignee) rec.assignee = rec.closedBy;
+        } else {
+          rec.closedBy = '';
+          rec.closedAt = 0;
         }
         aiSave(); aiRender();
       }
