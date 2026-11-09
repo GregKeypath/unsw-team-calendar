@@ -934,7 +934,8 @@
     .ai-acts { margin-left:auto; display:flex; gap:5px; flex-wrap:wrap; }
     .ai-acts button, .ai-who button { border:1px solid #e5e7eb; background:#fff; border-radius:6px; font-size:0.64rem; font-weight:700; padding:3px 9px; cursor:pointer; color:#4b5563; font-family:inherit; }
     .ai-acts button:hover, .ai-who button:hover { border-color:#16202b; color:#16202b; }
-    .ai-acts button.go { background:#10b981; border-color:#10b981; color:#fff; }
+    .ai-acts button.go { background:#fff; border-color:#10b981; color:#047857; font-weight:800; }
+    .ai-acts button.go:hover { background:#10b981; border-color:#10b981; color:#fff; }
     .ai-cmts { margin-top:9px; display:flex; flex-direction:column; gap:6px; }
     .ai-cmt { background:#f8fafc; border-radius:8px; padding:7px 11px; font-size:0.74rem; color:#1f2937; line-height:1.5; white-space:pre-wrap; }
     .ai-cmt i { display:block; font-style:normal; font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.4px; color:#9ca3af; margin-bottom:2px; }
@@ -985,7 +986,8 @@
     .ci-acts { margin-left:auto; display:flex; gap:5px; }
     .ci-acts button { border:1px solid #e5e7eb; background:#fff; border-radius:6px; font-size:0.64rem; font-weight:700; padding:3px 9px; cursor:pointer; color:#4b5563; font-family:inherit; }
     .ci-acts button:hover { border-color:#16202b; color:#16202b; }
-    .ci-acts button.go { background:#10b981; border-color:#10b981; color:#fff; }
+    .ci-acts button.go { background:#fff; border-color:#10b981; color:#047857; font-weight:800; }
+    .ci-acts button.go:hover { background:#10b981; border-color:#10b981; color:#fff; }
     .ci-empty { text-align:center; padding:56px 20px; color:#9ca3af; font-size:0.85rem; }
     .ci-modal { background:#fff; border-radius:14px; padding:22px 24px; width:min(620px,94vw); max-height:90vh; overflow:auto; }
     .ci-modal h3 { margin:0 0 16px; font-size:1.05rem; font-weight:800; color:#16202b; }
@@ -11038,7 +11040,7 @@ ${cardsHTML}
             '<button data-aicmt="' + i.id + '">Comment</button>' +
             (done ? '' : '<button data-aistat="' + i.id + '|chasing">Chasing</button>') +
             (done ? '<button data-aistat="' + i.id + '|todo">Reopen</button>'
-                  : '<button class="go" data-aistat="' + i.id + '|done">\u2713 Done</button>') +
+                  : '<button class="go" data-aistat="' + i.id + '|done">Mark done</button>') +
           '</span>' +
         '</div>' +
       '</div>';
@@ -11258,7 +11260,7 @@ ${cardsHTML}
             (done ? '' : '<button data-cistat="' + i.id + '|unsw">With UNSW</button>') +
             (done ? '' : '<button data-cistat="' + i.id + '|sdit">With SDIT</button>') +
             (done ? '<button data-cistat="' + i.id + '|open">Reopen</button>'
-                  : '<button class="go" data-cistat="' + i.id + '|resolved">\u2713 Resolved</button>') +
+                  : '<button class="go" data-cistat="' + i.id + '|resolved">Mark resolved</button>') +
             (done ? '' : '<button data-cistat="' + i.id + '|noissue">Not an issue</button>') +
             '<button data-ciedit="' + i.id + '">Edit</button>' +
             '<button data-cidel="' + i.id + '">Delete</button>' +
