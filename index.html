@@ -906,6 +906,10 @@
     .ai-whofilters .ai-fbtn { font-size:0.66rem; padding:4px 11px; border-style:dashed; }
     .ai-whofilters .ai-fbtn.active { border-style:solid; background:#4338ca; border-color:#4338ca; color:#fff; }
     .ai-list { display:flex; flex-direction:column; gap:10px; }
+    .ai-bucket { display:flex; align-items:baseline; gap:9px; margin:6px 0 -2px; padding-bottom:6px; border-bottom:2px solid #e5e7eb; }
+    .ai-bucket span { font-size:0.8rem; font-weight:800; color:#16202b; letter-spacing:-0.2px; }
+    .ai-bucket i { font-style:normal; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; }
+    .ai-bucket:first-child { margin-top:0; }
     .ai-card { background:#fff; border:1px solid #e5e7eb; border-left:4px solid #ef4444; border-radius:11px; padding:13px 16px; }
     .ai-card.st-chasing { border-left-color:#f59e0b; }
     .ai-card.st-done { border-left-color:#10b981; background:#f8fdfa; }
@@ -945,6 +949,9 @@
     .ci-stat { background:#fff; border:1px solid #e5e7eb; border-radius:11px; padding:9px 15px; min-width:92px; }
     .ci-stat b { display:block; font-size:1.35rem; font-weight:900; color:#16202b; line-height:1.1; }
     .ci-stat span { font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#9ca3af; }
+    .ci-search { width:100%; max-width:620px; border:1.5px solid #e5e7eb; border-radius:9px; padding:9px 13px;
+      font-size:0.8rem; font-family:inherit; color:#16202b; background:#fff; margin-bottom:12px; }
+    .ci-search:focus { outline:none; border-color:#16202b; }
     .ci-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
     .ci-fbtn { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 13px; font-size:0.7rem; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
     .ci-fbtn.active { background:#16202b; color:#fff; border-color:#16202b; }
@@ -2717,6 +2724,7 @@
     </div>
     <p class="ci-sub">Where the carousel and the handbook disagree, or anything about a study period that looks wrong. Log it here so it is not sitting in someone’s inbox.</p>
     <div class="ci-stats" id="ci-stats"></div>
+    <input type="search" class="ci-search" id="ci-search" placeholder="Search everything on this board: a unit code, a program, a name, anything in the notes">
     <div class="ci-filters" id="ci-filters"></div>
     <div class="ci-filters ci-progfilters" id="ci-progfilters"></div>
     <div class="ci-list" id="ci-list"></div>
@@ -10983,7 +10991,7 @@ ${cardsHTML}
       return;
     }
 
-    list.innerHTML = items.map(function (i) {
+    const aiCard = function (i) {
       const st = AI_STATUS[i.status] || AI_STATUS.todo;
       const late = aiDays(i.start);
       const lateChip = (late > 0 && i.status !== 'done')
@@ -11033,6 +11041,26 @@ ${cardsHTML}
           '</span>' +
         '</div>' +
       '</div>';
+    };
+
+    // One bucket per list, so the conditional offers and the Student
+    // Essentials blocks do not run into each other.
+    const buckets = [];
+    items.forEach(function (it) {
+      const name = it.list || 'Other';
+      let b = buckets.filter(function (x) { return x.name === name; })[0];
+      if (!b) { b = { name: name, rows: [] }; buckets.push(b); }
+      b.rows.push(it);
+    });
+
+    list.innerHTML = buckets.map(function (b) {
+      const openN = b.rows.filter(function (x) { return x.status !== "done"; }).length;
+      return (buckets.length > 1 || aiList === "all"
+        ? '<div class="ai-bucket"><span>' + aiEsc(b.name) + '</span>' +
+            '<i>' + b.rows.length + ' student' + (b.rows.length === 1 ? '' : 's') +
+            (openN < b.rows.length ? ', ' + openN + ' still open' : '') + '</i></div>'
+        : '') +
+        b.rows.map(aiCard).join('');
     }).join('');
   }
 
@@ -11130,6 +11158,7 @@ ${cardsHTML}
   let ciItems = {};
   let ciFilter = 'live';
   let ciProg = 'all';
+  let ciQuery = '';
   let ciEditId = null;
 
   function ciEsc(s) {
@@ -11156,6 +11185,8 @@ ${cardsHTML}
     if (!list) return;
 
     const all = Object.keys(ciItems).map(k => Object.assign({ id:k }, ciItems[k]));
+    const sEl = document.getElementById("ci-search");
+    if (sEl && sEl.value.trim() !== ciQuery) sEl.value = ciQuery;
     const counts = { open:0, unsw:0, sdit:0, resolved:0, noissue:0 };
     all.forEach(i => { if (counts[i.status] != null) counts[i.status]++; });
 
@@ -11185,11 +11216,21 @@ ${cardsHTML}
     if (ciFilter === 'live') items = all.filter(i => i.status === 'open' || i.status === 'unsw' || i.status === 'sdit');
     else if (ciFilter !== 'all') items = all.filter(i => i.status === ciFilter);
     if (ciProg !== 'all') items = items.filter(i => i.program === ciProg);
+
+    if (ciQuery) {
+      const q = ciQuery.toLowerCase();
+      items = items.filter(function (i) {
+        return [i.code, i.program, i.sp, i.by, i.carousel, i.other, i.notes, i.closedBy,
+                (CI_STATUS[i.status] || {}).label]
+          .filter(Boolean).join(" ").toLowerCase().indexOf(q) > -1;
+      });
+    }
     items.sort((a, b) => (b.ts || 0) - (a.ts || 0));
 
     if (!items.length) {
       list.innerHTML = '<div class="ci-empty">' +
-        (all.length ? 'Nothing under those filters.' : 'Nothing logged yet. Add the first one.') + '</div>';
+        (ciQuery ? 'Nothing matches \u201c' + ciEsc(ciQuery) + '\u201d. Try Everything as well, in case it is closed.'
+                 : (all.length ? 'Nothing under those filters.' : 'Nothing logged yet. Add the first one.')) + '</div>';
       return;
     }
 
@@ -11275,6 +11316,12 @@ ${cardsHTML}
       ciSave(); ciClose(); ciRender();
     });
 
+    const q = document.getElementById('ci-search');
+    if (q) q.addEventListener('input', function () {
+      ciQuery = this.value.trim();
+      ciRender();
+    });
+
     document.getElementById('ci-progfilters').addEventListener('click', e => {
       const b = e.target.closest('[data-ciprog]');
       if (!b) return;
@@ -11295,12 +11342,17 @@ ${cardsHTML}
         const parts = st.dataset.cistat.split('|');
         const it = ciItems[parts[0]];
         if (!it) return;
-        it.status = parts[1];
-        if (parts[1] === 'resolved' || parts[1] === 'noissue') {
-          const who = prompt('Signed off by? (your name)', it.closedBy || '');
-          if (who === null) return;
-          it.closedBy = who.trim();
+        const closing = (parts[1] === 'resolved' || parts[1] === 'noissue');
+        if (closing) {
+          // A cancelled prompt, or one the browser has blocked after a few
+          // dialogs, used to throw the whole change away and leave the item
+          // sitting in Still open. Take the name if we get one, carry on
+          // either way.
+          let who = null;
+          try { who = prompt('Signed off by? (your name)', it.closedBy || localStorage.getItem('unsw-me') || ''); } catch (e) { who = null; }
+          it.closedBy = (who === null) ? (it.closedBy || '') : who.trim();
         } else { it.closedBy = ''; }
+        it.status = parts[1];
         ciSave(); ciRender();
         return;
       }
