@@ -11033,9 +11033,8 @@ ${cardsHTML}
     if (lf) lf.innerHTML = lists.length < 2 ? "" :
       ['<button class="ai-fbtn' + (aiList === "all" ? " active" : "") + '" data-ailist="all">All lists</button>']
         .concat(lists.map(function (L) {
-          const n = all.filter(function (i) { return i.list === L && i.status !== "done"; }).length;
           return '<button class="ai-fbtn' + (aiList === L ? " active" : "") + '" data-ailist="' + aiEsc(L) + '">' +
-            aiEsc(L) + ' ' + n + '</button>';
+            aiEsc(L) + '</button>';
         })).join("");
 
     const who = [...new Set(all.map(function (i) { return i.assignee; }).filter(Boolean))].sort();
