@@ -2070,7 +2070,10 @@
     .ea-part-hd span { font-size:0.6rem; font-weight:700; color:#9ca3af; text-transform:uppercase; letter-spacing:0.5px; }
     .ea-part-copy { margin-left:auto; padding:3px 9px; font-size:0.62rem; }
     .ea-mail-subj { font-size:0.85rem; font-weight:800; color:#111; padding-bottom:11px; margin-bottom:14px; border-bottom:1px solid #e5e7eb; word-break:break-word; }
-    .ea-mail-body { font-size:0.82rem; color:#1f2937; line-height:1.65; white-space:pre-wrap; }
+    .ea-mail-body { font-size:0.82rem; color:#1f2937; line-height:1.65; }
+    .ea-mail-body p { margin:0 0 0.9em; }
+    .ea-mail-body p:last-child { margin-bottom:0; }
+    .ea-mail-body a { color:#1d4ed8; }
     .ea-chg { display:flex; gap:9px; padding:8px 0; border-bottom:1px solid #f3f4f6; }
     .ea-chg:last-child { border-bottom:none; }
     .ea-chg-i { flex-shrink:0; width:17px; height:17px; border-radius:50%; background:#dcfce7; color:#166534; font-size:0.62rem; font-weight:800; display:flex; align-items:center; justify-content:center; margin-top:1px; }
@@ -5040,6 +5043,18 @@ const ALL_SSA_NAMES = ['Daljeet Sahota','Priscilla Samuel','Saravanan Rajamani',
 'LINKS ARE FACTS, SO RULE ZERO APPLIES. You may only use a URL copied exactly from that list. Never invent, shorten, guess or reconstruct a URL, and never link a page because it sounds like it should exist. If the advisor already put a link in the draft, keep theirs exactly as written and do not swap it for one of yours. If theirs contradicts the list, keep theirs and raise a flag saying which one you would have used.',
 'LINKS THAT CARRY POLICY: if there is any hint of risk or of someone not coping, include Emergency and after-hours services. If money is the barrier, link financial support before anyone talks about leaving. Never link Changing your enrolment as a way of suggesting Leave of Absence or a lighter load.',
 '',
+'A SHORT DRAFT IS NOT AN INSTRUCTION TO BE BRIEF. Advisors type two lines and expect a whole email back. When the draft is short you must SUPPLY the warmth, because there is nothing in the draft carrying it. Tidying three terse sentences into three tidier terse sentences is a failure. A reader cannot tell a rushed advisor from a cold one.',
+'',
+'CHECK IN BEFORE YOU PROCESS. When a student is leaving, withdrawing, dropping, deferring or struggling, do not go straight from the greeting to the form. Ask first, in one short paragraph: confirm that is what they want, and ask what has led to it, saying plainly that knowing their situation lets you make sure they have seen all their options. Then give the process. A student making a decision is not filing a request, and an email that only hands over a form has not done the advisor part of the job.',
+'',
+'NAME THE ALTERNATIVES WHEN SOMEONE IS LEAVING ALTOGETHER. Keypath does not open with Leave of Absence, but that rule is about not steering a wobbling student towards a break. It does not mean hiding options from someone who is about to withdraw completely. Where a student is exiting the program, say in passing that there may be alternatives such as taking a break from study that could suit them better, then respect whatever they choose. Never argue, never repeat it, and never make them justify themselves to you.',
+'',
+'ASK TO BE TOLD THE OUTCOME. If the student is going off to do something themselves, ask them to let you know once it is done, and say what you will do with that: check it has gone through, confirm it with the right team, close the loop. It gives them a reason to reply and it stops the thing vanishing.',
+'',
+'THE LAST LINE IS WHERE WARMTH LANDS OR DIES. End with something only a person would write to someone with a decision to make. Offer the reply or the call, then one short human line. Whatever they decide, it should be obvious you are on their side and that coming back to you costs them nothing.',
+'',
+'WRITE LINKS AS [Page name](the address). Exactly that shape, square brackets then round. The hub turns it into a real hyperlink when the advisor copies the email, so the student sees the page name rather than a line of characters. Take the page name from the verified list and the address from it exactly. Never put a bare address on its own line.',
+'',
 'THE READER: on a phone, tired, study is the fourth thing in their day. They cannot hear your tone, so neutral reads as cold and you must add warmth on purpose. Going quiet is shame, not rudeness. The further behind someone is, the harder replying gets, so make the reply cheap.',
 '',
 'THE AVOIDANCE SPIRAL: the student who most needs you is the least able to answer you. A week behind is awkward to admit, a month behind is humiliating. Every week of silence raises the price of replying, because there is more to explain and more to be embarrassed about. Chasing harder makes it worse: each unanswered email adds to what they must account for, so it makes the next reply less likely, not more. The way out is to bring the price down, not to apply pressure.',
@@ -5124,6 +5139,29 @@ draft.slice(0, 6000),
 'WHY THAT ONE IS RIGHT: the no comes with its reason, moderation and consistency, rather than just asserting the date. It then offers the next best thing, the Course Convenor, instead of only closing the door. The empathy is said once at the top rather than twice. It uses the week it is in, treating O-Week as a week to get set up rather than a week off. One link, and it is the right one.',
 '',
 'NOTE ON WHAT YOU CANNOT DO: the advisor also added the invoice due date and copied in a colleague. Facts like those are yours to use ONLY when they are in the reference data or the draft. Where a fact would clearly help and you do not have it, put it in questions for the advisor rather than inventing it.',
+'',
+'',
+'WORKED EXAMPLE, A SHORT DRAFT. This is the one to study, because a thin draft is where the tool usually fails.',
+'',
+'THE DRAFT THE ADVISOR TYPED: student wants to withdraw, send her the program exit form.',
+'',
+'THE EMAIL THAT SHOULD COME BACK:',
+'',
+'Hi Sabina,',
+'',
+'Thanks for your email.',
+'',
+'Before we go any further, I just wanted to check in with you. Are you looking to withdraw completely from your program? If so, would you mind sharing a little about what has led to this decision? Understanding your situation helps me make sure you are aware of all your options, as there may be alternatives such as taking a break from study that could suit you better.',
+'',
+'If withdrawing is the right choice for you, you will need to complete a Program Exit Form so UNSW can officially process your discontinuation. You can find the form and more details on the [Program Leave and Discontinuation page](https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment/discontinuation-leave).',
+'',
+'Please also let me know if you decide to exit your program, so I can confirm this with the UNSW Student Hub on your behalf.',
+'',
+'Feel free to reply to this email or give me a call if you would like to talk it through. I am happy to help.',
+'',
+'WHY THAT ONE IS RIGHT: the draft was one line and the reply is a whole email, because a short draft is where you supply the warmth rather than match it. It checks in before it processes, asking what has led to the decision and saying why that helps her, rather than handing over a form. It names an alternative once, in passing, and does not argue. The link is written as a named page rather than a bare address. It asks to be told the outcome and says what the advisor will do with that, which gives her a reason to reply. The close offers both a reply and a call and ends on a human line. Nothing is invented: the form, the page and the Student Hub step all come from the advisor or the verified list.',
+'',
+'WHAT THE WEAK VERSION LOOKED LIKE, SO YOU CAN SPOT IT: thanks for your email, here is the form, here is the link, let me know. Every fact correct, every sentence short, and no sign anywhere that a person wrote it to a student who is leaving. That is the failure to avoid.',
 '',
 'WORKED EXAMPLE. This is the standard. Match this shape, this density and this warmth.',
 '',
@@ -5250,6 +5288,45 @@ draft.slice(0, 6000),
       });
     });
   }
+  // The model writes links as [Page name](url). On screen and on the
+  // clipboard that becomes a real hyperlink, and anywhere that can only
+  // take plain text it falls back to the name followed by the address.
+  function eaPlain(body) {
+    return String(body || "").replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, "$1: $2");
+  }
+
+  function eaHtmlBody(body) {
+    return String(body || "").split(/\n\s*\n/).map(function (p) {
+      let s = p.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, function (m, name, url) {
+        return "<a href=\"" + url + "\">" + name + "</a>";
+      });
+      s = s.replace(/(^|[\s>])(https?:\/\/[^\s<]+?)([.,;:)]?)(?=\s|$)/g, function (m, pre, url, trail) {
+        return pre + "<a href=\"" + url + "\">" + url + "</a>" + trail;
+      });
+      return "<p>" + s.replace(/\n/g, "<br>") + "</p>";
+    }).join("");
+  }
+
+  async function eaToClipboard(text, html, btn, restore) {
+    try {
+      if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+        await navigator.clipboard.write([new ClipboardItem({
+          "text/plain": new Blob([text], { type: "text/plain" }),
+          "text/html": new Blob([html], { type: "text/html" })
+        })]);
+      } else {
+        await navigator.clipboard.writeText(text);
+      }
+    } catch (e) {
+      try { await navigator.clipboard.writeText(text); } catch (e2) { return; }
+    }
+    if (btn) {
+      btn.textContent = "\u2713 Copied";
+      setTimeout(function () { btn.textContent = restore; }, 1600);
+    }
+  }
+
   function eaSubject(s) {
     let t = String(s == null ? '' : s).trim();
     t = t.replace(/^(unsw[ ]*online[ ]*[|:–-][ ]*)+/i, '').trim();
@@ -5377,7 +5454,7 @@ draft.slice(0, 6000),
         '<div class="ea-part-hd"><span>Subject</span><button class="ea-btn-sm ea-part-copy" data-eacopy="subject">Copy subject</button></div>' +
         '<div class="ea-mail-subj">' + eaEsc(cur.subject) + '</div>' +
         '<div class="ea-part-hd"><span>Body</span><button class="ea-btn-sm ea-part-copy" data-eacopy="body">Copy body</button></div>' +
-        '<div class="ea-mail-body">' + eaEsc(cur.body) + '</div>' +
+        '<div class="ea-mail-body">' + eaHtmlBody(cur.body) + '</div>' +
       '</div>' +
       weaveNote + adds +
       (flags   ? '<div class="ea-card-hd" style="margin-top:18px;">🔎 Fact check</div>' + flags : '') +
@@ -5418,23 +5495,18 @@ draft.slice(0, 6000),
       if (!b || !eaResult) return;
       const which = b.dataset.eacopy;
       const cur = eaCurrent();
-      const txt = which === 'subject' ? cur.subject : cur.body;
-      navigator.clipboard.writeText(txt).then(function() {
-        const was = b.textContent;
-        b.textContent = '✓ Copied';
-        setTimeout(function() { b.textContent = was; }, 1600);
-      });
+      const raw = which === 'subject' ? cur.subject : cur.body;
+      const txt = eaPlain(raw);
+      const html = which === 'subject' ? eaEsc(raw) : eaHtmlBody(raw);
+      eaToClipboard(txt, html, b, b.textContent);
     });
 
     document.getElementById('ea-copy').addEventListener('click', function() {
       if (!eaResult) return;
       const cur = eaCurrent();
-      const txt = 'Subject: ' + cur.subject + '\n\n' + cur.body;
-      navigator.clipboard.writeText(txt).then(function() {
-        const b = document.getElementById('ea-copy');
-        b.textContent = '✓ Copied';
-        setTimeout(function() { b.textContent = '📋 Copy email'; }, 1600);
-      });
+      const txt = 'Subject: ' + cur.subject + '\n\n' + eaPlain(cur.body);
+      const html = '<p><b>Subject:</b> ' + eaEsc(cur.subject) + '</p>' + eaHtmlBody(cur.body);
+      eaToClipboard(txt, html, document.getElementById('ea-copy'), '📋 Copy email');
     });
 
     document.getElementById('ea-tone-hint').textContent = (EA_TYPES[eaType] || {}).hint || '';
