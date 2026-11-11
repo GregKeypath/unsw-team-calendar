@@ -1360,6 +1360,22 @@
     .kanban-sep.sep-urgent .kanban-sep-label { color: #ef4444; }
     .kanban-sep.sep-tasks::before, .kanban-sep.sep-tasks::after { background: #e5e7eb; }
     .kanban-sep.sep-tasks .kanban-sep-label { color: #9ca3af; }
+    .kanban-sep.sep-stream::before, .kanban-sep.sep-stream::after { background: #e5e7eb; }
+    .kanban-sep.sep-stream .kanban-sep-label { color: #6b7280; }
+    .kanban-sep.s-keydate::before, .kanban-sep.s-keydate::after { background: #bae6fd; }
+    .kanban-sep.s-keydate .kanban-sep-label { color: #0369a1; }
+    .kanban-sep.s-priority::before, .kanban-sep.s-priority::after { background: #fecaca; }
+    .kanban-sep.s-priority .kanban-sep-label { color: #b91c1c; }
+    .kanban-sep.s-welcome::before, .kanban-sep.s-welcome::after { background: #bbf7d0; }
+    .kanban-sep.s-welcome .kanban-sep-label { color: #15803d; }
+    .kanban-sep.s-calls::before, .kanban-sep.s-calls::after { background: #bfdbfe; }
+    .kanban-sep.s-calls .kanban-sep-label { color: #1d4ed8; }
+    .kanban-sep.s-webinar::before, .kanban-sep.s-webinar::after { background: #fed7aa; }
+    .kanban-sep.s-webinar .kanban-sep-label { color: #c2410c; }
+    .kanban-sep.s-admin::before, .kanban-sep.s-admin::after { background: #e2e8f0; }
+    .kanban-sep.s-admin .kanban-sep-label { color: #475569; }
+    .kanban-sep.s-leadership::before, .kanban-sep.s-leadership::after { background: #ddd6fe; }
+    .kanban-sep.s-leadership .kanban-sep-label { color: #6d28d9; }
     .kanban-sep.sep-other::before, .kanban-sep.sep-other::after { background: #c4b5fd; }
     .kanban-sep.sep-other .kanban-sep-label { color: #7c3aed; }
     .kanban-sep.sep-auto::before, .kanban-sep.sep-auto::after { background: #fde68a; }
@@ -5850,6 +5866,7 @@ draft.slice(0, 6000),
   function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : activeKanbanSchool === 'UoM' ? UOM_INITIAL : KANBAN_INITIAL; }
 
   const KANBAN_CATS = {
+    keydate:     { label: 'Key date',              dot: '#38BDF8' },
     priority:    { label: 'Priority',              dot: '#EF4444' },
     calls:       { label: 'Calls',                 dot: '#3B82F6' },
     admin:       { label: 'Admin',                 dot: '#94A3B8' },
@@ -6180,6 +6197,18 @@ draft.slice(0, 6000),
     } catch(e) {}
   }
 
+  // The streams the strategy artifact is laid out in, top to bottom.
+  // Anything with a category not listed falls in at the end.
+  const KANBAN_STREAMS = [
+    { cat: 'keydate',    label: '\u{1F4C5} Key dates' },
+    { cat: 'priority',   label: '\u{1F534} Priority' },
+    { cat: 'welcome',    label: '\u{1F44B} Welcome' },
+    { cat: 'calls',      label: '\u{1F4DE} Calls & re-engagement' },
+    { cat: 'webinar',    label: '\u{1F3A5} Webinars' },
+    { cat: 'admin',      label: '\u{1F5C2}\uFE0F Admin' },
+    { cat: 'leadership', label: '\u{1F9ED} Leadership' }
+  ];
+
   function makeSep(label, cls) {
     const sep = document.createElement('div');
     sep.className = `kanban-sep ${cls}`;
@@ -6221,7 +6250,7 @@ draft.slice(0, 6000),
       const opt = document.createElement('div');
       opt.className = 'kedit-cat-opt' + (card.cat === key ? ' selected' : '');
       opt.textContent = cat.label;
-      opt.style.background = key === 'priority' ? '#FEE2E2' : key === 'calls' ? '#DBEAFE' : key === 'admin' ? '#F3F4F6' : key === 'leadership' ? '#EDE9FE' : key === 'welcome' ? '#D1FAE5' : key === 'automated' ? '#FEF3C7' : key === 'webinar' ? '#FFEDD5' : key === 'other_resp' ? '#EDE9FE' : '#F9FAFB';
+      opt.style.background = key === 'keydate' ? '#E0F2FE' : key === 'priority' ? '#FEE2E2' : key === 'calls' ? '#DBEAFE' : key === 'admin' ? '#F3F4F6' : key === 'leadership' ? '#EDE9FE' : key === 'welcome' ? '#D1FAE5' : key === 'automated' ? '#FEF3C7' : key === 'webinar' ? '#FFEDD5' : key === 'other_resp' ? '#EDE9FE' : '#F9FAFB';
       opt.style.color = '#374151';
       opt.dataset.cat = key;
       opt.addEventListener('click', () => {
@@ -6305,9 +6334,21 @@ draft.slice(0, 6000),
         urgentCards.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
       }
 
-      // Tasks
-      body.appendChild(makeSep('📋 Tasks', 'sep-tasks'));
-      regularCards.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
+      // Grouped into streams, the way the strategy board reads
+      const seen = {};
+      KANBAN_STREAMS.forEach(s => {
+        const inStream = regularCards.filter(c => c.cat === s.cat);
+        if (!inStream.length) return;
+        inStream.forEach(c => { seen[c.id] = 1; });
+        body.appendChild(makeSep(s.label, "sep-stream s-" + s.cat));
+        inStream.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
+      });
+      const loose = regularCards.filter(c => !seen[c.id]);
+      if (loose.length) {
+        body.appendChild(makeSep('\u{1F4CB} Other tasks', 'sep-tasks'));
+        loose.forEach(card => body.appendChild(createKanbanCard(card, col.id)));
+      }
+      if (!regularCards.length) body.appendChild(makeSep('\u{1F4CB} Tasks', 'sep-tasks'));
 
       // Add task button
       const addBtn = document.createElement('button');
