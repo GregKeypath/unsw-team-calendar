@@ -6147,13 +6147,12 @@ draft.slice(0, 6000),
           else if (typeof val === 'object') kanbanBoard[col] = Object.values(val).filter(Boolean);
           else kanbanBoard[col] = [];
         }
-        // Restore any columns missing from Firebase using the master template
+        // Make sure every column exists, but leave it empty. Filling a blank
+        // column from the template used to bring deleted tasks back, because
+        // a column cleared on purpose looks exactly like one that was never
+        // there. A new board still gets the template, in the branch below.
         kanbanCols().forEach(c => {
-          if (!kanbanBoard[c.id] || kanbanBoard[c.id].length === 0) {
-            kanbanBoard[c.id] = kanbanTemplate()[c.id]
-              ? JSON.parse(JSON.stringify(kanbanTemplate()[c.id]))
-              : [];
-          }
+          if (!kanbanBoard[c.id]) kanbanBoard[c.id] = [];
         });
         if (!kanbanBoard._themes) kanbanBoard._themes = {};
         if (!kanbanBoard._tasks) kanbanBoard._tasks = [];
