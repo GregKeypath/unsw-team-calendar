@@ -5829,6 +5829,7 @@ draft.slice(0, 6000),
   function getKanbanDB() {
     if (activeKanbanSchool === 'MBS') return `${KANBAN_BASE}/kanban_MBS.json`;
     if (activeKanbanSchool === 'UoM') return `${KANBAN_BASE}/kanban_UoM.json`;
+    if (activeKanbanSchool === 'SIM') return `${KANBAN_BASE}/kanban_SIM.json`;
     return `${KANBAN_BASE}/kanban_${activeKanbanHex}_${activeKanbanYear}.json`;
   }
 
@@ -5843,6 +5844,20 @@ draft.slice(0, 6000),
     { id: 'week-2',  label: 'Week 2' }];
   const KANBAN_HEXES = ['H5','H6'];
   const KANBAN_YEARS = ['25','26','27'];
+
+  const SIM_COLS = [
+    { id: 'every',  label: 'Every week' },
+    { id: 'week-0', label: 'Week 0' },
+    { id: 'week-1', label: 'Week 1' },
+    { id: 'week-2', label: 'Week 2' },
+    { id: 'week-3', label: 'Week 3' },
+    { id: 'week-4', label: 'Week 4' },
+    { id: 'week-5', label: 'Week 5' },
+    { id: 'week-6', label: 'Week 6' },
+    { id: 'break',  label: 'Break' },
+  ];
+
+  const SIM_INITIAL = {};
 
   const UOM_COLS = [
     { id: 'week-1', label: 'Week 1' },
@@ -5912,8 +5927,8 @@ draft.slice(0, 6000),
     { id: 'week-5',  label: 'Week 5' },
     { id: 'week-6',  label: 'Week 6' },
     { id: 'week-7',  label: 'Week 7' }];
-  function kanbanCols()     { return activeKanbanSchool === 'MBS' ? MBS_COLS : activeKanbanSchool === 'UoM' ? UOM_COLS : KANBAN_COLS; }
-  function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : activeKanbanSchool === 'UoM' ? UOM_INITIAL : KANBAN_INITIAL; }
+  function kanbanCols()     { return activeKanbanSchool === 'MBS' ? MBS_COLS : activeKanbanSchool === 'UoM' ? UOM_COLS : activeKanbanSchool === 'SIM' ? SIM_COLS : KANBAN_COLS; }
+  function kanbanTemplate() { return activeKanbanSchool === 'MBS' ? MBS_INITIAL : activeKanbanSchool === 'UoM' ? UOM_INITIAL : activeKanbanSchool === 'SIM' ? SIM_INITIAL : KANBAN_INITIAL; }
 
   const KANBAN_CATS = {
     keydate:     { label: 'Key date',              dot: '#38BDF8' },
@@ -6160,10 +6175,10 @@ draft.slice(0, 6000),
     const nav = document.getElementById('kanban-hex-nav');
     if (!nav) return;
     // Year prev/next + hex buttons
-    const isMBS = activeKanbanSchool !== 'UNSW';
+    const isMBS = activeKanbanSchool !== 'UNSW';   // any partner board, one study period
     nav.innerHTML =
       (isMbs() ? `<span class="school-switch">` : '') +
-        (isMbs() ? ['MBS','UoM'] : ['UNSW']).map(s =>
+        (isMbs() ? ['MBS','UoM'] : ['UNSW','SIM']).map(s =>
           `<button class="school-btn${s === activeKanbanSchool ? ' active' : ''}" data-kschool="${s}">${s}</button>`
         ).join('') +
       (isMbs() ? `</span>` : '') +
@@ -6171,6 +6186,8 @@ draft.slice(0, 6000),
         ? `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 8px;align-self:center;">` +
             (activeKanbanSchool === 'UoM'
               ? 'University of Melbourne · re-enrolment, one OT study period'
+              : activeKanbanSchool === 'SIM'
+              ? 'Singapore Institute of Management · enrol and pay, and GC to M articulation'
               : 'Melbourne Business School · one study period') + `</span>`
         : `<span style="font-size:0.72rem;font-weight:700;color:#6b7280;padding:0 4px;align-self:center;">20${activeKanbanYear}</span>` +
           KANBAN_HEXES.map(hx =>
@@ -6356,7 +6373,12 @@ draft.slice(0, 6000),
     const todayKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const todayWeek = UNSW_WEEKS[todayKey];
     let currentColId = null;
-    if (todayWeek && activeKanbanSchool !== 'MBS') {
+    if (todayWeek && activeKanbanSchool === 'SIM') {
+      // SIM runs a week behind the UNSW hexamester: SIM week 0 sits
+      // alongside UNSW H6 week 1, so today lands one column earlier.
+      const n = todayWeek.label === 'O-Week' ? -1 : parseInt(todayWeek.label.replace('Week ', ''), 10) - 1;
+      if (n >= 0) currentColId = 'week-' + n;
+    } else if (todayWeek && activeKanbanSchool !== 'MBS') {
       currentColId = todayWeek.label === 'O-Week' ? 'o-week'
                    : 'week-' + todayWeek.label.replace('Week ', '');
     }
