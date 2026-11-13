@@ -6359,10 +6359,10 @@ draft.slice(0, 6000),
 
   let kShowEmptyStreams = false;
 
-  // UNSW keeps the column board the team is used to. The partner boards
+  // UNSW and MBS keep the column board the team is used to. UoM and SIM
   // use the stream by week matrix their strategy artifacts are laid out in.
   function renderKanban() {
-    if (activeKanbanSchool === 'UNSW') renderKanbanColumns();
+    if (activeKanbanSchool === 'UNSW' || activeKanbanSchool === 'MBS') renderKanbanColumns();
     else renderKanbanGrid();
   }
 
