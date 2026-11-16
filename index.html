@@ -2149,6 +2149,10 @@
     .ea-flag.warn { background:#fffbeb; border-left-color:#f59e0b; }
     .ea-flag.ok { background:#f0fdf4; border-left-color:#16a34a; }
     .ea-flag-t { font-size:0.76rem; color:#374151; line-height:1.5; }
+    .ea-q-btn { margin-top:7px; }
+    .ea-q-sugg { margin-top:8px; background:#fff; border:1px solid #e5e7eb; border-left:3px solid #10b981;
+      border-radius:7px; padding:9px 11px; font-size:0.78rem; line-height:1.55; color:#1f2937; white-space:pre-wrap; }
+    .ea-q-acts { display:flex; gap:6px; margin-top:8px; }
     .ea-q { font-size:0.78rem; color:#475569; line-height:1.5; padding:5px 0 5px 14px; position:relative; }
     .ea-q:before { content:'?'; position:absolute; left:0; color:#1e3a5f; font-weight:800; }
     .ea-note { font-size:0.66rem; color:#92400e; background:#fffbeb; border:1px solid #fde68a; border-radius:7px; padding:8px 11px; margin-top:12px; line-height:1.45; }
@@ -5304,6 +5308,7 @@ draft.slice(0, 6000),
       eaResult.additions = eaDropRepeats(eaResult, draft);
       eaPick = 0;
       eaAdded = {};
+      eaQSugg = {}; eaQBusy = -1;
       eaRenderResult(eaResult);
     } catch (e) {
       document.getElementById('ea-output').innerHTML =
@@ -5406,7 +5411,9 @@ draft.slice(0, 6000),
   let eaPick = 0;
   let eaAdded = {};
 
-  let eaWeaveError = false;
+  let eaWeaveError = '';
+  let eaQSugg = {};   // question index -> suggested wording
+  let eaQBusy = -1;
   let eaWoven = {};   // version index -> body with the chosen additions worked in
   let eaWeaving = false;
 
@@ -5418,6 +5425,54 @@ draft.slice(0, 6000),
 
   // Rather than dropping the paragraph on the end, the email is rewritten with
   // it worked in, so it reads as though it was always there.
+  // Turn a Before you send question into wording the advisor can review,
+  // rather than leaving them to work out how to say it.
+  async function eaSuggest(i) {
+    const q = (eaResult.questions || [])[i];
+    if (!q) return;
+    const key = EA_PROXY ? null : eaGetKey(false);
+    if (!EA_PROXY && !key) return;
+
+    eaQBusy = i;
+    eaRenderResult(eaResult);
+
+    const v = eaResult.versions[eaPick] || {};
+    const prompt = [
+      'An advisor is about to send the email below. Someone has raised a question about it. Write the sentence or two they could put in the email to deal with that question.',
+      '',
+      EA_RULES.split('WORKED EXAMPLE')[0],
+      '',
+      'RULES FOR THIS SUGGESTION:',
+      '- Rule Zero above still applies. Use only what is already in the email. If answering needs a fact you do not have, write the sentence with a [placeholder in square brackets] for the advisor to fill.',
+      '- One or two sentences. Not a paragraph, not a whole email.',
+      '- Same voice as the email it is going into.',
+      '- Write only the sentences. No preamble, no quotes around them, no explanation.',
+      '',
+      'THE EMAIL:',
+      '"""',
+      eaPlain(eaCurrent().body || v.body || ''),
+      '"""',
+      '',
+      'THE QUESTION: ' + q
+    ].join('\n');
+
+    try {
+      const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.35, maxOutputTokens: 2000 } };
+      const url = EA_PROXY || ('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + key);
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await res.json();
+      const cand = (data.candidates || [])[0] || {};
+      if (cand.finishReason === 'MAX_TOKENS') throw new Error('cut off');
+      let raw = (cand.content && cand.content.parts) ? cand.content.parts.map(function (p) { return p.text || ''; }).join('') : '';
+      raw = String(raw).replace(/```[a-z]*\n?/g, '').trim().replace(/^["\u201c]|["\u201d]$/g, '');
+      eaQSugg[i] = raw || 'Nothing came back. Try again.';
+    } catch (e) {
+      eaQSugg[i] = 'Could not get a suggestion (' + (e.message || 'failed') + '). Try again.';
+    }
+    eaQBusy = -1;
+    eaRenderResult(eaResult);
+  }
+
   async function eaWeave() {
     const v = eaResult.versions[eaPick];
     const chosen = (eaResult.additions || []).filter((a, i) => eaAdded[i]);
@@ -5432,7 +5487,10 @@ draft.slice(0, 6000),
     const prompt = [
       'You are editing an email that is already written and already follows the house style. Work the extra information below into it so it reads as though it was always part of the email.',
       '',
-      EA_RULES,
+      // The worked examples are for writing an email from scratch. This is
+      // an edit, so the style rules go in without them and the request stays
+      // small enough to come back whole.
+      EA_RULES.split('WORKED EXAMPLE')[0],
       '',
       'RULES FOR THIS EDIT:',
       '- Keep every point the email already makes. You are adding, not trimming.',
@@ -5449,24 +5507,26 @@ draft.slice(0, 6000),
       'WORK IN THIS INFORMATION:',
       chosen.map(function (a, i) { return (i + 1) + '. ' + (a.label || '') + ': ' + (a.paragraph || ''); }).join('\n'),
       '',
-      'Respond ONLY with valid JSON, no markdown fences:',
-      '{ "body": "the full email body with the information worked in, plain text with real line breaks between paragraphs" }'
+      'Reply with the full email body and NOTHING else. No JSON, no quotes around it, no code fences, no explanation before or after. Start at the greeting and finish at the sign off.'
     ].join('\n');
 
     try {
-      const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 4000 } };
+      const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 8000 } };
       const url = EA_PROXY || ('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' + key);
       const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const data = await res.json();
-      let raw = (((data.candidates || [])[0] || {}).content || {}).parts ? data.candidates[0].content.parts[0].text : '';
-      raw = String(raw).replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      const out = JSON.parse(raw);
-      if (out && out.body) eaWoven[eaPick] = out.body;
-      else throw new Error("no body came back");
+      const cand = (data.candidates || [])[0] || {};
+      if (cand.finishReason === 'MAX_TOKENS') throw new Error('the reply was cut off');
+      let raw = (cand.content && cand.content.parts) ? cand.content.parts.map(function (p) { return p.text || ''; }).join('') : '';
+      raw = String(raw).replace(/```[a-z]*\n?/g, '').trim();
+      // A good rework is at least as long as the email it started from. A
+      // stub or an apology is the model refusing, so fall back instead.
+      if (raw.length < Math.max(80, (v.body || '').length * 0.6)) throw new Error('came back too short to be the email');
+      eaWoven[eaPick] = raw;
     } catch (e) {
-      // fall back to the old behaviour rather than losing the addition
+      // Rather than lose the addition, put it on the end and say why.
       eaWoven[eaPick] = (v.body || '') + '\n' + '\n' + chosen.map(function (a) { return a.paragraph; }).join('\n' + '\n');
-      eaWeaveError = true;
+      eaWeaveError = e.message || 'the rework failed';
     }
     eaWeaving = false;
     eaRenderResult(eaResult);
@@ -5483,8 +5543,17 @@ draft.slice(0, 6000),
       const icon = lvl === 'ok' ? '✅' : (lvl === 'error' ? '⚠️' : '🔎');
       return '<div class="ea-flag ' + cls + '"><div class="ea-flag-t">' + icon + ' ' + eaEsc(f.text) + '</div></div>';
     }).join('');
-    const qs = (r.questions || []).map(function(q) {
-      return '<div class="ea-q">' + eaEsc(q) + '</div>';
+    const qs = (r.questions || []).map(function (q, i) {
+      const sug = eaQSugg[i];
+      return '<div class="ea-q">' + eaEsc(q) +
+        '<button class="ea-btn-sm ea-q-btn" data-eaq="' + i + '"' + (eaQBusy === i ? ' disabled' : '') + '>' +
+          (eaQBusy === i ? 'Thinking\u2026' : (sug ? 'Suggest again' : 'Suggest wording')) + '</button>' +
+        (sug ? '<div class="ea-q-sugg">' + eaEsc(sug) +
+          '<div class="ea-q-acts">' +
+            '<button class="ea-btn-sm" data-eaquse="' + i + '">Add it in</button>' +
+            '<button class="ea-btn-sm" data-eaqdrop="' + i + '">Discard</button>' +
+          '</div></div>' : '') +
+      '</div>';
     }).join('');
 
     const vers = r.versions || [];
@@ -5512,7 +5581,7 @@ draft.slice(0, 6000),
 
     const cur = eaCurrent();
     const weaveNote = eaWeaveError
-      ? '<div class="ea-flag warn"><div class="ea-flag-t">\u26a0\ufe0f Could not rework that in, so it has been added at the end. Worth a read before sending.</div></div>'
+      ? '<div class="ea-flag warn"><div class="ea-flag-t">\u26a0\ufe0f Could not rework that in (' + eaEsc(eaWeaveError) + '), so it is on the end instead. Worth a read before sending.</div></div>'
       : '';
     document.getElementById('ea-output').innerHTML =
       picker +
@@ -5548,12 +5617,34 @@ draft.slice(0, 6000),
     document.getElementById('ea-output').addEventListener('click', function(e) {
       const ver = e.target.closest('[data-eaver]');
       if (ver) { eaPick = +ver.dataset.eaver; eaRenderResult(eaResult); return; }
+      const qb = e.target.closest('[data-eaq]');
+      if (qb) { if (eaQBusy === -1) eaSuggest(+qb.dataset.eaq); return; }
+
+      const qu = e.target.closest('[data-eaquse]');
+      if (qu) {
+        const i = +qu.dataset.eaquse;
+        const text = eaQSugg[i];
+        if (!text) return;
+        // drop it in just before the closing lines, where an extra point belongs
+        const body = eaCurrent().body || '';
+        const paras = body.split(/\n\s*\n/);
+        const at = Math.max(1, paras.length - 2);
+        paras.splice(at, 0, text);
+        eaWoven[eaPick] = paras.join('\n\n');
+        delete eaQSugg[i];
+        eaRenderResult(eaResult);
+        return;
+      }
+
+      const qd = e.target.closest('[data-eaqdrop]');
+      if (qd) { delete eaQSugg[+qd.dataset.eaqdrop]; eaRenderResult(eaResult); return; }
+
       const add = e.target.closest('[data-eaadd]');
       if (add) {
         if (eaWeaving) return;
         const i = +add.dataset.eaadd;
         eaAdded[i] = !eaAdded[i];
-        eaWeaveError = false;
+        eaWeaveError = '';
         eaWeave();
         return;
       }
