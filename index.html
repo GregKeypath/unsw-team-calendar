@@ -2330,7 +2330,7 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">Calendar</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
-  <button class="tab-btn" data-tab="actions">Lists to Action</button>
+  <button class="tab-btn" data-tab="actions">Outstanding Docs</button>
   <button class="tab-btn" data-tab="notices">Notice Board</button>
   <!-- Pacing Board hidden Nov 2026 at Greg's request. Uncomment to bring it back, the panel and its data are untouched.
   <button class="tab-btn" data-tab="pacing">Pacing Board</button> -->
@@ -2769,16 +2769,16 @@
   </div>
 </div>
 
-<!-- Lists to Action tab -->
+<!-- Outstanding Docs tab -->
 <div class="tab-panel" id="tab-actions">
   <div class="mbs-only mbs-soon">
     <span class="tagline">MBS</span>
-    <h3>Lists to Action</h3>
+    <h3>Outstanding Docs</h3>
     <p>Ready for MBS rows whenever you have a list.</p>
   </div>
   <div class="ai-wrap">
     <div class="ai-head">
-      <h2>📋 Lists to Action</h2>
+      <h2>📋 Outstanding Docs</h2>
       <span class="ai-src" id="ai-src"></span>
     </div>
     <p class="ai-sub">Lists of students needing something chased. Assign one to yourself or to someone else, tick it off once it is sorted, and leave a comment so the next person knows where it got to. Student IDs only, no names, because this page is on the open internet. An address is the ID with a z in front, at unsw.edu.au.</p>
@@ -11308,7 +11308,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-18-01";
+  const HUB_BUILD = "2026-11-18-02";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
@@ -11407,7 +11407,7 @@ ${cardsHTML}
     try { saved = localStorage.getItem("hub-institution") || "unsw"; } catch (e) {}
     mbsSetInst(saved === "mbs" ? "mbs" : "unsw");
   }
-  // ── Lists to Action ────────────────────────────────────
+  // ── Outstanding Docs ────────────────────────────────────
   const AI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/action_items.json';
   const AI_LOADED = 'Outstanding docs, loaded 23 Oct 2026 from the accounts list';
   const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"}];
