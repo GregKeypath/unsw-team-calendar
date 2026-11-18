@@ -928,6 +928,9 @@
     .ai-letter.open { display:block; }
     .ai-letter a { color:#4338ca; }
     .ai-more { border:none; background:none; padding:0; font-size:0.68rem; font-weight:800; color:#6b7280; cursor:pointer; font-family:inherit; text-decoration:underline; }
+    .ai-picker { display:inline-flex; flex-wrap:wrap; gap:4px; margin-left:4px; padding:4px 6px;
+      background:#f8fafc; border:1px solid #e5e7eb; border-radius:8px; }
+    .ai-picker button.on { background:#16202b; border-color:#16202b; color:#fff; }
     .ai-who { display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:10px; font-size:0.7rem; color:#6b7280; }
     .ai-who b { font-weight:800; color:#16202b; }
     .ai-foot { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:10px; padding-top:9px; border-top:1px solid #f3f4f6; font-size:0.66rem; color:#9ca3af; }
@@ -11303,6 +11306,75 @@ ${cardsHTML}
     }
   }
 
+  // Bumped on every deploy. The page asks the live copy what its build is
+  // and tells whoever has the hub open that there is a newer one.
+  const HUB_BUILD = "2026-11-18-01";
+
+  // Built when it is needed, with its styles inline, so nothing in the
+  // page stylesheet can hide it.
+  function hubBarShow(build, onReload, onHide) {
+    let bar = document.getElementById("hub-update");
+    if (bar) bar.remove();
+    if (!build) return;
+
+    bar = document.createElement("div");
+    bar.id = "hub-update";
+    bar.dataset.build = build;
+    bar.style.cssText = "position:fixed;bottom:18px;left:50%;margin-left:-185px;width:370px;" +
+      "box-sizing:border-box;justify-content:center;" +
+      "z-index:2147483647;display:flex;align-items:center;gap:10px;background:#16202b;color:#fff;" +
+      "border-radius:11px;padding:11px 16px;font-size:0.76rem;font-weight:700;" +
+      "font-family:inherit;box-shadow:0 8px 24px rgba(0,0,0,0.28);";
+
+    const msg = document.createElement("span");
+    msg.textContent = "The hub has been updated.";
+    bar.appendChild(msg);
+
+    const btn = function (text, ghost, fn) {
+      const b2 = document.createElement("button");
+      b2.textContent = text;
+      b2.style.cssText = "border:none;border-radius:7px;padding:5px 13px;font-size:0.72rem;" +
+        "font-weight:800;cursor:pointer;font-family:inherit;" +
+        (ghost ? "background:rgba(255,255,255,0.16);color:#fff;" : "background:#fff;color:#16202b;");
+      b2.addEventListener("click", fn);
+      bar.appendChild(b2);
+    };
+    btn("Reload", false, onReload);
+    btn("Not now", true, onHide);
+
+    document.body.appendChild(bar);
+  }
+
+  function initHubUpdate() {
+    if (location.hostname === "localhost" || location.protocol === "file:") return;
+
+    let dismissed = "";
+    try { dismissed = localStorage.getItem("hub-build-seen") || ""; } catch (e) {}
+
+    async function check() {
+      if (document.hidden) return;
+      if (document.getElementById("hub-update")) return;
+      try {
+        const r = await fetch(location.pathname + "?build=" + Date.now(), { cache: "no-store" });
+        const t = await r.text();
+        const m = t.match(/HUB_BUILD = "([^"]+)"/);
+        if (!m) return;
+        const live = m[1];
+        if (live === HUB_BUILD || live === dismissed) return;
+        hubBarShow(live,
+          function () { location.reload(); },
+          function () {
+            dismissed = live;
+            try { localStorage.setItem("hub-build-seen", live); } catch (e2) {}
+            hubBarShow(null);
+          });
+      } catch (e) {}
+    }
+
+    setTimeout(check, 20000);
+    setInterval(check, 300000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) check(); });
+  }
   function initMbs() {
     const sw = document.getElementById("inst-switch");
     if (sw) sw.addEventListener("click", function (e) {
@@ -11337,8 +11409,8 @@ ${cardsHTML}
   }
   // ── Lists to Action ────────────────────────────────────
   const AI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/action_items.json';
-  const AI_LOADED = 'Conditional offers 23 Oct, ZZCO5006 swap 10 Nov 2026';
-  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Conditional offers"},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Conditional offers"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Conditional offers"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Conditional offers"},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Conditional offers"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Conditional offers"},{"id":"zzco2273183","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"2273183","prog":"MCO","ssa":"Amelia Churchill","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco2121075","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"2121075","prog":"MCO","ssa":"Amelia Churchill","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco5772633","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"5772633","prog":"MCO","ssa":"Stephanie Scriva","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco2212628","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"2212628","prog":"MCO","ssa":"Daljeet Sahota","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco5803476","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"5803476","prog":"MCO","ssa":"James Miller","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco3542301","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"3542301","prog":"MCO","ssa":"Kimberley Hornlimann","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028. Flagged in the source as Unmatched Teaching Period, not reviewed. Worth a look before the comms goes.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco5169486","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"5169486","prog":"MCO","ssa":"Priscilla Samuel","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028. Flagged in the source as Unmatched Course, not reviewed. Worth a look before the comms goes.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."},{"id":"zzco5803889","list":"ZZCO5006 swap, H4 2027","term":"H4 27","start":"2027-07-05","sid":"5803889","prog":"GDCO","ssa":"Priscilla Samuel","type":"Course swap","gate":"UNSW has actioned the swap. The student does not need to do anything.","need":"Enrolled in ZZCO5006 Working with Couples and Families for Hexamester 4 2027, swapped to ZZCO5007 Counselling for Grief and Loss. Both are electives. ZZCO5006 moves to Hexamester 1 2028.","letter":"Dear Student,  We are contacting you about changes to your Hexamester 4 2027 enrolment in ZZCO5006 Working with Couples and Families.  Due to a timetabling change, ZZCO5007 Counselling for Grief and Loss will now be offered in Hexamester 4, 2027 instead of ZZCO5006, which is planned to be offered in Hexa 1 2028.  Your enrolment in elective ZZCO5006 for Hexa 4 2027 will be swapped to elective ZZCO5007 Counselling for Grief and Loss.  Next steps: You do not need to do anything, the Hexa 4 2027 elective enrolment swap has been actioned for you by UNSW.  If you have any questions, please contact your Student Support Advisor. Phone 1300 501 037, email current-students@studyonline.unsw.edu.au, or book a call with an SSA."}];
+  const AI_LOADED = 'Outstanding docs, loaded 23 Oct 2026 from the accounts list';
+  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"}];
   const AI_STATUS = {
     todo:    { label: 'To do',          cls: 'st-todo' },
     chasing: { label: 'Chasing student', cls: 'st-chasing' },
@@ -11348,6 +11420,7 @@ ${cardsHTML}
   let aiFilter = 'live';
   let aiWho = 'all';
   let aiList = 'all';
+  let aiPick = null;
   let aiOpen = {};
 
   function aiEsc(s) {
@@ -11369,14 +11442,6 @@ ${cardsHTML}
     return who;
   }
 
-  function aiDays(iso) {
-    const d = new Date(iso + 'T00:00:00');
-    return Math.floor((Date.now() - d.getTime()) / 86400000);
-  }
-
-  function aiNice(iso) {
-    return new Date(iso + 'T00:00:00').toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
-  }
 
   async function aiLoad() {
     try {
@@ -11471,10 +11536,7 @@ ${cardsHTML}
 
     const aiCard = function (i) {
       const st = AI_STATUS[i.status] || AI_STATUS.todo;
-      const late = aiDays(i.start);
-      const lateChip = (late > 0 && i.status !== 'done')
-        ? '<span class="ai-chip late">Intake started ' + late + ' days ago</span>'
-        : '<span class="ai-chip">Intake starts ' + aiNice(i.start) + '</span>';
+
       const cmts = i.comments.map(function (c) {
         return '<div class="ai-cmt"><i>' + aiEsc(c.by || 'Unknown') + ' \u00b7 ' +
           new Date(c.ts || 0).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' }) +
@@ -11490,7 +11552,6 @@ ${cardsHTML}
           (i.fac ? '<span class="ai-chip">' + aiEsc(i.fac) + '</span>' : '') +
           (i.ssa ? '<span class="ai-chip">SSA ' + aiEsc(i.ssa) + '</span>' : '') +
           '<span class="ai-type">' + aiEsc(i.type) + '</span>' +
-          lateChip +
           '<span class="ai-status ' + st.cls + '">' + st.label + '</span>' +
         '</div>' +
         '<div class="ai-need">' + aiEsc(i.need) + '</div>' +
@@ -11507,6 +11568,14 @@ ${cardsHTML}
             : (i.assignee ? 'Assigned to <b>' + aiEsc(i.assignee) + '</b>' : '<span>Nobody assigned</span>')) +
           '<button data-aiclaim="' + i.id + '">' + (i.assignee ? 'Reassign' : 'Assign') + '</button>' +
           (i.assignee ? '<button data-aiclear="' + i.id + '">Clear</button>' : '') +
+          (aiPick === i.id
+            ? '<span class="ai-picker">' +
+                (typeof NB_SSAS !== 'undefined' ? NB_SSAS : []).concat(['\u2014']).map(function (p) {
+                  return '<button data-aipick="' + i.id + '|' + aiEsc(p) + '"' +
+                    (i.assignee === p ? ' class="on"' : '') + '>' +
+                    (p === '\u2014' ? 'Nobody' : aiEsc(p)) + '</button>';
+                }).join('') + '</span>'
+            : '') +
         '</div>' +
         (cmts ? '<div class="ai-cmts">' + cmts + '</div>' : '') +
         '<div class="ai-foot">' +
@@ -11573,11 +11642,14 @@ ${cardsHTML}
       if (lt) { aiOpen[lt.dataset.ailetter] = !aiOpen[lt.dataset.ailetter]; aiRender(); return; }
 
       const cl = e.target.closest('[data-aiclaim]');
-      if (cl) {
-        const rec = aiRec(cl.dataset.aiclaim);
-        const n = prompt('Assign this to which SSA?', rec.assignee || (localStorage.getItem('unsw-me') || ''));
-        if (n === null) return;
-        rec.assignee = n.trim();
+      if (cl) { aiPick = (aiPick === cl.dataset.aiclaim) ? null : cl.dataset.aiclaim; aiRender(); return; }
+
+      const pk = e.target.closest('[data-aipick]');
+      if (pk) {
+        const parts = pk.dataset.aipick.split('|');
+        const rec = aiRec(parts[0]);
+        rec.assignee = (parts[1] === '\u2014') ? '' : parts[1];
+        aiPick = null;
         aiSave(); aiRender();
         return;
       }
@@ -11864,6 +11936,7 @@ ${cardsHTML}
   initIssues();
   initActions();
   initMbs();
+  initHubUpdate();
   (function () {
     const flip = document.getElementById('nb-flip');
     if (!flip) return;
