@@ -307,6 +307,12 @@
       margin: 0 auto;
     }
 
+    .ev-times { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+    .ev-times input { width:120px; border:1.5px solid #e5e7eb; border-radius:7px; padding:7px 9px; font-size:0.82rem; font-family:inherit; color:#16202b; background:#fff; }
+    .ev-times input:focus { outline:none; border-color:#16202b; }
+    .ev-times span { font-size:0.74rem; color:#9ca3af; font-weight:700; }
+    .tag-opt { font-weight:600; color:#b6bfca; text-transform:none; letter-spacing:0; }
+    .event-time { font-weight:800; opacity:0.75; margin-right:5px; white-space:nowrap; }
     .event-chip { cursor: pointer; }
 
     .day-cell {
@@ -2580,6 +2586,12 @@
     </div>
     <div class="modal-body">
       <input type="text" id="event-input" placeholder="Event name..." maxlength="80" />
+      <div class="tag-label">Time <span class="tag-opt">optional</span></div>
+      <div class="ev-times">
+        <input type="time" id="event-start" step="300" />
+        <span>to</span>
+        <input type="time" id="event-end" step="300" />
+      </div>
       <div class="tag-label">Event Type</div>
       <div class="tag-picker" id="tag-picker"></div>
       <div class="modal-actions">
@@ -2600,6 +2612,12 @@
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
         <div id="detail-tag-badge" class="event-tag-badge" style="flex-shrink:0;"></div>
         <select id="detail-tag-select" style="font-size:0.78rem;border:1px solid #e5e7eb;border-radius:6px;padding:4px 10px;color:#374151;background:#f9fafb;cursor:pointer;outline:none;"></select>
+      </div>
+      <div class="field-label">Time <span class="tag-opt">optional</span></div>
+      <div class="ev-times">
+        <input type="time" id="detail-start" step="300" />
+        <span>to</span>
+        <input type="time" id="detail-end" step="300" />
       </div>
       <div class="field-label">Link</div>
       <input type="text" id="detail-link" placeholder="https://..." maxlength="300" />
@@ -3762,13 +3780,32 @@
         // Events
         const list = document.createElement('div');
         list.className = 'events-list';
-        (events[key] || []).forEach((ev, idx) => {
+        // Timed events run earliest first. Anything without a time keeps the
+        // order it was added, after the timed ones.
+        (events[key] || [])
+          .map((ev, idx) => ({ ev, idx }))
+          .sort((a, b) => {
+            const as = a.ev.start || '', bs = b.ev.start || '';
+            if (as && bs) return as < bs ? -1 : as > bs ? 1 : a.idx - b.idx;
+            if (as) return -1;
+            if (bs) return 1;
+            return a.idx - b.idx;
+          })
+          .forEach(({ ev, idx }) => {
           const tag = TAGS[ev.tag] || TAGS[0];
           const chip = document.createElement('div');
           chip.className = 'event-chip';
           chip.style.background = tag.bg;
           chip.style.color = tag.text;
           chip.style.borderLeft = `3px solid ${tag.dot}`;
+
+          const when = evTimeLabel(ev);
+          if (when) {
+            const tm = document.createElement('span');
+            tm.className = 'event-time';
+            tm.textContent = when;
+            chip.appendChild(tm);
+          }
 
           const txt = document.createElement('span');
           txt.className = 'event-text';
@@ -3818,6 +3855,8 @@
     document.getElementById('modal-title').textContent =
       `Add Event — ${DAY_NAMES[dow - 1]} ${day} ${MONTH_NAMES[month]} ${year}`;
     input.value = '';
+    document.getElementById('event-start').value = '';
+    document.getElementById('event-end').value = '';
     selectedTag = 0;
     renderTags();
     overlay.classList.add('open');
@@ -3853,11 +3892,35 @@
     });
   }
 
+  // 09:00 reads better as 9am, and an end time only earns its place when
+  // someone has set one.
+  function evClock(t) {
+    if (!t) return '';
+    const p = String(t).split(':');
+    const hh = parseInt(p[0], 10);
+    const mm = p[1] || '00';
+    if (isNaN(hh)) return '';
+    const ap = hh < 12 ? 'am' : 'pm';
+    let h12 = hh % 12; if (h12 === 0) h12 = 12;
+    return h12 + (mm === '00' ? '' : ':' + mm) + ap;
+  }
+
+  function evTimeLabel(ev) {
+    const s = evClock(ev && ev.start), e = evClock(ev && ev.end);
+    if (s && e) return s + '–' + e;
+    return s || '';
+  }
+
   function saveEvent() {
     const name = input.value.trim();
     if (!name || !pendingDateKey) return;
     if (!events[pendingDateKey]) events[pendingDateKey] = [];
-    events[pendingDateKey].push({ name, tag: selectedTag });
+    const start = document.getElementById('event-start').value;
+    const end   = document.getElementById('event-end').value;
+    const newEv = { name, tag: selectedTag };
+    if (start) newEv.start = start;
+    if (end) newEv.end = end;
+    events[pendingDateKey].push(newEv);
     saveEvents();
     render();
     closeModal();
@@ -3902,6 +3965,8 @@
     applyBadge(ev.tag || 0);
     sel.onchange = () => applyBadge(parseInt(sel.value));
 
+    document.getElementById('detail-start').value = ev.start || '';
+    document.getElementById('detail-end').value = ev.end || '';
     document.getElementById('detail-link').value = ev.link || '';
     document.getElementById('detail-comments').value = ev.comments || '';
     detailOverlay.classList.add('open');
@@ -3916,6 +3981,10 @@
   document.getElementById('detail-save-btn').addEventListener('click', () => {
     if (detailKey === null || detailIdx === null) return;
     events[detailKey][detailIdx].tag      = parseInt(document.getElementById('detail-tag-select').value) || 0;
+    const ds = document.getElementById('detail-start').value;
+    const de = document.getElementById('detail-end').value;
+    if (ds) events[detailKey][detailIdx].start = ds; else delete events[detailKey][detailIdx].start;
+    if (de) events[detailKey][detailIdx].end = de; else delete events[detailKey][detailIdx].end;
     events[detailKey][detailIdx].link     = document.getElementById('detail-link').value.trim();
     events[detailKey][detailIdx].comments = document.getElementById('detail-comments').value.trim();
     saveEvents();
@@ -11275,7 +11344,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-23-01";
+  const HUB_BUILD = "2026-11-24-01";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
