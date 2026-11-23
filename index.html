@@ -769,10 +769,6 @@
     .unsw-badge .kd-btn { display:none; background:none; border:none; cursor:pointer; font-size:0.6rem; padding:0 1px; opacity:0.6; line-height:1; color:inherit; }
     .unsw-badge:hover .kd-btn { display:inline; }
     .unsw-badge .kd-btn:hover { opacity:1; }
-    .kd-bar { display:flex; align-items:center; gap:10px; margin:0 0 8px; font-size:0.72rem; color:#6b7280; }
-    .kd-bar.hidden { display:none; }
-    .kd-bar button { background:none; border:1px solid #e5e7eb; border-radius:5px; padding:3px 10px; font-size:0.7rem; cursor:pointer; color:#374151; }
-    .kd-bar button:hover { background:#f3f4f6; }
     .kd-note { font-size:0.72rem; color:#6b7280; margin-top:10px; line-height:1.45; }
 
     .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:12px; padding:11px 14px;
@@ -2386,11 +2382,6 @@
   </div>
 </div>
 
-<div class="kd-bar hidden" id="kd-bar">
-  <span id="kd-bar-text"></span>
-  <button id="kd-reset-btn">Restore all key dates</button>
-</div>
-
 <div class="calendar-grid inst-both" id="calendar-grid"></div>
 
 </div><!-- end tab-calendar -->
@@ -3267,23 +3258,6 @@
         UNSW_DATES[shown].push(copy);
       });
     });
-    updateKdBar();
-  }
-
-  function updateKdBar() {
-    const bar = document.getElementById('kd-bar');
-    if (!bar) return;
-    let moved = 0, gone = 0;
-    Object.keys(keyDateOverrides).forEach(k => {
-      const o = keyDateOverrides[k];
-      if (o && o.hidden) gone++; else if (o && o.date) moved++;
-    });
-    if (!moved && !gone) { bar.classList.add('hidden'); return; }
-    const parts = [];
-    if (moved) parts.push(moved + (moved === 1 ? ' key date moved' : ' key dates moved'));
-    if (gone) parts.push(gone + ' cancelled');
-    document.getElementById('kd-bar-text').textContent = '📌 ' + parts.join(' · ');
-    bar.classList.remove('hidden');
   }
 
   async function saveKeyDateOverrides() {
@@ -3994,13 +3968,6 @@
 
   document.getElementById('kd-close-btn').addEventListener('click', closeKeyDate);
   kdOverlay.addEventListener('click', e => { if (e.target === kdOverlay) closeKeyDate(); });
-
-  document.getElementById('kd-reset-btn').addEventListener('click', () => {
-    keyDateOverrides = {};
-    saveKeyDateOverrides();
-    rebuildUnswDates();
-    render();
-  });
 
   document.getElementById('prev-btn').addEventListener('click', () => {
     startDate.setDate(startDate.getDate() - 7);
@@ -11308,7 +11275,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-18-02";
+  const HUB_BUILD = "2026-11-23-01";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
