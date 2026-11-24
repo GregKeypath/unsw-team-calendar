@@ -128,6 +128,64 @@
     .tab-btn[data-tab="wishlist"]::before  { content: '💡'; }
     .tab-btn[data-tab="actions"]::before   { content: '📋'; }
     .tab-btn[data-tab="issues"]::before    { content: '🔎'; }
+    .tab-btn[data-tab="overload"]::before  { content: '⬆️'; }
+
+    .ov-wrap { padding:18px 22px 50px; max-width:1180px; }
+    .ov-head h2 { margin:0 0 4px; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
+    .ov-sub { font-size:0.78rem; color:#6b7280; margin:0 0 6px; line-height:1.55; max-width:800px; }
+    .ov-src { font-size:0.62rem; font-weight:700; color:#9ca3af; margin-bottom:16px; }
+    .ov-hd { font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:0.7px; color:#16202b;
+      margin:26px 0 10px; padding-bottom:6px; border-bottom:2px solid #e5e7eb; }
+    .ov-hd:first-of-type { margin-top:18px; }
+    .ov-key { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+    .ov-pill { font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
+      border-radius:999px; padding:4px 11px; white-space:nowrap; }
+    .ov-pill.no  { background:#fee2e2; color:#991b1b; }
+    .ov-pill.cri { background:#fef3c7; color:#92400e; }
+    .ov-pill.tbc { background:#e5e7eb; color:#4b5563; }
+    .ov-keytxt { font-size:0.7rem; color:#6b7280; align-self:center; }
+
+    .ov-tbl { overflow-x:auto; border:1px solid #e5e7eb; border-radius:11px; background:#fff; }
+    .ov-tbl table { border-collapse:collapse; width:100%; min-width:900px; }
+    .ov-tbl th { background:#f8fafc; font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;
+      color:#9ca3af; text-align:left; padding:9px 12px; border-bottom:1px solid #e5e7eb; }
+    .ov-tbl td { padding:11px 12px; border-bottom:1px solid #f3f4f6; vertical-align:top; font-size:0.76rem;
+      color:#374151; line-height:1.5; }
+    .ov-tbl tr:last-child td { border-bottom:none; }
+    .ov-tbl tr.no td  { background:#fffafa; }
+    .ov-tbl tr.cri td { background:#fffdf5; }
+    .ov-tbl tr.tbc td { background:#fafbfc; }
+    .ov-prog { font-weight:800; color:#16202b; }
+    .ov-codes { display:block; font-size:0.64rem; font-weight:700; color:#9ca3af; margin-top:2px; }
+    .ov-note { font-size:0.68rem; color:#6b7280; display:block; margin-top:4px; }
+    .ov-tbl ul { margin:5px 0 0; padding-left:17px; }
+    .ov-tbl li { margin-bottom:2px; }
+    .ov-band td { background:#f1f5f9 !important; font-size:0.68rem; font-weight:800; text-transform:uppercase;
+      letter-spacing:0.5px; color:#475569; }
+
+    .ov-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:10px; }
+    .ov-step { background:#fff; border:1px solid #e5e7eb; border-top:3px solid #16202b; border-radius:10px; padding:12px 14px; }
+    .ov-step b { display:block; font-size:0.58rem; font-weight:800; text-transform:uppercase; letter-spacing:0.6px;
+      color:#9ca3af; margin-bottom:3px; }
+    .ov-step h4 { margin:0 0 5px; font-size:0.84rem; font-weight:800; color:#16202b; }
+    .ov-step p { margin:0; font-size:0.73rem; color:#6b7280; line-height:1.5; }
+
+    .ov-list { margin:0; padding-left:19px; }
+    .ov-list li { font-size:0.78rem; color:#374151; line-height:1.6; margin-bottom:7px; }
+
+    .ov-links { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:8px; }
+    .ov-link { background:#fff; border:1px solid #e5e7eb; border-radius:9px; padding:9px 13px; }
+    .ov-link b { display:block; font-size:0.7rem; font-weight:800; color:#16202b; margin-bottom:2px; }
+    .ov-link a { font-size:0.7rem; color:#1d4ed8; word-break:break-word; }
+    .ov-link span { font-size:0.7rem; color:#6b7280; }
+
+    .ov-warn { background:#fffbeb; border:1px solid #fde68a; border-left:4px solid #f59e0b; border-radius:9px;
+      padding:11px 14px; font-size:0.74rem; color:#92400e; line-height:1.55; margin-bottom:12px; }
+    .ov-email { background:#fff; border:1px solid #e5e7eb; border-radius:11px; padding:16px 18px; }
+    .ov-email-hd { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+    .ov-email-hd b { font-size:0.74rem; font-weight:800; color:#16202b; }
+    .ov-email-body { font-size:0.78rem; color:#374151; line-height:1.65; white-space:pre-wrap; }
+    .ov-email-body .fill { background:#fef3c7; border-radius:3px; padding:0 4px; font-weight:700; color:#92400e; }
 
     .theme-picker-wrap { align-self: center; margin-bottom: 7px; }
     .sw-strip { display: flex; width: 34px; height: 16px; border-radius: 4px; overflow: hidden; flex: none; box-shadow: 0 1px 2px rgba(0,0,0,0.18); }
@@ -2345,6 +2403,7 @@
   <button class="tab-btn" data-tab="email">Email Assistant</button>
   <button class="tab-btn" data-tab="schedule">Daily Schedule</button>
   <button class="tab-btn" data-tab="issues">Carousel and DP Issues</button>
+  <button class="tab-btn" data-tab="overload">Overloading</button>
   <!-- Wishlist retired Oct 2026, nobody was using it. Uncomment this and the panel below to bring it back.
   <button class="tab-btn" data-tab="wishlist">Wishlist</button> -->
   <div class="theme-picker-wrap">
@@ -2844,6 +2903,205 @@
     </div>
   </div>
 </div>
+<!-- Overloading tab -->
+<div class="tab-panel" id="tab-overload">
+  <div class="mbs-only mbs-soon">
+    <span class="tagline">MBS</span>
+    <h3>Overloading</h3>
+    <p>MBS runs its own enrolment rules. Nothing on this page applies there.</p>
+  </div>
+  <div class="ov-wrap">
+    <div class="ov-head">
+      <h2>⬆️ Overloading Cheat Sheet</h2>
+      <p class="ov-sub">Check eligibility here before advising any student to apply to overload. Overloading is more than 6 UOC, which is one course, in a hexamester.</p>
+      <div class="ov-src">UNSW ONLINE · SSA &amp; SEA QUICK REFERENCE</div>
+    </div>
+
+    <div class="ov-key">
+      <span class="ov-pill no">Not permitted</span><span class="ov-keytxt">do not advise to apply</span>
+      <span class="ov-pill cri">Criteria apply</span><span class="ov-keytxt">student must meet all criteria</span>
+      <span class="ov-pill tbc">To be confirmed</span><span class="ov-keytxt">check before advising</span>
+    </div>
+
+    <div class="ov-hd">1. Can the student overload?</div>
+    <div class="ov-tbl">
+      <table>
+        <thead>
+          <tr><th style="width:27%">Program</th><th style="width:16%">Faculty</th><th style="width:14%">Status</th><th>Criteria</th></tr>
+        </thead>
+        <tbody>
+          <tr class="cri">
+            <td>
+              <span class="ov-prog">Business School programs</span>
+              <span class="ov-note">Analytics<span class="ov-codes">7457, 7450, 5437, 8437</span></span>
+              <span class="ov-note">Applied Finance<span class="ov-codes">7430, 5436, 8436</span></span>
+              <span class="ov-note">FinTech<span class="ov-codes">7434, 5433, 8433</span></span>
+              <span class="ov-note">Human Resource Management<span class="ov-codes">7452, 7453, 7454, 7458, 8451</span></span>
+              <span class="ov-note">Management<span class="ov-codes">7413 GC Business, 8431 Master of Management</span></span>
+            </td>
+            <td>UNSW Business School</td>
+            <td><span class="ov-pill cri">Criteria apply</span></td>
+            <td>
+              <b>Masters only.</b> The student must meet all of:
+              <ul>
+                <li>42 UOC or less remaining in the program</li>
+                <li>WAM of 65 or above</li>
+                <li>Good Academic Standing</li>
+                <li>Once per academic year only</li>
+              </ul>
+              <span class="ov-note">Graduate Certificate and Graduate Diploma students are not permitted to overload.</span>
+            </td>
+          </tr>
+          <tr class="cri">
+            <td><span class="ov-prog">Data Science</span><span class="ov-codes">7446, 5646, 8646</span></td>
+            <td>Faculty of Science</td>
+            <td><span class="ov-pill cri">Criteria apply</span></td>
+            <td>
+              <b>Maximum 12 UOC.</b> The student must meet all of:
+              <ul>
+                <li>12 UOC already completed in a UNSW postgraduate online program</li>
+                <li>Overall WAM of 75 or above</li>
+              </ul>
+              <span class="ov-note">Advanced standing does not count towards the 12 UOC completed.</span>
+            </td>
+          </tr>
+          <tr class="no">
+            <td><span class="ov-prog">Graduate Diploma in Psychology</span><span class="ov-codes">5334</span></td>
+            <td>Faculty of Science</td>
+            <td><span class="ov-pill no">Not permitted</span></td>
+            <td>No exceptions.</td>
+          </tr>
+          <tr class="no">
+            <td><span class="ov-prog">Cyber Security</span><span class="ov-codes">7649, 5649, 8649</span></td>
+            <td>Faculty of Engineering</td>
+            <td><span class="ov-pill no">Not permitted</span></td>
+            <td>Confirmed 5 May 2026.</td>
+          </tr>
+          <tr class="ov-band"><td colspan="4">New programs, position still being confirmed</td></tr>
+          <tr class="no">
+            <td><span class="ov-prog">AI Strategy</span><span class="ov-codes">7494 Graduate Certificate</span></td>
+            <td></td>
+            <td><span class="ov-pill no">Not permitted</span></td>
+            <td>Graduate Certificate, so not permitted.</td>
+          </tr>
+          <tr class="no">
+            <td><span class="ov-prog">Business Psychology</span><span class="ov-codes">7513, 5513, 8513</span></td>
+            <td></td>
+            <td><span class="ov-pill no">Not permitted</span></td>
+            <td>Expected to follow the Business School position. Do not advise a student to apply.</td>
+          </tr>
+          <tr class="tbc">
+            <td><span class="ov-prog">Counselling</span><span class="ov-codes">7970, 5970, 8970</span></td>
+            <td>Arts, Design &amp; Architecture, Social Sciences</td>
+            <td><span class="ov-pill tbc">To be confirmed</span></td>
+            <td>
+              Indicative criteria only:
+              <ul>
+                <li>36 UOC completed at UNSW</li>
+                <li>WAM of 65 or above</li>
+                <li>Good Academic Standing</li>
+                <li>Following term only</li>
+              </ul>
+              <span class="ov-note">Placements add significant workload, so weigh this up carefully before raising it with a student.</span>
+            </td>
+          </tr>
+          <tr class="tbc">
+            <td><span class="ov-prog">Business Law</span><span class="ov-codes">7301 Graduate Certificate</span></td>
+            <td>Law &amp; Justice</td>
+            <td><span class="ov-pill tbc">To be confirmed</span></td>
+            <td>Treat as not permitted until the faculty confirms.</td>
+          </tr>
+          <tr class="tbc">
+            <td><span class="ov-prog">Project Management</span><span class="ov-codes">7876, 7877, 5876, 8876</span></td>
+            <td>UNSW Canberra</td>
+            <td><span class="ov-pill tbc">To be confirmed</span></td>
+            <td>Canberra sets its own rules. Check before advising.</td>
+          </tr>
+          <tr class="tbc">
+            <td><span class="ov-prog">Any program not listed here</span></td>
+            <td></td>
+            <td><span class="ov-pill tbc">To be confirmed</span></td>
+            <td>Check with the faculty before advising a student to apply.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ov-hd">2. The process</div>
+    <div class="ov-steps">
+      <div class="ov-step">
+        <b>Step 1</b>
+        <h4>Check eligibility</h4>
+        <p>Use the table above. If the program is not permitted, say so plainly and do not send the form.</p>
+      </div>
+      <div class="ov-step">
+        <b>Step 2</b>
+        <h4>Discuss the workload</h4>
+        <p>Two courses in a hexamester is 40 hours a week or more. Talk through work, family and study commitments before anything else.</p>
+      </div>
+      <div class="ov-step">
+        <b>Step 3</b>
+        <h4>Student applies</h4>
+        <p>The student submits the overload request themselves through the web form. We do not submit it for them.</p>
+      </div>
+      <div class="ov-step">
+        <b>Step 4</b>
+        <h4>Follow up</h4>
+        <p>Send the email template below and book a check-in call for O Week or Week 1.</p>
+      </div>
+    </div>
+
+    <div class="ov-hd">3. What to tell the student</div>
+    <ul class="ov-list">
+      <li>Course sites open on the Monday of O Week, not before.</li>
+      <li>They are responsible for the full workload of both courses from day one.</li>
+      <li>Overloading is not grounds for special consideration. A Short Extension may still apply for an individual assessment.</li>
+      <li>They can drop one course without academic or financial penalty up to the census date.</li>
+      <li>Book a check-in call so someone is watching how they are travelling.</li>
+    </ul>
+
+    <div class="ov-hd">4. Key links</div>
+    <div class="ov-links">
+      <div class="ov-link"><b>Overload request form</b><a href="https://portal.insight.unsw.edu.au/web-forms/" target="_blank" rel="noopener">portal.insight.unsw.edu.au/web-forms</a></div>
+      <div class="ov-link"><b>Key dates calendar</b><a href="https://studyonline.unsw.edu.au/sites/default/files/UNSW-Key-Dates-Calendar.pdf" target="_blank" rel="noopener">UNSW Key Dates Calendar (PDF)</a></div>
+      <div class="ov-link"><b>Business School enrolment requests</b><a href="https://www.unsw.edu.au/business/student-life/study-support/policies-guidelines/enrolment-requests-policy" target="_blank" rel="noopener">Enrolment requests policy</a></div>
+      <div class="ov-link"><b>Faculty of Science rules</b><a href="https://www.unsw.edu.au/science/student-life-resources/student-resources/faculty-science-rules" target="_blank" rel="noopener">Faculty of Science rules</a></div>
+      <div class="ov-link"><b>Faculty of Engineering rules</b><a href="https://www.unsw.edu.au/engineering/student-life/student-resources/faculty-enrolment-rules" target="_blank" rel="noopener">Faculty enrolment rules</a></div>
+      <div class="ov-link"><b>Arts, Design &amp; Architecture rules</b><a href="https://www.unsw.edu.au/arts-design-architecture/student-life/faqs-key-contacts/faculty-ada-rules" target="_blank" rel="noopener">Faculty ADA rules</a></div>
+      <div class="ov-link"><b>Law &amp; Justice rules</b><a href="https://www.unsw.edu.au/law-justice/student-life/current-students/faculty-enrolment-rules" target="_blank" rel="noopener">Faculty enrolment rules</a></div>
+      <div class="ov-link"><b>Special consideration</b><a href="https://www.unsw.edu.au/student/managing-your-studies/academic-life/special-consideration" target="_blank" rel="noopener">Special consideration</a></div>
+      <div class="ov-link"><b>Student Success</b><span>1300 501 037 · current-students@studyonline.unsw.edu.au</span></div>
+    </div>
+
+    <div class="ov-hd">5. Email template</div>
+    <div class="ov-warn">Fill in every highlighted date before you send. Copy it out of here and into Outlook.</div>
+    <div class="ov-email">
+      <div class="ov-email-hd"><b>Subject: UNSW Online | Request to overload process</b><button class="ci-btn-ghost" id="ov-copy">Copy the email</button></div>
+      <div class="ov-email-body" id="ov-email-body">Hi [Name],
+
+Thank you for your interest in overloading next hexamester. Here is what happens next.
+
+To apply, please submit a request through the UNSW web form: https://portal.insight.unsw.edu.au/web-forms/
+
+Please have this in by <span class="fill">[insert date]</span> so there is time for the faculty to make a decision before enrolment opens.
+
+A few things worth knowing before you apply:
+
+- Overloading means two courses in a single hexamester, which is a commitment of around 40 hours a week. Please have a think about your work and family commitments alongside that.
+- Your course sites open on the Monday of O Week, which is <span class="fill">[insert date]</span>. You will not be able to see the material before then.
+- You are responsible for the full workload of both courses from the start of the hexamester.
+- Overloading is not grounds for special consideration. A Short Extension may still apply to an individual assessment if something comes up.
+- If you find the load is too much, you can drop one course without academic or financial penalty up to the census date, which is <span class="fill">[insert date]</span>.
+
+I would also like to book a short check-in call with you in O Week or Week 1 to see how you are travelling.
+
+If you have any questions at all, please give me a call.
+
+Kind regards,</div>
+    </div>
+  </div>
+</div>
+
 <!-- Notice Board tab -->
 <div class="tab-panel" id="tab-notices">
   <div class="nb-wrap inst-both">
@@ -5730,6 +5988,17 @@ draft.slice(0, 6000),
       if (btn.dataset.tab === 'schedule') initSchedule();
       if (btn.dataset.tab === 'notices') initNotices();
     });
+  });
+
+  // ── Overloading: copy the student email ───────────────────────
+  document.getElementById('ov-copy').addEventListener('click', function () {
+    const b = this;
+    const text = 'Subject: UNSW Online | Request to overload process\n\n' +
+      document.getElementById('ov-email-body').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      b.textContent = 'Copied';
+      setTimeout(() => { b.textContent = 'Copy the email'; }, 1800);
+    }).catch(() => { b.textContent = 'Select it and copy'; });
   });
 
   // ── Pacing Target Lock ────────────────────────────────────────
@@ -11344,7 +11613,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-24-01";
+  const HUB_BUILD = "2026-11-24-02";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
