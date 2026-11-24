@@ -961,7 +961,29 @@
     .ai-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
     .ai-fbtn { border:1px solid #e5e7eb; background:#fff; border-radius:999px; padding:5px 13px; font-size:0.7rem; font-weight:700; color:#6b7280; cursor:pointer; font-family:inherit; }
     .ai-fbtn.active { background:#16202b; color:#fff; border-color:#16202b; }
-    .ai-listfilters .ai-fbtn.active { background:#0369a1; border-color:#0369a1; color:#fff; }
+    .ai-listtabs { display:flex; gap:4px; border-bottom:2px solid #e5e7eb; margin-bottom:0; }
+    .ai-ltab { border:none; background:none; border-bottom:3px solid transparent; margin-bottom:-2px;
+      padding:9px 16px 8px; font-size:0.82rem; font-weight:800; color:#9ca3af; cursor:pointer;
+      font-family:inherit; display:flex; align-items:center; gap:7px; }
+    .ai-ltab:hover { color:#6b7280; }
+    .ai-ltab.active { color:#16202b; border-bottom-color:#16202b; }
+    .ai-ltab i { font-style:normal; font-size:0.62rem; font-weight:800; background:#e5e7eb; color:#6b7280;
+      border-radius:999px; padding:1px 7px; }
+    .ai-ltab.active i { background:#16202b; color:#fff; }
+
+    .ai-batchtabs { display:flex; gap:6px; flex-wrap:wrap; margin:12px 0 0; }
+    .ai-batchtabs:empty { margin:0; }
+    .ai-btab { border:1.5px solid #e5e7eb; background:#fff; border-radius:8px; padding:6px 13px;
+      font-size:0.74rem; font-weight:800; color:#6b7280; cursor:pointer; font-family:inherit;
+      display:flex; align-items:center; gap:7px; }
+    .ai-btab:hover { border-color:#cbd5e1; }
+    .ai-btab.active { background:#0369a1; border-color:#0369a1; color:#fff; }
+    .ai-btab i { font-style:normal; font-size:0.62rem; font-weight:800; background:#f3f4f6; color:#6b7280;
+      border-radius:999px; padding:1px 7px; }
+    .ai-btab.active i { background:rgba(255,255,255,0.25); color:#fff; }
+
+    .ai-srcline { font-size:0.66rem; font-weight:700; color:#9ca3af; margin:10px 0 0; line-height:1.5; }
+    .ai-srcline:empty { margin:0; }
     .ai-whofilters { margin-top:-6px; }
     .ai-whofilters .ai-fbtn { font-size:0.66rem; padding:4px 11px; border-style:dashed; }
     .ai-whofilters .ai-fbtn.active { border-style:solid; background:#4338ca; border-color:#4338ca; color:#fff; }
@@ -978,6 +1000,7 @@
     .ai-chip { font-size:0.68rem; font-weight:700; color:#6b7280; background:#f3f4f6; border-radius:5px; padding:2px 8px; }
     .ai-chip.term { color:#4338ca; background:#eef2ff; font-weight:800; }
     .ai-chip.late { color:#991b1b; background:#fee2e2; font-weight:800; }
+    .ai-chip.warn { color:#92400e; background:#fef3c7; font-weight:800; }
     .ai-type { font-size:0.68rem; font-weight:800; color:#0369a1; background:#e0f2fe; border-radius:5px; padding:2px 8px; }
     .ai-status { margin-left:auto; font-size:0.62rem; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; border-radius:999px; padding:3px 10px; }
     .ai-status.st-todo { background:#fee2e2; color:#991b1b; }
@@ -2390,7 +2413,7 @@
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="calendar">Calendar</button>
   <button class="tab-btn" data-tab="kanban">Engagement Strategy</button>
-  <button class="tab-btn" data-tab="actions">Outstanding Docs</button>
+  <button class="tab-btn" data-tab="actions">Action Lists</button>
   <button class="tab-btn" data-tab="notices">Notice Board</button>
   <!-- Pacing Board hidden Nov 2026 at Greg's request. Uncomment to bring it back, the panel and its data are untouched.
   <button class="tab-btn" data-tab="pacing">Pacing Board</button> -->
@@ -2841,18 +2864,19 @@
 <div class="tab-panel" id="tab-actions">
   <div class="mbs-only mbs-soon">
     <span class="tagline">MBS</span>
-    <h3>Outstanding Docs</h3>
+    <h3>Action Lists</h3>
     <p>Ready for MBS rows whenever you have a list.</p>
   </div>
   <div class="ai-wrap">
     <div class="ai-head">
-      <h2>📋 Outstanding Docs</h2>
-      <span class="ai-src" id="ai-src"></span>
+      <h2>📋 Action Lists</h2>
     </div>
     <p class="ai-sub">Lists of students needing something chased. Assign one to yourself or to someone else, tick it off once it is sorted, and leave a comment so the next person knows where it got to. Student IDs only, no names, because this page is on the open internet. An address is the ID with a z in front, at unsw.edu.au.</p>
+    <div class="ai-listtabs" id="ai-listfilters"></div>
+    <div class="ai-batchtabs" id="ai-batchfilters"></div>
+    <div class="ai-srcline" id="ai-src"></div>
     <div class="ai-stats" id="ai-stats"></div>
     <div class="ai-filters" id="ai-filters"></div>
-    <div class="ai-filters ai-listfilters" id="ai-listfilters"></div>
     <div class="ai-filters ai-whofilters" id="ai-whofilters"></div>
     <div class="ai-list" id="ai-list"></div>
   </div>
@@ -11613,7 +11637,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-24-02";
+  const HUB_BUILD = "2026-11-24-03";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
@@ -11714,8 +11738,22 @@ ${cardsHTML}
   }
   // ── Outstanding Docs ────────────────────────────────────
   const AI_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/action_items.json';
-  const AI_LOADED = 'Outstanding docs, loaded 23 Oct 2026 from the accounts list';
-  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding docs"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding docs"}];
+  // Where each batch came from, so nobody has to guess how old a list is.
+  const AI_LOADED = {
+    'H5 and earlier': 'Loaded 23 Oct 2026 from the accounts list. Intakes from H3 26 onwards that were still outstanding at that point.',
+    'H6': 'Loaded 24 Nov 2026 from the Offer Conditions report.'
+  };
+  const AI_ROWS = [{"id":"1605979","term":"H3 26","start":"2026-05-11","prog":"7413","sid":"5776492","appl":"1605979","action":"MATR","reason":"OLAP","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Management from Works Well Training, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Management from Works Well Training by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H5 and earlier"},{"id":"1611713","term":"H3 26","start":"2026-05-11","prog":"7458","sid":"5790900","appl":"1611713","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that Parramatta Community College has processed the withdrawal from the Certificate IV in Training and Assessment.","letter":"Please note that if you would like to commence in Hexamester 3, 2026 then we require evidence that Parramatta Community College has processed your withdrawal from Certificate IV in Training and Assessment. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H5 and earlier"},{"id":"1614674","term":"H4 26","start":"2026-07-06","prog":"5334","sid":"5783681","appl":"1614674","action":"MATR","reason":"OLAP","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Final transcripts and completion certificates for the Graduate Certificate in Psychological Science (ACAP) and Certificate IV in Community Service (TAFE NSW), or evidence both have processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require an official final transcript and completion certificates for the Graduate Certificate Psychological Science from ACAP and Certificate IV Community Service from TAFE NSW. Alternatively, if you do not plan to complete these programs we require evidence that ACAP and TAFE have processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H5 and earlier"},{"id":"1608451","term":"H4 26","start":"2026-07-06","prog":"7452","sid":"5788649","appl":"1608451","action":"MATR","reason":"OLAP","type":"Proof of citizenship","gate":"Can accept now, document due by the start of the intake","need":"Proof of citizenship: a current Australian passport, or an Australian birth or citizenship certificate.","letter":"Please note that you can accept your offer now but you must provide proof of citizenship in the form of a current Australian passport or Australian birth/citizenship certificate by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H5 and earlier"},{"id":"1615601","term":"H4 26","start":"2026-07-06","prog":"8436","sid":"5793254","appl":"1615601","action":"MATR","reason":"OLAP","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that CAANZ has processed the withdrawal from the Graduate Diploma.","letter":"Please note that if you would like to commence in Hexamester 4, 2026 then we require evidence that CAANZ has processed your withdrawal from the Graduate Diploma. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H5 and earlier"},{"id":"1614439","term":"H5 26","start":"2026-08-31","prog":"7301","sid":"5792498","appl":"1614439","action":"MATR","reason":"OLAP","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final Diploma transcript from CDU.","letter":"Please note that you can accept your offer now but you must provide an official, final Diploma transcript from CDU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H5 and earlier"},
+{"id":"10659555","term":"H6 26","start":"2026-10-26","sid":"5801289","appl":"10659555","sea":"Michael L","created":"2026-10-22","course":"Graduate Certificate in Human Resource Management","enrol":"Enrolled","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that the University of Canberra has processed the withdrawal from the Juris Doctor.","letter":"Please note that if you would like to commence in Hexamester 6, 2026 then we require evidence that the University of Canberra has processed your withdrawal from the Juris Doctor. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H6"},
+{"id":"10850142","term":"H6 26","start":"2026-10-26","sid":"5810320","appl":"10850142","sea":"Jesse","created":"2026-10-16","course":"Graduate Certificate of Analytics","enrol":"Enrolled","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Official final transcript and completion certificate for the Master of Planning from WSU, or evidence that WSU has processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 6, 2026 then we require an official final transcript and completion certificate for the Master of Planning from WSU. Alternatively, if you do not plan to complete this program we require evidence that WSU has processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H6"},
+{"id":"10819959","term":"H6 26","start":"2026-10-26","sid":"5810204","appl":"10819959","sea":"Michaela","created":"2026-10-16","course":"Graduate Certificate in AI Strategy","enrol":"Enrolled","type":"Transcript or withdrawal","gate":"Required before the student can commence","need":"Official final transcript and completion certificate for the Master of Business Administration from Curtin University, or evidence that Curtin has processed a withdrawal.","letter":"Please note that if you would like to commence in Hexamester 6, 2026 then we require an official final transcript and completion certificate for the Master of Business Administration from Curtin University. Alternatively, if you do not plan to complete this program we require evidence that Curtin University has processed your withdrawal. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H6"},
+{"id":"10800794","term":"H6 26","start":"2026-10-26","sid":"5808709","appl":"10800794","sea":"Joshua","created":"2026-10-08","course":"Graduate Certificate of Cyber Security","enrol":"Enrolled","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final transcript from QUT.","letter":"Please note that you can accept your offer now but you must provide an official, final transcript from QUT by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H6"},
+{"id":"10683789","term":"H6 26","start":"2026-10-26","sid":"5806598","appl":"10683789","sea":"Joshua","created":"2026-09-28","course":"Graduate Certificate in AI Strategy","enrol":"Enrolled","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that the University of Melbourne has processed the withdrawal from the Master of Data Science.","letter":"Please note that if you would like to commence in Hexamester 6, 2026 then we require evidence that University of Melbourne has processed your withdrawal from Master of Data Science. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H6"},
+{"id":"10710941","term":"H6 26","start":"2026-10-26","sid":"5805028","appl":"10710941","sea":"Michael H","created":"2026-09-22","course":"Masters Degree (Coursework) of AI Leadership and Strategy","enrol":"Enrolled","type":"Transcript","gate":"Can accept now, document due by the start of the intake","need":"Official final transcript from Bond University.","letter":"Please note that you can accept your offer now but you must provide an official, final transcript from Bond University by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H6"},
+{"id":"10678914","term":"H6 26","start":"2026-10-26","sid":"5804580","appl":"10678914","sea":"","created":"2026-09-18","course":"Graduate Diploma in Counselling","enrol":"Not enrolled","type":"Degree certificate","gate":"Can accept now, document due by the start of the intake","need":"Official Bachelor degree certificate from WSU.","letter":"Please note that you can accept your offer now but you must provide an official Bachelor degree certificate from WSU by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H6"},
+{"id":"10594728","term":"H6 26","start":"2026-10-26","sid":"3528887","appl":"10594728","sea":"Michael H","created":"2026-09-07","course":"Masters Degree (Coursework) of Counselling","enrol":"Enrolled","type":"Degree certificate","gate":"Can accept now, document due by the start of the intake","need":"Official Graduate Diploma certificate from the College of Law.","letter":"Please note that you can accept your offer now but you must provide an official Graduate Diploma degree certificate from the College of Law by the start of your intake. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H6"},
+{"id":"10479495","term":"H6 26","start":"2026-10-26","sid":"5798447","appl":"10479495","sea":"Emma","created":"2026-09-18","course":"Graduate Certificate of Project Management","enrol":"Enrolled","type":"VET transcript","gate":"Can accept now, document due by the start of the intake","need":"Verifiable VET transcript in PDF for the Diploma of Business from Churchill Education, created from the USI Student Portal.","letter":"Please note that you can accept your offer now but you must provide a verifiable VET transcript in PDF format created from your USI Student Portal for the Diploma of Business from Churchill Education by the start of your intake. The transcript must contain a unique URL link, name and document number or a QR Code displayed at the bottom of the PDF. Refer to https://www.usi.gov.au/usi-vet-transcripts/students-and-their-vet-transcripts for more information. Failure to provide this may result in your current offer and enrolment being withdrawn.","list":"Outstanding Docs","batch":"H6"},
+{"id":"10557622","term":"H6 26","start":"2026-10-26","sid":"5802121","appl":"10557622","sea":"","created":"2026-09-22","course":"Masters Degree (Coursework) of Counselling","enrol":"Not enrolled","type":"Withdrawal evidence","gate":"Required before the student can commence","need":"Evidence that the University of Canberra has processed the withdrawal from the Master of Counselling.","letter":"Please note that if you would like to commence in Hexamester 6, 2026 then we require evidence that the University of Canberra has processed your withdrawal from the Master of Counselling. Please refer to our Multiple Enrolment Rules at https://www.unsw.edu.au/student/managing-your-studies/essentials/changing-your-enrolment","list":"Outstanding Docs","batch":"H6"}];
   const AI_STATUS = {
     todo:    { label: 'To do',          cls: 'st-todo' },
     chasing: { label: 'Chasing student', cls: 'st-chasing' },
@@ -11724,7 +11762,8 @@ ${cardsHTML}
   let aiState = {};
   let aiFilter = 'live';
   let aiWho = 'all';
-  let aiList = 'all';
+  let aiList = '';
+  let aiBatch = 'all';
   let aiPick = null;
   let aiOpen = {};
 
@@ -11773,9 +11812,6 @@ ${cardsHTML}
     const list = document.getElementById('ai-list');
     if (!list) return;
 
-    const src = document.getElementById('ai-src');
-    if (src) src.textContent = AI_LOADED;
-
     const all = AI_ROWS.map(function (r) {
       const s = aiState[r.id] || {};
       return Object.assign({}, r, {
@@ -11785,9 +11821,53 @@ ${cardsHTML}
       });
     });
 
+    // Each list is a tab, and inside a list each batch is a tab of its own,
+    // so a new hexamester just drops in alongside the last one.
+    const lists = [...new Set(AI_ROWS.map(function (i) { return i.list; }).filter(Boolean))];
+    if (lists.indexOf(aiList) === -1) aiList = lists[0] || '';
+
+    const openIn = function (rows) {
+      return rows.filter(function (i) { return i.status !== 'done'; }).length;
+    };
+
+    const lf = document.getElementById('ai-listfilters');
+    if (lf) lf.innerHTML = lists.map(function (L) {
+      const n = openIn(all.filter(function (i) { return i.list === L; }));
+      return '<button class="ai-ltab' + (aiList === L ? ' active' : '') + '" data-ailist="' + aiEsc(L) + '">' +
+        aiEsc(L) + (n ? '<i>' + n + '</i>' : '') + '</button>';
+    }).join('');
+
+    // Newest batch first, worked out from the latest intake in each one so a
+    // batch named H1 27 still lands after H6 26.
+    const inList = all.filter(function (i) { return i.list === aiList; });
+    const bMax = {};
+    inList.forEach(function (i) {
+      const b = i.batch || '';
+      if (!b) return;
+      if (!bMax[b] || i.start > bMax[b]) bMax[b] = i.start;
+    });
+    const batches = Object.keys(bMax).sort(function (a, b) { return bMax[a] < bMax[b] ? 1 : -1; });
+    if (aiBatch !== 'all' && batches.indexOf(aiBatch) === -1) aiBatch = 'all';
+
+    const bf = document.getElementById('ai-batchfilters');
+    if (bf) bf.innerHTML = batches.length < 2 ? '' :
+      batches.map(function (B) {
+        const n = openIn(inList.filter(function (i) { return i.batch === B; }));
+        return '<button class="ai-btab' + (aiBatch === B ? ' active' : '') + '" data-aibatch="' + aiEsc(B) + '">' +
+          aiEsc(B) + (n ? '<i>' + n + '</i>' : '') + '</button>';
+      }).concat('<button class="ai-btab' + (aiBatch === 'all' ? ' active' : '') +
+        '" data-aibatch="all">Everything</button>').join('');
+
+    const src = document.getElementById('ai-src');
+    if (src) src.textContent = (aiBatch !== 'all' && AI_LOADED[aiBatch]) ? AI_LOADED[aiBatch] : '';
+
+    // Everything below counts only what the chosen tabs are showing, so the
+    // numbers always match the rows underneath them.
+    const scope = aiBatch === 'all' ? inList : inList.filter(function (i) { return i.batch === aiBatch; });
+
     const counts = { todo: 0, chasing: 0, done: 0 };
-    all.forEach(function (i) { if (counts[i.status] != null) counts[i.status]++; });
-    const unassigned = all.filter(function (i) { return !i.assignee && i.status !== 'done'; }).length;
+    scope.forEach(function (i) { if (counts[i.status] != null) counts[i.status]++; });
+    const unassigned = scope.filter(function (i) { return !i.assignee && i.status !== 'done'; }).length;
 
     const stats = document.getElementById('ai-stats');
     if (stats) stats.innerHTML =
@@ -11802,35 +11882,25 @@ ${cardsHTML}
       return '<button class="ai-fbtn' + (aiFilter === t[0] ? ' active' : '') + '" data-aif="' + t[0] + '">' + t[1] + '</button>';
     }).join('');
 
-    const lists = [...new Set(AI_ROWS.map(function (i) { return i.list; }).filter(Boolean))];
-    const lf = document.getElementById("ai-listfilters");
-    if (lf) lf.innerHTML = lists.length < 2 ? "" :
-      ['<button class="ai-fbtn' + (aiList === "all" ? " active" : "") + '" data-ailist="all">All lists</button>']
-        .concat(lists.map(function (L) {
-          return '<button class="ai-fbtn' + (aiList === L ? " active" : "") + '" data-ailist="' + aiEsc(L) + '">' +
-            aiEsc(L) + '</button>';
-        })).join("");
-
-    const who = [...new Set(all.map(function (i) { return i.assignee; }).filter(Boolean))].sort();
+    const who = [...new Set(scope.map(function (i) { return i.assignee; }).filter(Boolean))].sort();
     const wf = document.getElementById('ai-whofilters');
     if (wf) wf.innerHTML = who.length
       ? ['<button class="ai-fbtn' + (aiWho === 'all' ? ' active' : '') + '" data-aiwho="all">Everyone</button>']
           .concat(who.map(function (p) {
             return '<button class="ai-fbtn' + (aiWho === p ? ' active' : '') + '" data-aiwho="' + aiEsc(p) + '">' +
-              aiEsc(p) + ' ' + all.filter(function (i) { return i.assignee === p; }).length + '</button>';
+              aiEsc(p) + ' ' + scope.filter(function (i) { return i.assignee === p; }).length + '</button>';
           })).join('')
       : '';
 
     const me = (localStorage.getItem('unsw-me') || '').toLowerCase();
-    let items = all;
-    if (aiFilter === 'live') items = all.filter(function (i) { return i.status !== 'done'; });
-    else if (aiFilter === 'mine') items = all.filter(function (i) { return me && String(i.assignee).toLowerCase() === me; });
-    else if (aiFilter === 'none') items = all.filter(function (i) { return !i.assignee; });
-    else if (aiFilter !== 'all') items = all.filter(function (i) { return i.status === aiFilter; });
+    let items = scope;
+    if (aiFilter === 'live') items = scope.filter(function (i) { return i.status !== 'done'; });
+    else if (aiFilter === 'mine') items = scope.filter(function (i) { return me && String(i.assignee).toLowerCase() === me; });
+    else if (aiFilter === 'none') items = scope.filter(function (i) { return !i.assignee; });
+    else if (aiFilter !== 'all') items = scope.filter(function (i) { return i.status === aiFilter; });
     if (aiWho !== 'all') items = items.filter(function (i) { return i.assignee === aiWho; });
-    if (aiList !== 'all') items = items.filter(function (i) { return i.list === aiList; });
-    items.sort(function (a, b) {
-      if (a.list !== b.list) return a.list < b.list ? -1 : 1;
+    items = items.slice().sort(function (a, b) {
+      if ((a.batch || '') !== (b.batch || '')) return (bMax[b.batch] || '') < (bMax[a.batch] || '') ? -1 : 1;
       return a.start < b.start ? -1 : a.start > b.start ? 1 : 0;
     });
 
@@ -11852,16 +11922,22 @@ ${cardsHTML}
         '<div class="ai-top">' +
           '<span class="ai-sid">' + aiEsc(i.sid) + '</span>' +
           '<span class="ai-chip term">' + aiEsc(i.term) + '</span>' +
-          '<span class="ai-chip">Program ' + aiEsc(i.prog) + '</span>' +
+          (i.prog ? '<span class="ai-chip">Program ' + aiEsc(i.prog) + '</span>' : '') +
+          (i.course ? '<span class="ai-chip">' + aiEsc(i.course) + '</span>' : '') +
+          (i.enrol ? '<span class="ai-chip' + (/not/i.test(i.enrol) ? ' warn' : '') + '">' + aiEsc(i.enrol) + '</span>' : '') +
           (i.appl ? '<span class="ai-chip">Appl ' + aiEsc(i.appl) + '</span>' : '') +
           (i.fac ? '<span class="ai-chip">' + aiEsc(i.fac) + '</span>' : '') +
           (i.ssa ? '<span class="ai-chip">SSA ' + aiEsc(i.ssa) + '</span>' : '') +
+          (i.sea ? '<span class="ai-chip">SEA ' + aiEsc(i.sea) + '</span>' : '') +
           '<span class="ai-type">' + aiEsc(i.type) + '</span>' +
           '<span class="ai-status ' + st.cls + '">' + st.label + '</span>' +
         '</div>' +
         '<div class="ai-need">' + aiEsc(i.need) + '</div>' +
         '<div class="ai-foot" style="border:none; margin:0; padding:0; color:#9ca3af;">' +
-          '<span>' + aiEsc(i.gate) + '</span>' +
+          '<span>' + aiEsc(i.gate) +
+            (i.created ? ' · condition set ' + new Date(i.created + 'T00:00:00')
+              .toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '') +
+          '</span>' +
           (i.letter ? '<button class="ai-more" data-ailetter="' + i.id + '">' +
             (aiOpen[i.id] ? 'Hide the letter wording' : 'Show the letter wording') + '</button>' : '') +
         '</div>' +
@@ -11885,7 +11961,7 @@ ${cardsHTML}
         (cmts ? '<div class="ai-cmts">' + cmts + '</div>' : '') +
         '<div class="ai-foot">' +
           '<span>' + (i.action ? aiEsc(i.action) + ' \u00b7 ' + aiEsc(i.reason) + ' \u00b7 Online Acceptance Process'
-                                : aiEsc(i.list)) + '</span>' +
+                                : 'Offer condition') + '</span>' +
           '<span class="ai-acts">' +
             '<button data-aicmt="' + i.id + '">Comment</button>' +
             (done ? '' : '<button data-aistat="' + i.id + '|chasing">Chasing</button>') +
@@ -11932,6 +12008,14 @@ ${cardsHTML}
       const b = e.target.closest('[data-ailist]');
       if (!b) return;
       aiList = b.dataset.ailist;
+      aiBatch = 'all';
+      aiRender();
+    });
+
+    document.getElementById('ai-batchfilters').addEventListener('click', function (e) {
+      const b = e.target.closest('[data-aibatch]');
+      if (!b) return;
+      aiBatch = b.dataset.aibatch;
       aiRender();
     });
 
