@@ -829,7 +829,29 @@
     .unsw-badge.fee-due { background:#FFF7ED; color:#7C2D12; border-left:3px solid #EA580C; }
     .unsw-badge.sem-block { background:#E2E8F0; color:#334155; border-left:3px solid #64748B; }
     .unsw-badge.huddle { background:#EEF2FF; color:#3730A3; border-left:3px solid #6366F1; }
+    .unsw-badge.sim-census { background:#FEE2E2; color:#991B1B; border-left:3px solid #EF4444; }
+    .unsw-badge.sim-start  { background:#D1FAE5; color:#065F46; border-left:3px solid #10B981; }
+    .unsw-badge.sim-admin  { background:#FFF7ED; color:#7C2D12; border-left:3px solid #EA580C; }
     .unsw-badge.kd-moved { box-shadow:inset 0 0 0 1px #94A3B8; }
+
+    .partner-bar { display:flex; align-items:center; gap:7px; flex-wrap:wrap; padding:0 0 14px; }
+    .partner-bar .pb-label { font-size:0.64rem; font-weight:800; text-transform:uppercase;
+      letter-spacing:0.6px; color:#9ca3af; margin-right:2px; }
+    .pb-btn { border:1.5px solid #e5e7eb; background:#fff; border-radius:999px; padding:4px 12px 4px 9px;
+      font-size:0.7rem; font-weight:800; color:#9ca3af; cursor:pointer; font-family:inherit;
+      display:inline-flex; align-items:center; gap:6px; }
+    .pb-btn .pb-dot { width:8px; height:8px; border-radius:50%; background:#cbd5e1; flex-shrink:0; }
+    .pb-btn.on { color:#16202b; border-color:#cbd5e1; background:#f9fafb; }
+    .pb-btn:hover { border-color:#cbd5e1; }
+    .pb-all { border:none; background:none; font-size:0.68rem; font-weight:800; color:#6b7280;
+      cursor:pointer; font-family:inherit; text-decoration:underline; padding:4px 2px; }
+
+    .event-partner { font-size:0.58rem; font-weight:800; letter-spacing:0.3px; border-radius:4px;
+      padding:1px 5px; margin-right:5px; flex-shrink:0; }
+
+    .partner-select { width:100%; border:1.5px solid #e5e7eb; border-radius:7px; padding:8px 10px;
+      font-size:0.82rem; font-family:inherit; color:#16202b; background:#fff; margin-bottom:4px; }
+    .partner-select:focus { outline:none; border-color:#16202b; }
     .unsw-badge .kd-btn { display:none; background:none; border:none; cursor:pointer; font-size:0.6rem; padding:0 1px; opacity:0.6; line-height:1; color:inherit; }
     .unsw-badge:hover .kd-btn { display:inline; }
     .unsw-badge .kd-btn:hover { opacity:1; }
@@ -2470,6 +2492,7 @@
   </div>
 </div>
 
+<div class="partner-bar inst-both" id="partner-bar"></div>
 <div class="calendar-grid inst-both" id="calendar-grid"></div>
 
 </div><!-- end tab-calendar -->
@@ -2674,6 +2697,8 @@
         <span>to</span>
         <input type="time" id="event-end" step="300" />
       </div>
+      <div class="tag-label">Who is it for</div>
+      <select id="event-partner" class="partner-select"></select>
       <div class="tag-label">Event Type</div>
       <div class="tag-picker" id="tag-picker"></div>
       <div class="modal-actions">
@@ -2695,6 +2720,8 @@
         <div id="detail-tag-badge" class="event-tag-badge" style="flex-shrink:0;"></div>
         <select id="detail-tag-select" style="font-size:0.78rem;border:1px solid #e5e7eb;border-radius:6px;padding:4px 10px;color:#374151;background:#f9fafb;cursor:pointer;outline:none;"></select>
       </div>
+      <div class="field-label">Who is it for</div>
+      <select id="detail-partner" class="partner-select"></select>
       <div class="field-label">Time <span class="tag-opt">optional</span></div>
       <div class="ev-times">
         <input type="time" id="detail-start" step="300" />
@@ -3531,33 +3558,66 @@ Kind regards,</div>
     'o-week':'🎓', 'census':'📋', 'enrol-deadline':'📝', 'late-enrol':'⏰',
     'standing-report':'📊', 'suspension-appeal':'⚖️', 'ipt-open':'🔓',
     'wadm-drop':'📉', 'sem-block':'🚧', 'huddle':'🤝',
-    'aw-deadline':'🚪', 'ipt-close':'🔓', 'fee-due':'💳'
+    'aw-deadline':'🚪', 'ipt-close':'🔓', 'fee-due':'💳',
+    'sim-census':'📋', 'sim-start':'🎓', 'sim-admin':'💳'
   };
 
   // Coded key dates are seeds. The team can move or cancel any of them, and those
   // changes live in Firebase so everyone sees the same calendar.
   const KEYDATE_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/keydate_overrides.json';
+  // SIM runs six study periods on its own calendar, not the UNSW hexamester,
+  // so these come straight from the SIM academic calendar rather than being
+  // worked out from UNSW weeks. Census is the Monday of week 2 every time.
+  // SP1 is from Greg's 24 Nov 2026 update, which supersedes the spreadsheet
+  // on module payment and adds orientation and module enrolment.
+  // SP2 to SP6 are from the 2027 SIM Academic Calendar.
+  const SIM_DATES_BASE = {
+    '2026-12-18': [{ type:'sim-admin',  label:'SIM SP1 Module Enrolment due (23:59 SGT)' }],
+    '2026-12-21': [{ type:'sim-admin',  label:'SIM SP1 Application deadline' },
+                   { type:'sim-start',  label:'SIM SP1 Orientation, Zoom 6:30pm to 7pm' }],
+    '2026-12-31': [{ type:'sim-admin',  label:'SIM SP1 Module payment due' }],
+    '2027-01-04': [{ type:'sim-start',  label:'SIM SP1 Lessons start' }],
+    '2027-01-11': [{ type:'sim-census', label:'SIM SP1 Census, non-paying students removed' }],
+    '2027-03-01': [{ type:'sim-start',  label:'SIM SP2 Lessons start' }],
+    '2027-03-08': [{ type:'sim-census', label:'SIM SP2 Census, non-paying students removed' }],
+    '2027-05-03': [{ type:'sim-start',  label:'SIM SP3 Lessons start' }],
+    '2027-05-10': [{ type:'sim-census', label:'SIM SP3 Census, non-paying students removed' }],
+    '2027-07-05': [{ type:'sim-start',  label:'SIM SP4 Lessons start' }],
+    '2027-07-12': [{ type:'sim-census', label:'SIM SP4 Census, non-paying students removed' }],
+    '2027-08-30': [{ type:'sim-start',  label:'SIM SP5 Lessons start' }],
+    '2027-09-06': [{ type:'sim-census', label:'SIM SP5 Census, non-paying students removed' }],
+    '2027-11-01': [{ type:'sim-start',  label:'SIM SP6 Lessons start' }],
+    '2027-11-08': [{ type:'sim-census', label:'SIM SP6 Census, non-paying students removed' }]
+  };
+
   let keyDateOverrides = {};
   const UNSW_DATES = {};
+  const SIM_DATES = {};
 
   function kdId(baseDate, item) {
     return (baseDate + '|' + item.type + '|' + item.label).replace(/[.#$/\[\]]/g, '_');
   }
 
-  function rebuildUnswDates() {
-    Object.keys(UNSW_DATES).forEach(k => delete UNSW_DATES[k]);
-    Object.keys(UNSW_DATES_BASE).forEach(baseDate => {
-      UNSW_DATES_BASE[baseDate].forEach(item => {
+  // Both partners' key dates go through the same move and cancel machinery.
+  function buildKeyDates(base, out, partner) {
+    Object.keys(out).forEach(k => delete out[k]);
+    Object.keys(base).forEach(baseDate => {
+      base[baseDate].forEach(item => {
         const id = kdId(baseDate, item);
         const ov = keyDateOverrides[id];
         if (ov && ov.hidden) return;
         const shown = (ov && ov.date) ? ov.date : baseDate;
-        const copy = Object.assign({}, item, { kdId:id, kdBase:baseDate });
+        const copy = Object.assign({}, item, { kdId:id, kdBase:baseDate, partner:partner });
         if (ov && ov.date && ov.date !== baseDate) copy.kdMoved = true;
-        if (!UNSW_DATES[shown]) UNSW_DATES[shown] = [];
-        UNSW_DATES[shown].push(copy);
+        if (!out[shown]) out[shown] = [];
+        out[shown].push(copy);
       });
     });
+  }
+
+  function rebuildUnswDates() {
+    buildKeyDates(UNSW_DATES_BASE, UNSW_DATES, 'unsw');
+    buildKeyDates(SIM_DATES_BASE, SIM_DATES, 'sim');
   }
 
   async function saveKeyDateOverrides() {
@@ -3873,7 +3933,34 @@ Kind regards,</div>
 
   const DB_BASE = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app';
   function isMbs() { return document.body.getAttribute("data-inst") === "mbs"; }
-  function evDb() { return DB_BASE + (isMbs() ? "/events_mbs.json" : "/events.json"); }
+
+  // One calendar for every partner. The UNSW/MBS switch still drives the rest
+  // of the hub, but the calendar shows the lot and tags who each thing is for.
+  // Anything saved before tagging existed has no partner, so it reads as "all".
+  const PARTNERS = {
+    all:  { label: 'All partners', short: 'All',  bg: '#F3F4F6', text: '#374151', dot: '#6B7280' },
+    unsw: { label: 'UNSW',         short: 'UNSW', bg: '#FEF3C7', text: '#92400E', dot: '#F59E0B' },
+    mbs:  { label: 'MBS',          short: 'MBS',  bg: '#EDE9FE', text: '#5B21B6', dot: '#7C3AED' },
+    uom:  { label: 'UoM',          short: 'UoM',  bg: '#DBEAFE', text: '#1D4ED8', dot: '#3B82F6' },
+    sim:  { label: 'SIM',          short: 'SIM',  bg: '#D1FAE5', text: '#065F46', dot: '#10B981' }
+  };
+  const PARTNER_KEYS = ['all', 'unsw', 'mbs', 'uom', 'sim'];
+  function evPartner(ev) {
+    const p = ev && ev.partner;
+    return PARTNERS[p] ? p : 'all';
+  }
+
+  // Which partners the calendar is showing. Everything, until someone narrows it.
+  let partnerShow = (function () {
+    try {
+      const raw = JSON.parse(localStorage.getItem('cal-partners') || 'null');
+      if (Array.isArray(raw) && raw.length) return raw.filter(function (k) { return PARTNERS[k]; });
+    } catch (e) {}
+    return PARTNER_KEYS.slice();
+  })();
+  function partnerOn(k) { return partnerShow.indexOf(k) !== -1; }
+
+  function evDb() { return DB_BASE + "/events.json"; }
   const PACING_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing.json';
   const PACING_LOCK_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing_targetlock.json';
 
@@ -4022,8 +4109,11 @@ Kind regards,</div>
 
         cell.appendChild(labelEl);
 
-        // UNSW Key Date badges
-        const unswItems = isMbs() ? null : UNSW_DATES[key];
+        // Key date badges. They follow the partner filter now, not the
+        // UNSW/MBS switch, because the calendar is shared across partners.
+        const unswItems = []
+          .concat(partnerOn('unsw') ? (UNSW_DATES[key] || []) : [])
+          .concat(partnerOn('sim')  ? (SIM_DATES[key]  || []) : []);
         if (unswItems && unswItems.length) {
           const row = document.createElement('div');
           row.className = 'unsw-dates-row';
@@ -4066,6 +4156,7 @@ Kind regards,</div>
         // order it was added, after the timed ones.
         (events[key] || [])
           .map((ev, idx) => ({ ev, idx }))
+          .filter(({ ev }) => partnerOn(evPartner(ev)))
           .sort((a, b) => {
             const as = a.ev.start || '', bs = b.ev.start || '';
             if (as && bs) return as < bs ? -1 : as > bs ? 1 : a.idx - b.idx;
@@ -4080,6 +4171,18 @@ Kind regards,</div>
           chip.style.background = tag.bg;
           chip.style.color = tag.text;
           chip.style.borderLeft = `3px solid ${tag.dot}`;
+
+          // Only worth saying whose it is when it is somebody's in particular.
+          const pk = evPartner(ev);
+          if (pk !== 'all') {
+            const pc = PARTNERS[pk];
+            const pb = document.createElement('span');
+            pb.className = 'event-partner';
+            pb.textContent = pc.short;
+            pb.style.background = pc.dot;
+            pb.style.color = '#fff';
+            chip.appendChild(pb);
+          }
 
           const when = evTimeLabel(ev);
           if (when) {
@@ -4139,6 +4242,9 @@ Kind regards,</div>
     input.value = '';
     document.getElementById('event-start').value = '';
     document.getElementById('event-end').value = '';
+    // Start on whichever partner the hub is set to, since that is usually
+    // the one you are working in, but any of them can be picked.
+    fillPartnerSelect('event-partner', isMbs() ? 'mbs' : 'unsw');
     selectedTag = 0;
     renderTags();
     overlay.classList.add('open');
@@ -4148,6 +4254,64 @@ Kind regards,</div>
   function closeModal() {
     overlay.classList.remove('open');
     pendingDateKey = null;
+  }
+
+  function fillPartnerSelect(id, chosen) {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '';
+    PARTNER_KEYS.forEach(function (k) {
+      const opt = document.createElement('option');
+      opt.value = k;
+      opt.textContent = PARTNERS[k].label;
+      if (k === chosen) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  // The filter is a view, not a setting, so it stays on this browser only.
+  function renderPartnerBar() {
+    const bar = document.getElementById('partner-bar');
+    if (!bar) return;
+    bar.innerHTML = '';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'pb-label';
+    lbl.textContent = 'Showing';
+    bar.appendChild(lbl);
+
+    PARTNER_KEYS.forEach(function (k) {
+      const p = PARTNERS[k];
+      const b = document.createElement('button');
+      b.className = 'pb-btn' + (partnerOn(k) ? ' on' : '');
+      const dot = document.createElement('span');
+      dot.className = 'pb-dot';
+      if (partnerOn(k)) dot.style.background = p.dot;
+      b.appendChild(dot);
+      b.appendChild(document.createTextNode(p.label));
+      b.addEventListener('click', function () {
+        const i = partnerShow.indexOf(k);
+        if (i === -1) partnerShow.push(k);
+        else if (partnerShow.length > 1) partnerShow.splice(i, 1);
+        try { localStorage.setItem('cal-partners', JSON.stringify(partnerShow)); } catch (e) {}
+        renderPartnerBar();
+        render();
+      });
+      bar.appendChild(b);
+    });
+
+    if (partnerShow.length < PARTNER_KEYS.length) {
+      const all = document.createElement('button');
+      all.className = 'pb-all';
+      all.textContent = 'Show everything';
+      all.addEventListener('click', function () {
+        partnerShow = PARTNER_KEYS.slice();
+        try { localStorage.setItem('cal-partners', JSON.stringify(partnerShow)); } catch (e) {}
+        renderPartnerBar();
+        render();
+      });
+      bar.appendChild(all);
+    }
   }
 
   function renderTags() {
@@ -4200,6 +4364,8 @@ Kind regards,</div>
     const start = document.getElementById('event-start').value;
     const end   = document.getElementById('event-end').value;
     const newEv = { name, tag: selectedTag };
+    const pk = document.getElementById('event-partner').value;
+    if (pk && pk !== 'all') newEv.partner = pk;
     if (start) newEv.start = start;
     if (end) newEv.end = end;
     events[pendingDateKey].push(newEv);
@@ -4247,6 +4413,7 @@ Kind regards,</div>
     applyBadge(ev.tag || 0);
     sel.onchange = () => applyBadge(parseInt(sel.value));
 
+    fillPartnerSelect('detail-partner', evPartner(ev));
     document.getElementById('detail-start').value = ev.start || '';
     document.getElementById('detail-end').value = ev.end || '';
     document.getElementById('detail-link').value = ev.link || '';
@@ -4263,6 +4430,9 @@ Kind regards,</div>
   document.getElementById('detail-save-btn').addEventListener('click', () => {
     if (detailKey === null || detailIdx === null) return;
     events[detailKey][detailIdx].tag      = parseInt(document.getElementById('detail-tag-select').value) || 0;
+    const dp = document.getElementById('detail-partner').value;
+    if (dp && dp !== 'all') events[detailKey][detailIdx].partner = dp;
+    else delete events[detailKey][detailIdx].partner;
     const ds = document.getElementById('detail-start').value;
     const de = document.getElementById('detail-end').value;
     if (ds) events[detailKey][detailIdx].start = ds; else delete events[detailKey][detailIdx].start;
@@ -4344,6 +4514,7 @@ Kind regards,</div>
   });
 
   startDate = getMonday(new Date());
+  renderPartnerBar();
   loadKeyDateOverrides().then(render);
   loadEvents();
   startPolling();
@@ -11590,7 +11761,9 @@ ${cardsHTML}
     const grid = document.getElementById("calendar-grid");
     const panel = document.getElementById("mbsa-panel");
     const bar = document.getElementById("cal-subtabs");
+    const pbar = document.getElementById("partner-bar");
     if (grid) grid.style.display = (v === "assess") ? "none" : "";
+    if (pbar) pbar.style.display = (v === "assess") ? "none" : "";
     if (panel) panel.style.display = (v === "assess") ? "" : "none";
     if (bar) [...bar.querySelectorAll("[data-calview]")].forEach(function (b) {
       b.classList.toggle("on", b.dataset.calview === v);
@@ -11617,8 +11790,8 @@ ${cardsHTML}
     if (sw) [...sw.querySelectorAll("[data-inst-btn]")].forEach(function (b) {
       b.classList.toggle("on", b.dataset.instBtn === inst);
     });
-    // the two institutions keep separate events and notices, so reload both
-    try { loadEvents(); } catch (e) {}
+    // The calendar is shared across partners now, so it does not reload here.
+    // Notices are still per institution.
     try { nbLoad(); } catch (e) {}
     try { if (typeof loadKanban === "function") {
       activeKanbanSchool = (inst === "mbs") ? "MBS" : "UNSW";
@@ -11637,7 +11810,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-24-03";
+  const HUB_BUILD = "2026-11-26-01";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
