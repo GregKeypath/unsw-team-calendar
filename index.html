@@ -834,17 +834,6 @@
     .unsw-badge.sim-admin  { background:#FFF7ED; color:#7C2D12; border-left:3px solid #EA580C; }
     .unsw-badge.kd-moved { box-shadow:inset 0 0 0 1px #94A3B8; }
 
-    .partner-bar { display:flex; align-items:center; gap:7px; flex-wrap:wrap; padding:0 0 14px; }
-    .partner-bar .pb-label { font-size:0.64rem; font-weight:800; text-transform:uppercase;
-      letter-spacing:0.6px; color:#9ca3af; margin-right:2px; }
-    .pb-btn { border:1.5px solid #e5e7eb; background:#fff; border-radius:999px; padding:4px 12px 4px 9px;
-      font-size:0.7rem; font-weight:800; color:#9ca3af; cursor:pointer; font-family:inherit;
-      display:inline-flex; align-items:center; gap:6px; }
-    .pb-btn .pb-dot { width:8px; height:8px; border-radius:50%; background:#cbd5e1; flex-shrink:0; }
-    .pb-btn.on { color:#16202b; border-color:#cbd5e1; background:#f9fafb; }
-    .pb-btn:hover { border-color:#cbd5e1; }
-    .pb-all { border:none; background:none; font-size:0.68rem; font-weight:800; color:#6b7280;
-      cursor:pointer; font-family:inherit; text-decoration:underline; padding:4px 2px; }
 
     .event-partner { font-size:0.58rem; font-weight:800; letter-spacing:0.3px; border-radius:4px;
       padding:1px 5px; margin-right:5px; flex-shrink:0; }
@@ -859,6 +848,10 @@
 
     .tz-card { background:linear-gradient(135deg,#fffaf0 0%,#fff2f5 48%,#eef4ff 100%); border-radius:12px; padding:11px 14px;
       border:1px solid rgba(30,45,65,0.08); box-shadow:0 2px 5px rgba(30,45,65,0.12); transform:rotate(-0.5deg); }
+    /* On the back of the board it is one of the notes, so it drops its own card. */
+    .nb-tznote { margin-bottom:14px; }
+    .nb-tznote .tz-card { background:none; border:none; box-shadow:none; padding:0; border-radius:0; transform:none; }
+    .nb-tznote .tz-ttl { color:#23374a; }
     .tz-odd { font-size:0.64rem; font-weight:700; color:#9a3412; margin-top:6px; }
     .tz-hd { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
     .tz-ttl { font-size:0.88rem; font-weight:900; color:#16202b; letter-spacing:-0.01em; }
@@ -1149,8 +1142,6 @@
       box-shadow:inset 0 1px 0 #fff, inset 0 -18px 28px -22px rgba(30,45,65,0.22), 0 2px 5px rgba(30,45,65,0.08); }
     .nb-surface::after { content:''; position:absolute; left:16px; right:16px; bottom:-9px; height:9px; border-radius:0 0 7px 7px;
       background:linear-gradient(180deg,#c9d2db,#aab6c2); box-shadow:0 3px 6px rgba(30,45,65,0.22); }
-    .nb-surface-top { display:flex; align-items:flex-start; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
-    .nb-surface-top .tz-card { flex-shrink:0; margin-bottom:0; }
     .nb-head { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
     .nb-head h2 { margin:0; font-size:1.35rem; font-weight:800; color:#1b2b3d; letter-spacing:-0.3px; }
     .nb-sub { font-size:0.76rem; color:#6b7a8c; margin:0 0 16px; }
@@ -2492,7 +2483,6 @@
   </div>
 </div>
 
-<div class="partner-bar inst-both" id="partner-bar"></div>
 <div class="calendar-grid inst-both" id="calendar-grid"></div>
 
 </div><!-- end tab-calendar -->
@@ -3165,9 +3155,6 @@ Kind regards,</div>
     <div class="nb-flip" id="nb-flip">
       <div class="nb-face nb-front">
         <div class="nb-surface">
-          <div class="nb-surface-top">
-            <div class="tz-card" id="tz-map"></div>
-          </div>
           <div class="nb-board" id="nb-board"></div>
           <button class="nb-tab" id="nb-to-back"></button>
         </div>
@@ -3175,6 +3162,7 @@ Kind regards,</div>
       <div class="nb-face nb-back">
         <div class="nb-surface nb-surface-rear">
           <div class="nb-rear-hd"><b>Taken down</b><span>Off the board, kept in case anyone needs to look back.</span></div>
+          <div class="nb-note nb-c-blue nb-tznote"><span class="nb-pin">🕒</span><div class="tz-card" id="tz-map"></div></div>
           <div class="nb-board" id="nb-board-old"></div>
           <button class="nb-tab" id="nb-to-front">Back to the board</button>
         </div>
@@ -3189,7 +3177,7 @@ Kind regards,</div>
     <div class="nb-lbl">Title</div>
     <input type="text" id="nb-f-title" placeholder="Short and clear" maxlength="120">
     <div class="nb-lbl">The update</div>
-    <textarea id="nb-f-body" placeholder="Write the update here.&#10;&#10;## Makes a heading&#10;- Makes a bullet&#10;**Bold** for names and labels&#10;&#10;Emails and links become clickable on their own."></textarea>
+    <textarea id="nb-f-body" placeholder="Write the update here, or paste straight from Outlook, Teams or a web page and the links come with it.&#10;&#10;## Makes a heading&#10;- Makes a bullet&#10;**Bold** for names and labels&#10;[Words](https://link) names a link&#10;&#10;Emails and plain links become clickable on their own."></textarea>
     <div class="nb-lbl">Label</div>
     <select id="nb-f-tag"></select>
     <div class="nb-lbl">From</div>
@@ -3950,16 +3938,6 @@ Kind regards,</div>
     return PARTNERS[p] ? p : 'all';
   }
 
-  // Which partners the calendar is showing. Everything, until someone narrows it.
-  let partnerShow = (function () {
-    try {
-      const raw = JSON.parse(localStorage.getItem('cal-partners') || 'null');
-      if (Array.isArray(raw) && raw.length) return raw.filter(function (k) { return PARTNERS[k]; });
-    } catch (e) {}
-    return PARTNER_KEYS.slice();
-  })();
-  function partnerOn(k) { return partnerShow.indexOf(k) !== -1; }
-
   function evDb() { return DB_BASE + "/events.json"; }
   const PACING_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing.json';
   const PACING_LOCK_DB = 'https://unsw-team-calendar-default-rtdb.asia-southeast1.firebasedatabase.app/pacing_targetlock.json';
@@ -4109,11 +4087,11 @@ Kind regards,</div>
 
         cell.appendChild(labelEl);
 
-        // Key date badges. They follow the partner filter now, not the
-        // UNSW/MBS switch, because the calendar is shared across partners.
+        // Key date badges. Every partner's dates sit on the one calendar and
+        // carry their own tag, so the UNSW/MBS switch no longer hides them.
         const unswItems = []
-          .concat(partnerOn('unsw') ? (UNSW_DATES[key] || []) : [])
-          .concat(partnerOn('sim')  ? (SIM_DATES[key]  || []) : []);
+          .concat(UNSW_DATES[key] || [])
+          .concat(SIM_DATES[key] || []);
         if (unswItems && unswItems.length) {
           const row = document.createElement('div');
           row.className = 'unsw-dates-row';
@@ -4156,7 +4134,6 @@ Kind regards,</div>
         // order it was added, after the timed ones.
         (events[key] || [])
           .map((ev, idx) => ({ ev, idx }))
-          .filter(({ ev }) => partnerOn(evPartner(ev)))
           .sort((a, b) => {
             const as = a.ev.start || '', bs = b.ev.start || '';
             if (as && bs) return as < bs ? -1 : as > bs ? 1 : a.idx - b.idx;
@@ -4269,50 +4246,6 @@ Kind regards,</div>
     });
   }
 
-  // The filter is a view, not a setting, so it stays on this browser only.
-  function renderPartnerBar() {
-    const bar = document.getElementById('partner-bar');
-    if (!bar) return;
-    bar.innerHTML = '';
-
-    const lbl = document.createElement('span');
-    lbl.className = 'pb-label';
-    lbl.textContent = 'Showing';
-    bar.appendChild(lbl);
-
-    PARTNER_KEYS.forEach(function (k) {
-      const p = PARTNERS[k];
-      const b = document.createElement('button');
-      b.className = 'pb-btn' + (partnerOn(k) ? ' on' : '');
-      const dot = document.createElement('span');
-      dot.className = 'pb-dot';
-      if (partnerOn(k)) dot.style.background = p.dot;
-      b.appendChild(dot);
-      b.appendChild(document.createTextNode(p.label));
-      b.addEventListener('click', function () {
-        const i = partnerShow.indexOf(k);
-        if (i === -1) partnerShow.push(k);
-        else if (partnerShow.length > 1) partnerShow.splice(i, 1);
-        try { localStorage.setItem('cal-partners', JSON.stringify(partnerShow)); } catch (e) {}
-        renderPartnerBar();
-        render();
-      });
-      bar.appendChild(b);
-    });
-
-    if (partnerShow.length < PARTNER_KEYS.length) {
-      const all = document.createElement('button');
-      all.className = 'pb-all';
-      all.textContent = 'Show everything';
-      all.addEventListener('click', function () {
-        partnerShow = PARTNER_KEYS.slice();
-        try { localStorage.setItem('cal-partners', JSON.stringify(partnerShow)); } catch (e) {}
-        renderPartnerBar();
-        render();
-      });
-      bar.appendChild(all);
-    }
-  }
 
   function renderTags() {
     const picker = document.getElementById('tag-picker');
@@ -4514,7 +4447,6 @@ Kind regards,</div>
   });
 
   startDate = getMonday(new Date());
-  renderPartnerBar();
   loadKeyDateOverrides().then(render);
   loadEvents();
   startPolling();
@@ -11322,7 +11254,7 @@ ${cardsHTML}
       const pic = t.match(/^!\[([^\]]*)\]\((https?:\/\/[^)]+|[^):]+)\)$/);
       if (pic) { flushPara(); flushList(); out.push('<a class="nb-pic" href="' + nbEsc(pic[2]) + '" target="_blank" rel="noopener"><img src="' + nbEsc(pic[2]) + '" alt="' + nbEsc(pic[1]) + '" loading="lazy"></a>'); return; }
       if (head) { flushPara(); flushList(); out.push('<h5 class="nb-h">' + nbInline(head[1]) + '</h5>'); return; }
-      const item = t.match(/^[-\u2022]\s+(.*)$/);
+      const item = t.match(/^[-*\u2022\u00b7\u25e6\u2023\u25aa]\s+(.*)$/);
       if (item) { flushPara(); if (!list) list = []; list.push('<li>' + nbInline(item[1]) + '</li>'); return; }
       flushList();
       para.push(nbInline(t));
@@ -11468,6 +11400,107 @@ ${cardsHTML}
     }
   }
 
+  // A copy from Outlook, Teams, Word or a web page carries the real links in its
+  // HTML flavour. Dropped into a plain box the browser keeps only the words, so
+  // this turns the HTML into the board's own shorthand before it lands.
+  const NB_BLOCKY = 'p,div,ul,ol,li,h1,h2,h3,h4,h5,h6,table,tr,td,th,section,article,blockquote,pre,header,footer,main,aside';
+
+  function nbRichInline(node) {
+    let s = '';
+    Array.prototype.forEach.call(node.childNodes, function (c) {
+      if (c.nodeType === 3) { s += String(c.nodeValue).replace(/\s+/g, ' '); return; }
+      if (c.nodeType !== 1) return;
+      const tag = c.tagName.toLowerCase();
+      if (tag === 'br') { s += '\n'; return; }
+      if (tag === 'img') {
+        const src = (c.getAttribute('src') || '').trim();
+        if (/^https?:\/\//i.test(src)) s += '![' + (c.getAttribute('alt') || '').replace(/[\[\]]/g, '') + '](' + src + ')';
+        return;
+      }
+      if (tag === 'a') {
+        const href = (c.getAttribute('href') || '').trim();
+        const label = nbRichInline(c).replace(/\s+/g, ' ').trim();
+        if (/^mailto:/i.test(href)) { s += href.slice(7).split('?')[0]; return; }
+        if (!/^https?:\/\//i.test(href)) { s += label; return; }
+        s += (label && label !== href) ? '[' + label.replace(/[\[\]]/g, '') + '](' + href + ')' : href;
+        return;
+      }
+      if (tag === 'b' || tag === 'strong') {
+        const inner = nbRichInline(c).replace(/\s+/g, ' ').trim();
+        s += inner ? '**' + inner.replace(/\*/g, '') + '**' : '';
+        return;
+      }
+      s += nbRichInline(c);
+    });
+    return s;
+  }
+
+  function nbRichBlock(node, out) {
+    Array.prototype.forEach.call(node.childNodes, function (c) {
+      if (c.nodeType === 3) {
+        const t = String(c.nodeValue).replace(/\s+/g, ' ').trim();
+        if (t) out.push(t);
+        return;
+      }
+      if (c.nodeType !== 1) return;
+      const tag = c.tagName.toLowerCase();
+      if (tag === 'br' || tag === 'hr') { out.push(''); return; }
+      if (/^h[1-6]$/.test(tag)) {
+        const t = nbRichInline(c).replace(/\s+/g, ' ').trim();
+        if (t) { out.push(''); out.push('## ' + t); }
+        return;
+      }
+      if (tag === 'li') {
+        const clone = c.cloneNode(true);
+        const nested = [];
+        Array.prototype.forEach.call(clone.querySelectorAll('ul,ol'), function (l) {
+          nested.push(l);
+          if (l.parentNode) l.parentNode.removeChild(l);
+        });
+        const t = nbRichInline(clone).replace(/\s+/g, ' ').trim();
+        if (t) out.push('- ' + t.replace(/^[-*•·◦‣▪]\s*/, ''));
+        nested.forEach(function (l) { nbRichBlock(l, out); });
+        return;
+      }
+      if (c.querySelector && c.querySelector(NB_BLOCKY)) { nbRichBlock(c, out); return; }
+      const line = nbRichInline(c).trim();
+      if (!line) return;
+      line.split('\n').forEach(function (l) {
+        const v = l.trim();
+        if (v) out.push(v);
+      });
+      if (tag === 'p' || tag === 'blockquote' || tag === 'tr') out.push('');
+    });
+  }
+
+  function nbRich(html) {
+    let doc;
+    try { doc = new DOMParser().parseFromString(html, 'text/html'); } catch (e) { return ''; }
+    if (!doc || !doc.body) return '';
+    Array.prototype.forEach.call(doc.querySelectorAll('style,script,meta,link,title'), function (el) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    });
+    const out = [];
+    nbRichBlock(doc.body, out);
+    return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+  }
+
+  function nbPaste(e) {
+    const cb = e.clipboardData || window.clipboardData;
+    if (!cb) return;
+    let html = '';
+    try { html = cb.getData('text/html') || ''; } catch (err) { return; }
+    if (!html) return;
+    const text = nbRich(html);
+    if (!text) return;
+    e.preventDefault();
+    const ta = e.currentTarget;
+    const a = ta.selectionStart, b = ta.selectionEnd;
+    ta.value = ta.value.slice(0, a) + text + ta.value.slice(b);
+    ta.selectionStart = ta.selectionEnd = a + text.length;
+    ta.focus();
+  }
+
   function nbOpen(id) {
     nbEditId = id;
     const n = id ? nbNotices[id] : null;
@@ -11546,6 +11579,9 @@ ${cardsHTML}
         const el = document.getElementById(id);
         if (el) el.addEventListener('click', _nbClick);
       });
+
+      const nbBody = document.getElementById('nb-f-body');
+      if (nbBody) nbBody.addEventListener('paste', nbPaste);
 
       document.getElementById('nb-add').addEventListener('click', () => nbOpen(null));
       document.getElementById('nb-cancel').addEventListener('click', nbClose);
@@ -11761,9 +11797,7 @@ ${cardsHTML}
     const grid = document.getElementById("calendar-grid");
     const panel = document.getElementById("mbsa-panel");
     const bar = document.getElementById("cal-subtabs");
-    const pbar = document.getElementById("partner-bar");
     if (grid) grid.style.display = (v === "assess") ? "none" : "";
-    if (pbar) pbar.style.display = (v === "assess") ? "none" : "";
     if (panel) panel.style.display = (v === "assess") ? "" : "none";
     if (bar) [...bar.querySelectorAll("[data-calview]")].forEach(function (b) {
       b.classList.toggle("on", b.dataset.calview === v);
@@ -11810,7 +11844,7 @@ ${cardsHTML}
 
   // Bumped on every deploy. The page asks the live copy what its build is
   // and tells whoever has the hub open that there is a newer one.
-  const HUB_BUILD = "2026-11-26-01";
+  const HUB_BUILD = "2026-11-26-02";
 
   // Built when it is needed, with its styles inline, so nothing in the
   // page stylesheet can hide it.
